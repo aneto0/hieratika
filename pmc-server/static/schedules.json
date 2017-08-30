@@ -3,18 +3,20 @@
             "name": "schedule 1",
             "owner": "Andre Neto",
             "description": "...",
-            "id": "schedule1",
             "variables": [{
-                    "name": "PLANT::PMC::TEST::VAR1",
-                    "value": "1"
+                    "name": "PMC::TEST::VAR1",
+                    "value": "1",
+                    "isPV": "True"
                 },
                 {
-                    "name": "PLANT::PMC::TEST::VAR2",
-                    "value": "2"
+                    "name": "PMC::TEST::VAR2",
+                    "value": "2",
+                    "isPV": "True"
                 },
                 {
                     "name": "SUP::PMC::TEST::VAR3",
-                    "value": "3"
+                    "value": "3",
+                    "isPV": "False"
                 }
             ]
         },
@@ -22,18 +24,20 @@
             "name": "schedule 2",
             "owner": "Andre Neto",
             "description": "...",
-            "id": "schedule2",
             "variables": [{
-                    "name": "PLANT::PMC::TEST::VAR1",
-                    "value": "10"
+                    "name": "PMC::TEST::VAR1",
+                    "value": "10",
+                    "isPV": "True"
                 },
                 {
-                    "name": "PLANT::PMC::TEST::VAR2",
-                    "value": "20"
+                    "name": "PMC::TEST::VAR2",
+                    "value": "20",
+                    "isPV": "True"
                 },
                 {
                     "name": "SUP::PMC::TEST::VAR3",
-                    "value": "30"
+                    "value": "30",
+                    "isPV": "False"
                 }
             ]
         }

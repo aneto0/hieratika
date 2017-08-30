@@ -59,14 +59,13 @@ def changeschedule():
             for s in schedules:
                 if (s["name"] == requestedSchedule):
                     variables = s["variables"]
-                    for v in variables:
-                        variableName = v["name"]
-                        if (variableName.startswith("PLANT::")):
-                            pvName = variableName[len("PLANT::"):]
-                            pvValue = v["value"]
-                            caput(pvName, pvValue)
-                            print pvName
-    return "done"
+#                    for v in variables:
+#                        if (v["isPV"] == "True"):
+#                            pvName = v["name"]
+#                            pvValue = v["value"]
+#                            caput(pvName, pvValue)
+                    break
+    return json.dumps(variables)
 
 
 @app.route("/stream")

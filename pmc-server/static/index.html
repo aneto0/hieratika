@@ -2,6 +2,77 @@
     <head>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
+        <!-- Define a new standard component for the pmc -->
+        <script type="text/javascript">
+            const PLANT_CHANGED_COLOR = "red";
+            const STANDARD_COLOR = "black";
+
+            if (!document.registerElement) {
+                alert("Custom elements not supported!");
+            }
+            else {
+                var PMCInputProto = Object.create(HTMLInputElement.prototype);
+
+                PMCInputProto.currentValuesToString = function() {
+                    return "Plant: " + this.plvalue + " Schedule: " + this.scvalue + " Reference: " + this.revalue;
+                }
+
+                PMCInputProto.showValues = function() {
+                    alert(this.currentValuesToString());
+                }
+
+                Object.defineProperty(PMCInputProto, "plvalue", {
+                    value: 1,
+                    writable: true
+                });
+
+                Object.defineProperty(PMCInputProto, "scvalue", {
+                    value: 1,
+                    writable: true
+                });
+
+                Object.defineProperty(PMCInputProto, "revalue", {
+                    value: 1,
+                    writable: true
+                });
+
+/*                PMCInputProto.createdCallback = function() {
+                    var thisObj = this;
+                    thisObj.value = "Undefined";
+                    if(typeof(EventSource) !== "undefined") {
+                        var source = new EventSource("http://localhost:8084/BROWSE/SSE/");
+                        source.onmessage = function(event) {
+                            //Need to do both (at least to triger the attributeChangedCallback)
+                            thisObj.setAttribute("plvalue", event.data);
+                            thisObj.plvalue = event.data; 
+                        };
+                    } else {
+                        this.value = "Sorry, your browser does not support server-sent events...";
+                    }
+                }*/
+
+                PMCInputProto.attachedCallback = function() {
+                }
+
+                PMCInputProto.detachedCallback = function() {
+                }
+
+                PMCInputProto.attributeChangedCallback = function(attrName, oldValue, newValue) {
+                    if(attrName === "plvalue") {
+                        this.title = this.currentValuesToString();
+//                        this.value = this.plvalue;
+                        this.style.color = PLANT_CHANGED_COLOR;
+                    }
+                }
+
+                document.registerElement("pmc-input", {
+                    prototype: PMCInputProto,
+                    extends: "input"
+                });
+            }
+        </script>
+
+
         <!-- Handle SSE events from the server-->
         <script>
             var eventOutputContainer = document.getElementById("event");
@@ -11,7 +82,8 @@
                 var msg = $.parseJSON(e.data);
                 var pv = msg.pv[0];
                 var targetElement = document.getElementById(pv.name);
-                targetElement.value = pv.value;
+                targetElement.plvalue = pv.value;
+                targetElement.setAttribute("plvalue", pv.value);
             };
         </script>
 
@@ -47,12 +119,24 @@
                         url: "/changeschedule",
                         data: $(this).serialize(),
                         success: function (response) {
-                            if (response == "done") {
+                            variables = $.parseJSON(response);
+                            console.log(variables);
+                            $.each(variables, function(i, variable) {
+                                console.log(variable.name);
+//                                $("\"#" + variable.name + "\"").value = variable.value;
+                                var targetElement = document.getElementById(variable.name);
+                                if (targetElement != null) {
+                                    targetElement.value = variable.value;
+                                    targetElement.setAttribute("value", variable.value);
+                                }
+                            });
+
+/*                            if (response == "done") {
                                 alert("Form submitted successfully!");
                             } 
                             else {
                                 alert("Form submission failed!");
-                                }
+                                }*/
                         },
                         error: function (response) {
                             alert(response);
@@ -71,9 +155,10 @@
                     success: function (response) {
                         //response will be already a json
                         schedules = response.schedules;
+                        console.log(schedules);
                         $.each(schedules, function(i, schedule) {
                             $("#schselect").append($("<option>", {
-                                value: schedule.id,
+                                value: schedule.name,
                                 text: schedule.name
                             }));
                         });
@@ -92,9 +177,9 @@
         <div id="event"></div>
         <form id="mainform">
             <label for="PMC::TEST::VAR1">PMC::TEST::VAR1</label>
-            <input type="text" id="PMC::TEST::VAR1" name="PMC::TEST::VAR1"></input></br>
+            <input is="pmc-input" type="text" id="PMC::TEST::VAR1" name="PMC::TEST::VAR1"></input></br>
             <label for="PMC::TEST::VAR2">PMC::TEST::VAR2</label>
-            <input type="text" id="PMC::TEST::VAR2" name="PMC::TEST::VAR2"></input></br>
+            <input is="pmc-input" type="text" id="PMC::TEST::VAR2" name="PMC::TEST::VAR2"></input></br>
             <input type="submit" value="Update values"></input>
         </form></br>
         

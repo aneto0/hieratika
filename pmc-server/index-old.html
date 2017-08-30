@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>HTML5 Custom elements: native HTML5</title>
+        <style>
+            input {
+                color: black;
+                font-size: 16px;
+                text-align: right;
+            }
+        </style>
+
+        <script type="text/javascript">
+            const PLANT_CHANGED_COLOR = "red";
+            const STANDARD_COLOR = "black";
+
+            if (!document.registerElement) {
+                alert("Custom elements not supported!");
+            }
+            else {
+                var L1InputProto = Object.create(HTMLInputElement.prototype);
+
+                L1InputProto.currentValuesToString = function() {
+                    return "Plant: " + this.plvalue + " Schedule: " + this.scvalue + " Reference: " + this.revalue;
+                }
+
+                L1InputProto.showValues = function() {
+                    alert(this.currentValuesToString());
+                }
+
+                Object.defineProperty(L1InputProto, "plvalue", {
+                    value: 1,
+                    writable: true
+                });
+
+                Object.defineProperty(L1InputProto, "scvalue", {
+                    value: 1,
+                    writable: true
+                });
+
+                Object.defineProperty(L1InputProto, "revalue", {
+                    value: 1,
+                    writable: true
+                });
+
+                L1InputProto.createdCallback = function() {
+                    var thisObj = this;
+                    thisObj.value = "Undefined";
+                    if(typeof(EventSource) !== "undefined") {
+//                        var source = new EventSource("sse_callback.php");
+                        var source = new EventSource("http://localhost:8084/BROWSE/SSE/");
+                        source.onmessage = function(event) {
+                            //Need to do both (at least to triger the attributeChangedCallback)
+                            thisObj.setAttribute("plvalue", event.data);
+                            thisObj.plvalue = event.data; 
+                        };
+                    } else {
+                        this.value = "Sorry, your browser does not support server-sent events...";
+                    }
+                }
+
+                L1InputProto.attachedCallback = function() {
+                }
+
+                L1InputProto.detachedCallback = function() {
+                }
+
+                L1InputProto.attributeChangedCallback = function(attrName, oldValue, newValue) {
+                    if(attrName === "plvalue") {
+                        this.title = this.currentValuesToString();
+                        this.value = this.currentValuesToString();
+                        this.style.color = PLANT_CHANGED_COLOR;
+                    }
+                }
+
+                document.registerElement("l1-input", {
+                    prototype: L1InputProto,
+                    extends: "input"
+                });
+            }
+        </script>
+    </head>
+    
+    <body>
+        Plant value 1: <input is="l1-input" id="input1" title="wtf?"></input></br>
+        Plant value 2: <input id="input2" title="wtf?"></input>
+        <div id="result"></div>
+    </body>
+</html>
