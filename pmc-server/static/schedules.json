@@ -1,0 +1,42 @@
+{
+    "schedules": [{
+            "name": "schedule 1",
+            "owner": "Andre Neto",
+            "description": "...",
+            "id": "schedule1",
+            "variables": [{
+                    "name": "PLANT::PMC::TEST::VAR1",
+                    "value": "1"
+                },
+                {
+                    "name": "PLANT::PMC::TEST::VAR2",
+                    "value": "2"
+                },
+                {
+                    "name": "SUP::PMC::TEST::VAR3",
+                    "value": "3"
+                }
+            ]
+        },
+        {
+            "name": "schedule 2",
+            "owner": "Andre Neto",
+            "description": "...",
+            "id": "schedule2",
+            "variables": [{
+                    "name": "PLANT::PMC::TEST::VAR1",
+                    "value": "10"
+                },
+                {
+                    "name": "PLANT::PMC::TEST::VAR2",
+                    "value": "20"
+                },
+                {
+                    "name": "SUP::PMC::TEST::VAR3",
+                    "value": "30"
+                }
+            ]
+        }
+    ]
+
+}

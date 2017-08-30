@@ -1,0 +1,10 @@
+record( longin, "PMC::TEST::VAR1")
+{
+   field(DTYP, "Soft Channel")
+}
+
+record( ai, "PMC::TEST::VAR2")
+{
+   field(DTYP, "Soft Channel")
+}
+

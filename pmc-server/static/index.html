@@ -1,0 +1,107 @@
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+        <!-- Handle SSE events from the server-->
+        <script>
+            var eventOutputContainer = document.getElementById("event");
+            var evtSrc = new EventSource("/stream");
+            evtSrc.onmessage = function(e) {
+                console.log(e.data);
+                var msg = $.parseJSON(e.data);
+                var pv = msg.pv[0];
+                var targetElement = document.getElementById(pv.name);
+                targetElement.value = pv.value;
+            };
+        </script>
+
+        <!--Trap the submit-->
+        <script>
+            $(function () {
+                $("#mainform").on("submit", function (e) {
+                    e.preventDefault();
+                    $.ajax({
+                        type: "get",
+                        url: "/submit",
+                        data: $(this).serialize(),
+                        success: function (response) {
+                            if (response == "done") {
+                                alert("Form submitted successfully!");
+                            } 
+                            else {
+                                alert("Form submission failed!");
+                                }
+                            },
+                            error: function (response) {
+                                alert(response);
+                            }
+                    });
+                });
+            });
+            $(function () {
+                $("#scheduleform").on("submit", function (e) {
+                    e.preventDefault();
+                    console.log($(this).serialize());
+                    $.ajax({
+                        type: "get",
+                        url: "/changeschedule",
+                        data: $(this).serialize(),
+                        success: function (response) {
+                            if (response == "done") {
+                                alert("Form submitted successfully!");
+                            } 
+                            else {
+                                alert("Form submission failed!");
+                                }
+                        },
+                        error: function (response) {
+                            alert(response);
+                        }
+                    });
+                });
+            });
+        </script>
+
+        <script>
+            $(document).ready(function() {
+                $.ajax({
+                    type: "get",
+                    url: "/schedules.json",
+                    data: $(this).serialize(),
+                    success: function (response) {
+                        //response will be already a json
+                        schedules = response.schedules;
+                        $.each(schedules, function(i, schedule) {
+                            $("#schselect").append($("<option>", {
+                                value: schedule.id,
+                                text: schedule.name
+                            }));
+                        });
+                    },
+                    error: function (response) {
+                        alert(response);
+                    }
+                });
+
+            });
+        </script>
+
+    </head>
+    <body>
+        <h1>PMC Example 1</h1>
+        <div id="event"></div>
+        <form id="mainform">
+            <label for="PMC::TEST::VAR1">PMC::TEST::VAR1</label>
+            <input type="text" id="PMC::TEST::VAR1" name="PMC::TEST::VAR1"></input></br>
+            <label for="PMC::TEST::VAR2">PMC::TEST::VAR2</label>
+            <input type="text" id="PMC::TEST::VAR2" name="PMC::TEST::VAR2"></input></br>
+            <input type="submit" value="Update values"></input>
+        </form></br>
+        
+        <form id="scheduleform">
+            <select id="schselect" name="schselect"></select>
+            <input type="submit" value="Load"></input>
+        </form></br>
+    </body>
+</html>
+
