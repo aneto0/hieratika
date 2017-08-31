@@ -1,3 +1,5 @@
+import argparse
+
 import Queue
 
 import threading
@@ -11,7 +13,11 @@ import json
 
 from flask import Flask, Response, request
 
+
 app = Flask(__name__, static_url_path="")
+
+#list of variables to monitor
+plantVariablesToMonitor = ["PMC::TEST::VAR1", "PMC::TEST::VAR2"]
 
 #Synchronised queue between the SSE stream_data function and the pvValueChanged. One queue per consumer thread. Should be further protected with semaphores
 threadQueues = {}
@@ -26,19 +32,44 @@ def streamData():
     while True:
         tid = str(threading.current_thread())
         if tid not in threadQueues:
+            # The first time send all the variables
             threadQueues[tid] = Queue.Queue()
-        monitorQueue = threadQueues[tid]
-        updatedPV = monitorQueue.get(True)
-        updateType = updatedPV[0]
-        pvName = updatedPV[1]
-        pvValue = updatedPV[2]
-        encodedPy = {updateType : [ {"name" : pvName, "value" : str(pvValue)}] }
-        encodedJson = json.dumps(encodedPy)
-        monitorQueue.task_done()
-        monitorQueue.join()
-        print encodedJson 
+            updateType = "pv" 
+            encodedPy = {updateType : [ ] }
+            for pvName in plantVariablesToMonitor:
+                pvValue = caget(pvName)
+                encodedPy["pv"].append({"name" : pvName, "value" : str(pvValue)})
+            encodedJson = json.dumps(encodedPy)
+        else:
+            # Just monitor on change 
+            monitorQueue = threadQueues[tid]
+            updatedPV = monitorQueue.get(True)
+            updateType = updatedPV[0]
+            pvName = updatedPV[1]
+            pvValue = updatedPV[2]
+            encodedPy = {updateType : [ {"name" : pvName, "value" : str(pvValue)}] }
+            encodedJson = json.dumps(encodedPy)
+            monitorQueue.task_done()
         yield "data: {0}\n\n".format(encodedJson)
 
+#Gets all the pv information
+@app.route("/getplantinfo")
+def getplantinfo():
+    encodedPy = {"pv": [ ] }
+    for pvName in plantVariablesToMonitor:
+        pv = epics.PV(pvName)
+        pvType = pv.type
+        if (pvType == "time_long"):
+            pvType = "int32"
+        elif (pvType == "time_double"):
+            pvType = "float64"
+        else:
+            pvType = "string"
+
+        encodedPy["pv"].append({"name" : pvName, "type" : str(pvType)})
+    encodedJson = json.dumps(encodedPy)
+    return encodedJson
+  
 #Try to update the values in the plant
 @app.route("/submit", methods=["POST", "GET"])
 def submit():
@@ -48,9 +79,21 @@ def submit():
             caput(k, request.args[k])
     return "done"
 
-#Try to update the values in the plant against an existent schedule
-@app.route("/changeschedule", methods=["POST", "GET"])
-def changeschedule():
+#Return the available schedules
+@app.route("/getschedules")
+def getschedules():
+    scheduleNames = []
+    with open("static/schedules.json") as jsonFile:
+        schedulesJson = json.load(jsonFile)
+        schedules = schedulesJson["schedules"]
+        for s in schedules:
+            scheduleNames.append(s["name"]);
+    return json.dumps(scheduleNames)
+
+
+#Returns the variables associated to a given schedule
+@app.route("/getschedule", methods=["POST", "GET"])
+def getschedule():
     if (request.method == "GET"):
         requestedSchedule = request.args["schselect"]
         with open("static/schedules.json") as jsonFile:
@@ -76,14 +119,17 @@ def stream():
 def index():
     return app.send_static_file("index.html")
 
-#List of variables to monitor
-plantVariablesToMonitor = ["PMC::TEST::VAR1", "PMC::TEST::VAR2"]
-
 if __name__ == "__main__":
     epics.ca.find_libca()
     
+    parser = argparse.ArgumentParser(description = "Flask http server to prototype ideas for ITER level-1")
+    parser.add_argument("-H", "--host", default="127.0.0.1", help="Server port")
+    parser.add_argument("-p", "--port", type=int, default=5000, help="Server IP")
+
+    args = parser.parse_args()
+
     for pvName in plantVariablesToMonitor:
         camonitor(pvName, None, pvValueChanged)
 
     app.debug = True
-    app.run(threaded= True)
+    app.run(threaded= True, host=args.host, port=args.port)

@@ -1,11 +1,16 @@
 <html>
     <head>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>-->
+        <script src="/js/jquery.min.js"></script>
 
         <!-- Define a new standard component for the pmc -->
         <script type="text/javascript">
-            const PLANT_CHANGED_COLOR = "red";
-            const STANDARD_COLOR = "black";
+            currentReference = "none";        
+
+            const PLANT_OR_REF_CHANGED_COLOR = "gray";
+            const DIFF_INIT_CHANGED_COLOR = "blue";
+            const STANDARD_FCOLOR = "black";
+            const STANDARD_BCOLOR = "white";
 
             if (!document.registerElement) {
                 alert("Custom elements not supported!");
@@ -14,37 +19,96 @@
                 var PMCInputProto = Object.create(HTMLInputElement.prototype);
 
                 PMCInputProto.currentValuesToString = function() {
-                    return "Plant: " + this.plvalue + " Schedule: " + this.scvalue + " Reference: " + this.revalue;
+                    var refToDisplay = this.schvalue;
+                    if (currentReference === "plant") {
+                        refToDisplay = this.pltvalue;
+                    }
+                    return "Current: " + this.value + " Plant: " + this.pltvalue + " Reference: " + this.schvalue + " Initial: " + this.initvalue;
                 }
 
                 PMCInputProto.showValues = function() {
                     alert(this.currentValuesToString());
                 }
+    
+                PMCInputProto.checkValues = function() {
+                    //If the current value does not match the initial value set the font color blue
+                    if(this.value !== this.initvalue) {
+                        this.style.color = DIFF_INIT_CHANGED_COLOR;
+                    }
+                    else {
+                        this.style.color = STANDARD_FCOLOR;
+                    }
 
-                Object.defineProperty(PMCInputProto, "plvalue", {
-                    value: 1,
+                    var newBackgroundColor = STANDARD_BCOLOR;
+                    var val1 = this.value;
+                    var val2 = this.value;
+                    //If the reference value does not match the current value, change the background
+                    if (currentReference === "plant") {
+                        if ((this.typevalue === "float32") || (this.typevalue === "float64")) {
+                            val1 = parseFloat(this.pltvalue);
+                            val2 = parseFloat(this.value);
+                        }
+                        else {
+                            val1 = this.pltvalue;
+                        }
+                    }
+                    else if (currentReference === "none") {
+                    }
+                    //must be from a schedule
+                    else {
+                        if ((this.typevalue === "float32") || (this.typevalue === "float64")) {
+                            val1 = parseFloat(this.schvalue);
+                            val2 = parseFloat(this.value);
+                        }
+                        else {
+                            val1 = this.schvalue;
+                        }
+                    }
+                    if (val1 === val2) {
+                        newBackgroundColor = STANDARD_BCOLOR;
+                    }
+                    else {
+                        newBackgroundColor = PLANT_OR_REF_CHANGED_COLOR;
+                    }
+
+                    this.style.backgroundColor = newBackgroundColor;
+                    this.title = this.currentValuesToString();
+                }
+
+                //The type of value
+                Object.defineProperty(PMCInputProto, "typevalue", {
+                    value: "string",
                     writable: true
                 });
 
-                Object.defineProperty(PMCInputProto, "scvalue", {
-                    value: 1,
+                //Initial value
+                Object.defineProperty(PMCInputProto, "initvalue", {
+                    value: "N/A",
                     writable: true
                 });
 
-                Object.defineProperty(PMCInputProto, "revalue", {
-                    value: 1,
+                //Plant value
+                Object.defineProperty(PMCInputProto, "pltvalue", {
+                    value: "N/A",
                     writable: true
                 });
 
+                //Reference value
+                Object.defineProperty(PMCInputProto, "schvalue", {
+                    value: "N/A",
+                    writable: true
+                });
+
+//This also works... i.e. register one SSE event per component... but I don't think this is efficient.
 /*                PMCInputProto.createdCallback = function() {
-                    var thisObj = this;
+                    var thisObj = thise;
                     thisObj.value = "Undefined";
                     if(typeof(EventSource) !== "undefined") {
                         var source = new EventSource("http://localhost:8084/BROWSE/SSE/");
                         source.onmessage = function(event) {
                             //Need to do both (at least to triger the attributeChangedCallback)
-                            thisObj.setAttribute("plvalue", event.data);
-                            thisObj.plvalue = event.data; 
+                            thisObj.setAttribute("pltvalue", event.data);
+                            thisObj.pltvalue = event.data; 
                         };
                     } else {
                         this.value = "Sorry, your browser does not support server-sent events...";
@@ -58,11 +122,7 @@
                 }
 
                 PMCInputProto.attributeChangedCallback = function(attrName, oldValue, newValue) {
-                    if(attrName === "plvalue") {
-                        this.title = this.currentValuesToString();
-//                        this.value = this.plvalue;
-                        this.style.color = PLANT_CHANGED_COLOR;
-                    }
+                    this.checkValues(); 
                 }
 
                 document.registerElement("pmc-input", {
@@ -77,20 +137,24 @@
         <script>
             var eventOutputContainer = document.getElementById("event");
             var evtSrc = new EventSource("/stream");
+            //Changed values are received in json format
             evtSrc.onmessage = function(e) {
-                console.log(e.data);
-                var msg = $.parseJSON(e.data);
-                var pv = msg.pv[0];
-                var targetElement = document.getElementById(pv.name);
-                targetElement.plvalue = pv.value;
-                targetElement.setAttribute("plvalue", pv.value);
+                var jsonPVs = $.parseJSON(e.data);
+                var pvs = jsonPVs["pv"];
+                var i;
+                for (i in pvs) {
+                    var pv = pvs[i];
+                    var targetElement = document.getElementById(pv.name);
+                    targetElement.pltvalue = pv.value;
+                    targetElement.setAttribute("pltvalue", pv.value);
+                }
             };
         </script>
 
-        <!--Trap the submit-->
         <script>
+            //Submit new values to update the plant 
             $(function () {
-                $("#mainform").on("submit", function (e) {
+                $("#updatePlantForm").on("submit", function (e) {
                     e.preventDefault();
                     $.ajax({
                         type: "get",
@@ -98,8 +162,13 @@
                         data: $(this).serialize(),
                         success: function (response) {
                             if (response == "done") {
-                                alert("Form submitted successfully!");
-                            } 
+                                alert("Values updated successfully!");
+                                var allTextInputs = $("input:text");
+                                    allTextInputs.each(function (i, textInput) {
+                                        textInput.initvalue = textInput.value;
+                                        textInput.setAttribute("initvalue", textInput.value);
+                                    });
+                                } 
                             else {
                                 alert("Form submission failed!");
                                 }
@@ -110,33 +179,74 @@
                     });
                 });
             });
+
+            //Set parameters as reference
             $(function () {
-                $("#scheduleform").on("submit", function (e) {
+                $("#setReferenceForm").on("submit", function (e) {
                     e.preventDefault();
-                    console.log($(this).serialize());
+                    //Check if the refence to set is none
+                    currentReference = document.getElementById("refselect").value;
+                    if (currentReference === "none") {
+                        //Reset all the values to N/A
+                        var allTextInputs = $("input:text");
+                        allTextInputs.each(function (i, textInput) {
+                            textInput.schvalue = "N/A";
+                            textInput.checkValues();
+                        });
+                    }
+                    else if (currentReference === "plant") {
+                        //Reset all the values to N/A
+                        var allTextInputs = $("input:text");
+                        allTextInputs.each(function (i, textInput) {
+                            textInput.schvalue = textInput.pltvalue;
+                            textInput.checkValues();
+                        });
+                    }
+                    else {
+                        var getParams = $(this).serialize();
+                        //Replace the refselect with schselect to avoid collision of the two drop box
+                        getParams = getParams.replace("refselect", "schselect");
+                        $.ajax({
+                            type: "get",
+                            url: "/getschedule",
+                            data: getParams,
+                            success: function (response) {
+                                variables = $.parseJSON(response);
+                                $.each(variables, function(i, variable) {
+                                    var targetElement = document.getElementById(variable.name);
+                                    if (targetElement != null) {
+                                        targetElement.schvalue = variable.value;
+                                        targetElement.setAttribute("schvalue", variable.value);
+                                    }
+                                });
+                            },
+                            error: function (response) {
+                                alert(response);
+                            }
+                        });
+                    }
+                });
+            });
+
+            //Load parameters from a schedule
+            $(function () {
+                $("#loadScheduleForm").on("submit", function (e) {
+                    e.preventDefault();
                     $.ajax({
                         type: "get",
-                        url: "/changeschedule",
+                        url: "/getschedule",
                         data: $(this).serialize(),
                         success: function (response) {
                             variables = $.parseJSON(response);
-                            console.log(variables);
                             $.each(variables, function(i, variable) {
-                                console.log(variable.name);
-//                                $("\"#" + variable.name + "\"").value = variable.value;
                                 var targetElement = document.getElementById(variable.name);
                                 if (targetElement != null) {
                                     targetElement.value = variable.value;
+                                    targetElement.initvalue = variable.value;
                                     targetElement.setAttribute("value", variable.value);
+                                    targetElement.setAttribute("initvalue", variable.value);
                                 }
                             });
-
-/*                            if (response == "done") {
-                                alert("Form submitted successfully!");
-                            } 
-                            else {
-                                alert("Form submission failed!");
-                                }*/
                         },
                         error: function (response) {
                             alert(response);
@@ -148,18 +258,22 @@
 
         <script>
             $(document).ready(function() {
+                //Load available schedule names. 
                 $.ajax({
                     type: "get",
-                    url: "/schedules.json",
-                    data: $(this).serialize(),
+                    url: "/getschedules",
                     success: function (response) {
-                        //response will be already a json
-                        schedules = response.schedules;
-                        console.log(schedules);
-                        $.each(schedules, function(i, schedule) {
+                        var scheduleNames = $.parseJSON(response);
+                        $.each(scheduleNames, function(i, scheduleName) {
                             $("#schselect").append($("<option>", {
-                                value: schedule.name,
-                                text: schedule.name
+                                value: scheduleName,
+                                text: scheduleName
+                            }));
+                        });
+                        $.each(scheduleNames, function(i, scheduleName) {
+                            $("#refselect").append($("<option>", {
+                                value: scheduleName,
+                                text: scheduleName
                             }));
                         });
                     },
@@ -168,25 +282,63 @@
                     }
                 });
 
-            });
-        </script>
 
+                //Load all the types
+                $.ajax({
+                    type: "get",
+                    url: "/getplantinfo",
+                    success: function (response) {
+                        var pvInfosJson = $.parseJSON(response);
+                        var pvInfos = pvInfosJson["pv"];
+                        $.each(pvInfos, function(i, pvInfo) {
+                            var targetElement = document.getElementById(pvInfo.name);
+                            if (targetElement != null) {
+                                targetElement.typevalue = pvInfo.type;
+                                targetElement.setAttribute("typevalue", pvInfo.type);
+                            }
+                        });
+                    },
+                    error: function (response) {
+                        alert(response);
+                    }
+                });
+
+            });
+
+            function loadFromPlant() {
+                var allTextInputs = $("input:text");
+                allTextInputs.each(function (i, textInput) {
+                    textInput.value = textInput.pltvalue;
+                    textInput.checkValues();
+                });
+            }
+        </script>
     </head>
     <body>
         <h1>PMC Example 1</h1>
         <div id="event"></div>
-        <form id="mainform">
+        <form id="updatePlantForm">
             <label for="PMC::TEST::VAR1">PMC::TEST::VAR1</label>
-            <input is="pmc-input" type="text" id="PMC::TEST::VAR1" name="PMC::TEST::VAR1"></input></br>
+            <input is="pmc-input" type="text" id="PMC::TEST::VAR1" name="PMC::TEST::VAR1" oninput="checkValues()"></input></br>
             <label for="PMC::TEST::VAR2">PMC::TEST::VAR2</label>
-            <input is="pmc-input" type="text" id="PMC::TEST::VAR2" name="PMC::TEST::VAR2"></input></br>
+            <input is="pmc-input" type="text" id="PMC::TEST::VAR2" name="PMC::TEST::VAR2" oninput="checkValues()"></input></br>
             <input type="submit" value="Update values"></input>
         </form></br>
         
-        <form id="scheduleform">
+        <form id="loadScheduleForm">
             <select id="schselect" name="schselect"></select>
-            <input type="submit" value="Load"></input>
+            <input type="submit" value="Load from schedule"></input>
         </form></br>
+
+        <form id="setReferenceForm">
+            <select id="refselect" name="refselect">
+                <option value="none" text="none">None</option>
+                <option value="plant" text="plant">Plant</option>
+            </select>
+            <input type="submit" value="Set reference"></input>
+        </form></br>
+            
+        <input type="button" value="Load from plant" onclick="loadFromPlant()"></input>
     </body>
 </html>
 
