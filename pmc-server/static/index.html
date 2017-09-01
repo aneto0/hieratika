@@ -1,137 +1,9 @@
 <html>
     <head>
         <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>-->
-        <script src="/js/jquery.min.js"></script>
-
-        <!-- Define a new standard component for the pmc -->
-        <script type="text/javascript">
-            currentReference = "none";        
-
-            const PLANT_OR_REF_CHANGED_COLOR = "gray";
-            const DIFF_INIT_CHANGED_COLOR = "blue";
-            const STANDARD_FCOLOR = "black";
-            const STANDARD_BCOLOR = "white";
-
-            if (!document.registerElement) {
-                alert("Custom elements not supported!");
-            }
-            else {
-                var PMCInputProto = Object.create(HTMLInputElement.prototype);
-
-                PMCInputProto.currentValuesToString = function() {
-                    var refToDisplay = this.schvalue;
-                    if (currentReference === "plant") {
-                        refToDisplay = this.pltvalue;
-                    }
-                    return "Current: " + this.value + " Plant: " + this.pltvalue + " Reference: " + this.schvalue + " Initial: " + this.initvalue;
-                }
-
-                PMCInputProto.showValues = function() {
-                    alert(this.currentValuesToString());
-                }
-    
-                PMCInputProto.checkValues = function() {
-                    //If the current value does not match the initial value set the font color blue
-                    if(this.value !== this.initvalue) {
-                        this.style.color = DIFF_INIT_CHANGED_COLOR;
-                    }
-                    else {
-                        this.style.color = STANDARD_FCOLOR;
-                    }
-
-                    var newBackgroundColor = STANDARD_BCOLOR;
-                    var val1 = this.value;
-                    var val2 = this.value;
-                    //If the reference value does not match the current value, change the background
-                    if (currentReference === "plant") {
-                        if ((this.typevalue === "float32") || (this.typevalue === "float64")) {
-                            val1 = parseFloat(this.pltvalue);
-                            val2 = parseFloat(this.value);
-                        }
-                        else {
-                            val1 = this.pltvalue;
-                        }
-                    }
-                    else if (currentReference === "none") {
-                    }
-                    //must be from a schedule
-                    else {
-                        if ((this.typevalue === "float32") || (this.typevalue === "float64")) {
-                            val1 = parseFloat(this.schvalue);
-                            val2 = parseFloat(this.value);
-                        }
-                        else {
-                            val1 = this.schvalue;
-                        }
-                    }
-                    if (val1 === val2) {
-                        newBackgroundColor = STANDARD_BCOLOR;
-                    }
-                    else {
-                        newBackgroundColor = PLANT_OR_REF_CHANGED_COLOR;
-                    }
-
-                    this.style.backgroundColor = newBackgroundColor;
-                    this.title = this.currentValuesToString();
-                }
-
-                //The type of value
-                Object.defineProperty(PMCInputProto, "typevalue", {
-                    value: "string",
-                    writable: true
-                });
-
-                //Initial value
-                Object.defineProperty(PMCInputProto, "initvalue", {
-                    value: "N/A",
-                    writable: true
-                });
-
-                //Plant value
-                Object.defineProperty(PMCInputProto, "pltvalue", {
-                    value: "N/A",
-                    writable: true
-                });
-
-                //Reference value
-                Object.defineProperty(PMCInputProto, "schvalue", {
-                    value: "N/A",
-                    writable: true
-                });
-
-//This also works... i.e. register one SSE event per component... but I don't think this is efficient.
-/*                PMCInputProto.createdCallback = function() {
-                    var thisObj = thise;
-                    thisObj.value = "Undefined";
-                    if(typeof(EventSource) !== "undefined") {
-                        var source = new EventSource("http://localhost:8084/BROWSE/SSE/");
-                        source.onmessage = function(event) {
-                            //Need to do both (at least to triger the attributeChangedCallback)
-                            thisObj.setAttribute("pltvalue", event.data);
-                            thisObj.pltvalue = event.data; 
-                        };
-                    } else {
-                        this.value = "Sorry, your browser does not support server-sent events...";
-                    }
-                }*/
-
-                PMCInputProto.attachedCallback = function() {
-                }
-
-                PMCInputProto.detachedCallback = function() {
-                }
-
-                PMCInputProto.attributeChangedCallback = function(attrName, oldValue, newValue) {
-                    this.checkValues(); 
-                }
-
-                document.registerElement("pmc-input", {
-                    prototype: PMCInputProto,
-                    extends: "input"
-                });
-            }
-        </script>
-
+        <link rel="import" href="libraries.html">
+        <link rel="import" href="pmc-input.html">
+        <link rel="import" href="pmc-array.html">
 
         <!-- Handle SSE events from the server-->
         <script>
@@ -185,12 +57,13 @@
                 $("#setReferenceForm").on("submit", function (e) {
                     e.preventDefault();
                     //Check if the refence to set is none
-                    currentReference = document.getElementById("refselect").value;
+                    var currentReference = document.getElementById("refselect").value;
                     if (currentReference === "none") {
                         //Reset all the values to N/A
                         var allTextInputs = $("input:text");
                         allTextInputs.each(function (i, textInput) {
                             textInput.schvalue = "N/A";
+                            textInput.currentReference = currentReference;
                             textInput.checkValues();
                         });
                     }
@@ -199,6 +72,7 @@
                         var allTextInputs = $("input:text");
                         allTextInputs.each(function (i, textInput) {
                             textInput.schvalue = textInput.pltvalue;
+                            textInput.currentReference = currentReference;
                             textInput.checkValues();
                         });
                     }
@@ -216,7 +90,9 @@
                                     var targetElement = document.getElementById(variable.name);
                                     if (targetElement != null) {
                                         targetElement.schvalue = variable.value;
+                                        targetElement.currentReference = currentReference;
                                         targetElement.setAttribute("schvalue", variable.value);
+                                        textInput.checkValues();
                                     }
                                 });
                             },
@@ -311,6 +187,15 @@
                     textInput.value = textInput.pltvalue;
                     textInput.checkValues();
                 });
+
+                var allArraysInputs = $("pmc-array");
+                console.log(allArraysInputs);
+                allArraysInputs.each(function (i, arrayInput) {
+                    a = [1, 2, 3, 4, 5];
+                    arrayInput.setElements(a);
+                    arrayInput.showEditor(a);
+                });
+
             }
         </script>
     </head>
@@ -339,6 +224,9 @@
         </form></br>
             
         <input type="button" value="Load from plant" onclick="loadFromPlant()"></input>
+
+        <pmc-array id="array1" numberOfElements="5"></pmc-array>
+        <pmc-array id="array2" numberOfElements="5"></pmc-array>
     </body>
 </html>
 
