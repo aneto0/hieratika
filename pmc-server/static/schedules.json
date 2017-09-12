@@ -14,6 +14,16 @@
                     "isPV": "True"
                 },
                 {
+                    "name": "PMC::TEST::VAR3",
+                    "value": "Example 1",
+                    "isPV": "True"
+                },
+                {
+                    "name": "PMC::TEST::VAR4",
+                    "value": "Example 3",
+                    "isPV": "True"
+                },
+                {
                     "name": "SUP::PMC::TEST::VAR3",
                     "value": "3",
                     "isPV": "False"
@@ -32,6 +42,16 @@
                 {
                     "name": "PMC::TEST::VAR2",
                     "value": "20",
+                    "isPV": "True"
+                },
+                {
+                    "name": "PMC::TEST::VAR3",
+                    "value": "Example 2",
+                    "isPV": "True"
+                },
+                {
+                    "name": "PMC::TEST::VAR4",
+                    "value": "Example 4",
                     "isPV": "True"
                 },
                 {

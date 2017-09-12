@@ -8,3 +8,18 @@ record( ai, "PMC::TEST::VAR2")
    field(DTYP, "Soft Channel")
 }
 
+record( waveform, "PMC::TEST::VAR3")
+{
+   field(DTYP, "Soft Channel")
+   field(FTVL, "LONG")
+   field(NELM, 5)
+}
+
+record( waveform, "PMC::TEST::VAR4")
+{
+   field(DTYP, "Soft Channel")
+   field(FTVL, "DOUBLE")
+   field(NELM, 3)
+
+}
+

@@ -4,6 +4,7 @@
         <link rel="import" href="libraries.html">
         <link rel="import" href="pmc-input.html">
         <link rel="import" href="pmc-array.html">
+        <link rel="import" href="pmc-array-editor.html">
 
         <!-- Handle SSE events from the server-->
         <script>
@@ -92,7 +93,7 @@
                                         targetElement.schvalue = variable.value;
                                         targetElement.currentReference = currentReference;
                                         targetElement.setAttribute("schvalue", variable.value);
-                                        textInput.checkValues();
+                                        targetElement.checkValues();
                                     }
                                 });
                             },
@@ -169,8 +170,10 @@
                         $.each(pvInfos, function(i, pvInfo) {
                             var targetElement = document.getElementById(pvInfo.name);
                             if (targetElement != null) {
-                                targetElement.typevalue = pvInfo.type;
-                                targetElement.setAttribute("typevalue", pvInfo.type);
+                                if (pvNElements == 1) {
+                                    targetElement.typevalue = pvInfo.type;
+                                    targetElement.setAttribute("typevalue", pvInfo.type);
+                                }
                             }
                         });
                     },
@@ -188,13 +191,13 @@
                     textInput.checkValues();
                 });
 
-                var allArraysInputs = $("pmc-array");
+/*                var allArraysInputs = $("pmc-array");
                 console.log(allArraysInputs);
                 allArraysInputs.each(function (i, arrayInput) {
                     a = [1, 2, 3, 4, 5];
                     arrayInput.setElements(a);
                     arrayInput.showEditor(a);
-                });
+                });*/
 
             }
         </script>
@@ -207,6 +210,8 @@
             <input is="pmc-input" type="text" id="PMC::TEST::VAR1" name="PMC::TEST::VAR1" oninput="checkValues()"></input></br>
             <label for="PMC::TEST::VAR2">PMC::TEST::VAR2</label>
             <input is="pmc-input" type="text" id="PMC::TEST::VAR2" name="PMC::TEST::VAR2" oninput="checkValues()"></input></br>
+            <label for="PMC::TEST::VAR3">PMC::TEST::VAR3</label>
+            <input is="pmc-array" type="submit" id="PMC::TEST::VAR3" name="PMC::TEST::VAR3" oninput="checkValues()"></input></br>
             <input type="submit" value="Update values"></input>
         </form></br>
         
@@ -225,8 +230,8 @@
             
         <input type="button" value="Load from plant" onclick="loadFromPlant()"></input>
 
-        <pmc-array id="array1" numberOfElements="5"></pmc-array>
-        <pmc-array id="array2" numberOfElements="5"></pmc-array>
+<!--        <pmc-array id="array1" numberOfElements="5"></pmc-array>
+        <pmc-array id="array2" numberOfElements="5"></pmc-array>-->
     </body>
 </html>
 

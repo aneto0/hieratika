@@ -17,7 +17,10 @@ from flask import Flask, Response, request
 app = Flask(__name__, static_url_path="")
 
 #list of variables to monitor
-plantVariablesToMonitor = ["PMC::TEST::VAR1", "PMC::TEST::VAR2"]
+plantVariablesToMonitor = [epics.PV("PMC::TEST::VAR1"), epics.PV("PMC::TEST::VAR2"), epics.PV("PMC::TEST::VAR3"), epics.PV("PMC::TEST::VAR4")]
+
+#live database simulating the plant
+plantVariablesDB = {}
 
 #Synchronised queue between the SSE stream_data function and the pvValueChanged. One queue per consumer thread. Should be further protected with semaphores
 threadQueues = {}
@@ -36,9 +39,12 @@ def streamData():
             threadQueues[tid] = Queue.Queue()
             updateType = "pv" 
             encodedPy = {updateType : [ ] }
-            for pvName in plantVariablesToMonitor:
-                pvValue = caget(pvName)
-                encodedPy["pv"].append({"name" : pvName, "value" : str(pvValue)})
+            for pv in plantVariablesToMonitor:
+                value = str(pv.get())
+                if (pv.nelm > 1):
+                    value = "Example 1"
+                plantVariablesDB[pv.pvname] = value
+                encodedPy["pv"].append({"name" : pv.pvname, "value" : value})
             encodedJson = json.dumps(encodedPy)
         else:
             # Just monitor on change 
@@ -56,8 +62,8 @@ def streamData():
 @app.route("/getplantinfo")
 def getplantinfo():
     encodedPy = {"pv": [ ] }
-    for pvName in plantVariablesToMonitor:
-        pv = epics.PV(pvName)
+    for pv in plantVariablesToMonitor:
+        pvNElements = pv.nelm
         pvType = pv.type
         if (pvType == "time_long"):
             pvType = "int32"
@@ -66,7 +72,7 @@ def getplantinfo():
         else:
             pvType = "string"
 
-        encodedPy["pv"].append({"name" : pvName, "type" : str(pvType)})
+        encodedPy["pv"].append({"name" : pv.pvname, "type" : str(pvType), "numberOfElements" : str(pvNElements)})
     encodedJson = json.dumps(encodedPy)
     return encodedJson
   
@@ -128,8 +134,8 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    for pvName in plantVariablesToMonitor:
-        camonitor(pvName, None, pvValueChanged)
+    for pv in plantVariablesToMonitor:
+        camonitor(pv.pvname, None, pvValueChanged)
 
     app.debug = True
     app.run(threaded= True, host=args.host, port=args.port)

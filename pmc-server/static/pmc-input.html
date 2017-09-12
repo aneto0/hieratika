@@ -11,6 +11,7 @@
     }
     else {
         var PMCInputProto = Object.create(HTMLInputElement.prototype);
+//        var PMCInputProto = Object.create(HTMLElement.prototype);
 
         PMCInputProto.currentValuesToString = function() {
             var refToDisplay = this.schvalue;

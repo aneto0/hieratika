@@ -1,7 +1,6 @@
 <html>
     <head>
         <link rel="import" href="libraries.html">
-        <link rel="import" href="pmc-input.html">
     </head>
     <body>
         <template id="ttarray">
@@ -20,7 +19,7 @@
             (function () {
                 var importDoc = document.currentScript.ownerDocument; // importee
 
-                var PMCArrayProto = Object.create(PMCInputProto.prototype);
+                var PMCArrayProto = Object.create(HTMLElement.prototype);
                 Object.defineProperty(PMCArrayProto, "numberOfElements", {
                     value: "0",
                     writable: true
