@@ -1,0 +1,121 @@
+<!-- Define a new standard component for the pmc -->
+<link rel="import" href="libraries.html">
+<script type="text/javascript">
+    const PLANT_OR_REF_CHANGED_COLOR = "gray";
+    const DIFF_INIT_CHANGED_COLOR = "blue";
+    const STANDARD_FCOLOR = "black";
+    const STANDARD_BCOLOR = "white";
+
+    //Constructor
+    function PMCComponent() {
+       HTMLElement.call(this);
+    }
+    PMCComponent.prototype = Object.create(HTMLElement.prototype);
+    PMCComponent.prototype.constructor = PMCComponent;
+
+    //prototype functions are capable of acting on the this (i.e. they are not static functions)
+    PMCComponent.prototype.currentValuesToString = function() {
+        var refToDisplay = this.schvalue;
+        if (this.currentReference === "plant") {
+            refToDisplay = this.pltvalue;
+        }
+        return "Current: " + this.value + " Plant: " + this.pltvalue + " Reference: " + this.schvalue + " Initial: " + this.initvalue;
+    }
+
+    PMCComponent.prototype.showValues = function() {
+        alert(this.currentValuesToString());
+    }
+
+    PMCComponent.prototype.checkValues = function() {
+        //If the current value does not match the initial value set the font color blue
+        if(this.value !== this.initvalue) {
+            this.style.color = DIFF_INIT_CHANGED_COLOR;
+        }
+        else {
+            this.style.color = STANDARD_FCOLOR;
+        }
+
+        var newBackgroundColor = STANDARD_BCOLOR;
+        var val1 = this.value;
+        var val2 = this.value;
+        //If the reference value does not match the current value, change the background
+        if (this.currentReference === "plant") {
+            if ((this.typevalue === "float32") || (this.typevalue === "float64")) {
+                val1 = parseFloat(this.pltvalue);
+                val2 = parseFloat(this.value);
+            }
+            else {
+                val1 = this.pltvalue;
+            }
+        }
+        //must be from a schedule
+        else if (this.currentReference !== "none") {
+            if ((this.typevalue === "float32") || (this.typevalue === "float64")) {
+                val1 = parseFloat(this.schvalue);
+                val2 = parseFloat(this.value);
+            }
+            else {
+                val1 = this.schvalue;
+            }
+        }
+        if (val1 === val2) {
+            newBackgroundColor = STANDARD_BCOLOR;
+        }
+        else {
+            newBackgroundColor = PLANT_OR_REF_CHANGED_COLOR;
+        }
+
+        this.style.backgroundColor = newBackgroundColor;
+        this.title = this.currentValuesToString();
+    }
+
+    //The reference in use
+    Object.defineProperty(PMCComponent, "currentReference", {
+        value: "none",
+        writable: true
+    });
+
+
+    //The type of value
+    Object.defineProperty(PMCComponent, "typevalue", {
+        value: "string",
+        writable: true
+    });
+
+    //Initial value
+    Object.defineProperty(PMCComponent, "initvalue", {
+        value: "N/A",
+        writable: true
+    });
+
+    //Plant value
+    Object.defineProperty(PMCComponent, "pltvalue", {
+        value: "N/A",
+        writable: true
+    });
+
+    //Reference value
+    Object.defineProperty(PMCComponent, "schvalue", {
+        value: "N/A",
+        writable: true
+    });
+
+    PMCComponent.prototype.attachedCallback = function() {
+    }
+
+    PMCComponent.prototype.detachedCallback = function() {
+    }
+
+    PMCComponent.prototype.attributeChangedCallback = function(attrName, oldValue, newValue) {
+        this.checkValues(); 
+    }
+
+    function extendMixin (destination, source) {
+        for (var prop in source) {
+            if (source.hasOwnProperty(prop)) {
+                destination[prop] = source[prop];
+            }
+        }
+    };
+</script>
+

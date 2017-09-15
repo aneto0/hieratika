@@ -1,17 +1,17 @@
 {
-    "allarrays": [
+    "arrays": [
         {
             "variable": "PMC::TEST::VAR3",
             "arrays": [
                 {
                     "name":"Example 1",
                     "values": [1, 2, 3, 4, 5],
-                    "owner: "Andre Neto"
+                    "owner": "Andre Neto"
                 },
                 {
                     "name":"Example 2",
                     "values": [7, 8, 9],
-                    "owner: "Andre Neto"
+                    "owner": "Andre Neto"
                 }
 
             ]
@@ -22,12 +22,12 @@
                 {
                     "name":"Example 3",
                     "values": [1, 2, 3, 4, 5],
-                    "owner: "Andre Neto"
+                    "owner": "Andre Neto"
                 },
                 {
                     "name":"Example 4",
                     "values": [7, 8, 9],
-                    "owner: "Andre Neto"
+                    "owner": "Andre Neto"
                 }
 
             ]

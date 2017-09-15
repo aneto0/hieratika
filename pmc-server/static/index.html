@@ -4,7 +4,8 @@
         <link rel="import" href="libraries.html">
         <link rel="import" href="pmc-input.html">
         <link rel="import" href="pmc-array.html">
-        <link rel="import" href="pmc-array-editor.html">
+<!--        <link rel="import" href="pmc-array.html">
+        <link rel="import" href="pmc-array-editor.html">-->
 
         <!-- Handle SSE events from the server-->
         <script>
@@ -18,8 +19,11 @@
                 for (i in pvs) {
                     var pv = pvs[i];
                     var targetElement = document.getElementById(pv.name);
-                    targetElement.pltvalue = pv.value;
-                    targetElement.setAttribute("pltvalue", pv.value);
+                    console.log(targetElement);
+                    if (targetElement !== null) {
+                        targetElement.pltvalue = pv.value;
+                        targetElement.setAttribute("pltvalue", pv.value);
+                    }
                 }
             };
         </script>
@@ -47,6 +51,7 @@
                                 }
                             },
                             error: function (response) {
+                                console.log(response);
                                 alert(response);
                             }
                     });
@@ -98,6 +103,7 @@
                                 });
                             },
                             error: function (response) {
+                                console.log(response);
                                 alert(response);
                             }
                         });
@@ -118,6 +124,7 @@
                             $.each(variables, function(i, variable) {
                                 var targetElement = document.getElementById(variable.name);
                                 if (targetElement != null) {
+                                    targetElement.innerHTML = variable.value;
                                     targetElement.value = variable.value;
                                     targetElement.initvalue = variable.value;
                                     targetElement.setAttribute("value", variable.value);
@@ -126,11 +133,14 @@
                             });
                         },
                         error: function (response) {
+                            console.log(response);
                             alert(response);
                         }
                     });
                 });
             });
+
+            //Get all the available arrays
         </script>
 
         <script>
@@ -141,6 +151,7 @@
                     url: "/getschedules",
                     success: function (response) {
                         var scheduleNames = $.parseJSON(response);
+                        console.log(scheduleNames);
                         $.each(scheduleNames, function(i, scheduleName) {
                             $("#schselect").append($("<option>", {
                                 value: scheduleName,
@@ -155,6 +166,7 @@
                         });
                     },
                     error: function (response) {
+                        console.log(response);
                         alert(response);
                     }
                 });
@@ -170,14 +182,15 @@
                         $.each(pvInfos, function(i, pvInfo) {
                             var targetElement = document.getElementById(pvInfo.name);
                             if (targetElement != null) {
-                                if (pvNElements == 1) {
+                                //if (pvNElements == 1) {
                                     targetElement.typevalue = pvInfo.type;
                                     targetElement.setAttribute("typevalue", pvInfo.type);
-                                }
+                                //}
                             }
                         });
                     },
                     error: function (response) {
+                        console.log(response);
                         alert(response);
                     }
                 });
@@ -207,11 +220,11 @@
         <div id="event"></div>
         <form id="updatePlantForm">
             <label for="PMC::TEST::VAR1">PMC::TEST::VAR1</label>
-            <input is="pmc-input" type="text" id="PMC::TEST::VAR1" name="PMC::TEST::VAR1" oninput="checkValues()"></input></br>
+            <input is="pmc-input" type="text" id="PMC::TEST::VAR1" name="PMC::TEST::VAR1"></input></br>
             <label for="PMC::TEST::VAR2">PMC::TEST::VAR2</label>
-            <input is="pmc-input" type="text" id="PMC::TEST::VAR2" name="PMC::TEST::VAR2" oninput="checkValues()"></input></br>
+            <input is="pmc-input" type="text" id="PMC::TEST::VAR2" name="PMC::TEST::VAR2"></input></br>
             <label for="PMC::TEST::VAR3">PMC::TEST::VAR3</label>
-            <input is="pmc-array" type="submit" id="PMC::TEST::VAR3" name="PMC::TEST::VAR3" oninput="checkValues()"></input></br>
+            <button is="pmc-array" type="button" id="PMC::TEST::VAR3" name="PMC::TEST::VAR3"></button></br>
             <input type="submit" value="Update values"></input>
         </form></br>
         

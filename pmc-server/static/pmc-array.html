@@ -1,92 +1,39 @@
-<html>
-    <head>
-        <link rel="import" href="libraries.html">
-        <link rel="import" href="pmc-input.html">
-    </head>
-    <body>
-        <template id="ttarray">
-            <dialog id="darray">
-                <h1>
-                    Array editor v0.0
-                </h1>
-                <table border="1" id="tarray">
-                    <tr>
-                    </tr>
-                </table>
-                <button id="darrayclose">Close</button>
-            </dialog>
-        </template>
-        <script>
-            (function () {
-                var importDoc = document.currentScript.ownerDocument; // importee
+<!-- Array editor button -->
+<link rel="import" href="libraries.html">
+<link rel="import" href="pmc-component.html">
+<script type="text/javascript">
+    //Constructor
+    function PMCArray() {
+        HTMLButtonElement.call(this);
+    }
 
-                var PMCArrayProto = Object.create(PMCInputProto.prototype);
-                Object.defineProperty(PMCArrayProto, "numberOfElements", {
-                    value: "0",
-                    writable: true
-                });
+    //Notice that PMCArrayProto is an alias to PMCArray.prototype
+    PMCArrayProto = Object.create(HTMLButtonElement.prototype);
+    PMCArrayProto.constructor = PMCArray;
 
-                PMCArrayProto.showEditor = function(elementsToSet) {
-                    this.numberOfElements = elementsToSet.length;
-                    var tbl = this.shadowRoot.querySelector("#tarray");
-                    var diag = this.shadowRoot.querySelector("#darray");
-                    tbl.deleteRow(0);
-                    var row = tbl.insertRow(0);
-                    var i;
-                    for (i=0; i<elementsToSet.length; i++) {
-                        console.log(i);
-                        var col = row.insertCell(i);
-                        col.setAttribute("contenteditable", "true");
-                        col.innerHTML = elementsToSet[i];
-                    }
-                    
- 
-                    diag.show();
-                }
+    PMCArrayProto.selectArray = function() {
+        alert("Select the array :-)");
+    }
 
-                PMCArrayProto.setElements = function(elementsToSet) {
-                    this.numberOfElements = elementsToSet.length;
-                    var tbl = this.shadowRoot.querySelector("#tarray");
-                    tbl.deleteRow(0);
-                    var row = tbl.insertRow(0);
-                    var i;
-                    for (i=0; i<elementsToSet.length; i++) {
-                        console.log(i);
-                        var col = row.insertCell(i);
-                        col.innerHTML = elementsToSet[i];
-                    }
-                }
+    extendMixin(PMCArray.prototype, PMCComponent.prototype);
+
+    PMCArrayProto.createdCallback = function () {
+        this.addEventListener("click", function (e) {
+            this.selectArray();
+            return false;
+        }, false);
+    }
+
+    //Arrays that are available to be selected
+    Object.defineProperty(PMCArray, "avarrays", {
+        value: "",
+        writable: true
+    });
 
 
-                PMCArrayProto.attributeChangedCallback = function(attrName, oldValue, newValue) {
-                    if (attrName === "numberOfElements") {
-                        console.log(numberOfElements);
-                    }
-                }
-                    
-                // Use Shadow DOM and a template.
-                PMCArrayProto.createdCallback = function() {
-                    // Get template 
-                    var template = importDoc.querySelector("#ttarray");
+    document.registerElement("pmc-array", {
+        prototype: PMCArrayProto,
+        extends: "button"
+    });
+</script>
 
-                    // import template into
-                    var clone = document.importNode(template.content, true);
-                    var root = this.createShadowRoot();
- 
-                    root.appendChild(clone);
-
-                    var diag = this.shadowRoot.querySelector("#darray");
-                    var closeButton = this.shadowRoot.querySelector("#darrayclose");
-                    closeButton.onclick = function() {
-                        diag.close();
-                    };
-                };
-
-                document.registerElement("pmc-array", {
-                    prototype: PMCArrayProto
-                });
-            })();
-        </script>
-
-    </body>
-</html>

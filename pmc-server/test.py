@@ -96,6 +96,21 @@ def getschedules():
             scheduleNames.append(s["name"]);
     return json.dumps(scheduleNames)
 
+#Return the available arrays
+@app.route("/getarrays")
+def getarrays():
+    arrayNames = {}
+    with open("static/arrays.json") as jsonFile:
+        arraysJson = json.load(jsonFile)
+        arrays = arraysJson["arrays"]
+        for a in arrays:
+            var = a["variable"]
+            varArrays = a["arrays"]
+            for va in varArrays:
+                arrayNames.setdefault(var, []).append(va["name"])
+    return json.dumps(arrayNames)
+
+
 
 #Returns the variables associated to a given schedule
 @app.route("/getschedule", methods=["POST", "GET"])
