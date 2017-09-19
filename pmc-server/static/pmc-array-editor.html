@@ -12,20 +12,24 @@
                     <tr>
                     </tr>
                 </table>
-                <button id="darrayclose">Close</button>
+                <br/>
+                <br/>
+                <br/>
+                <button id="darraySave">Save</button>
+                <button id="darrayCancel">Cancel</button>
             </dialog>
         </template>
         <script>
-/*            (function () {
+            (function () {
                 var importDoc = document.currentScript.ownerDocument; // importee
 
-                var PMCArrayProto = Object.create(HTMLElement.prototype);
-                Object.defineProperty(PMCArrayProto, "numberOfElements", {
+                var PMCArrayEditorProto = Object.create(HTMLElement.prototype);
+                Object.defineProperty(PMCArrayEditorProto, "numberOfElements", {
                     value: "0",
                     writable: true
                 });
 
-                PMCArrayProto.showEditor = function(elementsToSet) {
+                PMCArrayEditorProto.showEditor = function(elementsToSet) {
                     this.numberOfElements = elementsToSet.length;
                     var tbl = this.shadowRoot.querySelector("#tarray");
                     var diag = this.shadowRoot.querySelector("#darray");
@@ -38,12 +42,10 @@
                         col.setAttribute("contenteditable", "true");
                         col.innerHTML = elementsToSet[i];
                     }
-                    
- 
                     diag.show();
                 }
 
-                PMCArrayProto.setElements = function(elementsToSet) {
+                PMCArrayEditorProto.setElements = function(elementsToSet) {
                     this.numberOfElements = elementsToSet.length;
                     var tbl = this.shadowRoot.querySelector("#tarray");
                     tbl.deleteRow(0);
@@ -57,14 +59,14 @@
                 }
 
 
-                PMCArrayProto.attributeChangedCallback = function(attrName, oldValue, newValue) {
+                PMCArrayEditorProto.attributeChangedCallback = function(attrName, oldValue, newValue) {
                     if (attrName === "numberOfElements") {
                         console.log(numberOfElements);
                     }
                 }
                     
                 // Use Shadow DOM and a template.
-                PMCArrayProto.createdCallback = function() {
+                PMCArrayEditorProto.createdCallback = function() {
                     // Get template 
                     var template = importDoc.querySelector("#ttarray");
 
@@ -75,16 +77,21 @@
                     root.appendChild(clone);
 
                     var diag = this.shadowRoot.querySelector("#darray");
-                    var closeButton = this.shadowRoot.querySelector("#darrayclose");
-                    closeButton.onclick = function() {
+                    var saveButton = this.shadowRoot.querySelector("#darraySave");
+                    saveButton.onclick = function() {
                         diag.close();
-                    };
+                    }.bind(this);
+                    var cancelButton = this.shadowRoot.querySelector("#darrayCancel");
+                    cancelButton.onclick = function() {
+                        diag.close();
+                    }.bind(this);
+
                 };
 
-                document.registerElement("pmc-array", {
-                    prototype: PMCArrayProto
+                document.registerElement("pmc-array-editor", {
+                    prototype: PMCArrayEditorProto
                 });
-            })();*/
+            })();
         </script>
 
     </body>

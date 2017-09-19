@@ -1,6 +1,7 @@
-<!-- Array editor button -->
+<!-- Array selector button -->
 <link rel="import" href="libraries.html">
 <link rel="import" href="pmc-component.html">
+<link rel="import" href="pmc-array-selector.html">
 <script type="text/javascript">
     //Constructor
     function PMCArray() {
@@ -11,25 +12,31 @@
     PMCArrayProto = Object.create(HTMLButtonElement.prototype);
     PMCArrayProto.constructor = PMCArray;
 
+    extendMixin(PMCArrayProto, PMCComponent.prototype);
+
     PMCArrayProto.selectArray = function() {
-        alert("Select the array :-)");
+        var selector = document.getElementById(this.id + "-selector");
+        selector.showSelector(this.avarrays);
     }
 
-    extendMixin(PMCArray.prototype, PMCComponent.prototype);
+    PMCArrayProto.changeArray = function(newArrayName) {
+        this.innerHTML = newArrayName;
+        this.value = newArrayName;
+    }
 
     PMCArrayProto.createdCallback = function () {
         this.addEventListener("click", function (e) {
             this.selectArray();
             return false;
         }, false);
+
+        //Attach a selector
+        var selector = document.createElement("pmc-array-selector");
+        var selectorId = this.id + "-selector";
+        selector.setAttribute("id", selectorId);
+        selector.ownerarray = this;
+        document.body.appendChild(selector);
     }
-
-    //Arrays that are available to be selected
-    Object.defineProperty(PMCArray, "avarrays", {
-        value: "",
-        writable: true
-    });
-
 
     document.registerElement("pmc-array", {
         prototype: PMCArrayProto,

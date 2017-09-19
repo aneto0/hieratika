@@ -66,20 +66,21 @@
                     var currentReference = document.getElementById("refselect").value;
                     if (currentReference === "none") {
                         //Reset all the values to N/A
-                        var allTextInputs = $("input:text");
-                        allTextInputs.each(function (i, textInput) {
-                            textInput.schvalue = "N/A";
-                            textInput.currentReference = currentReference;
-                            textInput.checkValues();
+                        //var allTextInputs = $("input:text");
+                        var allPMCComps = $("[is^='pmc']");
+                        allPMCComps.each(function (i, pmcComp) {
+                            pmcComp.schvalue = "N/A";
+                            pmcComp.currentReference = currentReference;
+                            pmcComp.checkValues();
                         });
                     }
                     else if (currentReference === "plant") {
                         //Reset all the values to N/A
-                        var allTextInputs = $("input:text");
-                        allTextInputs.each(function (i, textInput) {
-                            textInput.schvalue = textInput.pltvalue;
-                            textInput.currentReference = currentReference;
-                            textInput.checkValues();
+                        var allPMCComps = $("[is^='pmc']");
+                        allPMCComps.each(function (i, pmcComp) {
+                            pmcComp.schvalue = pmcComp.pltvalue;
+                            pmcComp.currentReference = currentReference;
+                            pmcComp.checkValues();
                         });
                     }
                     else {
@@ -171,7 +172,6 @@
                     }
                 });
 
-
                 //Load all the types
                 $.ajax({
                     type: "get",
@@ -195,23 +195,38 @@
                     }
                 });
 
+                //Load all the arrays
+                $.ajax({
+                    type: "get",
+                    url: "/getarrays",
+                    success: function (response) {
+                        var arraysJson = $.parseJSON(response);
+                        var allArrays = arraysJson["arrays"];
+                        $.each(allArrays, function(i, arrayJson) {
+                            var targetElement = document.getElementById(arrayJson.variable);
+                            if (targetElement != null) {
+                                targetElement.avarrays = arrayJson.names;
+//                                    targetElement.typevalue = pvInfo.type;
+//                                    targetElement.setAttribute("typevalue", pvInfo.type);
+                            }
+                        });
+                    },
+                    error: function (response) {
+                        console.log(response);
+                        alert(response);
+                    }
+                });
+
+
             });
 
             function loadFromPlant() {
-                var allTextInputs = $("input:text");
-                allTextInputs.each(function (i, textInput) {
-                    textInput.value = textInput.pltvalue;
-                    textInput.checkValues();
+                var allPMCComps = $("[is^='pmc']");
+                allPMCComps.each(function (i, pmcComp) {
+                    pmcComp.innerHTML = pmcComp.pltvalue;
+                    pmcComp.value = pmcComp.pltvalue;
+                    pmcComp.checkValues();
                 });
-
-/*                var allArraysInputs = $("pmc-array");
-                console.log(allArraysInputs);
-                allArraysInputs.each(function (i, arrayInput) {
-                    a = [1, 2, 3, 4, 5];
-                    arrayInput.setElements(a);
-                    arrayInput.showEditor(a);
-                });*/
-
             }
         </script>
     </head>
@@ -225,6 +240,8 @@
             <input is="pmc-input" type="text" id="PMC::TEST::VAR2" name="PMC::TEST::VAR2"></input></br>
             <label for="PMC::TEST::VAR3">PMC::TEST::VAR3</label>
             <button is="pmc-array" type="button" id="PMC::TEST::VAR3" name="PMC::TEST::VAR3"></button></br>
+            <label for="PMC::TEST::VAR4">PMC::TEST::VAR4</label>
+            <button is="pmc-array" type="button" id="PMC::TEST::VAR4" name="PMC::TEST::VAR4"></button></br>
             <input type="submit" value="Update values"></input>
         </form></br>
         
@@ -242,9 +259,6 @@
         </form></br>
             
         <input type="button" value="Load from plant" onclick="loadFromPlant()"></input>
-
-<!--        <pmc-array id="array1" numberOfElements="5"></pmc-array>
-        <pmc-array id="array2" numberOfElements="5"></pmc-array>-->
     </body>
 </html>
 
