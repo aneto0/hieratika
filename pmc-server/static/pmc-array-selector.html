@@ -1,7 +1,7 @@
 <html>
     <head>
         <link rel="import" href="libraries.html">
-        <link rel="import" href="pmc-array-editor.html">
+        <link rel="import" href="pmc-array-editor-dialog.html">
     </head>
     <body>
         <template id="tarrayselector">
@@ -76,17 +76,15 @@
                     }.bind(this); //bind is needed to make sure that the "this" is still valid in the context of the callback
 
                     //Attach an editor
-                    var editor = document.createElement("pmc-array-editor");
-                    var editorId = this.ownerarray.id + "-editor";
+                    var editor = document.createElement("pmc-array-editor-dialog");
+                    var editorId = this.ownerarray.id + "-editor-dialog";
                     console.log(editorId);
                     console.log(this.id);
                     editor.setAttribute("id", editorId);
                     document.body.appendChild(editor);
                     editButton.onclick = function() {
                         console.log(this.id);
-                        var editor = document.getElementById(this.ownerarray.id + "-editor");
-                        console.log(this.id + "-editor");
-                        console.log(editor);
+                        var editor = document.getElementById(this.ownerarray.id + "-editor-dialog");
                         $.ajax({
                             type: "get",
                             url: "/getarray",

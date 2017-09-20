@@ -1,0 +1,71 @@
+<html>
+    <head>
+        <link rel="import" href="libraries.html">
+        <link rel="import" href="pmc-array-editor.html">
+    </head>
+    <body>
+        <template id="template-array-dialog">
+            <dialog id="darray">
+                <h1>
+                    Array editor v0.1
+                </h1>
+                <pmc-array-editor id="parraye">
+                </pmc-array-editor>
+                <br/>
+                <button id="darraySave">Save</button>
+                <button id="darrayCancel">Cancel</button>
+            </dialog>
+        </template>
+        <script>
+            (function () {
+                var importDoc = document.currentScript.ownerDocument; // importee
+
+                var PMCArrayEditorDialogProto = Object.create(HTMLElement.prototype);
+                Object.defineProperty(PMCArrayEditorDialogProto, "numberOfElements", {
+                    value: "0",
+                    writable: true
+                });
+
+                PMCArrayEditorDialogProto.showEditor = function(elementsToSet) {
+                    var arrayEditor = this.shadowRoot.querySelector("#parraye");
+                    var diag = this.shadowRoot.querySelector("#darray");
+                    arrayEditor.setup(elementsToSet);
+                    diag.show();
+                }
+
+                PMCArrayEditorDialogProto.setElements = function(elementsToSet) {
+                    var arrayEditor = this.shadowRoot.querySelector("#parraye");
+                    arrayEditor.setup(elementsToSet);
+                }
+                    
+                // Use Shadow DOM and a template.
+                PMCArrayEditorDialogProto.createdCallback = function() {
+                    // Get template 
+                    var template = importDoc.querySelector("#template-array-dialog");
+
+                    // import template into
+                    var clone = document.importNode(template.content, true);
+                    var root = this.createShadowRoot();
+ 
+                    root.appendChild(clone);
+
+                    var diag = this.shadowRoot.querySelector("#darray");
+                    var saveButton = this.shadowRoot.querySelector("#darraySave");
+                    saveButton.onclick = function() {
+                        diag.close();
+                    }.bind(this);
+                    var cancelButton = this.shadowRoot.querySelector("#darrayCancel");
+                    cancelButton.onclick = function() {
+                        diag.close();
+                    }.bind(this);
+
+                };
+
+                document.registerElement("pmc-array-editor-dialog", {
+                    prototype: PMCArrayEditorDialogProto
+                });
+            })();
+        </script>
+
+    </body>
+</html>

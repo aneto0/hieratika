@@ -4,20 +4,12 @@
     </head>
     <body>
         <template id="ttarray">
-            <dialog id="darray">
-                <h1>
-                    Array editor v0.0
-                </h1>
+            <div id="darray">
                 <table border="1" id="tarray">
                     <tr>
                     </tr>
                 </table>
-                <br/>
-                <br/>
-                <br/>
-                <button id="darraySave">Save</button>
-                <button id="darrayCancel">Cancel</button>
-            </dialog>
+            </div>
         </template>
         <script>
             (function () {
@@ -29,7 +21,7 @@
                     writable: true
                 });
 
-                PMCArrayEditorProto.showEditor = function(elementsToSet) {
+                PMCArrayEditorProto.setup = function(elementsToSet) {
                     this.numberOfElements = elementsToSet.length;
                     var tbl = this.shadowRoot.querySelector("#tarray");
                     var diag = this.shadowRoot.querySelector("#darray");
@@ -42,7 +34,6 @@
                         col.setAttribute("contenteditable", "true");
                         col.innerHTML = elementsToSet[i];
                     }
-                    diag.show();
                 }
 
                 PMCArrayEditorProto.setElements = function(elementsToSet) {
@@ -58,13 +49,6 @@
                     }
                 }
 
-
-                PMCArrayEditorProto.attributeChangedCallback = function(attrName, oldValue, newValue) {
-                    if (attrName === "numberOfElements") {
-                        console.log(numberOfElements);
-                    }
-                }
-                    
                 // Use Shadow DOM and a template.
                 PMCArrayEditorProto.createdCallback = function() {
                     // Get template 
@@ -75,16 +59,6 @@
                     var root = this.createShadowRoot();
  
                     root.appendChild(clone);
-
-                    var diag = this.shadowRoot.querySelector("#darray");
-                    var saveButton = this.shadowRoot.querySelector("#darraySave");
-                    saveButton.onclick = function() {
-                        diag.close();
-                    }.bind(this);
-                    var cancelButton = this.shadowRoot.querySelector("#darrayCancel");
-                    cancelButton.onclick = function() {
-                        diag.close();
-                    }.bind(this);
 
                 };
 
