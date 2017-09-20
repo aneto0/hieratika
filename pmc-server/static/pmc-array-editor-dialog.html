@@ -29,13 +29,13 @@
                 PMCArrayEditorDialogProto.showEditor = function(elementsToSet) {
                     var arrayEditor = this.shadowRoot.querySelector("#parraye");
                     var diag = this.shadowRoot.querySelector("#darray");
-                    arrayEditor.setup(elementsToSet);
+                    arrayEditor.setValue(elementsToSet);
                     diag.show();
                 }
 
                 PMCArrayEditorDialogProto.setElements = function(elementsToSet) {
                     var arrayEditor = this.shadowRoot.querySelector("#parraye");
-                    arrayEditor.setup(elementsToSet);
+                    arrayEditor.setValue(elementsToSet);
                 }
                     
                 // Use Shadow DOM and a template.

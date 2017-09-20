@@ -40,7 +40,7 @@
         var val2 = this.value;
         //If the reference value does not match the current value, change the background
         if (this.currentReference === "plant") {
-            if ((this.typevalue === "float32") || (this.typevalue === "float64")) {
+            if ((!this.library) && (this.typevalue === "float32") || (this.typevalue === "float64")) {
                 val1 = parseFloat(this.pltvalue);
                 val2 = parseFloat(this.value);
             }
@@ -50,7 +50,7 @@
         }
         //must be from a schedule
         else if (this.currentReference !== "none") {
-            if ((this.typevalue === "float32") || (this.typevalue === "float64")) {
+            if ((!this.library) && (this.typevalue === "float32") || (this.typevalue === "float64")) {
                 val1 = parseFloat(this.schvalue);
                 val2 = parseFloat(this.value);
             }
@@ -58,7 +58,7 @@
                 val1 = this.schvalue;
             }
         }
-        console.log("val1 = " + val1 + " val2 = " + val2 + " === " + (val1 === val2));
+        //console.log("val1 = " + val1 + " val2 = " + val2 + " === " + (val1 === val2));
         if (val1 === val2) {
             newBackgroundColor = STANDARD_BCOLOR;
         }
@@ -69,6 +69,24 @@
         this.style.backgroundColor = newBackgroundColor;
         this.title = this.currentValuesToString();
     }
+
+    PMCComponent.prototype.refresh = function() {
+    }
+
+    PMCComponent.prototype.getNumberOfElements = function() {
+        return this.numberOfElements;
+    }
+
+    PMCComponent.prototype.setNumberOfElements = function(numberOfElementsIn) {
+        this.numberOfElements = numberOfElementsIn;
+    }
+
+    PMCComponent.prototype.setValue = function(valueToSet) {
+        this.innerHTML = valueToSet;
+        this.value = valueToSet;
+        this.checkValues();
+    }
+    
 
     //The reference in use
     Object.defineProperty(PMCComponent, "currentReference", {
@@ -100,6 +118,19 @@
         value: "N/A",
         writable: true
     });
+
+    //Number of elements
+    Object.defineProperty(PMCComponent, "numberOfElements", {
+        value: "N/A",
+        writable: true
+    });
+
+    //If true the value is a pointer to a library (e.g. a waveform name) which actually stores the values
+    Object.defineProperty(PMCComponent, "library", {
+        value: "N/A",
+        writable: true
+    });
+
 
     PMCComponent.prototype.attachedCallback = function() {
     }

@@ -1,0 +1,49 @@
+{
+    "plants" : [
+        {
+            "id":"PMC::TEST::PLANT1",
+            "variables": [
+                {
+                    "name" : "PMC::TEST::VAR1",
+                    "initialValue" : "1",
+                    "type" : "int32",
+                    "numberOfElements" : "1",
+                    "library" : "false",
+                    "epicsPV" : "true"
+                },
+                {
+                    "name" : "PMC::TEST::VAR2",
+                    "initialValue" : "1",
+                    "type" : "float32",
+                    "numberOfElements" : "1",
+                    "library" : "false",
+                    "epicsPV" : "true"
+                },
+                {
+                    "name" : "PMC::TEST::VAR3",
+                    "initialValue" : "Example 1",
+                    "type" : "int32",
+                    "numberOfElements" : "5",
+                    "library" : "true",
+                    "epicsPV" : "true"
+                },
+                {
+                    "name" : "PMC::TEST::VAR4",
+                    "initialValue" : "Example 3",
+                    "type" : "float32",
+                    "numberOfElements" : "3",
+                    "library" : "true",
+                    "epicsPV" : "true"
+                },
+                {
+                    "name" : "PMC::TEST::VAR5",
+                    "initialValue" : ["7", "8", "9", "0"],
+                    "type" : "float32",
+                    "numberOfElements" : "4",
+                    "library" : "false",
+                    "epicsPV" : "false"
+                }
+            ]
+        }
+    ]
+}

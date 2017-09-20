@@ -17,10 +17,10 @@ from flask import Flask, Response, request
 app = Flask(__name__, static_url_path="")
 
 #list of variables to monitor
-plantVariablesToMonitor = [epics.PV("PMC::TEST::VAR1"), epics.PV("PMC::TEST::VAR2"), epics.PV("PMC::TEST::VAR3"), epics.PV("PMC::TEST::VAR4")]
+#plantVariablesToMonitor = [epics.PV("PMC::TEST::VAR1"), epics.PV("PMC::TEST::VAR2"), epics.PV("PMC::TEST::VAR3"), epics.PV("PMC::TEST::VAR4")]
 
 #live database simulating the plant
-plantVariablesDB = {}
+plantVariablesDB = []
 
 #Synchronised queue between the SSE stream_data function and the pvValueChanged. One queue per consumer thread. Should be further protected with semaphores
 threadQueues = {}
@@ -28,7 +28,7 @@ threadQueues = {}
 #see http://cars9.uchicago.edu/software/python/pyepics3/pv.html#pv-callbacks-label for other arguments that could be retrieved
 def pvValueChanged(pvname=None, value=None, **kw):
     for k, q in threadQueues.iteritems():
-        q.put(("pv", pvname, value), True)
+        q.put((pvname, value), True)
 
 #Call back for the Server Side Event. One per connection will loop on the while and consume from its own queue
 def streamData():
@@ -37,23 +37,24 @@ def streamData():
         if tid not in threadQueues:
             # The first time send all the variables
             threadQueues[tid] = Queue.Queue()
-            updateType = "pv" 
-            encodedPy = {updateType : [ ] }
-            for pv in plantVariablesToMonitor:
-                value = str(pv.get())
-                if (pv.nelm > 1):
-                    value = "Example 1"
-                plantVariablesDB[pv.pvname] = value
-                encodedPy["pv"].append({"name" : pv.pvname, "value" : value})
+            encodedPy = {"plantVariables": [ ] }
+            for pv in plantVariablesDB:
+                pvName = pv["name"]
+                if pv["epicsPV"] == "true" and pv["library"] == "false":
+                    value = str(epics.PV(pvName).get())
+                else:
+                    value = pv["initialValue"]
+                
+                pv["value"] = value
+                encodedPy["plantVariables"].append({"name" : pvName, "value" : value})
             encodedJson = json.dumps(encodedPy)
         else:
             # Just monitor on change 
             monitorQueue = threadQueues[tid]
             updatedPV = monitorQueue.get(True)
-            updateType = updatedPV[0]
-            pvName = updatedPV[1]
-            pvValue = updatedPV[2]
-            encodedPy = {updateType : [ {"name" : pvName, "value" : str(pvValue)}] }
+            pvName = updatedPV[0]
+            pvValue = updatedPV[1]
+            encodedPy = {"plantVariables": [ {"name" : pvName, "value" : str(pvValue)}] }
             encodedJson = json.dumps(encodedPy)
             monitorQueue.task_done()
         yield "data: {0}\n\n".format(encodedJson)
@@ -61,18 +62,19 @@ def streamData():
 #Gets all the pv information
 @app.route("/getplantinfo")
 def getplantinfo():
-    encodedPy = {"pv": [ ] }
-    for pv in plantVariablesToMonitor:
-        pvNElements = pv.nelm
-        pvType = pv.type
-        if (pvType == "time_long"):
-            pvType = "int32"
-        elif (pvType == "time_double"):
-            pvType = "float64"
-        else:
-            pvType = "string"
+#    for pv in plantVariablesToMonitor:
+#        pvNElements = pv.nelm
+#        pvType = pv.type
+#        if (pvType == "time_long"):
+#            pvType = "int32"
+#        elif (pvType == "time_double"):
+#            pvType = "float64"
+#        else:
+#            pvType = "string"
 
-        encodedPy["pv"].append({"name" : pv.pvname, "type" : str(pvType), "numberOfElements" : str(pvNElements)})
+#        encodedPy["pv"].append({"name" : pv.pvname, "type" : str(pvType), "numberOfElements" : str(pvNElements)})
+#    encodedJson = json.dumps(encodedPy)
+    encodedPy = {"variables": plantVariablesDB }
     encodedJson = json.dumps(encodedPy)
     return encodedJson
   
@@ -173,8 +175,14 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    for pv in plantVariablesToMonitor:
-        camonitor(pv.pvname, None, pvValueChanged)
+    with open("plant-variables.json") as jsonFile:
+        plantVariablesDBJSon = json.load(jsonFile)
+        #Assume the first plant for the time being
+        plantVariablesDB = plantVariablesDBJSon["plants"][0]["variables"]
+
+    for pv in plantVariablesDB:
+        if pv["epicsPV"] == "true":
+            camonitor(pv["name"], None, pvValueChanged)
 
     app.debug = True
     app.run(threaded= True, host=args.host, port=args.port)

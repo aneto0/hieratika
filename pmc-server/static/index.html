@@ -4,6 +4,7 @@
         <link rel="import" href="libraries.html">
         <link rel="import" href="pmc-input.html">
         <link rel="import" href="pmc-array.html">
+        <link rel="import" href="pmc-array-editor.html">
 <!--        <link rel="import" href="pmc-array.html">
         <link rel="import" href="pmc-array-editor.html">-->
 
@@ -13,13 +14,12 @@
             var evtSrc = new EventSource("/stream");
             //Changed values are received in json format
             evtSrc.onmessage = function(e) {
-                var jsonPVs = $.parseJSON(e.data);
-                var pvs = jsonPVs["pv"];
+                var jsonPlantVariables = $.parseJSON(e.data);
+                var plantVariables = jsonPlantVariables["plantVariables"];
                 var i;
-                for (i in pvs) {
-                    var pv = pvs[i];
+                for (i in plantVariables) {
+                    var pv = plantVariables[i];
                     var targetElement = document.getElementById(pv.name);
-                    console.log(targetElement);
                     if (targetElement !== null) {
                         targetElement.pltvalue = pv.value;
                         targetElement.setAttribute("pltvalue", pv.value);
@@ -66,7 +66,6 @@
                     var currentReference = document.getElementById("refselect").value;
                     if (currentReference === "none") {
                         //Reset all the values to N/A
-                        //var allTextInputs = $("input:text");
                         var allPMCComps = $("[is^='pmc']");
                         allPMCComps.each(function (i, pmcComp) {
                             pmcComp.schvalue = "N/A";
@@ -98,7 +97,6 @@
                                     if (targetElement != null) {
                                         targetElement.schvalue = variable.value;
                                         targetElement.currentReference = currentReference;
-                                        targetElement.setAttribute("schvalue", variable.value);
                                         targetElement.checkValues();
                                     }
                                 });
@@ -125,11 +123,10 @@
                             $.each(variables, function(i, variable) {
                                 var targetElement = document.getElementById(variable.name);
                                 if (targetElement != null) {
-                                    targetElement.innerHTML = variable.value;
+                                    /*targetElement.innerHTML = variable.value;
                                     targetElement.value = variable.value;
-                                    targetElement.initvalue = variable.value;
-                                    targetElement.setAttribute("value", variable.value);
-                                    targetElement.setAttribute("initvalue", variable.value);
+                                    targetElement.initvalue = variable.value;*/ 
+                                    targetElement.setValue(variable.value);
                                 }
                             });
                         },
@@ -152,7 +149,6 @@
                     url: "/getschedules",
                     success: function (response) {
                         var scheduleNames = $.parseJSON(response);
-                        console.log(scheduleNames);
                         $.each(scheduleNames, function(i, scheduleName) {
                             $("#schselect").append($("<option>", {
                                 value: scheduleName,
@@ -178,14 +174,14 @@
                     url: "/getplantinfo",
                     success: function (response) {
                         var pvInfosJson = $.parseJSON(response);
-                        var pvInfos = pvInfosJson["pv"];
+                        var pvInfos = pvInfosJson["variables"];
                         $.each(pvInfos, function(i, pvInfo) {
                             var targetElement = document.getElementById(pvInfo.name);
                             if (targetElement != null) {
-                                //if (pvNElements == 1) {
-                                    targetElement.typevalue = pvInfo.type;
-                                    targetElement.setAttribute("typevalue", pvInfo.type);
-                                //}
+                                targetElement.typevalue = pvInfo.type;
+                                targetElement.library = ("library", pvInfo.library.toLowerCase() === "true");
+                                targetElement.numberOfElements = pvInfo.numberOfElements;
+                                targetElement.refresh();
                             }
                         });
                     },
@@ -206,8 +202,6 @@
                             var targetElement = document.getElementById(arrayJson.variable);
                             if (targetElement != null) {
                                 targetElement.avarrays = arrayJson.names;
-//                                    targetElement.typevalue = pvInfo.type;
-//                                    targetElement.setAttribute("typevalue", pvInfo.type);
                             }
                         });
                     },
@@ -223,9 +217,7 @@
             function loadFromPlant() {
                 var allPMCComps = $("[is^='pmc']");
                 allPMCComps.each(function (i, pmcComp) {
-                    pmcComp.innerHTML = pmcComp.pltvalue;
-                    pmcComp.value = pmcComp.pltvalue;
-                    pmcComp.checkValues();
+                    pmcComp.setValue(pmcComp.pltvalue);
                 });
             }
         </script>
@@ -234,14 +226,28 @@
         <h1>PMC Example 1</h1>
         <div id="event"></div>
         <form id="updatePlantForm">
-            <label for="PMC::TEST::VAR1">PMC::TEST::VAR1</label>
-            <input is="pmc-input" type="text" id="PMC::TEST::VAR1" name="PMC::TEST::VAR1"></input></br>
-            <label for="PMC::TEST::VAR2">PMC::TEST::VAR2</label>
-            <input is="pmc-input" type="text" id="PMC::TEST::VAR2" name="PMC::TEST::VAR2"></input></br>
-            <label for="PMC::TEST::VAR3">PMC::TEST::VAR3</label>
-            <button is="pmc-array" type="button" id="PMC::TEST::VAR3" name="PMC::TEST::VAR3"></button></br>
-            <label for="PMC::TEST::VAR4">PMC::TEST::VAR4</label>
-            <button is="pmc-array" type="button" id="PMC::TEST::VAR4" name="PMC::TEST::VAR4"></button></br>
+            <table border="0">
+                <tr>
+                    <td>PMC::TEST::VAR1</td>
+                    <td><input is="pmc-input" type="text" id="PMC::TEST::VAR1" name="PMC::TEST::VAR1"></input></td>
+                </tr>
+                <tr>
+                    <td>PMC::TEST::VAR2</td>
+                    <td><input is="pmc-input" type="text" id="PMC::TEST::VAR2" name="PMC::TEST::VAR2"></input></td>
+                </tr>
+                <tr>
+                    <td>PMC::TEST::VAR3</td>
+                    <td><button is="pmc-array" type="button" id="PMC::TEST::VAR3" name="PMC::TEST::VAR3"></button></td>
+                </tr>
+                <tr>
+                    <td>PMC::TEST::VAR4</td>
+                    <td><button is="pmc-array" type="button" id="PMC::TEST::VAR4" name="PMC::TEST::VAR4"></button></td>
+                </tr>
+                <tr>
+                    <td>PMC::TEST::VAR5</td>
+                    <td><pmc-array-editor is="pmc" id="PMC::TEST::VAR5" name="PMC::TEST::VAR5" numberOfElements="5"></pmc-array-editor></td>
+                </tr>
+            </table>
             <input type="submit" value="Update values"></input>
         </form></br>
         

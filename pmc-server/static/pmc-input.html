@@ -5,6 +5,7 @@
     //Constructor
     function PMCInput() {
         HTMLInputElement.call(this);
+        PMCComponent.call(this);
     }
 
     //Notice that PMCInputProto is an "alias" to PMCInput.prototype
@@ -15,6 +16,7 @@
 
     PMCInputProto.createdCallback = function () {
         this.addEventListener("input", function (e) {
+            console.log(this.initvalue);
             this.checkValues();
         });
     }

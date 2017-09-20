@@ -24,6 +24,11 @@
                     "isPV": "True"
                 },
                 {
+                    "name": "PMC::TEST::VAR5",
+                    "value": ["-1", "-3", "-5", "2"],
+                    "isPV": "True"
+                },
+                {
                     "name": "SUP::PMC::TEST::VAR3",
                     "value": "3",
                     "isPV": "False"
@@ -52,6 +57,11 @@
                 {
                     "name": "PMC::TEST::VAR4",
                     "value": "Example 4",
+                    "isPV": "True"
+                },
+                {
+                    "name": "PMC::TEST::VAR5",
+                    "value": ["6", "9", "10", "15"],
                     "isPV": "True"
                 },
                 {
