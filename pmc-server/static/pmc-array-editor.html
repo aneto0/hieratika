@@ -25,9 +25,52 @@
             
                 extendMixin(PMCArrayEditorProto, PMCComponent.prototype);
 
+                PMCArrayEditorProto.checkValues = function() {
+                    //If the current value does not match the initial value set the font color blue
+                    var tbl = this.shadowRoot.querySelector("#tarray");
+                    var row = tbl.rows[0];
+                    var initialValue = this.getInitialValue();
+                    var refValue = this.getReferenceValue();
+                    var plantValue = this.getPlantValue();
+                    var i;
+                    for (i=0; i<this.numberOfElements; i++) { 
+                        var cell = row.cells[i];
+                        var value = cell.innerHTML;
+                        var cellInitValue = "";
+                        if (initialValue !== undefined) {
+                            cellInitValue = initialValue[i];
+                        }
+                        if(value !== cellInitValue) {
+                            cell.style.color = DIFF_INIT_CHANGED_COLOR;
+                        }
+                        else {
+                            cell.style.color = STANDARD_FCOLOR;
+                        }
+                        var newBackgroundColor = STANDARD_BCOLOR;
+                       
+                        var cellRefValue = "";
+                        if (refValue !== undefined) { 
+                            cellRefValue = refValue[i];
+                        }
+                        var cellPlantValue;
+                        if (plantValue !== undefined) { 
+                            cellPlantValue = plantValue[i];
+                        }
+
+                        if (this.compareWithReference(value, cellPlantValue, cellRefValue)) {
+                            newBackgroundColor = STANDARD_BCOLOR;
+                        }
+                        else {
+                            newBackgroundColor = PLANT_OR_REF_CHANGED_COLOR;
+                        }
+
+                        cell.style.backgroundColor = newBackgroundColor;
+                    }
+                    this.title = this.currentValuesToString();
+                }
+
                 PMCArrayEditorProto.setValue = function(elementsToSet) {
                     this.setNumberOfElements(elementsToSet.length);
-                    var tbl = this.shadowRoot.querySelector("#tarray");
                     var tbl = this.shadowRoot.querySelector("#tarray");
                     tbl.deleteRow(0);
                     var row = tbl.insertRow(0);
@@ -35,6 +78,10 @@
                     for (i=0; i<elementsToSet.length; i++) {
                         var col = row.insertCell(i);
                         col.innerHTML = elementsToSet[i];
+                        col.setAttribute("contenteditable", "true");
+                        col.addEventListener("input", function (e) {
+                            this.checkValues();
+                        }.bind(this));
                     }
                     this.value = elementsToSet;
                     this.checkValues();
@@ -54,7 +101,6 @@
                 };
 
                 PMCArrayEditorProto.attachedCallback = function() {
-                    
                 };
 
                 PMCArrayEditorProto.refresh = function() {

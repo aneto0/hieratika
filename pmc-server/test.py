@@ -22,6 +22,7 @@ app = Flask(__name__, static_url_path="")
 #live database simulating the plant
 plantVariablesDB = []
 
+
 #Synchronised queue between the SSE stream_data function and the pvValueChanged. One queue per consumer thread. Should be further protected with semaphores
 threadQueues = {}
 
@@ -30,50 +31,44 @@ def pvValueChanged(pvname=None, value=None, **kw):
     for k, q in threadQueues.iteritems():
         q.put((pvname, value), True)
 
+def updatePlantVariablesDB(pvName, pvValue):
+    for pv in plantVariablesDB:
+        if (pv["name"] == pvName):
+            pv["value"] = pvValue
+            break
+
+
 #Call back for the Server Side Event. One per connection will loop on the while and consume from its own queue
 def streamData():
-    while True:
-        tid = str(threading.current_thread())
-        if tid not in threadQueues:
-            # The first time send all the variables
-            threadQueues[tid] = Queue.Queue()
-            encodedPy = {"plantVariables": [ ] }
-            for pv in plantVariablesDB:
-                pvName = pv["name"]
-                if pv["epicsPV"] == "true" and pv["library"] == "false":
-                    value = str(epics.PV(pvName).get())
-                else:
-                    value = pv["initialValue"]
-                
-                pv["value"] = value
-                encodedPy["plantVariables"].append({"name" : pvName, "value" : value})
-            encodedJson = json.dumps(encodedPy)
-        else:
-            # Just monitor on change 
-            monitorQueue = threadQueues[tid]
-            updatedPV = monitorQueue.get(True)
-            pvName = updatedPV[0]
-            pvValue = updatedPV[1]
-            encodedPy = {"plantVariables": [ {"name" : pvName, "value" : str(pvValue)}] }
-            encodedJson = json.dumps(encodedPy)
-            monitorQueue.task_done()
-        yield "data: {0}\n\n".format(encodedJson)
+    try:
+        while True:
+            tid = str(threading.current_thread())
+            if tid not in threadQueues:
+                # The first time send all the variables
+                threadQueues[tid] = Queue.Queue()
+                encodedPy = {"plantVariables": [ ] }
+                for pv in plantVariablesDB:
+                    pvName = pv["name"]
+                    value = pv["value"]
+                    encodedPy["plantVariables"].append({"name" : pvName, "value" : value})
+                encodedJson = json.dumps(encodedPy)
+            else:
+                # Just monitor on change 
+                monitorQueue = threadQueues[tid]
+                updatedPV = monitorQueue.get(True)
+                pvName = updatedPV[0]
+                pvValue = updatedPV[1]
+                encodedPy = {"plantVariables": [ {"name" : pvName, "value" : str(pvValue)}] }
+                encodedJson = json.dumps(encodedPy)
+                monitorQueue.task_done()
+            yield "data: {0}\n\n".format(encodedJson)
+    except Exception:
+        print "Exception ignored"
+        #ignore
 
 #Gets all the pv information
 @app.route("/getplantinfo")
 def getplantinfo():
-#    for pv in plantVariablesToMonitor:
-#        pvNElements = pv.nelm
-#        pvType = pv.type
-#        if (pvType == "time_long"):
-#            pvType = "int32"
-#        elif (pvType == "time_double"):
-#            pvType = "float64"
-#        else:
-#            pvType = "string"
-
-#        encodedPy["pv"].append({"name" : pv.pvname, "type" : str(pvType), "numberOfElements" : str(pvNElements)})
-#    encodedJson = json.dumps(encodedPy)
     encodedPy = {"variables": plantVariablesDB }
     encodedJson = json.dumps(encodedPy)
     return encodedJson
@@ -82,9 +77,16 @@ def getplantinfo():
 @app.route("/submit", methods=["POST", "GET"])
 def submit():
     if (request.method == "GET"):
-        print request.args
-        for k in request.args:
-            caput(k, request.args[k])
+        updateJSon = request.args["update"]
+        jSonUpdateVariables = json.loads(updateJSon)
+        for varName in jSonUpdateVariables:
+            newValue = jSonUpdateVariables[varName]
+            updatePlantVariablesDB(varName, newValue)
+            #Warn others that the plant values have changed!
+            for k, q in threadQueues.iteritems():
+                q.put((varName, newValue), True)
+
+            #caput(k, request.args[k])
     return "done"
 
 #Return the available schedules
@@ -149,11 +151,6 @@ def getschedule():
             for s in schedules:
                 if (s["name"] == requestedSchedule):
                     variables = s["variables"]
-#                    for v in variables:
-#                        if (v["isPV"] == "True"):
-#                            pvName = v["name"]
-#                            pvValue = v["value"]
-#                            caput(pvName, pvValue)
                     break
     return json.dumps(variables)
 
@@ -179,8 +176,10 @@ if __name__ == "__main__":
         plantVariablesDBJSon = json.load(jsonFile)
         #Assume the first plant for the time being
         plantVariablesDB = plantVariablesDBJSon["plants"][0]["variables"]
+        
 
     for pv in plantVariablesDB:
+        pv["value"] = pv["initialValue"]
         if pv["epicsPV"] == "true":
             camonitor(pv["name"], None, pvValueChanged)
 

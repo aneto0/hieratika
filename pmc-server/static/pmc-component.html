@@ -15,15 +15,41 @@
 
     //prototype functions are capable of acting on the this (i.e. they are not static functions)
     PMCComponent.prototype.currentValuesToString = function() {
-        var refToDisplay = this.schvalue;
-        if (this.currentReference === "plant") {
+        var refToDisplay = this.refvalue;
+        if (this.reference === "plant") {
             refToDisplay = this.pltvalue;
         }
-        return "Current: " + this.value + " Plant: " + this.pltvalue + " Reference: " + this.schvalue + " Initial: " + this.initvalue;
+        return "Current: " + this.value + " Plant: " + this.pltvalue + " Reference: " + this.refvalue + " Initial: " + this.initvalue;
     }
 
     PMCComponent.prototype.showValues = function() {
         alert(this.currentValuesToString());
+    }
+
+    PMCComponent.prototype.compareWithReference = function(value, pltValue, refValue) {
+        var val1 = value;
+        var val2 = value;
+        //If the reference value does not match the current value, change the background
+        if (this.reference === "plant") {
+            if ((!this.library) && (this.typevalue === "float32") || (this.typevalue === "float64")) {
+                val1 = parseFloat(pltValue);
+                val2 = parseFloat(value);
+            }
+            else {
+                val1 = pltValue;
+            }
+        }
+        //must be from a schedule
+        else if (this.reference !== "none") {
+            if ((!this.library) && (this.typevalue === "float32") || (this.typevalue === "float64")) {
+                val1 = parseFloat(refValue);
+                val2 = parseFloat(value);
+            }
+            else {
+                val1 = refValue;
+            }
+        }
+        return (val1 === val2);
     }
 
     PMCComponent.prototype.checkValues = function() {
@@ -36,30 +62,7 @@
         }
 
         var newBackgroundColor = STANDARD_BCOLOR;
-        var val1 = this.value;
-        var val2 = this.value;
-        //If the reference value does not match the current value, change the background
-        if (this.currentReference === "plant") {
-            if ((!this.library) && (this.typevalue === "float32") || (this.typevalue === "float64")) {
-                val1 = parseFloat(this.pltvalue);
-                val2 = parseFloat(this.value);
-            }
-            else {
-                val1 = this.pltvalue;
-            }
-        }
-        //must be from a schedule
-        else if (this.currentReference !== "none") {
-            if ((!this.library) && (this.typevalue === "float32") || (this.typevalue === "float64")) {
-                val1 = parseFloat(this.schvalue);
-                val2 = parseFloat(this.value);
-            }
-            else {
-                val1 = this.schvalue;
-            }
-        }
-        //console.log("val1 = " + val1 + " val2 = " + val2 + " === " + (val1 === val2));
-        if (val1 === val2) {
+        if (this.compareWithReference(this.value, this.pltvalue, this.refvalue)) {
             newBackgroundColor = STANDARD_BCOLOR;
         }
         else {
@@ -70,6 +73,10 @@
         this.title = this.currentValuesToString();
     }
 
+    /**
+     * virtual 
+     * To be specialised by other components that want to be warned when a browser refresh has happened.
+     */
     PMCComponent.prototype.refresh = function() {
     }
 
@@ -81,15 +88,66 @@
         this.numberOfElements = numberOfElementsIn;
     }
 
+    PMCComponent.prototype.getReferenceValue = function() {
+        return this.refvalue;
+    }
+
+    PMCComponent.prototype.setReferenceValue = function(referenceValueToSet) {
+        this.refvalue = referenceValueToSet;
+    }
+
+    PMCComponent.prototype.isLibrary = function() {
+        return this.library;
+    }
+
+    PMCComponent.prototype.setLibrary = function(isLibrary) {
+        this.library = isLibrary;
+    }
+
+    PMCComponent.prototype.getTypeValue = function() {
+        return this.typevalue;
+    }
+
+    PMCComponent.prototype.setTypeValue = function(typeValueToSet) {
+        this.typevalue = typeValueToSet;
+    }
+
+    PMCComponent.prototype.getPlantValue = function() {
+        return this.pltvalue;
+    }
+
+    PMCComponent.prototype.setPlantValue = function(plantValueToSet) {
+        this.pltvalue = plantValueToSet;
+    }
+
+    PMCComponent.prototype.getInitialValue = function() {
+        return this.initvalue;
+    }
+
+    PMCComponent.prototype.setInitialValue = function(initialValueToSet) {
+        this.initvalue = initialValueToSet;
+    }
+
+    PMCComponent.prototype.getReference = function() {
+        return this.reference;
+    }
+
+    PMCComponent.prototype.setReference = function(referenceToSet) {
+        this.reference = referenceToSet;
+    }
+
+    PMCComponent.prototype.getValue = function() {
+        return this.value;
+    }
+
     PMCComponent.prototype.setValue = function(valueToSet) {
         this.innerHTML = valueToSet;
         this.value = valueToSet;
         this.checkValues();
     }
-    
 
     //The reference in use
-    Object.defineProperty(PMCComponent, "currentReference", {
+    Object.defineProperty(PMCComponent, "reference", {
         value: "none",
         writable: true
     });
@@ -114,7 +172,7 @@
     });
 
     //Reference value
-    Object.defineProperty(PMCComponent, "schvalue", {
+    Object.defineProperty(PMCComponent, "refvalue", {
         value: "N/A",
         writable: true
     });
@@ -136,10 +194,6 @@
     }
 
     PMCComponent.prototype.detachedCallback = function() {
-    }
-
-    PMCComponent.prototype.attributeChangedCallback = function(attrName, oldValue, newValue) {
-        this.checkValues(); 
     }
 
     function extendMixin (destination, source) {

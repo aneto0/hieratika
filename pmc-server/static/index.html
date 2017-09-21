@@ -5,8 +5,6 @@
         <link rel="import" href="pmc-input.html">
         <link rel="import" href="pmc-array.html">
         <link rel="import" href="pmc-array-editor.html">
-<!--        <link rel="import" href="pmc-array.html">
-        <link rel="import" href="pmc-array-editor.html">-->
 
         <!-- Handle SSE events from the server-->
         <script>
@@ -21,8 +19,7 @@
                     var pv = plantVariables[i];
                     var targetElement = document.getElementById(pv.name);
                     if (targetElement !== null) {
-                        targetElement.pltvalue = pv.value;
-                        targetElement.setAttribute("pltvalue", pv.value);
+                        targetElement.setPlantValue(pv.value);
                     }
                 }
             };
@@ -33,27 +30,34 @@
             $(function () {
                 $("#updatePlantForm").on("submit", function (e) {
                     e.preventDefault();
+                    var allPMCDataJSon = {};
+                    var allPMCComps = $("[is^='pmc']");
+                    allPMCComps.each(function (i, pmcComp) {
+                        allPMCDataJSon[pmcComp.id] = pmcComp.getValue();
+                    });
+                    var dataToSend = "update=" + JSON.stringify(allPMCDataJSon);
+                    console.log(dataToSend);
                     $.ajax({
                         type: "get",
                         url: "/submit",
-                        data: $(this).serialize(),
+                        data: dataToSend,
                         success: function (response) {
                             if (response == "done") {
                                 alert("Values updated successfully!");
-                                var allTextInputs = $("input:text");
-                                    allTextInputs.each(function (i, textInput) {
-                                        textInput.initvalue = textInput.value;
-                                        textInput.setAttribute("initvalue", textInput.value);
-                                    });
-                                } 
+                                var allPMCComps = $("[is^='pmc']");
+                                allPMCComps.each(function (i, pmcComp) {
+                                    pmcComp.setInitialValue(pmcComp.getValue());
+                                    pmcComp.checkValues();
+                                });
+                            } 
                             else {
                                 alert("Form submission failed!");
-                                }
-                            },
-                            error: function (response) {
-                                console.log(response);
-                                alert(response);
                             }
+                        },
+                        error: function (response) {
+                            console.log(response);
+                            alert(response);
+                        }
                     });
                 });
             });
@@ -68,8 +72,8 @@
                         //Reset all the values to N/A
                         var allPMCComps = $("[is^='pmc']");
                         allPMCComps.each(function (i, pmcComp) {
-                            pmcComp.schvalue = "N/A";
-                            pmcComp.currentReference = currentReference;
+                            pmcComp.setReferenceValue("N/A");
+                            pmcComp.setReference(currentReference);
                             pmcComp.checkValues();
                         });
                     }
@@ -77,8 +81,8 @@
                         //Reset all the values to N/A
                         var allPMCComps = $("[is^='pmc']");
                         allPMCComps.each(function (i, pmcComp) {
-                            pmcComp.schvalue = pmcComp.pltvalue;
-                            pmcComp.currentReference = currentReference;
+                            pmcComp.setReferenceValue(pmcComp.getPlantValue());
+                            pmcComp.setReference(currentReference);
                             pmcComp.checkValues();
                         });
                     }
@@ -86,6 +90,7 @@
                         var getParams = $(this).serialize();
                         //Replace the refselect with schselect to avoid collision of the two drop box
                         getParams = getParams.replace("refselect", "schselect");
+                        console.log(getParams);
                         $.ajax({
                             type: "get",
                             url: "/getschedule",
@@ -95,8 +100,8 @@
                                 $.each(variables, function(i, variable) {
                                     var targetElement = document.getElementById(variable.name);
                                     if (targetElement != null) {
-                                        targetElement.schvalue = variable.value;
-                                        targetElement.currentReference = currentReference;
+                                        targetElement.setReferenceValue(variable.value);
+                                        targetElement.setReference(currentReference);
                                         targetElement.checkValues();
                                     }
                                 });
@@ -123,9 +128,6 @@
                             $.each(variables, function(i, variable) {
                                 var targetElement = document.getElementById(variable.name);
                                 if (targetElement != null) {
-                                    /*targetElement.innerHTML = variable.value;
-                                    targetElement.value = variable.value;
-                                    targetElement.initvalue = variable.value;*/ 
                                     targetElement.setValue(variable.value);
                                 }
                             });
@@ -178,10 +180,11 @@
                         $.each(pvInfos, function(i, pvInfo) {
                             var targetElement = document.getElementById(pvInfo.name);
                             if (targetElement != null) {
-                                targetElement.typevalue = pvInfo.type;
-                                targetElement.library = ("library", pvInfo.library.toLowerCase() === "true");
-                                targetElement.numberOfElements = pvInfo.numberOfElements;
+                                targetElement.setTypeValue(pvInfo.type);
+                                targetElement.setLibrary(pvInfo.library.toLowerCase() === "true");
+                                targetElement.setNumberOfElements(pvInfo.numberOfElements);
                                 targetElement.refresh();
+                                targetElement.setValue(pvInfo.value);
                             }
                         });
                     },
@@ -217,7 +220,7 @@
             function loadFromPlant() {
                 var allPMCComps = $("[is^='pmc']");
                 allPMCComps.each(function (i, pmcComp) {
-                    pmcComp.setValue(pmcComp.pltvalue);
+                    pmcComp.setValue(pmcComp.getPlantValue());
                 });
             }
         </script>

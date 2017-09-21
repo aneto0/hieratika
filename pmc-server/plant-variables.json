@@ -13,7 +13,7 @@
                 },
                 {
                     "name" : "PMC::TEST::VAR2",
-                    "initialValue" : "1",
+                    "initialValue" : "2",
                     "type" : "float32",
                     "numberOfElements" : "1",
                     "library" : "false",
