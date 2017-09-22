@@ -20,6 +20,7 @@
                     var targetElement = document.getElementById(pv.name);
                     if (targetElement !== null) {
                         targetElement.setPlantValue(pv.value);
+                        targetElement.checkValues();
                     }
                 }
             };
@@ -36,7 +37,6 @@
                         allPMCDataJSon[pmcComp.id] = pmcComp.getValue();
                     });
                     var dataToSend = "update=" + JSON.stringify(allPMCDataJSon);
-                    console.log(dataToSend);
                     $.ajax({
                         type: "get",
                         url: "/submit",
@@ -129,6 +129,7 @@
                                 var targetElement = document.getElementById(variable.name);
                                 if (targetElement != null) {
                                     targetElement.setValue(variable.value);
+                                    targetElement.checkValues();
                                 }
                             });
                         },
@@ -184,7 +185,10 @@
                                 targetElement.setLibrary(pvInfo.library.toLowerCase() === "true");
                                 targetElement.setNumberOfElements(pvInfo.numberOfElements);
                                 targetElement.refresh();
+                                targetElement.setReference("none");
+                                targetElement.setInitialValue(pvInfo.value);
                                 targetElement.setValue(pvInfo.value);
+                                targetElement.checkValues();
                             }
                         });
                     },
@@ -221,6 +225,7 @@
                 var allPMCComps = $("[is^='pmc']");
                 allPMCComps.each(function (i, pmcComp) {
                     pmcComp.setValue(pmcComp.getPlantValue());
+                    pmcComp.checkValues();
                 });
             }
         </script>

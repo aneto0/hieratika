@@ -19,7 +19,7 @@
         if (this.reference === "plant") {
             refToDisplay = this.pltvalue;
         }
-        return "Current: " + this.value + " Plant: " + this.pltvalue + " Reference: " + this.refvalue + " Initial: " + this.initvalue;
+        return "Current: " + this.getValue() + " Plant: " + this.getPlantValue() + " Reference: " + this.getReferenceValue() + " Initial: " + this.getInitialValue();
     }
 
     PMCComponent.prototype.showValues = function() {
@@ -93,7 +93,7 @@
     }
 
     PMCComponent.prototype.setReferenceValue = function(referenceValueToSet) {
-        this.refvalue = referenceValueToSet;
+        this.refvalue = referenceValueToSet.slice(0);
     }
 
     PMCComponent.prototype.isLibrary = function() {
@@ -117,7 +117,7 @@
     }
 
     PMCComponent.prototype.setPlantValue = function(plantValueToSet) {
-        this.pltvalue = plantValueToSet;
+        this.pltvalue = plantValueToSet.slice(0);
     }
 
     PMCComponent.prototype.getInitialValue = function() {
@@ -125,7 +125,7 @@
     }
 
     PMCComponent.prototype.setInitialValue = function(initialValueToSet) {
-        this.initvalue = initialValueToSet;
+        this.initvalue = initialValueToSet.slice(0);
     }
 
     PMCComponent.prototype.getReference = function() {
@@ -143,7 +143,6 @@
     PMCComponent.prototype.setValue = function(valueToSet) {
         this.innerHTML = valueToSet;
         this.value = valueToSet;
-        this.checkValues();
     }
 
     //The reference in use

@@ -35,12 +35,13 @@
                     var i;
                     for (i=0; i<this.numberOfElements; i++) { 
                         var cell = row.cells[i];
-                        var value = cell.innerHTML;
+                        var cellValue = cell.innerHTML;
+                        this.value[i] = cellValue;
                         var cellInitValue = "";
                         if (initialValue !== undefined) {
                             cellInitValue = initialValue[i];
                         }
-                        if(value !== cellInitValue) {
+                        if(cellValue !== cellInitValue) {
                             cell.style.color = DIFF_INIT_CHANGED_COLOR;
                         }
                         else {
@@ -57,7 +58,7 @@
                             cellPlantValue = plantValue[i];
                         }
 
-                        if (this.compareWithReference(value, cellPlantValue, cellRefValue)) {
+                        if (this.compareWithReference(cellValue, cellPlantValue, cellRefValue)) {
                             newBackgroundColor = STANDARD_BCOLOR;
                         }
                         else {
@@ -83,8 +84,8 @@
                             this.checkValues();
                         }.bind(this));
                     }
-                    this.value = elementsToSet;
-                    this.checkValues();
+                    //Make a shallow copy!
+                    this.value = elementsToSet.slice(0);
                 }
 
                 // Use Shadow DOM and a template.

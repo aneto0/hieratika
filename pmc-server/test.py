@@ -55,12 +55,14 @@ def streamData():
             else:
                 # Just monitor on change 
                 monitorQueue = threadQueues[tid]
+                print monitorQueue
                 updatedPV = monitorQueue.get(True)
                 pvName = updatedPV[0]
                 pvValue = updatedPV[1]
-                encodedPy = {"plantVariables": [ {"name" : pvName, "value" : str(pvValue)}] }
+                encodedPy = {"plantVariables": [ {"name" : pvName, "value" : pvValue}] }
                 encodedJson = json.dumps(encodedPy)
                 monitorQueue.task_done()
+                print encodedJson 
             yield "data: {0}\n\n".format(encodedJson)
     except Exception:
         print "Exception ignored"
@@ -71,6 +73,7 @@ def streamData():
 def getplantinfo():
     encodedPy = {"variables": plantVariablesDB }
     encodedJson = json.dumps(encodedPy)
+    print encodedJson
     return encodedJson
   
 #Try to update the values in the plant
@@ -78,9 +81,11 @@ def getplantinfo():
 def submit():
     if (request.method == "GET"):
         updateJSon = request.args["update"]
+        print updateJSon
         jSonUpdateVariables = json.loads(updateJSon)
         for varName in jSonUpdateVariables:
             newValue = jSonUpdateVariables[varName]
+            print str(newValue)
             updatePlantVariablesDB(varName, newValue)
             #Warn others that the plant values have changed!
             for k, q in threadQueues.iteritems():

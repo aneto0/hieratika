@@ -22,6 +22,7 @@
     PMCArrayProto.changeArray = function(newArrayName) {
         this.innerHTML = newArrayName;
         this.value = newArrayName;
+        this.checkValues();
     }
 
     PMCArrayProto.createdCallback = function () {
