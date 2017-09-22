@@ -78,12 +78,9 @@
                     //Attach an editor
                     var editor = document.createElement("pmc-array-editor-dialog");
                     var editorId = this.ownerarray.id + "-editor-dialog";
-                    console.log(editorId);
-                    console.log(this.id);
                     editor.setAttribute("id", editorId);
                     document.body.appendChild(editor);
                     editButton.onclick = function() {
-                        console.log(this.id);
                         var editor = document.getElementById(this.ownerarray.id + "-editor-dialog");
                         $.ajax({
                             type: "get",
@@ -97,7 +94,6 @@
                                 editor.numberOfElements = values.length;
                                 diag.close();
                                 editor.showEditor(values);
-                                console.log(values);
                             },
                             error: function (response) {
                                 console.log(response);
