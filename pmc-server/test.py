@@ -11,7 +11,7 @@ import time
 
 import json
 
-from flask import Flask, Response, request
+from flask import Flask, Response, request, send_from_directory
 
 
 app = Flask(__name__, static_url_path="")
@@ -167,6 +167,10 @@ def stream():
 @app.route("/")
 def index():
     return app.send_static_file("index.html")
+
+@app.route("/tmp/<filename>")
+def tmp(filename):
+    return send_from_directory('tmp', filename)
 
 if __name__ == "__main__":
     epics.ca.find_libca()

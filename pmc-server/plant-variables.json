@@ -42,7 +42,16 @@
                     "numberOfElements" : "4",
                     "library" : "false",
                     "epicsPV" : "false"
+                },
+                {
+                    "name" : "PMC::TEST::VAR6",
+                    "initialValue" : [["1"], ["1", "1"]],
+                    "type" : "float32",
+                    "numberOfElements" : ["1", "2"],
+                    "library" : "false",
+                    "epicsPV" : "false"
                 }
+
             ]
         }
     ]

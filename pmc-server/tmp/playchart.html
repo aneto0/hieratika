@@ -2,41 +2,140 @@
 <html>
 <head>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.0/Chart.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 <script>
+
+    function generatePolynomialMathML(pol) {
+        var polynomialInnerHTML = "<mrow>";
+        for (i=0; i<pol.length; i++) {
+            if (pol[i] !== 0) {
+                if (i !== 0) {
+                    polynomialInnerHTML += "<mo>+</mo>";
+                }
+                var expVal = (pol.length - i - 1);
+                if ((expVal === 0) || (pol[i] != 1)) {
+                    polynomialInnerHTML += "<mn>";
+                    polynomialInnerHTML += pol[i];
+                    polynomialInnerHTML += "</mn>";
+                }
+                if (expVal > 0) {
+                    if (expVal === 1) {
+                        polynomialInnerHTML += "<mi>s</mi>";
+                    } 
+                    else {
+                        polynomialInnerHTML += "<msup>";
+                        polynomialInnerHTML += "<mi>s</mi>";
+                        polynomialInnerHTML += "<mn>";
+                        polynomialInnerHTML += expVal;
+                        polynomialInnerHTML += "</mn>";
+                        polynomialInnerHTML += "</msup>";
+                    }
+                }
+            } 
+        }
+        polynomialInnerHTML += "</mrow>";
+        return polynomialInnerHTML;
+    }
+
+    function generateTransferFunctionMathML(num, den) {
+        var transferFunctionInnerHTML = "<math xmlns=\"http://www.w3.org/1998/Math/MathML\">";
+        transferFunctionInnerHTML += "<mi>H(s)</mi>";
+        transferFunctionInnerHTML += "<mo>=</mo>";
+        transferFunctionInnerHTML += "<mfrac>";
+        transferFunctionInnerHTML += generatePolynomialMathML(num);
+        transferFunctionInnerHTML += generatePolynomialMathML(den);
+        transferFunctionInnerHTML += "</mfrac>";
+        transferFunctionInnerHTML += "</math>";
+        return transferFunctionInnerHTML;
+    } 
+
+    function getFilterResponse(num, den, stepFrequency, maxFrequency) {
+        var numberOfFrequencies = maxFrequency / stepFrequency;
+        var w = new Array(numberOfFrequencies);
+        var amplitude = new Array(numberOfFrequencies);
+        w[0] = stepFrequency;
+        for (i=1; i<numberOfFrequencies; i++) {
+            w[i] = w[i-1] + stepFrequency
+        }
+        for (i=0; i<numberOfFrequencies; i++) {
+            var a = num[num.length - 1];
+            var b = 0;
+            //Go right to left
+            for (j=num.length-2; j>=0; j--) {
+                var pwr = num.length - j + 1;
+                if ((pwr % 2) == 0) {
+                    a = a - num[j] * Math.pow(w[i], pwr);
+                }
+                else  {
+                    b = b - num[j] * Math.pow(w[i], pwr);
+                }
+            }
+            numAbs = Math.sqrt(a*a + b*b);
+            
+            a = den[den.length - 1];
+            b = 0;
+            for (j=den.length-2; j>=0; j--) {
+                var pwr = den.length - j + 1;
+                if ((pwr % 2) == 0) {
+                    a = a - den[j] * Math.pow(w[i], pwr);
+                }
+                else  {
+                    b = b - den[j] * Math.pow(w[i], pwr);
+                }
+            }
+            denAbs = Math.sqrt(a*a + b*b);
+            amplitude[i] = {x: w[i], y: 20 * Math.log10(numAbs/denAbs)};
+        }
+        return amplitude;
+    }
+
     $(function() {
-        var dialog = document.getElementById('window');
-        document.getElementById('show').onclick = function() {
-            dialog.show();
-        };
-        document.getElementById('exit').onclick = function() {
-            dialog.close();
+        document.getElementById('updateButton').onclick = function() {
+            var numJS = document.getElementById("filterNumerator").value;
+            var denJS = document.getElementById("filterDenominator").value;
+            var transferFun = document.getElementById("transferFunction");
+            var num = eval("[" + numJS + "]");
+            var den = eval("[" + denJS + "]");
+            
+            var numRefJS = document.getElementById("filterNumeratorReference").value;
+            var denRefJS = document.getElementById("filterDenominatorReference").value;
+            var transferFunRef = document.getElementById("transferFunctionReference");
+            var numRef = eval("[" + numRefJS + "]");
+            var denRef = eval("[" + denRefJS + "]");
+
+            transferFun.innerHTML = generateTransferFunctionMathML(num, den);
+            transferFunRef.innerHTML = generateTransferFunctionMathML(numRef, denRef);
+            MathJax.Hub.Queue(["Typeset",MathJax.Hub,"transferFunction"]);
+            MathJax.Hub.Queue(["Typeset",MathJax.Hub,"transferFunctionRef"]);
+            //Remove all data
+            chart.data.datasets[0].data = getFilterResponse(num, den, 0.2, 10);
+            chart.data.datasets[1].data = getFilterResponse(numRef, denRef, 0.2, 10);
+            chart.update();
         };
     });
 
     $(function() {
         console.log(document.getElementById('myChart'));
-        var ctx = document.getElementById('myChart').getContext('2d');
+        var ctx = document.getElementById('myChart');
         var chart = new Chart(ctx, {
             // The type of chart we want to create
             type: 'line',
 
             // The data for our dataset
             data: {
-                datasets: [{
-                    label: "Current reference",
-                    //backgroundColor: 'white',
+                datasets: [
+                {
+                    label: "Current",
                     fill: "false",
-                //    borderColor: 'rgb(255, 99, 132)',
-                    backgroundColor: "rgba(0,255,0,0.4)",
-                    borderColor: "green", // The main line color
-                    data: [{
-                        x: 10,
-                        y: 20
-                    }, {
-                        x: 15,
-                        y: 10
-                    }]
+                    backgroundColor: "white",
+                    borderColor: "blue", // The main line color
+                },
+                {
+                    label: "Reference",
+                    fill: "false",
+                    backgroundColor: "white",
+                    borderColor: "gray", // The main line color
                 }]
             },
 
@@ -44,22 +143,53 @@
             options: {
                 scales: {
                     xAxes: [{
-                        type: 'linear',
-                        position: 'bottom'
+                        type: 'logarithmic',
+                        position: 'bottom',
+                        scaleLabel: {
+                            display: true,
+                            labelString: "rad/s"
+                        }
+                    }],
+                    yAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: "dB"
+                        }
                     }]
-                }
+                },
+                responsive : false
             }
         });
     });
 </script>
 </head>
 <body>
-    <dialog id="window">
-        <canvas id="myChart"></canvas>
-        <!--<h3>Hello World!</h3>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Earum, inventore!</p>-->
-        <button id="exit">Exit</button>
-    </dialog>
-    <button id="show">Show Dialog</button>
+    <canvas width="400" height="200" id="myChart"></canvas>
+    <table border="0">
+        <tr>
+            <td>Numerator</td>
+            <td><input type="text" id="filterNumerator" name="filterNumerator" value="1"></input></td>
+        </tr>
+        <tr>
+            <td>Denominator</td>
+            <td><input type="text" id="filterDenominator" name="filterDenominator" value="1,1"></input></td>
+        </tr>
+        <tr>
+            <td>Numerator Reference</td>
+            <td><input type="text" id="filterNumeratorReference" name="filterNumeratorReference" value="1,2"></input></td>
+        </tr>
+        <tr>
+            <td>Denominator Reference</td>
+            <td><input type="text" id="filterDenominatorReference" name="filterDenominatorReference" value="8,3,4"></input></td>
+        </tr>
+
+    </table>
+    <button id="updateButton">Update</button>
+    <div id="transferFunction">
+        H(s)=...
+    </div>
+    <div id="transferFunctionReference">
+        H(s)=...
+    </div>
 </body>
 </html>

@@ -1,0 +1,267 @@
+<html>
+    <head>
+        <link rel="import" href="libraries.html">
+        <link rel="import" href="pmc-component.html">
+    </head>
+    <body>
+        <template id="tfilter">
+            <canvas width="600" height="300" id="tcanvas"></canvas>
+            <table border=0">
+                <tr>
+                    <td>Frequency Step</td><td><input type="text" id="frequencyStepInput"></input></td>
+                    <td>Maximum frequency</td><td><input type="text" id="maxFrequencyInput"></input></td>
+                </tr>
+                <tr>
+                    <td>Numerator</td><td><input type="text" id="numeratorInput"></input></td>
+                    <td>Denominator</td><td><input type="text" id="denominatorInput"></input></td>
+                </tr>
+                <tr>
+                    <td>Current</td><td id="currentTransferFunction"></td>
+                </tr>
+                <tr>
+                    <td>Reference</td><td id="referenceTransferFunction"></td>
+                </tr>
+                <tr>
+                    <td>Plant</td><td id="plantTransferFunction"></td>
+                </tr>
+            </table>
+            <button id="refreshButton">Refresh</button>
+            </div>
+        </template>
+        <script>
+            function PMCFilterEditor() {
+                HTMLElement.call(this);
+            }
+
+            function generatePolynomialMathML(pol) {
+                var polynomialInnerHTML = "<mrow>";
+                for (i=0; i<pol.length; i++) {
+                    if (pol[i] !== 0) {
+                        if (i !== 0) {
+                            polynomialInnerHTML += "<mo>+</mo>";
+                        }
+                        var expVal = (pol.length - i - 1);
+                        if ((expVal === 0) || (pol[i] != 1)) {
+                            polynomialInnerHTML += "<mn>";
+                            polynomialInnerHTML += pol[i];
+                            polynomialInnerHTML += "</mn>";
+                        }
+                        if (expVal > 0) {
+                            if (expVal === 1) {
+                                polynomialInnerHTML += "<mi>s</mi>";
+                            } 
+                            else {
+                                polynomialInnerHTML += "<msup>";
+                                polynomialInnerHTML += "<mi>s</mi>";
+                                polynomialInnerHTML += "<mn>";
+                                polynomialInnerHTML += expVal;
+                                polynomialInnerHTML += "</mn>";
+                                polynomialInnerHTML += "</msup>";
+                            }
+                        }
+                    } 
+                }
+                polynomialInnerHTML += "</mrow>";
+                return polynomialInnerHTML;
+            }
+
+            function generateTransferFunctionMathML(num, den) {
+                var transferFunctionInnerHTML = "<math xmlns=\"http://www.w3.org/1998/Math/MathML\">";
+                transferFunctionInnerHTML += "<mi>H(s)</mi>";
+                transferFunctionInnerHTML += "<mo>=</mo>";
+                transferFunctionInnerHTML += "<mfrac>";
+                transferFunctionInnerHTML += generatePolynomialMathML(num);
+                transferFunctionInnerHTML += generatePolynomialMathML(den);
+                transferFunctionInnerHTML += "</mfrac>";
+                transferFunctionInnerHTML += "</math>";
+                return transferFunctionInnerHTML;
+            } 
+
+            function getFilterResponse(num, den, stepFrequency, maxFrequency) {
+                var numberOfFrequencies = maxFrequency / stepFrequency;
+                var w = new Array(numberOfFrequencies);
+                var amplitude = new Array(numberOfFrequencies);
+                w[0] = stepFrequency;
+                for (i=1; i<numberOfFrequencies; i++) {
+                    w[i] = w[i-1] + stepFrequency
+                }
+                for (i=0; i<numberOfFrequencies; i++) {
+                    var a = num[num.length - 1];
+                    var b = 0;
+                    //Go right to left
+                    for (j=num.length-2; j>=0; j--) {
+                        var pwr = num.length - j + 1;
+                        if ((pwr % 2) == 0) {
+                            a = a - num[j] * Math.pow(w[i], pwr);
+                        }
+                        else  {
+                            b = b - num[j] * Math.pow(w[i], pwr);
+                        }
+                    }
+                    numAbs = Math.sqrt(a*a + b*b);
+                    
+                    a = den[den.length - 1];
+                    b = 0;
+                    for (j=den.length-2; j>=0; j--) {
+                        var pwr = den.length - j + 1;
+                        if ((pwr % 2) == 0) {
+                            a = a - den[j] * Math.pow(w[i], pwr);
+                        }
+                        else  {
+                            b = b - den[j] * Math.pow(w[i], pwr);
+                        }
+                    }
+                    denAbs = Math.sqrt(a*a + b*b);
+                    amplitude[i] = {x: w[i], y: 20 * Math.log10(numAbs/denAbs)};
+                }
+                return amplitude;
+            }
+
+            (function () {
+                var importDoc = document.currentScript.ownerDocument; // importee
+
+                var PMCFilterEditorProto = Object.create(HTMLElement.prototype);
+                PMCFilterEditorProto.constructor = PMCFilterEditor;
+            
+                extendMixin(PMCFilterEditorProto, PMCComponent.prototype);
+
+                PMCFilterEditorProto.checkValues = function() {
+                    if (this.chart !== undefined) {
+                        this.chart.data.datasets[0].data = [];
+                        this.chart.data.datasets[1].data = [];
+                        this.chart.data.datasets[2].data = [];
+                        if (this.value !== undefined) {
+                            var num = this.value[0];
+                            var den = this.value[1];
+                            this.shadowRoot.querySelector("#numeratorInput").value = num;
+                            this.shadowRoot.querySelector("#denominatorInput").value = den;
+                            
+                            var currentTransferFunction = this.shadowRoot.querySelector("#currentTransferFunction");
+                            currentTransferFunction.innerHTML = generateTransferFunctionMathML(num, den);
+                            MathJax.Hub.Queue(["Typeset",MathJax.Hub, currentTransferFunction]);
+                            this.chart.data.datasets[0].data = getFilterResponse(num, den, this.frequencyStep, this.maxFrequency);
+                        }
+                        var refValue = this.getReferenceValue();
+                        if (refValue !== undefined) {
+                            var numRef = refValue[0];
+                            var denRef = refValue[1];
+                            this.chart.data.datasets[1].data = getFilterResponse(numRef, denRef, this.frequencyStep, this.maxFrequency);
+                        }
+                        var plantValue = this.getPlantValue();
+                        if (plantValue !== undefined) {
+                            var numPlant = plantValue[0];
+                            var denPlant = plantValue[1];
+                            this.chart.data.datasets[2].data = getFilterResponse(numPlant, denPlant, this.frequencyStep, this.maxFrequency);
+                        }
+                        this.chart.update();
+                    }
+                    this.title = this.currentValuesToString();
+                }
+
+                PMCFilterEditorProto.setValue = function(elementsToSet) {
+
+                    this.value = elementsToSet.slice(0);
+                }
+
+                // Use Shadow DOM and a template.
+                PMCFilterEditorProto.createdCallback = function() {
+                    // Get template 
+                    var template = importDoc.querySelector("#tfilter");
+                    // import template into
+                    var clone = document.importNode(template.content, true);
+                    var root = this.createShadowRoot();
+                    this.frequencyStep = 0.2;
+                    this.maxFrequency = 10; 
+                    root.appendChild(clone);
+                    this.shadowRoot.querySelector("#frequencyStepInput").value = this.frequencyStep;
+                    this.shadowRoot.querySelector("#maxFrequencyInput").value = this.maxFrequency;
+                    var button = this.shadowRoot.querySelector("#refreshButton");
+                    button.addEventListener("click", function (e) {
+                        this.frequencyStep = parseFloat(this.shadowRoot.querySelector("#frequencyStepInput").value);
+                        this.maxFrequency = parseFloat(this.shadowRoot.querySelector("#maxFrequencyInput").value);
+                        this.checkValues(); 
+                    }.bind(this));
+                };
+
+                PMCFilterEditorProto.attachedCallback = function() {
+                };
+
+                PMCFilterEditorProto.refresh = function() {
+                    var ctx = this.shadowRoot.querySelector("#tcanvas");
+                    var chart = new Chart(ctx, {
+                        // The type of chart we want to create
+                        type: "line",
+
+                        // The data for our dataset
+                        data: {
+                            datasets: [
+                            {
+                                label: "Current",
+                                fill: "false",
+                                backgroundColor: "white",
+                                borderColor: "blue" // The main line color
+                            },
+                            {
+                                label: "Reference",
+                                fill: "false",
+                                backgroundColor: "white",
+                                borderColor: "gray"
+                            },
+                            {
+                                label: "Plant",
+                                fill: "false",
+                                backgroundColor: "white",
+                                borderColor: "red"
+                            }]
+                        },
+
+                        // Configuration options go here
+                        options: {
+                            scales: {
+                                xAxes: [{
+                                    type: "logarithmic",
+                                    position: "bottom",
+                                    scaleLabel: {
+                                        display: true,
+                                        labelString: "rad/s"
+                                    }
+                                }],
+                                yAxes: [{
+                                    scaleLabel: {
+                                        display: true,
+                                        labelString: "dB"
+                                    }
+                                }]
+                            },
+                            responsive : false
+                        }
+                    });
+                    this.chart = chart;
+                }
+
+                //To enable to store the chart instance
+                Object.defineProperty(PMCFilterEditor, "chart", {
+                    value: "none",
+                    writable: true
+                });
+
+                //Step of the frequency to plot
+                Object.defineProperty(PMCFilterEditor, "frequencyStep", {
+                    value: "0.2",
+                    writable: true
+                });
+
+                //Maximum frequency
+                Object.defineProperty(PMCFilterEditor, "maxFrequency", {
+                    value: "10",
+                    writable: true
+                });
+
+                document.registerElement("pmc-filter-editor", {
+                    prototype: PMCFilterEditorProto
+                });
+            })();
+        </script>
+
+    </body>
+</html>

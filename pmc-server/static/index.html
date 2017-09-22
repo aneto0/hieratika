@@ -1,10 +1,11 @@
 <html>
     <head>
-        <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>-->
         <link rel="import" href="libraries.html">
         <link rel="import" href="pmc-input.html">
         <link rel="import" href="pmc-array.html">
         <link rel="import" href="pmc-array-editor.html">
+        <link rel="import" href="pmc-filter-editor.html">
+        <script src="/js/MathJax/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 
         <!-- Handle SSE events from the server-->
         <script>
@@ -253,7 +254,11 @@
                 </tr>
                 <tr>
                     <td>PMC::TEST::VAR5</td>
-                    <td><pmc-array-editor is="pmc" id="PMC::TEST::VAR5" name="PMC::TEST::VAR5" numberOfElements="5"></pmc-array-editor></td>
+                    <td><pmc-array-editor is="pmc" id="PMC::TEST::VAR5" name="PMC::TEST::VAR5"></pmc-array-editor></td>
+                </tr>
+                <tr>
+                    <td>PMC::TEST::VAR6</td>
+                    <td><pmc-filter-editor is="pmc" id="PMC::TEST::VAR6" name="PMC::TEST::VAR6"></pmc-filter-editor></td>
                 </tr>
             </table>
             <input type="submit" value="Update values"></input>
