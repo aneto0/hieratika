@@ -5,6 +5,9 @@
     </head>
     <body>
         <template id="tfilter">
+            <style>
+                @import url("/js/jqmath-0.4.3.css")
+            </style>
             <canvas width="600" height="300" id="tcanvas"></canvas>
             <table border=0">
                 <tr>
@@ -66,7 +69,7 @@
             }
 
             function generateTransferFunctionMathML(num, den) {
-                var transferFunctionInnerHTML = "<math xmlns=\"http://www.w3.org/1998/Math/MathML\">";
+                var transferFunctionInnerHTML = "<math>";
                 transferFunctionInnerHTML += "<mi>H(s)</mi>";
                 transferFunctionInnerHTML += "<mo>=</mo>";
                 transferFunctionInnerHTML += "<mfrac>";
@@ -135,23 +138,30 @@
                             var den = this.value[1];
                             this.shadowRoot.querySelector("#numeratorInput").value = num;
                             this.shadowRoot.querySelector("#denominatorInput").value = den;
+                            this.chart.data.datasets[0].data = getFilterResponse(num, den, this.frequencyStep, this.maxFrequency);
                             
                             var currentTransferFunction = this.shadowRoot.querySelector("#currentTransferFunction");
                             currentTransferFunction.innerHTML = generateTransferFunctionMathML(num, den);
-                            MathJax.Hub.Queue(["Typeset",MathJax.Hub, currentTransferFunction]);
-                            this.chart.data.datasets[0].data = getFilterResponse(num, den, this.frequencyStep, this.maxFrequency);
+                            jqMath.parseMath(currentTransferFunction);
                         }
                         var refValue = this.getReferenceValue();
                         if (refValue !== undefined) {
                             var numRef = refValue[0];
                             var denRef = refValue[1];
                             this.chart.data.datasets[1].data = getFilterResponse(numRef, denRef, this.frequencyStep, this.maxFrequency);
+                            var referenceTransferFunction = this.shadowRoot.querySelector("#referenceTransferFunction");
+                            referenceTransferFunction.innerHTML = generateTransferFunctionMathML(numRef, denRef);
+                            jqMath.parseMath(referenceTransferFunction);
                         }
                         var plantValue = this.getPlantValue();
                         if (plantValue !== undefined) {
                             var numPlant = plantValue[0];
                             var denPlant = plantValue[1];
                             this.chart.data.datasets[2].data = getFilterResponse(numPlant, denPlant, this.frequencyStep, this.maxFrequency);
+                            var plantTransferFunction = this.shadowRoot.querySelector("#plantTransferFunction");
+                            plantTransferFunction.innerHTML = generateTransferFunctionMathML(numPlant, denPlant);
+                            jqMath.parseMath(plantTransferFunction);
+
                         }
                         this.chart.update();
                     }
@@ -262,6 +272,5 @@
                 });
             })();
         </script>
-
-    </body>
+   </body>
 </html>
