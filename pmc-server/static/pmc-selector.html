@@ -1,0 +1,181 @@
+<html>
+    <head>
+        <link rel="import" href="libraries.html">
+    </head>
+    <body>
+        <template id="tselector">
+            <dialog id="dselector">
+                <h3 id="titselector">
+                </h3>
+                <div id="diveditor"></div>
+                <br/>
+                <select id="tselect" name="tselect"></select>
+                <br/>
+                <br/>
+                <button id="tselectorOK">OK</button>
+                <button id="tselectorCancel">Cancel</button>
+                <button id="tselectorEdit">Edit</button>
+            </dialog>
+        </template>
+        <script>
+            (function () {
+                var importDoc = document.currentScript.ownerDocument; // importee
+
+                var PMCSelectorProto = Object.create(HTMLElement.prototype);
+
+                //The owner of this selector dialog
+                Object.defineProperty(PMCSelectorProto, "owner", {
+                    value: "",
+                    writable: true
+                });
+
+                // which has been selected
+                Object.defineProperty(PMCSelectorProto, "selected", {
+                    value: "",
+                    writable: true
+                });
+
+                // the editor to use
+                Object.defineProperty(PMCSelectorProto, "editor", {
+                    value: "",
+                    writable: true
+                });
+
+            
+                PMCSelectorProto.showSelector = function(optionNames) {
+                    var diag = this.shadowRoot.querySelector("#dselector");
+                    var selector = this.shadowRoot.querySelector("#tselect");
+                    selector.innerHTML = "";
+                    $.each(optionNames, function(i, optionName) {
+                        var option = document.createElement( 'option' );
+                        option.value = option.text = optionName;
+                        selector.add(option);
+                    });
+                    diag.showModal();
+                }
+
+                // Use Shadow DOM and a template. Use the attachedCallback as @ createdCallback this.owner will not exist and I need this id (at least in this prototype phase)
+                PMCSelectorProto.attachedCallback = function() {
+                    // Get template 
+                    var template = importDoc.querySelector("#tselector");
+
+                    // import template into
+                    var clone = document.importNode(template.content, true);
+                    var root = this.createShadowRoot();
+ 
+                    root.appendChild(clone);
+
+                    var diag = this.shadowRoot.querySelector("#dselector");
+                    var selector = this.shadowRoot.querySelector("#tselect");
+                    var okButton = this.shadowRoot.querySelector("#tselectorOK");
+                    var cancelButton = this.shadowRoot.querySelector("#tselectorCancel");
+                    var editButton = this.shadowRoot.querySelector("#tselectorEdit");
+
+                    okButton.onclick = function() {
+                        this.selected = selector.options[selector.selectedIndex].text;
+                        this.owner.change(this.selected);
+                        diag.close();
+                    }.bind(this); //bind is needed to make sure that the "this" is still valid in the context of the callback
+
+                    cancelButton.onclick = function() {
+                        this.selected = "";
+                        diag.close();
+                    }.bind(this); //bind is needed to make sure that the "this" is still valid in the context of the callback
+
+                    //Attach an editor
+                    var divEditor = this.shadowRoot.querySelector("#divEditor");
+                    while(divEditor.firstChild) {
+                        divEditor.removeChild(divEditor);
+                    }
+                    divEditor.appendChild(this.editor);
+                    editButton.onclick = function() {
+                        var editor = this.shadowRoot.getElementById(this.editor.id);
+                        editor.setTypeValue(this.owner.getTypeValue());
+                        editor.setReference(this.owner.getReference());
+                        if (this.owner.getReferenceValue() !== undefined) {
+                            $.ajax({
+                                type: "get",
+                                url: "/getlibrary",
+                                data: {
+                                    variable : this.owner.id, 
+                                    libraryName : this.owner.getReferenceValue()  
+                                },
+                                success: function (response) {
+                                    values = $.parseJSON(response);
+                                    editor.setReferenceValue(values);
+                                },
+                                error: function (response) {
+                                    console.log(response);
+                                    alert(response);
+                                }
+                            });
+                        }
+
+                        if (this.owner.getInitialValue() !== undefined) {
+                            $.ajax({
+                                type: "get",
+                                url: "/getlibrary",
+                                data: {
+                                    variable : this.owner.id, 
+                                    libraryName : this.owner.getInitialValue()  
+                                },
+                                success: function (response) {
+                                    values = $.parseJSON(response);
+                                    editor.setInitialValue(values);
+                                    editor.checkValues();
+                                },
+                                error: function (response) {
+                                    console.log(response);
+                                    alert(response);
+                                }
+                            });
+                        }
+
+                        if (this.owner.getPlantValue() !== undefined) {
+                            $.ajax({
+                                type: "get",
+                                url: "/getlibrary",
+                                data: {
+                                    variable : this.owner.id, 
+                                    libraryName : this.owner.getPlantValue()  
+                                },
+                                success: function (response) {
+                                    values = $.parseJSON(response);
+                                    editor.setPlantValue(values);
+                                    editor.checkValues();
+                                },
+                                error: function (response) {
+                                    console.log(response);
+                                    alert(response);
+                                }
+                            });
+                        }
+
+                        $.ajax({
+                            type: "get",
+                            url: "/getlibrary",
+                            data: {
+                                variable : this.owner.id, 
+                                libraryName : selector.options[selector.selectedIndex].text  
+                            },
+                            success: function (response) {
+                                values = $.parseJSON(response);
+                                editor.setValue(values);
+                                editor.checkValues();
+                            },
+                            error: function (response) {
+                                console.log(response);
+                                alert(response);
+                            }
+                        });
+                    }.bind(this);
+                };
+
+                document.registerElement("pmc-selector", {
+                    prototype: PMCSelectorProto
+                });
+            })();
+        </script>
+
+    </body>
+</html>

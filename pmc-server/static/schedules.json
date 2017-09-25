@@ -37,6 +37,11 @@
                     "name": "SUP::PMC::TEST::VAR3",
                     "value": "3",
                     "isPV": "False"
+                },
+                {
+                    "name": "PMC::TEST::VAR7",
+                    "value": "Example 1",
+                    "isPV": "True"
                 }
             ]
         },
@@ -78,6 +83,11 @@
                     "name": "SUP::PMC::TEST::VAR3",
                     "value": "30",
                     "isPV": "False"
+                },
+                {
+                    "name": "PMC::TEST::VAR7",
+                    "value": "Example 2",
+                    "isPV": "True"
                 }
             ]
         }

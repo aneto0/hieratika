@@ -3,7 +3,7 @@
         </script>
         <link rel="import" href="libraries.html">
         <link rel="import" href="pmc-input.html">
-        <link rel="import" href="pmc-array.html">
+        <link rel="import" href="pmc-library.html">
         <link rel="import" href="pmc-array-editor.html">
         <link rel="import" href="pmc-filter-editor.html">
         <!-- Handle SSE events from the server-->
@@ -141,7 +141,7 @@
                 });
             });
 
-            //Get all the available arrays
+            //Get all the available libraries
         </script>
 
         <script>
@@ -184,7 +184,6 @@
                                 targetElement.setTypeValue(pvInfo.type);
                                 targetElement.setLibrary(pvInfo.library.toLowerCase() === "true");
                                 targetElement.setNumberOfElements(pvInfo.numberOfElements);
-                                targetElement.refresh();
                                 targetElement.setReference("none");
                                 targetElement.setInitialValue(pvInfo.value);
                                 targetElement.setValue(pvInfo.value);
@@ -198,17 +197,17 @@
                     }
                 });
 
-                //Load all the arrays
+                //Load all the librariesj
                 $.ajax({
                     type: "get",
-                    url: "/getarrays",
+                    url: "/getlibraries",
                     success: function (response) {
-                        var arraysJson = $.parseJSON(response);
-                        var allArrays = arraysJson["arrays"];
-                        $.each(allArrays, function(i, arrayJson) {
-                            var targetElement = document.getElementById(arrayJson.variable);
+                        var librariesJson = $.parseJSON(response);
+                        var allLibraries = librariesJson["libraries"];
+                        $.each(allLibraries, function(i, librariesJson) {
+                            var targetElement = document.getElementById(librariesJson.variable);
                             if (targetElement != null) {
-                                targetElement.avarrays = arrayJson.names;
+                                targetElement.availableOptions = librariesJson.names;
                             }
                         });
                     },
@@ -245,11 +244,15 @@
                 </tr>
                 <tr>
                     <td>PMC::TEST::VAR3</td>
-                    <td><button is="pmc-array" type="button" id="PMC::TEST::VAR3" name="PMC::TEST::VAR3"></button></td>
+                    <td><button is="pmc-library" data-editor="pmc-array-editor" type="button" id="PMC::TEST::VAR3" name="PMC::TEST::VAR3"></button></td>
                 </tr>
                 <tr>
                     <td>PMC::TEST::VAR4</td>
-                    <td><button is="pmc-array" type="button" id="PMC::TEST::VAR4" name="PMC::TEST::VAR4"></button></td>
+                    <td><button is="pmc-library" data-editor="pmc-array-editor" type="button" id="PMC::TEST::VAR4" name="PMC::TEST::VAR4"></button></td>
+                </tr>
+                <tr>
+                    <td>PMC::TEST::VAR7</td>
+                    <td><button is="pmc-library" data-editor="pmc-filter-editor" type="button" id="PMC::TEST::VAR7" name="PMC::TEST::VAR7"></button></td>
                 </tr>
                 <tr>
                     <td>PMC::TEST::VAR5</td>

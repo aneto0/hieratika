@@ -1,0 +1,68 @@
+<!-- Selector button -->
+<link rel="import" href="libraries.html">
+<link rel="import" href="pmc-component.html">
+<link rel="import" href="pmc-selector.html">
+<link rel="import" href="pmc-array-editor.html">
+<link rel="import" href="pmc-filter-editor.html">
+<script type="text/javascript">
+    //Constructor
+    function PMCLibrary() {
+        HTMLButtonElement.call(this);
+    }
+
+    //Notice that PMCLibraryProto is an alias to PMCLibrary.prototype
+    PMCLibraryProto = Object.create(HTMLButtonElement.prototype);
+    PMCLibraryProto.constructor = PMCLibrary;
+
+    extendMixin(PMCLibraryProto, PMCComponent.prototype);
+
+    // the editor to use
+    Object.defineProperty(PMCLibraryProto, "data-editor", {
+        value: "",
+        writable: true
+    });
+
+    Object.defineProperty(PMCLibraryProto, "availableOptions", {
+        value: "",
+        writable: true
+    });
+
+    PMCLibraryProto.selectOption = function() {
+        var selector = document.getElementById(this.id + "-selector");
+        selector.showSelector(this.availableOptions);
+    }
+
+    PMCLibraryProto.change = function(newLibraryName) {
+        this.innerHTML = newLibraryName;
+        this.value = newLibraryName;
+        this.checkValues();
+    }
+
+    PMCLibraryProto.createdCallback = function () {
+        this.addEventListener("click", function (e) {
+            this.selectOption();
+            return false;
+        }.bind(this), false);
+
+        //Create an editor
+        var editorName = this.getAttribute("data-editor");
+        var editor = document.createElement(editorName);
+        var editorId = this.id + "-library-editor";
+        editor.setAttribute("id", editorId);
+
+        //Attach a selector
+        var selector = document.createElement("pmc-selector");
+        var selectorId = this.id + "-selector";
+        selector.setAttribute("id", selectorId);
+        selector.owner = this;
+        selector.editor = editor;
+   
+        document.body.appendChild(selector);
+    }
+
+    document.registerElement("pmc-library", {
+        prototype: PMCLibraryProto,
+        extends: "button"
+    });
+</script>
+

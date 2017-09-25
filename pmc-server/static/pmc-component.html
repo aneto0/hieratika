@@ -26,35 +26,37 @@
         alert(this.currentValuesToString());
     }
 
-    PMCComponent.prototype.compareWithReference = function(value, pltValue, refValue) {
-        var val1 = value;
-        var val2 = value;
-        //If the reference value does not match the current value, change the background
-        if (this.reference === "plant") {
-            if ((!this.library) && (this.typevalue === "float32") || (this.typevalue === "float64")) {
-                val1 = parseFloat(pltValue);
-                val2 = parseFloat(value);
-            }
-            else {
-                val1 = pltValue;
-            }
+    PMCComponent.prototype.compareValues = function(value1, value2) {
+        var val1 = String(value1);
+        var val2 = String(value2);
+        if ((!this.library) && (this.typevalue === "float32") || (this.typevalue === "float64")) {
+                val1 = parseFloat(value1);
+                val2 = parseFloat(value2);
         }
-        //must be from a schedule
-        else if (this.reference !== "none") {
-            if ((!this.library) && (this.typevalue === "float32") || (this.typevalue === "float64")) {
-                val1 = parseFloat(refValue);
-                val2 = parseFloat(value);
-            }
-            else {
-                val1 = refValue;
-            }
+        else if ((!this.library) && (this.typevalue.startsWith("int") || (this.typevalue.startsWith("uint")))) {
+                val1 = parseInt(value1);
+                val2 = parseInt(value2);
         }
         return (val1 === val2);
     }
 
+    PMCComponent.prototype.compareWithReference = function(value, pltValue, refValue) {
+        var val1 = String(value);
+        var val2 = String(value);
+        //If the reference value does not match the current value, change the background
+        if (this.reference === "plant") {
+            val1 = pltValue;
+        }
+        //must be from a schedule
+        else if (this.reference !== "none") {
+            val1 = refValue;
+        }
+        return this.compareValues(val1, val2);
+    }
+
     PMCComponent.prototype.checkValues = function() {
         //If the current value does not match the initial value set the font color blue
-        if(this.value !== this.initvalue) {
+        if(!this.compareValues(this.value, this.initvalue)) {
             this.style.color = DIFF_INIT_CHANGED_COLOR;
         }
         else {

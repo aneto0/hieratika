@@ -50,8 +50,15 @@
                     "numberOfElements" : ["1", "2"],
                     "library" : "false",
                     "epicsPV" : "false"
+                },
+                {
+                    "name" : "PMC::TEST::VAR7",
+                    "initialValue" : "Example 1",
+                    "type" : "float32",
+                    "numberOfElements" : ["1", "2"],
+                    "library" : "true",
+                    "epicsPV" : "false"
                 }
-
             ]
         }
     ]

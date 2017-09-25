@@ -105,40 +105,41 @@ def getschedules():
             scheduleNames.append(s["name"]);
     return json.dumps(scheduleNames)
 
-#Return the available arrays
-@app.route("/getarrays")
-def getarrays():
-    arrayNames = []
-    with open("static/arrays.json") as jsonFile:
-        arraysJson = json.load(jsonFile)
-        arrays = arraysJson["arrays"]
-        for a in arrays:
+#Return the available libraries
+@app.route("/getlibraries")
+def getlibraries():
+    librariesNames = []
+    with open("static/libraries.json") as jsonFile:
+        librariesJson = json.load(jsonFile)
+        libraries = librariesJson["libraries"]
+        for a in libraries:
             varName = a["variable"]
-            varArrays = a["arrays"]
+            varLibraries = a["libraries"]
 
             varInfo = {}
             varInfo["variable"] = varName
             varInfo["names"] = []
-            for va in varArrays:
+            for va in varLibraries:
                 varInfo["names"].append(va["name"])
 
-            arrayNames.append(varInfo)
-    return json.dumps({"arrays": arrayNames})
+            librariesNames.append(varInfo)
+    return json.dumps({"libraries": librariesNames})
 
-#Returns the array information associated to a given variable
-@app.route("/getarray", methods=["POST", "GET"])
-def getarray():
+#Returns the library information associated to a given variable
+@app.route("/getlibrary", methods=["POST", "GET"])
+def getlibrary():
+    values = {}
     if (request.method == "GET"):
         requestedVariable = request.args["variable"]
-        requestedArrayName = request.args["arrayName"]
-        with open("static/arrays.json") as jsonFile:
-            arraysJson = json.load(jsonFile)
-            allArrays = arraysJson["arrays"]
-            for v in allArrays:
+        requestedLibraryName = request.args["libraryName"]
+        with open("static/libraries.json") as jsonFile:
+            librariesJson = json.load(jsonFile)
+            allLibraries = librariesJson["libraries"]
+            for v in allLibraries:
                 if (v["variable"] == requestedVariable):
-                    variableArrays = v["arrays"]
-                    for a in variableArrays:
-                        if (a["name"] == requestedArrayName):
+                    variableLibraries = v["libraries"]
+                    for a in variableLibraries:
+                        if (a["name"] == requestedLibraryName):
                             values = a["values"]
                             break
                     break

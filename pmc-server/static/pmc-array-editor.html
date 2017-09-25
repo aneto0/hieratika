@@ -41,7 +41,7 @@
                         if (initialValue !== undefined) {
                             cellInitValue = initialValue[i];
                         }
-                        if(cellValue !== cellInitValue) {
+                        if(!this.compareValues(cellValue, cellInitValue)) {
                             cell.style.color = DIFF_INIT_CHANGED_COLOR;
                         }
                         else {
@@ -103,18 +103,6 @@
 
                 PMCArrayEditorProto.attachedCallback = function() {
                 };
-
-                PMCArrayEditorProto.refresh = function() {
-                    var tbl = this.shadowRoot.querySelector("#tarray");
-                    tbl.deleteRow(0);
-                    var row = tbl.insertRow(0);
-                    var i;
-                    for (i=0; i<this.getNumberOfElements(); i++) {
-                        var col = row.insertCell(i);
-                        col.setAttribute("contenteditable", "true");
-                        col.innerHTML = " ";
-                    }
-                }
 
                 document.registerElement("pmc-array-editor", {
                     prototype: PMCArrayEditorProto
