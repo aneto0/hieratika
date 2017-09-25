@@ -133,8 +133,11 @@
                     if (this.reference === "plant") {
                         refToDisplay = this.pltvalue;
                     }
+                    var currentValueTxt = undefined;
                     var currentValue = this.getValue();
-                    var currentValueTxt = currentValue[0] + "/" + currentValue[1];
+                    if (currentValue !== undefined) {
+                        currentValueTxt = currentValue[0] + "/" + currentValue[1];
+                    }
 
                     var plantValue = this.getPlantValue();
                     var plantValueTxt = undefined;
@@ -174,14 +177,19 @@
                             currentTransferFunction.innerHTML = generateTransferFunctionMathML(num, den);
                             jqMath.parseMath(currentTransferFunction);
                         }
+
+                        var ref = this.getReference();
                         var refValue = this.getReferenceValue();
-                        if (refValue !== undefined) {
-                            var numRef = refValue[0];
-                            var denRef = refValue[1];
-                            this.chart.data.datasets[1].data = getFilterResponse(numRef, denRef, this.frequencyStep, this.maxFrequency);
-                            var referenceTransferFunction = this.shadowRoot.querySelector("#referenceTransferFunction");
-                            referenceTransferFunction.innerHTML = generateTransferFunctionMathML(numRef, denRef);
-                            jqMath.parseMath(referenceTransferFunction);
+                        var referenceTransferFunction = this.shadowRoot.querySelector("#referenceTransferFunction");
+                        referenceTransferFunction.innerHTML = "";
+                        if (ref !== "none") {
+                            if (refValue !== undefined) {
+                                var numRef = refValue[0];
+                                var denRef = refValue[1];
+                                this.chart.data.datasets[1].data = getFilterResponse(numRef, denRef, this.frequencyStep, this.maxFrequency);
+                                referenceTransferFunction.innerHTML = generateTransferFunctionMathML(numRef, denRef);
+                                jqMath.parseMath(referenceTransferFunction);
+                            }
                         }
                         var plantValue = this.getPlantValue();
                         if (plantValue !== undefined) {

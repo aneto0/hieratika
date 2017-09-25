@@ -29,7 +29,7 @@
 
     PMCLibraryProto.selectOption = function() {
         var selector = document.getElementById(this.id + "-selector");
-        selector.showSelector(this.availableOptions);
+        selector.showSelector(this.availableOptions, this.value);
     }
 
     PMCLibraryProto.change = function(newLibraryName) {

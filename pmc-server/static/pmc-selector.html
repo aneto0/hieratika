@@ -7,14 +7,25 @@
             <dialog id="dselector">
                 <h3 id="titselector">
                 </h3>
-                <div id="diveditor"></div>
-                <br/>
-                <select id="tselect" name="tselect"></select>
-                <br/>
-                <br/>
-                <button id="tselectorOK">OK</button>
-                <button id="tselectorCancel">Cancel</button>
-                <button id="tselectorEdit">Edit</button>
+                <table style="border-style: dotted;border-width: 3px;width: 100%">
+                    <tr>
+                        <td><div id="diveditor"></div></td>
+                    </tr>
+                </table>
+                </br>
+                <table style="border-style:solid;border-width:1px;width: 100%">
+                    <tr>
+                        <td><select id="tselect" name="tselect"></select></td>
+                        <td><button id="saveButton">Save</button></td>
+                        <td><button id="saveAsButton">Save as...</button><input type="text" id="saveAsLibraryName"></input></td>
+                    </tr>
+                </table>
+                </br>
+                <table style="border-style:solid;border-width:1px;width: 100%">
+                    <tr>
+                        <td><button id="tselectorOK">OK</button><button id="tselectorCancel">Cancel</button></td>
+                    </tr>
+                </table>
             </dialog>
         </template>
         <script>
@@ -42,7 +53,7 @@
                 });
 
             
-                PMCSelectorProto.showSelector = function(optionNames) {
+                PMCSelectorProto.showSelector = function(optionNames, currentOption) {
                     var diag = this.shadowRoot.querySelector("#dselector");
                     var selector = this.shadowRoot.querySelector("#tselect");
                     selector.innerHTML = "";
@@ -51,7 +62,93 @@
                         option.value = option.text = optionName;
                         selector.add(option);
                     });
+                    selector.value = currentOption;
+                    this.editLibrary();
                     diag.showModal();
+                }
+
+
+                PMCSelectorProto.editLibrary = function() {
+                    var selector = this.shadowRoot.querySelector("#tselect");
+                    var editor = this.shadowRoot.getElementById(this.editor.id);
+                    editor.setTypeValue(this.owner.getTypeValue());
+                    editor.setReference(this.owner.getReference());
+                    if (this.owner.getReferenceValue() !== undefined) {
+                        $.ajax({
+                            type: "get",
+                            url: "/getlibrary",
+                            data: {
+                                variable : this.owner.id, 
+                                libraryName : this.owner.getReferenceValue()  
+                            },
+                            success: function (response) {
+                                values = $.parseJSON(response);
+                                editor.setReferenceValue(values);
+                            },
+                            error: function (response) {
+                                console.log(response);
+                                alert(response);
+                            }
+                        });
+                    }
+
+                    if (this.owner.getInitialValue() !== undefined) {
+                        $.ajax({
+                            type: "get",
+                            url: "/getlibrary",
+                            data: {
+                                variable : this.owner.id, 
+                                libraryName : this.owner.getInitialValue()  
+                            },
+                            success: function (response) {
+                                values = $.parseJSON(response);
+                                editor.setInitialValue(values);
+                                editor.checkValues();
+                            },
+                            error: function (response) {
+                                console.log(response);
+                                alert(response);
+                            }
+                        });
+                    }
+
+                    if (this.owner.getPlantValue() !== undefined) {
+                        $.ajax({
+                            type: "get",
+                            url: "/getlibrary",
+                            data: {
+                                variable : this.owner.id, 
+                                libraryName : this.owner.getPlantValue()  
+                            },
+                            success: function (response) {
+                                values = $.parseJSON(response);
+                                editor.setPlantValue(values);
+                                editor.checkValues();
+                            },
+                            error: function (response) {
+                                console.log(response);
+                                alert(response);
+                            }
+                        });
+                    }
+
+                    $.ajax({
+                        type: "get",
+                        url: "/getlibrary",
+                        data: {
+                            variable : this.owner.id, 
+                            libraryName : selector.options[selector.selectedIndex].text  
+                        },
+                        success: function (response) {
+                            values = $.parseJSON(response);
+                            editor.setValue(values);
+                            editor.checkValues();
+                        },
+                        error: function (response) {
+                            console.log(response);
+                            alert(response);
+                        }
+                    });
                 }
 
                 // Use Shadow DOM and a template. Use the attachedCallback as @ createdCallback this.owner will not exist and I need this id (at least in this prototype phase)
@@ -69,7 +166,6 @@
                     var selector = this.shadowRoot.querySelector("#tselect");
                     var okButton = this.shadowRoot.querySelector("#tselectorOK");
                     var cancelButton = this.shadowRoot.querySelector("#tselectorCancel");
-                    var editButton = this.shadowRoot.querySelector("#tselectorEdit");
 
                     okButton.onclick = function() {
                         this.selected = selector.options[selector.selectedIndex].text;
@@ -82,93 +178,17 @@
                         diag.close();
                     }.bind(this); //bind is needed to make sure that the "this" is still valid in the context of the callback
 
+                    selector.onchange = function() {
+                        this.editLibrary();
+                    }.bind(this);
+
+
                     //Attach an editor
                     var divEditor = this.shadowRoot.querySelector("#divEditor");
                     while(divEditor.firstChild) {
                         divEditor.removeChild(divEditor);
                     }
                     divEditor.appendChild(this.editor);
-                    editButton.onclick = function() {
-                        var editor = this.shadowRoot.getElementById(this.editor.id);
-                        editor.setTypeValue(this.owner.getTypeValue());
-                        editor.setReference(this.owner.getReference());
-                        if (this.owner.getReferenceValue() !== undefined) {
-                            $.ajax({
-                                type: "get",
-                                url: "/getlibrary",
-                                data: {
-                                    variable : this.owner.id, 
-                                    libraryName : this.owner.getReferenceValue()  
-                                },
-                                success: function (response) {
-                                    values = $.parseJSON(response);
-                                    editor.setReferenceValue(values);
-                                },
-                                error: function (response) {
-                                    console.log(response);
-                                    alert(response);
-                                }
-                            });
-                        }
-
-                        if (this.owner.getInitialValue() !== undefined) {
-                            $.ajax({
-                                type: "get",
-                                url: "/getlibrary",
-                                data: {
-                                    variable : this.owner.id, 
-                                    libraryName : this.owner.getInitialValue()  
-                                },
-                                success: function (response) {
-                                    values = $.parseJSON(response);
-                                    editor.setInitialValue(values);
-                                    editor.checkValues();
-                                },
-                                error: function (response) {
-                                    console.log(response);
-                                    alert(response);
-                                }
-                            });
-                        }
-
-                        if (this.owner.getPlantValue() !== undefined) {
-                            $.ajax({
-                                type: "get",
-                                url: "/getlibrary",
-                                data: {
-                                    variable : this.owner.id, 
-                                    libraryName : this.owner.getPlantValue()  
-                                },
-                                success: function (response) {
-                                    values = $.parseJSON(response);
-                                    editor.setPlantValue(values);
-                                    editor.checkValues();
-                                },
-                                error: function (response) {
-                                    console.log(response);
-                                    alert(response);
-                                }
-                            });
-                        }
-
-                        $.ajax({
-                            type: "get",
-                            url: "/getlibrary",
-                            data: {
-                                variable : this.owner.id, 
-                                libraryName : selector.options[selector.selectedIndex].text  
-                            },
-                            success: function (response) {
-                                values = $.parseJSON(response);
-                                editor.setValue(values);
-                                editor.checkValues();
-                            },
-                            error: function (response) {
-                                console.log(response);
-                                alert(response);
-                            }
-                        });
-                    }.bind(this);
                 };
 
                 document.registerElement("pmc-selector", {

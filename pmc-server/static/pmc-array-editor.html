@@ -6,8 +6,17 @@
     <body>
         <template id="ttarray">
             <div id="darray">
-                <table border="1" id="tarray">
+                <table border="0">
                     <tr>
+                        <td>
+                            <table border="1" id="tarray">
+                                <tr></tr>
+                            </table>
+                        </td>
+                        <td>
+                            <button type="button" id="addButton">+</button>
+                            <button type="button" id="removeButton">-</button>
+                        </td>
                     </tr>
                 </table>
             </div>
@@ -80,6 +89,8 @@
                         var col = row.insertCell(i);
                         col.innerHTML = elementsToSet[i];
                         col.setAttribute("contenteditable", "true");
+                        col.style.width = "20px";
+                        col.style.textAlign = "right";
                         col.addEventListener("input", function (e) {
                             this.checkValues();
                         }.bind(this));
@@ -98,6 +109,29 @@
                     var root = this.createShadowRoot();
  
                     root.appendChild(clone);
+                    var addButton = this.shadowRoot.querySelector("#addButton");
+                    addButton.onclick = function() {
+                        var tbl = this.shadowRoot.querySelector("#tarray");
+                        var row = tbl.rows[0];
+                        var col = row.insertCell();
+                        col.setAttribute("contenteditable", "true");
+                        col.style.width = "20px";
+                        col.style.textAlign = "right";
+                        col.addEventListener("input", function (e) {
+                            this.checkValues();
+                        }.bind(this));
+                        this.checkValues();
+                    }.bind(this);
+
+                    var removeButton = this.shadowRoot.querySelector("#removeButton");
+                    removeButton.onclick = function() {
+                        var tbl = this.shadowRoot.querySelector("#tarray");
+                        var row = tbl.rows[0];
+                        if (row.cells.length > 0) {
+                            row.deleteCell(row.cells.length - 1);
+                        }
+                        this.checkValues();
+                    }.bind(this);
 
                 };
 
