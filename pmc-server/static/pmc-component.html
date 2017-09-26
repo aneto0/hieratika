@@ -1,11 +1,6 @@
 <!-- Define a new standard component for the pmc -->
 <link rel="import" href="libraries.html">
 <script type="text/javascript">
-    const PLANT_OR_REF_CHANGED_COLOR = "gray";
-    const DIFF_INIT_CHANGED_COLOR = "blue";
-    const STANDARD_FCOLOR = "black";
-    const STANDARD_BCOLOR = "white";
-
     //Constructor
     function PMCComponent() {
        HTMLElement.call(this);
@@ -29,13 +24,15 @@
     PMCComponent.prototype.compareValues = function(value1, value2) {
         var val1 = String(value1);
         var val2 = String(value2);
-        if ((!this.library) && (this.typevalue === "float32") || (this.typevalue === "float64")) {
-                val1 = parseFloat(value1);
-                val2 = parseFloat(value2);
-        }
-        else if ((!this.library) && (this.typevalue.startsWith("int") || (this.typevalue.startsWith("uint")))) {
-                val1 = parseInt(value1);
-                val2 = parseInt(value2);
+        if (this.typeValue !== undefined) {
+            if ((!this.library) && (this.typevalue === "float32") || (this.typevalue === "float64")) {
+                    val1 = parseFloat(value1);
+                    val2 = parseFloat(value2);
+            }
+            else if ((!this.library) && (this.typevalue.startsWith("int") || (this.typevalue.startsWith("uint")))) {
+                    val1 = parseInt(value1);
+                    val2 = parseInt(value2);
+            }
         }
         return (val1 === val2);
     }
@@ -54,25 +51,28 @@
         return this.compareValues(val1, val2);
     }
 
-    PMCComponent.prototype.checkValues = function() {
+    PMCComponent.prototype.checkValues = function(component) {
+        if (component === undefined) {
+            component = this;
+        }
         //If the current value does not match the initial value set the font color blue
-        if(!this.compareValues(this.value, this.initvalue)) {
-            this.style.color = DIFF_INIT_CHANGED_COLOR;
+        if(!this.compareValues(component.value, this.initvalue)) {
+            component.style.color = DIFF_INIT_CHANGED_COLOR;
         }
         else {
-            this.style.color = STANDARD_FCOLOR;
+            component.style.color = STANDARD_FCOLOR;
         }
 
         var newBackgroundColor = STANDARD_BCOLOR;
-        if (this.compareWithReference(this.value, this.pltvalue, this.refvalue)) {
+        if (this.compareWithReference(component.value, this.pltvalue, this.refvalue)) {
             newBackgroundColor = STANDARD_BCOLOR;
         }
         else {
             newBackgroundColor = PLANT_OR_REF_CHANGED_COLOR;
         }
 
-        this.style.backgroundColor = newBackgroundColor;
-        this.title = this.currentValuesToString();
+        component.style.backgroundColor = newBackgroundColor;
+        component.title = this.currentValuesToString();
     }
 
     /**
@@ -147,6 +147,20 @@
         this.value = valueToSet;
     }
 
+    PMCComponent.prototype.domLoaded = function() {
+    }
+
+    PMCComponent.prototype.attachLibraryHandler = function() {
+        //Create an editor
+        var editorName = this.getAttribute("data-library-editor");
+        var editor = document.createElement(editorName);
+
+        //Attach a selector
+        this.librarySelector = document.createElement("pmc-selector");
+        this.librarySelector.owner = this;
+        this.librarySelector.editor = editor;
+    }
+
     //The reference in use
     Object.defineProperty(PMCComponent, "reference", {
         value: "none",
@@ -190,6 +204,26 @@
         writable: true
     });
 
+    // the editor to use
+    Object.defineProperty(PMCComponent, "data-editor", {
+        value: "",
+        writable: true
+    });
+
+    Object.defineProperty(PMCComponent, "availableLibraries", {
+        value: "",
+        writable: true
+    });
+
+    Object.defineProperty(PMCComponent, "librarySelector", {
+        value: "",
+        writable: true
+    });
+
+    PMCComponent.prototype.selectLibrary = function() {
+        document.body.appendChild(this.librarySelector);
+        this.librarySelector.showSelector(this.availableLibraries, this.value);
+    }
 
     PMCComponent.prototype.attachedCallback = function() {
     }

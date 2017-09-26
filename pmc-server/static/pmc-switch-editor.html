@@ -1,0 +1,60 @@
+<!-- Standard button -->
+<html>
+    <head>
+        <link rel="import" href="libraries.html">
+        <link rel="import" href="pmc-component.html">
+    </head>
+    <body>
+        <template id="tswitch">
+            <textarea rows="10" cols="50" id="ttextarea">
+            </textarea>
+        </template>
+        <script type="text/javascript">
+            //Constructor
+            function PMCSwitchEditor() {
+                HTMLElement.call(this);
+                PMCComponent.call(this);
+            }
+
+            (function () {
+                var importDoc = document.currentScript.ownerDocument; // importee
+
+                //Notice that PMCSwitchEditorProto is an "alias" to PMCSwitchEditor.prototype
+                PMCSwitchEditorProto = Object.create(HTMLElement.prototype);
+                PMCSwitchEditorProto.constructor = PMCSwitchEditor;
+
+                extendMixin(PMCSwitchEditorProto, PMCComponent.prototype);
+
+                PMCSwitchEditorProto.setValue = function(elementsToSet) {
+                    var txtArea = this.shadowRoot.querySelector("#ttextarea");
+                    this.value = elementsToSet;
+                    txtArea.value = this.value;
+                    this.checkValues(txtArea);
+                }
+
+
+                PMCSwitchEditorProto.createdCallback = function () {
+                    // Get template 
+                    var template = importDoc.querySelector("#tswitch");
+
+                    // import template into
+                    var clone = document.importNode(template.content, true);
+                    var root = this.createShadowRoot();
+ 
+                    root.appendChild(clone);
+
+                    var txtArea = this.shadowRoot.querySelector("#ttextarea");
+                    txtArea.addEventListener("keyup", function (e) {
+                        console.log(txtArea.value);
+                        this.checkValues(txtArea);
+                    }.bind(this));
+                    allPMCComponents[this.id] = this;
+                }
+
+                document.registerElement("pmc-switch-editor", {
+                    prototype: PMCSwitchEditorProto,
+                });
+            })();
+        </script>
+    </body>
+</html>

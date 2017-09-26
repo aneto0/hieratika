@@ -58,6 +58,30 @@
                     "numberOfElements" : ["1", "2"],
                     "library" : "true",
                     "epicsPV" : "false"
+                },
+                {
+                    "name" : "PMC::TEST::VAR8",
+                    "initialValue" : "Example 1",
+                    "type" : "string",
+                    "numberOfElements" : "1",
+                    "library" : "true",
+                    "epicsPV" : "false"
+                },
+                {
+                    "name" : "PMC::TEST::VAR9",
+                    "initialValue" : "Example 2",
+                    "type" : "string",
+                    "numberOfElements" : "1",
+                    "library" : "true",
+                    "epicsPV" : "false"
+                },
+                {
+                    "name" : "PMC::TEST::VAR10",
+                    "initialValue" : "Example 4",
+                    "type" : "string",
+                    "numberOfElements" : "1",
+                    "library" : "true",
+                    "epicsPV" : "false"
                 }
             ]
         }

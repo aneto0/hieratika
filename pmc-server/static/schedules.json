@@ -42,6 +42,21 @@
                     "name": "PMC::TEST::VAR7",
                     "value": "Example 1",
                     "isPV": "True"
+                },
+                {
+                    "name": "PMC::TEST::VAR8",
+                    "value": "Example 1",
+                    "isPV": "True"
+                },
+                {
+                    "name": "PMC::TEST::VAR9",
+                    "value": "Example 2",
+                    "isPV": "True"
+                },
+                {
+                    "name": "PMC::TEST::VAR10",
+                    "value": "Example 4",
+                    "isPV": "True"
                 }
             ]
         },
@@ -87,6 +102,21 @@
                 {
                     "name": "PMC::TEST::VAR7",
                     "value": "Example 2",
+                    "isPV": "True"
+                },
+                {
+                    "name": "PMC::TEST::VAR8",
+                    "value": "Example 4",
+                    "isPV": "True"
+                },
+                {
+                    "name": "PMC::TEST::VAR9",
+                    "value": "Example 3",
+                    "isPV": "True"
+                },
+                {
+                    "name": "PMC::TEST::VAR10",
+                    "value": "Example 6",
                     "isPV": "True"
                 }
             ]

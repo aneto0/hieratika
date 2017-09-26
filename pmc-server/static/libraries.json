@@ -47,8 +47,38 @@
                 }
 
             ]
-        }
+        },
+        {
+            "variable": "PMC::TEST::VAR9",
+            "libraries": [
+                {
+                    "name":"Example 2",
+                    "values": "ip address 172.22.95.192 255.255.255.0\nboot system system-237; ep-49",
+                    "owner": "Andre Neto"
+                },
+                {
+                    "name":"Example 3",
+                    "values": "ip address 172.22.95.194 255.255.255.0\nboot system system-237; ep-90",
+                    "owner": "Andre Neto"
+                }
 
- 
+            ]
+        },
+        {
+            "variable": "PMC::TEST::VAR10",
+            "libraries": [
+                {
+                    "name":"Example 4",
+                    "values": "ip address 172.22.95.110 255.255.255.0\nboot system system-210; ep-49",
+                    "owner": "Andre Neto"
+                },
+                {
+                    "name":"Example 6",
+                    "values": "ip address 172.22.95.104 255.255.255.0\nboot system system-237; ep-10",
+                    "owner": "Andre Neto"
+                }
+
+            ]
+        }
     ]
 }

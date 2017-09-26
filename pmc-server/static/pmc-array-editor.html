@@ -109,6 +109,7 @@
                     var root = this.createShadowRoot();
  
                     root.appendChild(clone);
+                    allPMCComponents[this.id] = this;
                     var addButton = this.shadowRoot.querySelector("#addButton");
                     addButton.onclick = function() {
                         var tbl = this.shadowRoot.querySelector("#tarray");

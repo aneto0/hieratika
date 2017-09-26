@@ -18,6 +18,7 @@
         this.addEventListener("input", function (e) {
             this.checkValues();
         });
+        allPMCComponents[this.id] = this;
     }
 
     document.registerElement("pmc-input", {

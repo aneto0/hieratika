@@ -5,6 +5,9 @@
         <link rel="import" href="pmc-input.html">
         <link rel="import" href="pmc-library.html">
         <link rel="import" href="pmc-array-editor.html">
+        <link rel="import" href="pmc-cubicle-editor.html">
+        <link rel="import" href="pmc-switch.html">
+        <link rel="import" href="pmc-switch-editor.html">
         <link rel="import" href="pmc-filter-editor.html">
         <!-- Handle SSE events from the server-->
         <script>
@@ -17,7 +20,7 @@
                 var i;
                 for (i in plantVariables) {
                     var pv = plantVariables[i];
-                    var targetElement = document.getElementById(pv.name);
+                    var targetElement = allPMCComponents[pv.name];
                     if (targetElement !== null) {
                         targetElement.setPlantValue(pv.value);
                         targetElement.checkValues();
@@ -32,8 +35,7 @@
                 $("#updatePlantForm").on("submit", function (e) {
                     e.preventDefault();
                     var allPMCDataJSon = {};
-                    var allPMCComps = $("[is^='pmc']");
-                    allPMCComps.each(function (i, pmcComp) {
+                    $.each(allPMCComponents, function (i, pmcComp) {
                         allPMCDataJSon[pmcComp.id] = pmcComp.getValue();
                     });
                     var dataToSend = "update=" + JSON.stringify(allPMCDataJSon);
@@ -44,8 +46,7 @@
                         success: function (response) {
                             if (response == "done") {
                                 alert("Values updated successfully!");
-                                var allPMCComps = $("[is^='pmc']");
-                                allPMCComps.each(function (i, pmcComp) {
+                                $.each(allPMCComponents, function (i, pmcComp) {
                                     pmcComp.setInitialValue(pmcComp.getValue());
                                     pmcComp.checkValues();
                                 });
@@ -70,8 +71,7 @@
                     var currentReference = document.getElementById("refselect").value;
                     if (currentReference === "none") {
                         //Reset all the values to N/A
-                        var allPMCComps = $("[is^='pmc']");
-                        allPMCComps.each(function (i, pmcComp) {
+                        $.each(allPMCComponents, function (i, pmcComp) {
                             pmcComp.setReferenceValue("N/A");
                             pmcComp.setReference(currentReference);
                             pmcComp.checkValues();
@@ -79,8 +79,7 @@
                     }
                     else if (currentReference === "plant") {
                         //Reset all the values to N/A
-                        var allPMCComps = $("[is^='pmc']");
-                        allPMCComps.each(function (i, pmcComp) {
+                        $.each(allPMCComponents, function (i, pmcComp) {
                             pmcComp.setReferenceValue(pmcComp.getPlantValue());
                             pmcComp.setReference(currentReference);
                             pmcComp.checkValues();
@@ -98,7 +97,7 @@
                             success: function (response) {
                                 variables = $.parseJSON(response);
                                 $.each(variables, function(i, variable) {
-                                    var targetElement = document.getElementById(variable.name);
+                                    var targetElement = allPMCComponents[variable.name];
                                     if (targetElement != null) {
                                         targetElement.setReferenceValue(variable.value);
                                         targetElement.setReference(currentReference);
@@ -126,7 +125,7 @@
                         success: function (response) {
                             variables = $.parseJSON(response);
                             $.each(variables, function(i, variable) {
-                                var targetElement = document.getElementById(variable.name);
+                                var targetElement = allPMCComponents[variable.name];
                                 if (targetElement != null) {
                                     targetElement.setValue(variable.value);
                                     targetElement.checkValues();
@@ -179,8 +178,9 @@
                         var pvInfosJson = $.parseJSON(response);
                         var pvInfos = pvInfosJson["variables"];
                         $.each(pvInfos, function(i, pvInfo) {
-                            var targetElement = document.getElementById(pvInfo.name);
+                            var targetElement = allPMCComponents[pvInfo.name];
                             if (targetElement != null) {
+                                console.log(pvInfo.name);
                                 targetElement.setTypeValue(pvInfo.type);
                                 targetElement.setLibrary(pvInfo.library.toLowerCase() === "true");
                                 targetElement.setNumberOfElements(pvInfo.numberOfElements);
@@ -205,9 +205,9 @@
                         var librariesJson = $.parseJSON(response);
                         var allLibraries = librariesJson["libraries"];
                         $.each(allLibraries, function(i, librariesJson) {
-                            var targetElement = document.getElementById(librariesJson.variable);
+                            var targetElement = allPMCComponents[librariesJson.variable];
                             if (targetElement != null) {
-                                targetElement.availableOptions = librariesJson.names;
+                                targetElement.availableLibraries = librariesJson.names;
                             }
                         });
                     },
@@ -217,12 +217,15 @@
                     }
                 });
 
+                $.each(allPMCComponents, function (i, pmcComp) {
+                    pmcComp.domLoaded();
+                });
+
 
             });
 
             function loadFromPlant() {
-                var allPMCComps = $("[is^='pmc']");
-                allPMCComps.each(function (i, pmcComp) {
+                $.each(allPMCComponents, function (i, pmcComp) {
                     pmcComp.setValue(pmcComp.getPlantValue());
                     pmcComp.checkValues();
                 });
@@ -244,15 +247,15 @@
                 </tr>
                 <tr>
                     <td>PMC::TEST::VAR3</td>
-                    <td><button is="pmc-library" data-editor="pmc-array-editor" type="button" id="PMC::TEST::VAR3" name="PMC::TEST::VAR3"></button></td>
+                    <td><button is="pmc-library" data-library-editor="pmc-array-editor" type="button" id="PMC::TEST::VAR3" name="PMC::TEST::VAR3"></button></td>
                 </tr>
                 <tr>
                     <td>PMC::TEST::VAR4</td>
-                    <td><button is="pmc-library" data-editor="pmc-array-editor" type="button" id="PMC::TEST::VAR4" name="PMC::TEST::VAR4"></button></td>
+                    <td><button is="pmc-library" data-library-editor="pmc-array-editor" type="button" id="PMC::TEST::VAR4" name="PMC::TEST::VAR4"></button></td>
                 </tr>
                 <tr>
                     <td>PMC::TEST::VAR7</td>
-                    <td><button is="pmc-library" data-editor="pmc-filter-editor" type="button" id="PMC::TEST::VAR7" name="PMC::TEST::VAR7"></button></td>
+                    <td><button is="pmc-library" data-library-editor="pmc-filter-editor" type="button" id="PMC::TEST::VAR7" name="PMC::TEST::VAR7"></button></td>
                 </tr>
                 <tr>
                     <td>PMC::TEST::VAR5</td>
@@ -280,6 +283,16 @@
         </form></br>
             
         <input type="button" value="Load from plant" onclick="loadFromPlant()"></input>
+        <br/>
+
+        <pmc-cubicle-editor is="pmc" id="PMC::TEST::VAR8">
+            <pmc-switch is="pmc" id="PMC::TEST::VAR9" data-library-editor="pmc-switch-editor" data-location-cubicle="0">
+            </pmc-switch>
+            <pmc-switch is="pmc" id="PMC::TEST::VAR10" data-library-editor="pmc-switch-editor" data-location-cubicle="2">
+            </pmc-switch>
+        </pmc-cubicle-editor>
+<!--        <pmc-switch is="pmc" id="PMC::TEST::VAR11" data-library-editor="pmc-switch-editor">
+        </pmc-switch>-->
     </body>
 </html>
 

@@ -70,9 +70,8 @@
 
                 PMCSelectorProto.editLibrary = function() {
                     var selector = this.shadowRoot.querySelector("#tselect");
-                    var editor = this.shadowRoot.getElementById(this.editor.id);
-                    editor.setTypeValue(this.owner.getTypeValue());
-                    editor.setReference(this.owner.getReference());
+                    this.editor.setTypeValue(this.owner.getTypeValue());
+                    this.editor.setReference(this.owner.getReference());
                     if (this.owner.getReferenceValue() !== undefined) {
                         $.ajax({
                             type: "get",
@@ -83,8 +82,8 @@
                             },
                             success: function (response) {
                                 values = $.parseJSON(response);
-                                editor.setReferenceValue(values);
-                            },
+                                this.editor.setReferenceValue(values);
+                            }.bind(this),
                             error: function (response) {
                                 console.log(response);
                                 alert(response);
@@ -102,9 +101,9 @@
                             },
                             success: function (response) {
                                 values = $.parseJSON(response);
-                                editor.setInitialValue(values);
-                                editor.checkValues();
-                            },
+                                this.editor.setInitialValue(values);
+                                this.editor.checkValues();
+                            }.bind(this),
                             error: function (response) {
                                 console.log(response);
                                 alert(response);
@@ -122,9 +121,9 @@
                             },
                             success: function (response) {
                                 values = $.parseJSON(response);
-                                editor.setPlantValue(values);
-                                editor.checkValues();
-                            },
+                                this.editor.setPlantValue(values);
+                                this.editor.checkValues();
+                            }.bind(this),
                             error: function (response) {
                                 console.log(response);
                                 alert(response);
@@ -141,9 +140,9 @@
                         },
                         success: function (response) {
                             values = $.parseJSON(response);
-                            editor.setValue(values);
-                            editor.checkValues();
-                        },
+                            this.editor.setValue(values);
+                            this.editor.checkValues();
+                        }.bind(this),
                         error: function (response) {
                             console.log(response);
                             alert(response);
@@ -153,43 +152,48 @@
 
                 // Use Shadow DOM and a template. Use the attachedCallback as @ createdCallback this.owner will not exist and I need this id (at least in this prototype phase)
                 PMCSelectorProto.attachedCallback = function() {
-                    // Get template 
-                    var template = importDoc.querySelector("#tselector");
+                    if (this.shadowRoot === null) {
+                        // Get template 
+                        var template = importDoc.querySelector("#tselector");
 
-                    // import template into
-                    var clone = document.importNode(template.content, true);
-                    var root = this.createShadowRoot();
- 
-                    root.appendChild(clone);
+                        // import template into
+                        var clone = document.importNode(template.content, true);
+                        var root = this.createShadowRoot();
+     
+                        root.appendChild(clone);
+                        allPMCComponents[this.id] = this;
 
-                    var diag = this.shadowRoot.querySelector("#dselector");
-                    var selector = this.shadowRoot.querySelector("#tselect");
-                    var okButton = this.shadowRoot.querySelector("#tselectorOK");
-                    var cancelButton = this.shadowRoot.querySelector("#tselectorCancel");
+                        var diag = this.shadowRoot.querySelector("#dselector");
+                        var selector = this.shadowRoot.querySelector("#tselect");
+                        var okButton = this.shadowRoot.querySelector("#tselectorOK");
+                        var cancelButton = this.shadowRoot.querySelector("#tselectorCancel");
 
-                    okButton.onclick = function() {
-                        this.selected = selector.options[selector.selectedIndex].text;
-                        this.owner.change(this.selected);
-                        diag.close();
-                    }.bind(this); //bind is needed to make sure that the "this" is still valid in the context of the callback
+                        okButton.onclick = function() {
+                            this.selected = selector.options[selector.selectedIndex].text;
+                            this.owner.change(this.selected);
+                            diag.close();
+                            document.body.removeChild(this);
+                        }.bind(this); //bind is needed to make sure that the "this" is still valid in the context of the callback
 
-                    cancelButton.onclick = function() {
-                        this.selected = "";
-                        diag.close();
-                    }.bind(this); //bind is needed to make sure that the "this" is still valid in the context of the callback
+                        cancelButton.onclick = function() {
+                            this.selected = "";
+                            diag.close();
+                            document.body.removeChild(this);
+                        }.bind(this); //bind is needed to make sure that the "this" is still valid in the context of the callback
 
-                    selector.onchange = function() {
-                        this.editLibrary();
-                    }.bind(this);
+                        selector.onchange = function() {
+                            this.editLibrary();
+                        }.bind(this);
 
 
-                    //Attach an editor
-                    var divEditor = this.shadowRoot.querySelector("#divEditor");
-                    while(divEditor.firstChild) {
-                        divEditor.removeChild(divEditor);
+                        //Attach an editor
+                        var divEditor = this.shadowRoot.querySelector("#divEditor");
+                        while(divEditor.firstChild) {
+                            divEditor.removeChild(divEditor);
+                        }
+                        divEditor.appendChild(this.editor);
                     }
-                    divEditor.appendChild(this.editor);
-                };
+                }
 
                 document.registerElement("pmc-selector", {
                     prototype: PMCSelectorProto

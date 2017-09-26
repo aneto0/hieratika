@@ -221,6 +221,7 @@
                     this.frequencyStep = 0.2;
                     this.maxFrequency = 10; 
                     root.appendChild(clone);
+                    allPMCComponents[this.id] = this;
                     this.shadowRoot.querySelector("#frequencyStepInput").value = this.frequencyStep;
                     this.shadowRoot.querySelector("#maxFrequencyInput").value = this.maxFrequency;
                     var button = this.shadowRoot.querySelector("#refreshButton");

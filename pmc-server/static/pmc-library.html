@@ -8,6 +8,7 @@
     //Constructor
     function PMCLibrary() {
         HTMLButtonElement.call(this);
+        PMCComponent.call(this);
     }
 
     //Notice that PMCLibraryProto is an alias to PMCLibrary.prototype
@@ -15,22 +16,6 @@
     PMCLibraryProto.constructor = PMCLibrary;
 
     extendMixin(PMCLibraryProto, PMCComponent.prototype);
-
-    // the editor to use
-    Object.defineProperty(PMCLibraryProto, "data-editor", {
-        value: "",
-        writable: true
-    });
-
-    Object.defineProperty(PMCLibraryProto, "availableOptions", {
-        value: "",
-        writable: true
-    });
-
-    PMCLibraryProto.selectOption = function() {
-        var selector = document.getElementById(this.id + "-selector");
-        selector.showSelector(this.availableOptions, this.value);
-    }
 
     PMCLibraryProto.change = function(newLibraryName) {
         this.innerHTML = newLibraryName;
@@ -40,24 +25,12 @@
 
     PMCLibraryProto.createdCallback = function () {
         this.addEventListener("click", function (e) {
-            this.selectOption();
+            this.selectLibrary();
             return false;
         }.bind(this), false);
 
-        //Create an editor
-        var editorName = this.getAttribute("data-editor");
-        var editor = document.createElement(editorName);
-        var editorId = this.id + "-library-editor";
-        editor.setAttribute("id", editorId);
-
-        //Attach a selector
-        var selector = document.createElement("pmc-selector");
-        var selectorId = this.id + "-selector";
-        selector.setAttribute("id", selectorId);
-        selector.owner = this;
-        selector.editor = editor;
-   
-        document.body.appendChild(selector);
+        allPMCComponents[this.id] = this;
+        this.attachLibraryHandler();
     }
 
     document.registerElement("pmc-library", {
