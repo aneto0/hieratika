@@ -17,8 +17,7 @@
             evtSrc.onmessage = function(e) {
                 var jsonPlantVariables = $.parseJSON(e.data);
                 var plantVariables = jsonPlantVariables["plantVariables"];
-                var i;
-                for (i in plantVariables) {
+                for (var i in plantVariables) {
                     var pv = plantVariables[i];
                     var targetElement = allPMCComponents[pv.name];
                     if (targetElement !== null) {
@@ -187,6 +186,7 @@
                                 targetElement.setReference("none");
                                 targetElement.setInitialValue(pvInfo.value);
                                 targetElement.setValue(pvInfo.value);
+                                targetElement.setValidations(pvInfo.validation);
                                 targetElement.checkValues();
                             }
                         });

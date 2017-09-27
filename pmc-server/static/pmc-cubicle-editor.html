@@ -44,7 +44,7 @@
                 PMCCubicleEditorProto.domLoaded= function() {
                     var numberOfComponents = this.childElementCount;
                     var cubicleSvg = this.shadowRoot.querySelector("#cubicle");
-                    for (i=0; i<numberOfComponents; i++) {
+                    for (var i=0; i<numberOfComponents; i++) {
                         var component = this.children[i];
                         cubicleSvg.appendChild(component.shadowRoot);
                     }

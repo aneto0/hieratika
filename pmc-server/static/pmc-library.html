@@ -23,6 +23,11 @@
         this.checkValues();
     }
 
+    PMCLibraryProto.setValidations = function(validationsToSet) {
+        var librarySelector = this.getLibrarySelector();
+        librarySelector.editor.setValidations(validationsToSet); 
+    }
+
     PMCLibraryProto.createdCallback = function () {
         this.addEventListener("click", function (e) {
             this.selectLibrary();

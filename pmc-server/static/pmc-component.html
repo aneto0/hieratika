@@ -71,8 +71,28 @@
             newBackgroundColor = PLANT_OR_REF_CHANGED_COLOR;
         }
 
+        error = false;
+        var fun;
+        var validation;
+        if (this.validations !== undefined) {
+            for (var i=0; (i<this.validations.length) && (!error); i++) {
+                validation = this.validations[i];
+                fun = eval(validation.fun);
+                if (fun !== undefined) {
+                    if (validation.parameters === undefined) {
+                        validation.parameters = [];
+                    }
+                    error = !fun(this, validation.parameters);
+                }
+            }
+        }
+        var titleString = this.currentValuesToString();
+        if (error) {
+            newBackgroundColor = ERROR_BCOLOR;
+            titleString = "Failed @ " + fun.name + " [ " + validation.description + " ] ";
+        }
         component.style.backgroundColor = newBackgroundColor;
-        component.title = this.currentValuesToString();
+        component.title = titleString;
     }
 
     /**
@@ -145,6 +165,14 @@
     PMCComponent.prototype.setValue = function(valueToSet) {
         this.innerHTML = valueToSet;
         this.value = valueToSet;
+    }
+
+    PMCComponent.prototype.setValidations = function(validationsToSet) {
+        this.validations = validationsToSet;
+    }
+
+    PMCComponent.prototype.getValidations = function() {
+        return this.validations;
     }
 
     PMCComponent.prototype.domLoaded = function() {
@@ -220,9 +248,19 @@
         writable: true
     });
 
+    Object.defineProperty(PMCComponent, "validations", {
+        value: "",
+        writable: true
+    });
+
+
     PMCComponent.prototype.selectLibrary = function() {
         document.body.appendChild(this.librarySelector);
         this.librarySelector.showSelector(this.availableLibraries, this.value);
+    }
+
+    PMCComponent.prototype.getLibrarySelector = function() {
+        return this.librarySelector;
     }
 
     PMCComponent.prototype.attachedCallback = function() {

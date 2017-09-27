@@ -41,8 +41,8 @@
                     var initialValue = this.getInitialValue();
                     var refValue = this.getReferenceValue();
                     var plantValue = this.getPlantValue();
-                    var i;
-                    for (i=0; i<this.numberOfElements; i++) { 
+                   
+                    for (var i=0; (i<this.numberOfElements); i++) { 
                         var cell = row.cells[i];
                         var cellValue = cell.innerHTML;
                         this.value[i] = cellValue;
@@ -73,10 +73,39 @@
                         else {
                             newBackgroundColor = PLANT_OR_REF_CHANGED_COLOR;
                         }
-
                         cell.style.backgroundColor = newBackgroundColor;
                     }
-                    this.title = this.currentValuesToString();
+                    var error = false; 
+                    var validations = this.getValidations();
+                    var validation;
+                    if (this.validations !== undefined) {
+                        for (var i=0; (i<validations.length) && (!error); i++) {
+                            validation = validations[i];
+                            fun = eval(validation.fun);
+                            if (fun !== undefined) {
+                                if (validation.parameters === undefined) {
+                                    validation.parameters = [];
+                                }
+                                var parameters = [this];
+                                for (p in validation.parameters) {
+                                    parameters.push(validation.parameters[p]);
+                                }
+                                error = !fun(...parameters);
+                            }
+                        }
+                    }
+                    if(error) {
+                        newBackgroundColor = ERROR_BCOLOR;
+                        for (var i=0; (i<this.numberOfElements); i++) { 
+                            var cell = row.cells[i];
+                            cell.style.backgroundColor = ERROR_BCOLOR;
+                        }
+
+                        this.title = "Failed @ " + fun.name + " [ " + validation.description + " ] ";
+                    }
+                    else {
+                        this.title = this.currentValuesToString();
+                    }
                 }
 
                 PMCArrayEditorProto.setValue = function(elementsToSet) {
@@ -84,8 +113,7 @@
                     var tbl = this.shadowRoot.querySelector("#tarray");
                     tbl.deleteRow(0);
                     var row = tbl.insertRow(0);
-                    var i;
-                    for (i=0; i<elementsToSet.length; i++) {
+                    for (var i=0; i<elementsToSet.length; i++) {
                         var col = row.insertCell(i);
                         col.innerHTML = elementsToSet[i];
                         col.setAttribute("contenteditable", "true");
@@ -115,6 +143,7 @@
                         var tbl = this.shadowRoot.querySelector("#tarray");
                         var row = tbl.rows[0];
                         var col = row.insertCell();
+                        this.numberOfElements++;
                         col.setAttribute("contenteditable", "true");
                         col.style.width = "20px";
                         col.style.textAlign = "right";
@@ -131,6 +160,8 @@
                         if (row.cells.length > 0) {
                             row.deleteCell(row.cells.length - 1);
                         }
+                        this.numberOfElements--;
+                        this.value = this.value.slice(0, this.numberOfElements);
                         this.checkValues();
                     }.bind(this);
 

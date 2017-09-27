@@ -38,10 +38,12 @@
 
             function generatePolynomialMathML(pol) {
                 var polynomialInnerHTML = "<mrow>";
-                for (i=0; i<pol.length; i++) {
+                for (var i=0; i<pol.length; i++) {
                     if (pol[i] !== 0) {
                         if (i !== 0) {
-                            polynomialInnerHTML += "<mo>+</mo>";
+                            if (pol[i] > 0) {
+                                polynomialInnerHTML += "<mo>+</mo>";
+                            }
                         }
                         var expVal = (pol.length - i - 1);
                         if ((expVal === 0) || (pol[i] != 1)) {
@@ -85,14 +87,14 @@
                 var w = new Array(numberOfFrequencies);
                 var amplitude = new Array(numberOfFrequencies);
                 w[0] = stepFrequency;
-                for (i=1; i<numberOfFrequencies; i++) {
+                for (var i=1; i<numberOfFrequencies; i++) {
                     w[i] = w[i-1] + stepFrequency
                 }
-                for (i=0; i<numberOfFrequencies; i++) {
+                for (var i=0; i<numberOfFrequencies; i++) {
                     var a = num[num.length - 1];
                     var b = 0;
                     //Go right to left
-                    for (j=num.length-2; j>=0; j--) {
+                    for (var j=num.length-2; j>=0; j--) {
                         var pwr = num.length - j + 1;
                         if ((pwr % 2) == 0) {
                             a = a - num[j] * Math.pow(w[i], pwr);
@@ -105,7 +107,7 @@
                     
                     a = den[den.length - 1];
                     b = 0;
-                    for (j=den.length-2; j>=0; j--) {
+                    for (var j=den.length-2; j>=0; j--) {
                         var pwr = den.length - j + 1;
                         if ((pwr % 2) == 0) {
                             a = a - den[j] * Math.pow(w[i], pwr);
@@ -166,32 +168,70 @@
                         this.chart.data.datasets[0].data = [];
                         this.chart.data.datasets[1].data = [];
                         this.chart.data.datasets[2].data = [];
+                        var numeratorInput = this.shadowRoot.querySelector("#numeratorInput");
+                        var denominatorInput = this.shadowRoot.querySelector("#denominatorInput");
                         if (this.value !== undefined) {
                             var num = this.value[0];
                             var den = this.value[1];
-                            this.shadowRoot.querySelector("#numeratorInput").value = num;
-                            this.shadowRoot.querySelector("#denominatorInput").value = den;
-                            this.chart.data.datasets[0].data = getFilterResponse(num, den, this.frequencyStep, this.maxFrequency);
+                            numeratorInput.value = num;
+                            denominatorInput.value = den;
                             
+                            this.chart.data.datasets[0].data = getFilterResponse(num, den, this.frequencyStep, this.maxFrequency);
+                             
                             var currentTransferFunction = this.shadowRoot.querySelector("#currentTransferFunction");
                             currentTransferFunction.innerHTML = generateTransferFunctionMathML(num, den);
                             jqMath.parseMath(currentTransferFunction);
+
+                            if(!this.compareValues(numeratorInput.value, this.initvalue[0])) {
+                                numeratorInput.style.color = DIFF_INIT_CHANGED_COLOR;
+                            }
+                            else {
+                                numeratorInput.style.color = STANDARD_FCOLOR;
+                            }
+                            if(!this.compareValues(denominatorInput.value, this.initvalue[1])) {
+                                denominatorInput.style.color = DIFF_INIT_CHANGED_COLOR;
+                            }
+                            else {
+                                denominatorInput.style.color = STANDARD_FCOLOR;
+                            }
                         }
 
                         var ref = this.getReference();
                         var refValue = this.getReferenceValue();
+                        var plantValue = this.getPlantValue();
                         var referenceTransferFunction = this.shadowRoot.querySelector("#referenceTransferFunction");
                         referenceTransferFunction.innerHTML = "";
                         if (ref !== "none") {
                             if (refValue !== undefined) {
                                 var numRef = refValue[0];
                                 var denRef = refValue[1];
+                                if (plantValue === undefined) {
+                                    plantValue = [[],[]];    
+                                }
+                                var numPlant = plantValue[0];
+                                var denPlant = plantValue[1];
                                 this.chart.data.datasets[1].data = getFilterResponse(numRef, denRef, this.frequencyStep, this.maxFrequency);
                                 referenceTransferFunction.innerHTML = generateTransferFunctionMathML(numRef, denRef);
                                 jqMath.parseMath(referenceTransferFunction);
+                                var newBackgroundColor = STANDARD_BCOLOR;
+                                if (this.compareWithReference(numeratorInput.value, numPlant, numRef)) {
+                                    newBackgroundColor = STANDARD_BCOLOR;
+                                }
+                                else {
+                                    newBackgroundColor = PLANT_OR_REF_CHANGED_COLOR;
+                                }
+                                numeratorInput.style.backgroundColor = newBackgroundColor;
+
+                                if (this.compareWithReference(denominatorInput.value, denPlant, denRef)) {
+                                    newBackgroundColor = STANDARD_BCOLOR;
+                                }
+                                else {
+                                    newBackgroundColor = PLANT_OR_REF_CHANGED_COLOR;
+                                }
+                                denominatorInput.style.backgroundColor = newBackgroundColor;
+
                             }
                         }
-                        var plantValue = this.getPlantValue();
                         if (plantValue !== undefined) {
                             var numPlant = plantValue[0];
                             var denPlant = plantValue[1];
@@ -222,18 +262,35 @@
                     this.maxFrequency = 10; 
                     root.appendChild(clone);
                     allPMCComponents[this.id] = this;
-                    this.shadowRoot.querySelector("#frequencyStepInput").value = this.frequencyStep;
-                    this.shadowRoot.querySelector("#maxFrequencyInput").value = this.maxFrequency;
                     var button = this.shadowRoot.querySelector("#refreshButton");
                     var numeratorInput = this.shadowRoot.querySelector("#numeratorInput");
                     var denominatorInput = this.shadowRoot.querySelector("#denominatorInput");
-                    button.addEventListener("click", function (e) {
+                    var frequencyStepInput = this.shadowRoot.querySelector("#frequencyStepInput");
+                    var maxFrequencyInput = this.shadowRoot.querySelector("#maxFrequencyInput");
+                    frequencyStepInput.value = this.frequencyStep;
+                    maxFrequencyInput.value = this.maxFrequency;
+                    /*button.addEventListener("click", function (e) {
                         this.frequencyStep = parseFloat(this.shadowRoot.querySelector("#frequencyStepInput").value);
                         this.maxFrequency = parseFloat(this.shadowRoot.querySelector("#maxFrequencyInput").value);
                         this.value[0] = numeratorInput.value.split(",");
                         this.value[1] = denominatorInput.value.split(",");
                         this.checkValues(); 
-                    }.bind(this));
+                    }.bind(this));*/
+                    var allInputs = [numeratorInput, denominatorInput, frequencyStepInput, maxFrequencyInput];
+                    var i;
+                    for (i in allInputs) {
+                        allInputs[i].addEventListener("input", function (e) {
+                            this.frequencyStep = parseFloat(frequencyStepInput.value);
+                            this.maxFrequency = parseFloat(maxFrequencyInput.value);
+                            if ((this.maxFrequency / this.frequencyStep) > 100) {
+                                this.frequencyStep = this.maxFrequency / 100;
+                                frequencyStepInput.value = this.frequencyStep;
+                            }
+                            this.value[0] = numeratorInput.value.split(",");
+                            this.value[1] = denominatorInput.value.split(",");
+                            this.checkValues(); 
+                        }.bind(this));
+                    }
                 };
 
                 PMCFilterEditorProto.attachedCallback = function() {

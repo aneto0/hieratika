@@ -1,0 +1,135 @@
+<html>
+    <head>
+        <link rel="import" href="pmc-constants.html">
+    </head>
+    <script>
+        function checkMax(component, max) {
+            //Allow to compare each element of a given array with the corresponding element of a max array
+            //Or to compare each element of a given array against a single max value
+            var value = [];
+            var maxA = [];
+            var compValue = component.getValue();
+            var ok = (compValue !== undefined);
+            if (ok) {
+                if (typeof compValue === "string") {
+                    value = [compValue];
+                }
+                else if (compValue.length === undefined) {
+                    value = [compValue];
+                }
+                else {
+                    value = compValue;
+                }
+                if (typeof max === "string") {
+                    maxA = [max];
+                }
+                else if (max.length === undefined) {
+                    maxA = [max];
+                }
+                else {
+                    maxA = max;
+                }
+
+                if((value.length > 1) && (maxA.length == 1)) {
+                    //Compare all elements against a single maximuma
+                    maxA = Array(value.length).fill(maxA[0]);
+                }
+                //Allow to compare arrays with arrays of max
+                ok = !component.isLibrary();
+            }
+            if (ok) {
+                ok = (value.length === maxA.length);
+            }
+            for (var i=0; (i<value.length) && (ok); i++) {
+                if ((component.typevalue === "float32") || (component.typevalue === "float64")) {
+                    value[i] = parseFloat(value[i]);
+                    maxA[i] = parseFloat(maxA[i]);
+                }
+                else if ((component.typevalue.startsWith("int") || (component.typevalue.startsWith("uint")))) {
+                    value[i] = parseInt(value[i]);
+                    maxA[i] = parseInt(maxA[i]);
+                }
+                ok = (value[i] < maxA[i]);
+            }
+            return ok;
+        } 
+
+        function checkMin(component, min) {
+            var value = [];
+            var minI = [];
+            var compValue = component.getValue();
+            var ok = (compValue !== undefined);
+            if (ok) {
+                if (typeof compValue === "string") {
+                    value = [compValue];
+                }
+                else if (compValue.length === undefined) {
+                    value = [compValue];
+                }
+                else {
+                    value = compValue;
+                }
+                if (typeof min === "string") {
+                    minI = [min];
+                }
+                else if (min.length === undefined) {
+                    minI = [min];
+                }
+                else {
+                    minI = min;
+                }
+                if((value.length > 1) && (minI.length == 1)) {
+                    //Compare all elements against a single maximuma
+                    minI = Array(value.length).fill(minI[0]);
+                }
+
+                ok = !component.isLibrary();
+            }
+            if (ok) {
+                ok = (value.length === minI .length);
+            }
+            for (var i=0; (i<value.length) && (ok); i++) {
+                if ((component.typevalue === "float32") || (component.typevalue === "float64")) {
+                    value[i] = parseFloat(value[i]);
+                    minI [i] = parseFloat(minI [i]);
+                }
+                else if ((component.typevalue.startsWith("int") || (component.typevalue.startsWith("uint")))) {
+                    value[i] = parseInt(value[i]);
+                    minI [i] = parseInt(minI [i]);
+                }
+                ok = (value[i] > minI [i]);
+            }
+            return ok;
+        } 
+
+        function checkType(component) {
+            var value = [];
+            var compValue = component.getValue();
+            var ok = (compValue !== undefined);
+            if (ok) {
+                if (typeof compValue === "string") {
+                    value = [compValue];
+                }
+                else if (compValue.length === undefined) {
+                    value = [compValue];
+                }
+                else {
+                    value = compValue;
+                }
+                ok = !component.isLibrary();
+            }
+            for (var i=0; (i<value.length) && (ok); i++) {
+                if ((component.typevalue === "float32") || (component.typevalue === "float64")) {
+                    ok = !isNaN(value[i]);
+                }
+                else if ((component.typevalue.startsWith("int") || (component.typevalue.startsWith("uint")))) {
+                    ok = !isNaN(value[i]);
+                    if (ok) {
+                        ok = Number.isInteger(parseFloat(value[i]));
+                    }
+                }
+            }
+            return ok;
+        }
+    </script>
+</html>
