@@ -1,0 +1,190 @@
+<html>
+    <head>
+        <link rel="import" href="libraries.html">
+    </head>
+    <body>
+        <template id="tselector">
+            <dialog id="dselector">
+                <h3 id="titselector">
+                </h3>
+                <table style="border-style: dotted;border-width: 3px;width: 100%">
+                    <tr>
+                        <td><div id="diveditor"></div></td>
+                    </tr>
+                </table>
+                </br>
+                <table style="border-style:solid;border-width:1px;width: 100%">
+                    <tr>
+                        <td><select id="tselect" name="tselect"></select></td>
+                        <td><button id="saveButton">Save</button></td>
+                        <td><button id="saveAsButton">Save as...</button><input type="text" id="saveAsLibraryName"></input></td>
+                    </tr>
+                </table>
+                </br>
+                <table style="border-style:solid;border-width:1px;width: 100%">
+                    <tr>
+                        <td><button id="tselectorOK">OK</button><button id="tselectorCancel">Cancel</button></td>
+                    </tr>
+                </table>
+            </dialog>
+        </template>
+        <script>
+            (function () {
+                var importDoc = document.currentScript.ownerDocument; // importee
+
+                class PMCLibraryEditor extends HTMLElement {
+                    constructor() {
+                        super();
+                    }
+
+                    showSelector (optionNames, currentOption) {
+                        var diag = this.shadowRoot.querySelector("#dselector");
+                        var selector = this.shadowRoot.querySelector("#tselect");
+                        selector.innerHTML = "";
+                        $.each(optionNames, function(i, optionName) {
+                            var option = document.createElement( 'option' );
+                            option.value = option.text = optionName;
+                            selector.add(option);
+                        });
+                        selector.value = currentOption;
+                        this.editLibrary();
+                        diag.showModal();
+                    }
+
+
+                    editLibrary () {
+                        var selector = this.shadowRoot.querySelector("#tselect");
+                        this.editor.setTypeValue(this.owner.getTypeValue());
+                        this.editor.setReference(this.owner.getReference());
+                        if (this.owner.getReference() !== "none") {
+                            if (this.owner.getReferenceValue() !== undefined) {
+                                $.ajax({
+                                    type: "get",
+                                    url: "/getlibrary",
+                                    data: {
+                                        variable : this.owner.id, 
+                                        libraryName : this.owner.getReferenceValue()  
+                                    },
+                                    success: function (response) {
+                                        var values = $.parseJSON(response);
+                                        this.editor.setReferenceValue(values);
+                                    }.bind(this),
+                                    error: function (response) {
+                                        console.log(response);
+                                        alert(response);
+                                    }
+                                });
+                            }
+                        }
+
+                        if (this.owner.getInitialValue() !== undefined) {
+                            $.ajax({
+                                type: "get",
+                                url: "/getlibrary",
+                                data: {
+                                    variable : this.owner.id, 
+                                    libraryName : this.owner.getInitialValue()  
+                                },
+                                success: function (response) {
+                                    var values = $.parseJSON(response);
+                                    this.editor.setInitialValue(values);
+                                    this.editor.checkValues();
+                                }.bind(this),
+                                error: function (response) {
+                                    console.log(response);
+                                    alert(response);
+                                }
+                            });
+                        }
+
+                        if (this.owner.getPlantValue() !== undefined) {
+                            $.ajax({
+                                type: "get",
+                                url: "/getlibrary",
+                                data: {
+                                    variable : this.owner.id, 
+                                    libraryName : this.owner.getPlantValue()  
+                                },
+                                success: function (response) {
+                                    var values = $.parseJSON(response);
+                                    this.editor.setPlantValue(values);
+                                    this.editor.checkValues();
+                                }.bind(this),
+                                error: function (response) {
+                                    console.log(response);
+                                    alert(response);
+                                }
+                            });
+                        }
+
+                        $.ajax({
+                            type: "get",
+                            url: "/getlibrary",
+                            data: {
+                                variable : this.owner.id, 
+                                libraryName : selector.options[selector.selectedIndex].text  
+                            },
+                            success: function (response) {
+                                var values = $.parseJSON(response);
+                                this.editor.setValue(values);
+                                this.editor.checkValues();
+                            }.bind(this),
+                            error: function (response) {
+                                console.log(response);
+                                alert(response);
+                            }
+                        });
+                    }
+
+                    // Use Shadow DOM and a template. Use the attachedCallback as @ createdCallback this.owner will not exist and I need this id (at least in this prototype phase)
+                    attachedCallback () {
+                        if (this.shadowRoot === null) {
+                            // Get template 
+                            var template = importDoc.querySelector("#tselector");
+
+                            // import template into
+                            var clone = document.importNode(template.content, true);
+                            var root = this.createShadowRoot();
+         
+                            root.appendChild(clone);
+
+                            var diag = this.shadowRoot.querySelector("#dselector");
+                            var selector = this.shadowRoot.querySelector("#tselect");
+                            var okButton = this.shadowRoot.querySelector("#tselectorOK");
+                            var cancelButton = this.shadowRoot.querySelector("#tselectorCancel");
+
+                            okButton.onclick = function() {
+                                this.selected = selector.options[selector.selectedIndex].text;
+                                this.owner.libraryChanged(this.selected);
+                                diag.close();
+                                document.body.removeChild(this);
+                            }.bind(this); //bind is needed to make sure that the "this" is still valid in the context of the callback
+
+                            cancelButton.onclick = function() {
+                                this.selected = "";
+                                diag.close();
+                                document.body.removeChild(this);
+                            }.bind(this); //bind is needed to make sure that the "this" is still valid in the context of the callback
+
+                            selector.onchange = function() {
+                                this.editLibrary();
+                            }.bind(this);
+
+
+                            //Attach an editor
+                            var divEditor = this.shadowRoot.querySelector("#divEditor");
+                            while(divEditor.firstChild) {
+                                divEditor.removeChild(divEditor);
+                            }
+                            divEditor.appendChild(this.editor);
+                        }
+                    }
+
+                }
+                document.registerElement("pmc-library-editor", {
+                    prototype: PMCLibraryEditor.prototype
+                });
+            })();
+        </script>
+    </body>
+</html>

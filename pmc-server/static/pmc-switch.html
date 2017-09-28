@@ -47,58 +47,81 @@
               <rect id="rect3759-1-7-9-5-5-2" style="enable-background:accumulate;color:#000000;" rx="0" height="10" width="10" y="52.362" x="450" stroke-width="0.66667" fill="#0F0"/>
               <rect id="rect3759-1-7-4-4-5-2-3" style="enable-background:accumulate;color:#000000;" rx="0" height="10" width="10" y="52.362" x="470" stroke-width="0.66667" fill="#0F0"/>
              </g>
+             <g id="layerChanges1">
+                <rect x="0" y="0" width="50%" height="100%" fill="0xffffffff"/>
+             </g>
+             <g id="layerChanges2">
+                <rect x="50%" y="0" width="50%" height="100%" fill="0xffffffff"/>
             </svg>
         </template>
         <script>
-            function PMCSwitch() {
-                HTMLElement.call(this);
-                PMCComponent.call(this);
-            }
-            
             (function () {
                 var importDoc = document.currentScript.ownerDocument; // importee
 
-                var PMCSwitchProto = Object.create(HTMLElement.prototype);
-                PMCSwitchProto.constructor = PMCSwitch;
-            
-                extendMixin(PMCSwitchProto, PMCComponent.prototype);
+                class PMCSwitch extends PMCLibrary {
 
-                // Use Shadow DOM and a template.
-                PMCSwitchProto.createdCallback = function() {
-                    // Get template 
-                    var template = importDoc.querySelector("#tswitch");
+                    // Use Shadow DOM and a template.
+                    createdCallback () {
+                        super.createdCallback();
+                        this.svg = this.shadowRoot.querySelector("svg");
+                        this.svg.setAttribute("width", inchesToPixels(19));
+                        this.svg.setAttribute("height", cubicleUnitsToPixels(1));
+                        var cuLocation = parseInt(this.getAttribute("data-location-cubicle"));
+                        this.svg.setAttribute("y", cubicleUnitsToPixels(cuLocation));
+                        this.attachLibraryHandler();
+                        this.layerChanges1 = this.shadowRoot.querySelector("#layerChanges1");
+                        this.layerChanges1.setAttribute("opacity", "0");
+                        this.layerChanges2 = this.shadowRoot.querySelector("#layerChanges2");
+                        this.layerChanges2.setAttribute("opacity", "0");
+                    }
 
-                    // import template into
-                    var clone = document.importNode(template.content, true);
-                    var root = this.createShadowRoot();
- 
-                    root.appendChild(clone);
-                    allPMCComponents[this.id] = this;
+                    attachedCallback () {
+                        this.svg.addEventListener("click", function(e) {
+                            this.showLibraryEditor();
+                        }.bind(this));
+                    }
 
-                    var svg = this.shadowRoot.querySelector("svg");
-                    svg.setAttribute("width", inchesToPixels(19));
-                    svg.setAttribute("height", cubicleUnitsToPixels(1));
-                    var cuLocation = parseInt(this.getAttribute("data-location-cubicle"));
-                    svg.setAttribute("y", cubicleUnitsToPixels(cuLocation));
-                    this.attachLibraryHandler();
-                };
+                    getTemplate() {
+                        var template = importDoc.querySelector("#tswitch");
+                        return template;
+                    }
 
-                PMCSwitchProto.attachedCallback = function() {
-                    var svg = this.shadowRoot.querySelector("svg");
-                    svg.addEventListener("click", function(e) {
-                        this.selectLibrary();
-                        return false;
-                    }.bind(this), false);
-    
-                };
+                    libraryChanged (newLibraryName) {
+                        this.value = newLibraryName;
+                        this.checkValues();
+                    }
 
-                Object.defineProperty(PMCSwitchProto, "data-location-cubicle", {
-                    value: "0",
-                    writable: true
-                });
+                    checkValues () {
+                        //If the current value does not match the initial value set the font color blue
+                        if(!this.compareValues(this.getValue(), this.getInitialValue())) {
+                            this.layerChanges1.setAttribute("fill", DIFF_INIT_CHANGED_COLOR);
+                            this.layerChanges1.setAttribute("opacity", "0.5");
+                        }
+                        else {
+                            this.layerChanges1.setAttribute("opacity", "0");
+                        }
+
+                        var newBackgroundColor = STANDARD_BCOLOR;
+                        if (this.compareWithReference(this.getValue(), this.getPlantValue(), this.getReferenceValue())) {
+                            this.layerChanges2.setAttribute("opacity", "0");
+                        }
+                        else {
+                            this.layerChanges2.setAttribute("fill", PLANT_OR_REF_CHANGED_COLOR);
+                            this.layerChanges2.setAttribute("opacity", "0.5");
+                        }
+
+                        var titleString = this.currentValuesToString();
+                        this.svg.setAttribute("title", titleString);
+                        this.title = titleString;
+                    }
+
+                    valueChanged(typeOfChange) {
+                        this.checkValues();
+                    }
+                }
 
                 document.registerElement("pmc-switch", {
-                    prototype: PMCSwitchProto
+                    prototype: PMCSwitch.prototype
                 });
             })();
         </script>

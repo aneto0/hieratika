@@ -4,57 +4,36 @@
         <link rel="import" href="pmc-component.html">
     </head>
     <body>
-        <script>
-            function alert_me() {
-                alert('YEAH!!!');
-            }
-        </script>
-
-
         <template id="tcubicle">
             <svg width="190" height="822" id="cubicle">
-                <rect width="190" height="822" style="fill:rgb(255,255,255);stroke-width:10;stroke:rgb(0,0,217)" onclick="alert_me()"/>
+                <rect width="190" height="822" style="fill:rgb(255,255,255);stroke-width:10;stroke:rgb(0,0,217)" />
             </svg> 
         </template>
         <script>
-            function PMCCubicleEditor() {
-                HTMLElement.call(this);
-            }
-            
             (function () {
                 var importDoc = document.currentScript.ownerDocument; // importee
 
-                var PMCCubicleEditorProto = Object.create(HTMLElement.prototype);
-                PMCCubicleEditorProto.constructor = PMCCubicleEditor;
-            
-                extendMixin(PMCCubicleEditorProto, PMCComponent.prototype);
+                class PMCCubicleEditor extends PMCComponent {
+                    constructor() {
+                        super();
+                    }
 
-                // Use Shadow DOM and a template.
-                PMCCubicleEditorProto.createdCallback = function() {
-                    // Get template 
-                    var template = importDoc.querySelector("#tcubicle");
+                    domLoaded () {
+                        var numberOfComponents = this.childElementCount;
+                        var cubicleSvg = this.shadowRoot.querySelector("#cubicle");
+                        for (var i=0; i<numberOfComponents; i++) {
+                            var component = this.children[i];
+                            cubicleSvg.appendChild(component.shadowRoot);
+                        }
+                    }
 
-                    // import template into
-                    var clone = document.importNode(template.content, true);
-                    var root = this.createShadowRoot();
-                    root.appendChild(clone);
-                    allPMCComponents[this.id] = this;
-                }
-
-                PMCCubicleEditorProto.domLoaded= function() {
-                    var numberOfComponents = this.childElementCount;
-                    var cubicleSvg = this.shadowRoot.querySelector("#cubicle");
-                    for (var i=0; i<numberOfComponents; i++) {
-                        var component = this.children[i];
-                        cubicleSvg.appendChild(component.shadowRoot);
+                    getTemplate() {
+                        var template = importDoc.querySelector("#tcubicle");
+                        return template;
                     }
                 }
-
-                PMCCubicleEditorProto.attachedCallback = function() {
-                }
-
                 document.registerElement("pmc-cubicle-editor", {
-                    prototype: PMCCubicleEditorProto
+                    prototype: PMCCubicleEditor.prototype
                 });
             })();
         </script>

@@ -1,29 +1,54 @@
-<!-- Standard button -->
-<link rel="import" href="libraries.html">
-<link rel="import" href="pmc-component.html">
-<script type="text/javascript">
-    //Constructor
-    function PMCInput() {
-        HTMLInputElement.call(this);
-        PMCComponent.call(this);
-    }
+<html>
+    <head>
+        <link rel="import" href="libraries.html">
+        <link rel="import" href="pmc-component.html">
+    </head>
+    <body>
+        <template id="ttinput">
+            <input type="text" id="tinput"></input>
+        </template>
 
-    //Notice that PMCInputProto is an "alias" to PMCInput.prototype
-    PMCInputProto = Object.create(HTMLInputElement.prototype);
-    PMCInputProto.constructor = PMCInput;
+        <script>
+            //This is enclosure is required to protect the importDoc
+            (function () {
+                var importDoc = document.currentScript.ownerDocument; // importee
 
-    extendMixin(PMCInputProto, PMCComponent.prototype);
+                //Constructor
+                class PMCInput extends PMCComponent {
+                    constructor() {
+                        super();
+                    }
 
-    PMCInputProto.createdCallback = function () {
-        this.addEventListener("input", function (e) {
-            this.checkValues();
-        });
-        allPMCComponents[this.id] = this;
-    }
+                    createdCallback () {
+                        super.createdCallback();
+                        this.textInput = this.shadowRoot.querySelector("#tinput");
+                        this.textInput.addEventListener("input", function (e) {
+                            this.setValue(this.textInput.value);
+                            this.checkValues(this.textInput);
+                        }.bind(this));
+                    }
+                    
+                    getTemplate() {
+                        var template = importDoc.querySelector("#ttinput");
+                        return template;
+                    }
 
-    document.registerElement("pmc-input", {
-        prototype: PMCInputProto,
-        extends: "input"
-    });
-</script>
+                    valueChanged(typeOfChange) {
+                        if (typeOfChange === "value") {
+                            this.textInput.value = this.value;
+                        }
+                        this.checkValues(this.textInput);
+                    }
 
+                    getValue() {
+                        return this.textInput.value;
+                    }
+                }
+
+                document.registerElement("pmc-input", {
+                    prototype: PMCInput.prototype,
+                });
+            })(); 
+        </script>
+    </body>
+</html>

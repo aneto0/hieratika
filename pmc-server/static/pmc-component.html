@@ -2,193 +2,211 @@
 <link rel="import" href="libraries.html">
 <script type="text/javascript">
     //Constructor
-    function PMCComponent() {
-       HTMLElement.call(this);
-    }
-    PMCComponent.prototype = Object.create(HTMLElement.prototype);
-    PMCComponent.prototype.constructor = PMCComponent;
-
-    //prototype functions are capable of acting on the this (i.e. they are not static functions)
-    PMCComponent.prototype.currentValuesToString = function() {
-        var refToDisplay = this.refvalue;
-        if (this.reference === "plant") {
-            refToDisplay = this.pltvalue;
+    class PMCComponent extends HTMLElement {
+        constructor() {
+            super();
         }
-        return "Current: " + this.getValue() + " Plant: " + this.getPlantValue() + " Reference: " + this.getReferenceValue() + " Initial: " + this.getInitialValue();
-    }
 
-    PMCComponent.prototype.showValues = function() {
-        alert(this.currentValuesToString());
-    }
-
-    PMCComponent.prototype.compareValues = function(value1, value2) {
-        var val1 = String(value1);
-        var val2 = String(value2);
-        if (this.typeValue !== undefined) {
-            if ((!this.library) && (this.typevalue === "float32") || (this.typevalue === "float64")) {
-                    val1 = parseFloat(value1);
-                    val2 = parseFloat(value2);
+        currentValuesToString () {
+            var refToDisplay = this.refvalue;
+            if (this.reference === "plant") {
+                refToDisplay = this.pltvalue;
             }
-            else if ((!this.library) && (this.typevalue.startsWith("int") || (this.typevalue.startsWith("uint")))) {
-                    val1 = parseInt(value1);
-                    val2 = parseInt(value2);
-            }
-        }
-        return (val1 === val2);
-    }
-
-    PMCComponent.prototype.compareWithReference = function(value, pltValue, refValue) {
-        var val1 = String(value);
-        var val2 = String(value);
-        //If the reference value does not match the current value, change the background
-        if (this.reference === "plant") {
-            val1 = pltValue;
-        }
-        //must be from a schedule
-        else if (this.reference !== "none") {
-            val1 = refValue;
-        }
-        return this.compareValues(val1, val2);
-    }
-
-    PMCComponent.prototype.checkValues = function(component) {
-        if (component === undefined) {
-            component = this;
-        }
-        //If the current value does not match the initial value set the font color blue
-        if(!this.compareValues(component.value, this.initvalue)) {
-            component.style.color = DIFF_INIT_CHANGED_COLOR;
-        }
-        else {
-            component.style.color = STANDARD_FCOLOR;
+            return "[" + this.id + "] Current: " + this.getValue() + " Plant: " + this.getPlantValue() + " Reference: " + this.getReferenceValue() + " Initial: " + this.getInitialValue();
         }
 
-        var newBackgroundColor = STANDARD_BCOLOR;
-        if (this.compareWithReference(component.value, this.pltvalue, this.refvalue)) {
-            newBackgroundColor = STANDARD_BCOLOR;
-        }
-        else {
-            newBackgroundColor = PLANT_OR_REF_CHANGED_COLOR;
+        showValues () {
+            alert(this.currentValuesToString());
         }
 
-        error = false;
-        var fun;
-        var validation;
-        if (this.validations !== undefined) {
-            for (var i=0; (i<this.validations.length) && (!error); i++) {
-                validation = this.validations[i];
-                fun = eval(validation.fun);
-                if (fun !== undefined) {
-                    if (validation.parameters === undefined) {
-                        validation.parameters = [];
-                    }
-                    error = !fun(this, validation.parameters);
+        compareValues (value1, value2) {
+            var val1 = String(value1);
+            var val2 = String(value2);
+            if (this.typeValue !== undefined) {
+                if ((!this.library) && (this.typevalue === "float32") || (this.typevalue === "float64")) {
+                        val1 = parseFloat(value1);
+                        val2 = parseFloat(value2);
+                }
+                else if ((!this.library) && (this.typevalue.startsWith("int") || (this.typevalue.startsWith("uint")))) {
+                        val1 = parseInt(value1);
+                        val2 = parseInt(value2);
                 }
             }
+            return (val1 === val2);
         }
-        var titleString = this.currentValuesToString();
-        if (error) {
-            newBackgroundColor = ERROR_BCOLOR;
-            titleString = "Failed @ " + fun.name + " [ " + validation.description + " ] ";
+
+        compareWithReference (value, pltValue, refValue) {
+            var val1 = String(value);
+            var val2 = String(value);
+            //If the reference value does not match the current value, change the background
+            if (this.reference === "plant") {
+                val1 = pltValue;
+            }
+            //must be from a schedule
+            else if (this.reference !== "none") {
+                val1 = refValue;
+            }
+            return this.compareValues(val1, val2);
         }
-        component.style.backgroundColor = newBackgroundColor;
-        component.title = titleString;
+
+        checkValues (component) {
+            if (component === undefined) {
+                component = this;
+            }
+            //If the current value does not match the initial value set the font color blue
+            if(!this.compareValues(this.getValue(), this.getInitialValue())) {
+                component.style.color = DIFF_INIT_CHANGED_COLOR;
+            }
+            else {
+                component.style.color = STANDARD_FCOLOR;
+            }
+
+            var newBackgroundColor = STANDARD_BCOLOR;
+            if (this.compareWithReference(this.getValue(), this.getPlantValue(), this.getReferenceValue())) {
+                newBackgroundColor = STANDARD_BCOLOR;
+            }
+            else {
+                newBackgroundColor = PLANT_OR_REF_CHANGED_COLOR;
+            }
+
+            var error = false;
+            var fun;
+            var validation;
+            if (this.validations !== undefined) {
+                for (var i=0; (i<this.validations.length) && (!error); i++) {
+                    validation = this.validations[i];
+                    fun = eval(validation.fun);
+                    if (fun !== undefined) {
+                        if (validation.parameters === undefined) {
+                            validation.parameters = [];
+                        }
+                        error = !fun(this, validation.parameters);
+                    }
+                }
+            }
+            var titleString = this.currentValuesToString();
+            if (error) {
+                newBackgroundColor = ERROR_BCOLOR;
+                titleString = "Failed @ " + fun.name + " [ " + validation.description + " ] ";
+            }
+            component.style.backgroundColor = newBackgroundColor;
+            component.title = titleString;
+        }
+
+        /**
+         * virtual 
+         * To be specialised by other components that want to be warned when a browser refresh has happened.
+         */
+        refresh () {
+        }
+
+        getNumberOfElements () {
+            return this.numberOfElements;
+        }
+
+        setNumberOfElements (numberOfElementsIn) {
+            this.numberOfElements = numberOfElementsIn;
+        }
+
+        getReferenceValue () {
+            return this.refvalue;
+        }
+
+        setReferenceValue (referenceValueToSet) {
+            if (referenceValueToSet !== undefined) {
+                this.refvalue = referenceValueToSet.slice(0);
+                this.checkValues();
+            }
+        }
+
+        isLibrary () {
+            return this.library;
+        }
+
+        setLibrary (isLibrary) {
+            this.library = isLibrary;
+        }
+
+        getTypeValue () {
+            return this.typevalue;
+        }
+
+        setTypeValue (typeValueToSet) {
+            this.typevalue = typeValueToSet;
+        }
+
+        getPlantValue () {
+            return this.pltvalue;
+        }
+
+        setPlantValue (plantValueToSet) {
+            if (plantValueToSet !==  undefined) {
+                this.pltvalue = plantValueToSet.slice(0);
+                this.valueChanged("plantValue");
+            }
+        }
+
+        getInitialValue () {
+            return this.initvalue;
+        }
+
+        setInitialValue (initialValueToSet) {
+            this.initvalue = initialValueToSet.slice(0);
+            this.valueChanged("initialValue");
+        }
+
+        getReference () {
+            return this.reference;
+        }
+
+        setReference (referenceToSet) {
+            this.reference = referenceToSet;
+            this.valueChanged("reference");
+        }
+
+        getValue () {
+            return this.value;
+        }
+
+        setValue (valueToSet) {
+            this.value = valueToSet;
+            this.valueChanged("value");
+        }
+
+        setValidations (validationsToSet) {
+            this.validations = validationsToSet;
+        }
+
+        getValidations () {
+            return this.validations;
+        }
+
+        domLoaded () {
+        }
+
+        getTemplate() {
+        }
+
+        valueChanged(typeOfChange) {
+        }
+
+        createdCallback() {
+            var template = this.getTemplate();
+            if (template !== undefined) {
+                // import template into
+                var clone = document.importNode(template.content, true);
+                var root = this.createShadowRoot();
+                root.appendChild(clone);
+                allPMCComponents[this.id] = this;
+            }
+        }
+
+        attachedCallback () {
+        }
+
+        detachedCallback () {
+        }
     }
-
-    /**
-     * virtual 
-     * To be specialised by other components that want to be warned when a browser refresh has happened.
-     */
-    PMCComponent.prototype.refresh = function() {
-    }
-
-    PMCComponent.prototype.getNumberOfElements = function() {
-        return this.numberOfElements;
-    }
-
-    PMCComponent.prototype.setNumberOfElements = function(numberOfElementsIn) {
-        this.numberOfElements = numberOfElementsIn;
-    }
-
-    PMCComponent.prototype.getReferenceValue = function() {
-        return this.refvalue;
-    }
-
-    PMCComponent.prototype.setReferenceValue = function(referenceValueToSet) {
-        this.refvalue = referenceValueToSet.slice(0);
-    }
-
-    PMCComponent.prototype.isLibrary = function() {
-        return this.library;
-    }
-
-    PMCComponent.prototype.setLibrary = function(isLibrary) {
-        this.library = isLibrary;
-    }
-
-    PMCComponent.prototype.getTypeValue = function() {
-        return this.typevalue;
-    }
-
-    PMCComponent.prototype.setTypeValue = function(typeValueToSet) {
-        this.typevalue = typeValueToSet;
-    }
-
-    PMCComponent.prototype.getPlantValue = function() {
-        return this.pltvalue;
-    }
-
-    PMCComponent.prototype.setPlantValue = function(plantValueToSet) {
-        this.pltvalue = plantValueToSet.slice(0);
-    }
-
-    PMCComponent.prototype.getInitialValue = function() {
-        return this.initvalue;
-    }
-
-    PMCComponent.prototype.setInitialValue = function(initialValueToSet) {
-        this.initvalue = initialValueToSet.slice(0);
-    }
-
-    PMCComponent.prototype.getReference = function() {
-        return this.reference;
-    }
-
-    PMCComponent.prototype.setReference = function(referenceToSet) {
-        this.reference = referenceToSet;
-    }
-
-    PMCComponent.prototype.getValue = function() {
-        return this.value;
-    }
-
-    PMCComponent.prototype.setValue = function(valueToSet) {
-        this.innerHTML = valueToSet;
-        this.value = valueToSet;
-    }
-
-    PMCComponent.prototype.setValidations = function(validationsToSet) {
-        this.validations = validationsToSet;
-    }
-
-    PMCComponent.prototype.getValidations = function() {
-        return this.validations;
-    }
-
-    PMCComponent.prototype.domLoaded = function() {
-    }
-
-    PMCComponent.prototype.attachLibraryHandler = function() {
-        //Create an editor
-        var editorName = this.getAttribute("data-library-editor");
-        var editor = document.createElement(editorName);
-
-        //Attach a selector
-        this.librarySelector = document.createElement("pmc-selector");
-        this.librarySelector.owner = this;
-        this.librarySelector.editor = editor;
-    }
-
     //The reference in use
     Object.defineProperty(PMCComponent, "reference", {
         value: "none",
@@ -232,49 +250,10 @@
         writable: true
     });
 
-    // the editor to use
-    Object.defineProperty(PMCComponent, "data-editor", {
-        value: "",
-        writable: true
-    });
-
-    Object.defineProperty(PMCComponent, "availableLibraries", {
-        value: "",
-        writable: true
-    });
-
-    Object.defineProperty(PMCComponent, "librarySelector", {
-        value: "",
-        writable: true
-    });
-
     Object.defineProperty(PMCComponent, "validations", {
         value: "",
         writable: true
     });
 
-
-    PMCComponent.prototype.selectLibrary = function() {
-        document.body.appendChild(this.librarySelector);
-        this.librarySelector.showSelector(this.availableLibraries, this.value);
-    }
-
-    PMCComponent.prototype.getLibrarySelector = function() {
-        return this.librarySelector;
-    }
-
-    PMCComponent.prototype.attachedCallback = function() {
-    }
-
-    PMCComponent.prototype.detachedCallback = function() {
-    }
-
-    function extendMixin (destination, source) {
-        for (var prop in source) {
-            if (source.hasOwnProperty(prop)) {
-                destination[prop] = source[prop];
-            }
-        }
-    };
 </script>
 

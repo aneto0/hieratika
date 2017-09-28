@@ -5,54 +5,47 @@
         <link rel="import" href="pmc-component.html">
     </head>
     <body>
-        <template id="tswitch">
+        <template id="tswitche">
             <textarea rows="10" cols="50" id="ttextarea">
             </textarea>
         </template>
         <script type="text/javascript">
-            //Constructor
-            function PMCSwitchEditor() {
-                HTMLElement.call(this);
-                PMCComponent.call(this);
-            }
-
             (function () {
                 var importDoc = document.currentScript.ownerDocument; // importee
 
-                //Notice that PMCSwitchEditorProto is an "alias" to PMCSwitchEditor.prototype
-                PMCSwitchEditorProto = Object.create(HTMLElement.prototype);
-                PMCSwitchEditorProto.constructor = PMCSwitchEditor;
+                class PMCSwitchEditor extends PMCComponent {
+                    constructor() {
+                        super();
+                    }
 
-                extendMixin(PMCSwitchEditorProto, PMCComponent.prototype);
+                    setValue (elementsToSet) {
+                        this.txtArea.value = elementsToSet;
+                        super.setValue(elementsToSet);
+                    }
 
-                PMCSwitchEditorProto.setValue = function(elementsToSet) {
-                    var txtArea = this.shadowRoot.querySelector("#ttextarea");
-                    this.value = elementsToSet;
-                    txtArea.value = this.value;
-                    this.checkValues(txtArea);
+                    valueChanged(typeOfChange) {
+                        this.checkValues(this.txtArea);
+                    }
+
+                    getTemplate() {
+                        var template = importDoc.querySelector("#tswitche");
+                        return template;
+                    }
+
+                    createdCallback () {
+                        super.createdCallback();
+                        this.txtArea = this.shadowRoot.querySelector("#ttextarea");
+                        this.txtArea.addEventListener("keyup", function (e) {
+                            this.checkValues(this.txtArea);
+                        }.bind(this));
+                    }
+
+                    getValue() {
+                        return this.txtArea.value;
+                    }
                 }
-
-
-                PMCSwitchEditorProto.createdCallback = function () {
-                    // Get template 
-                    var template = importDoc.querySelector("#tswitch");
-
-                    // import template into
-                    var clone = document.importNode(template.content, true);
-                    var root = this.createShadowRoot();
- 
-                    root.appendChild(clone);
-
-                    var txtArea = this.shadowRoot.querySelector("#ttextarea");
-                    txtArea.addEventListener("keyup", function (e) {
-                        console.log(txtArea.value);
-                        this.checkValues(txtArea);
-                    }.bind(this));
-                    allPMCComponents[this.id] = this;
-                }
-
                 document.registerElement("pmc-switch-editor", {
-                    prototype: PMCSwitchEditorProto,
+                    prototype: PMCSwitchEditor.prototype,
                 });
             })();
         </script>

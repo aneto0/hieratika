@@ -3,12 +3,12 @@
         </script>
         <link rel="import" href="libraries.html">
         <link rel="import" href="pmc-input.html">
-        <link rel="import" href="pmc-library.html">
         <link rel="import" href="pmc-array-editor.html">
+        <link rel="import" href="pmc-filter-editor.html">
+        <link rel="import" href="pmc-library-button.html">
         <link rel="import" href="pmc-cubicle-editor.html">
         <link rel="import" href="pmc-switch.html">
         <link rel="import" href="pmc-switch-editor.html">
-        <link rel="import" href="pmc-filter-editor.html">
         <!-- Handle SSE events from the server-->
         <script>
             var eventOutputContainer = document.getElementById("event");
@@ -20,9 +20,8 @@
                 for (var i in plantVariables) {
                     var pv = plantVariables[i];
                     var targetElement = allPMCComponents[pv.name];
-                    if (targetElement !== null) {
+                    if (targetElement !== undefined) {
                         targetElement.setPlantValue(pv.value);
-                        targetElement.checkValues();
                     }
                 }
             };
@@ -45,9 +44,9 @@
                         success: function (response) {
                             if (response == "done") {
                                 alert("Values updated successfully!");
+                                var pmcComp;
                                 $.each(allPMCComponents, function (i, pmcComp) {
                                     pmcComp.setInitialValue(pmcComp.getValue());
-                                    pmcComp.checkValues();
                                 });
                             } 
                             else {
@@ -70,18 +69,18 @@
                     var currentReference = document.getElementById("refselect").value;
                     if (currentReference === "none") {
                         //Reset all the values to N/A
+                        var pmcComp;
                         $.each(allPMCComponents, function (i, pmcComp) {
                             pmcComp.setReferenceValue("N/A");
                             pmcComp.setReference(currentReference);
-                            pmcComp.checkValues();
                         });
                     }
                     else if (currentReference === "plant") {
                         //Reset all the values to N/A
+                        var pmcComp;
                         $.each(allPMCComponents, function (i, pmcComp) {
                             pmcComp.setReferenceValue(pmcComp.getPlantValue());
                             pmcComp.setReference(currentReference);
-                            pmcComp.checkValues();
                         });
                     }
                     else {
@@ -94,13 +93,13 @@
                             url: "/getschedule",
                             data: getParams,
                             success: function (response) {
-                                variables = $.parseJSON(response);
+                                var variables = $.parseJSON(response);
+                                var variable;
                                 $.each(variables, function(i, variable) {
                                     var targetElement = allPMCComponents[variable.name];
                                     if (targetElement != null) {
                                         targetElement.setReferenceValue(variable.value);
                                         targetElement.setReference(currentReference);
-                                        targetElement.checkValues();
                                     }
                                 });
                             },
@@ -127,7 +126,6 @@
                                 var targetElement = allPMCComponents[variable.name];
                                 if (targetElement != null) {
                                     targetElement.setValue(variable.value);
-                                    targetElement.checkValues();
                                 }
                             });
                         },
@@ -187,7 +185,6 @@
                                 targetElement.setInitialValue(pvInfo.value);
                                 targetElement.setValue(pvInfo.value);
                                 targetElement.setValidations(pvInfo.validation);
-                                targetElement.checkValues();
                             }
                         });
                     },
@@ -227,7 +224,6 @@
             function loadFromPlant() {
                 $.each(allPMCComponents, function (i, pmcComp) {
                     pmcComp.setValue(pmcComp.getPlantValue());
-                    pmcComp.checkValues();
                 });
             }
         </script>
@@ -239,23 +235,23 @@
             <table border="0">
                 <tr>
                     <td>PMC::TEST::VAR1</td>
-                    <td><input is="pmc-input" type="text" id="PMC::TEST::VAR1" name="PMC::TEST::VAR1"></input></td>
+                    <td><pmc-input id="PMC::TEST::VAR1" name="PMC::TEST::VAR1"></pmc-input></td>
                 </tr>
                 <tr>
                     <td>PMC::TEST::VAR2</td>
-                    <td><input is="pmc-input" type="text" id="PMC::TEST::VAR2" name="PMC::TEST::VAR2"></input></td>
+                    <td><pmc-input id="PMC::TEST::VAR2" name="PMC::TEST::VAR2"></pmc-input></td>
                 </tr>
                 <tr>
                     <td>PMC::TEST::VAR3</td>
-                    <td><button is="pmc-library" data-library-editor="pmc-array-editor" type="button" id="PMC::TEST::VAR3" name="PMC::TEST::VAR3"></button></td>
+                    <td><pmc-library-button data-library-editor="pmc-array-editor" id="PMC::TEST::VAR3" name="PMC::TEST::VAR3"></pmc-library-button></td>
                 </tr>
-                <tr>
-                    <td>PMC::TEST::VAR4</td>
-                    <td><button is="pmc-library" data-library-editor="pmc-array-editor" type="button" id="PMC::TEST::VAR4" name="PMC::TEST::VAR4"></button></td>
+                    <tr>
+                        <td>PMC::TEST::VAR4</td>
+                    <td><pmc-library-button data-library-editor="pmc-array-editor" id="PMC::TEST::VAR4" name="PMC::TEST::VAR4"></pmc-library-button></td>
                 </tr>
                 <tr>
                     <td>PMC::TEST::VAR7</td>
-                    <td><button is="pmc-library" data-library-editor="pmc-filter-editor" type="button" id="PMC::TEST::VAR7" name="PMC::TEST::VAR7"></button></td>
+                    <td><pmc-library-button data-library-editor="pmc-filter-editor" id="PMC::TEST::VAR7" name="PMC::TEST::VAR7"></pmc-library-button></td>
                 </tr>
                 <tr>
                     <td>PMC::TEST::VAR5</td>
@@ -291,8 +287,6 @@
             <pmc-switch is="pmc" id="PMC::TEST::VAR10" data-library-editor="pmc-switch-editor" data-location-cubicle="2">
             </pmc-switch>
         </pmc-cubicle-editor>
-<!--        <pmc-switch is="pmc" id="PMC::TEST::VAR11" data-library-editor="pmc-switch-editor">
-        </pmc-switch>-->
     </body>
 </html>
 

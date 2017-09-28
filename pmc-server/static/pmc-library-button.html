@@ -1,0 +1,60 @@
+<html>
+    <head>
+        <link rel="import" href="libraries.html">
+        <link rel="import" href="pmc-library.html">
+    </head>
+    <body>
+        <template id="ttlibrary">
+            <button type="button" id="blibrary"></button>
+        </template>
+
+        <script>
+            //This is enclosure is required to protect the importDoc
+            (function () {
+                var importDoc = document.currentScript.ownerDocument; // importee
+                //Constructor
+                class PMCLibraryButton extends PMCLibrary {
+                    constructor() {
+                        super();
+                    }
+
+                    createdCallback () {
+                        super.createdCallback();
+                        this.buttonInput = this.shadowRoot.querySelector("#blibrary");
+                        this.buttonInput.style.background = STANDARD_BCOLOR;
+                        this.buttonInput.addEventListener("click", function (e) {
+                            this.showLibraryEditor();
+                        }.bind(this));
+                        this.attachLibraryHandler();
+                    }
+                    
+                    valueChanged(typeOfChange) {
+                        if (typeOfChange === "value") {
+                            this.buttonInput.innerHTML = this.value;
+                        }
+                        this.checkValues(this.buttonInput);
+                    }
+
+                    getValue() {
+                        return this.buttonInput.innerHTML;
+                    }
+                            
+                    getTemplate() {
+                        var template = importDoc.querySelector("#ttlibrary");
+                        return template;
+                    }
+
+                    libraryChanged (newLibraryName) {
+                        this.buttonInput.innerHTML = newLibraryName;
+                        this.value = newLibraryName;
+                        this.checkValues(this.buttonInput);
+                    }
+                }
+
+                document.registerElement("pmc-library-button", {
+                    prototype: PMCLibraryButton.prototype,
+                });
+            })(); 
+        </script>
+    </body>
+</html>

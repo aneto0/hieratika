@@ -32,109 +32,101 @@
             </div>
         </template>
         <script>
-            function PMCFilterEditor() {
-                HTMLElement.call(this);
-            }
+        //This is enclosure is required to protect the importDoc
+        (function () {
+            var importDoc = document.currentScript.ownerDocument; // importee
+            class PMCFilterEditor extends PMCComponent {
+                constructor () {
+                    super();
+                }
 
-            function generatePolynomialMathML(pol) {
-                var polynomialInnerHTML = "<mrow>";
-                for (var i=0; i<pol.length; i++) {
-                    if (pol[i] !== 0) {
-                        if (i !== 0) {
-                            if (pol[i] > 0) {
-                                polynomialInnerHTML += "<mo>+</mo>";
+                generatePolynomialMathML(pol) {
+                    var polynomialInnerHTML = "<mrow>";
+                    for (var i=0; i<pol.length; i++) {
+                        if (pol[i] !== 0) {
+                            if (i !== 0) {
+                                if (pol[i] > 0) {
+                                    polynomialInnerHTML += "<mo>+</mo>";
+                                }
                             }
-                        }
-                        var expVal = (pol.length - i - 1);
-                        if ((expVal === 0) || (pol[i] != 1)) {
-                            polynomialInnerHTML += "<mn>";
-                            polynomialInnerHTML += pol[i];
-                            polynomialInnerHTML += "</mn>";
-                        }
-                        if (expVal > 0) {
-                            if (expVal === 1) {
-                                polynomialInnerHTML += "<mi>s</mi>";
-                            } 
-                            else {
-                                polynomialInnerHTML += "<msup>";
-                                polynomialInnerHTML += "<mi>s</mi>";
+                            var expVal = (pol.length - i - 1);
+                            if ((expVal === 0) || (pol[i] != 1)) {
                                 polynomialInnerHTML += "<mn>";
-                                polynomialInnerHTML += expVal;
+                                polynomialInnerHTML += pol[i];
                                 polynomialInnerHTML += "</mn>";
-                                polynomialInnerHTML += "</msup>";
+                            }
+                            if (expVal > 0) {
+                                if (expVal === 1) {
+                                    polynomialInnerHTML += "<mi>s</mi>";
+                                } 
+                                else {
+                                    polynomialInnerHTML += "<msup>";
+                                    polynomialInnerHTML += "<mi>s</mi>";
+                                    polynomialInnerHTML += "<mn>";
+                                    polynomialInnerHTML += expVal;
+                                    polynomialInnerHTML += "</mn>";
+                                    polynomialInnerHTML += "</msup>";
+                                }
+                            }
+                        } 
+                    }
+                    polynomialInnerHTML += "</mrow>";
+                    return polynomialInnerHTML;
+                }
+
+                generateTransferFunctionMathML(num, den) {
+                    var transferFunctionInnerHTML = "<math>";
+                    transferFunctionInnerHTML += "<mi>H(s)</mi>";
+                    transferFunctionInnerHTML += "<mo>=</mo>";
+                    transferFunctionInnerHTML += "<mfrac>";
+                    transferFunctionInnerHTML += this.generatePolynomialMathML(num);
+                    transferFunctionInnerHTML += this.generatePolynomialMathML(den);
+                    transferFunctionInnerHTML += "</mfrac>";
+                    transferFunctionInnerHTML += "</math>";
+                    return transferFunctionInnerHTML;
+                } 
+
+                getFilterResponse(num, den) {
+                    var numberOfFrequencies = this.maxFrequency / this.frequencyStep;
+                    var w = new Array(numberOfFrequencies);
+                    var amplitude = new Array(numberOfFrequencies);
+                    w[0] = this.frequencyStep;
+                    for (var i=1; i<numberOfFrequencies; i++) {
+                        w[i] = w[i-1] + this.frequencyStep; 
+                    }
+                    for (var i=0; i<numberOfFrequencies; i++) {
+                        var a = num[num.length - 1];
+                        var b = 0;
+                        //Go right to left
+                        for (var j=num.length-2; j>=0; j--) {
+                            var pwr = num.length - j + 1;
+                            if ((pwr % 2) == 0) {
+                                a = a - num[j] * Math.pow(w[i], pwr);
+                            }
+                            else  {
+                                b = b - num[j] * Math.pow(w[i], pwr);
                             }
                         }
-                    } 
-                }
-                polynomialInnerHTML += "</mrow>";
-                return polynomialInnerHTML;
-            }
-
-            function generateTransferFunctionMathML(num, den) {
-                var transferFunctionInnerHTML = "<math>";
-                transferFunctionInnerHTML += "<mi>H(s)</mi>";
-                transferFunctionInnerHTML += "<mo>=</mo>";
-                transferFunctionInnerHTML += "<mfrac>";
-                transferFunctionInnerHTML += generatePolynomialMathML(num);
-                transferFunctionInnerHTML += generatePolynomialMathML(den);
-                transferFunctionInnerHTML += "</mfrac>";
-                transferFunctionInnerHTML += "</math>";
-                return transferFunctionInnerHTML;
-            } 
-
-            function getFilterResponse(num, den, stepFrequency, maxFrequency) {
-                var numberOfFrequencies = maxFrequency / stepFrequency;
-                var w = new Array(numberOfFrequencies);
-                var amplitude = new Array(numberOfFrequencies);
-                w[0] = stepFrequency;
-                for (var i=1; i<numberOfFrequencies; i++) {
-                    w[i] = w[i-1] + stepFrequency
-                }
-                for (var i=0; i<numberOfFrequencies; i++) {
-                    var a = num[num.length - 1];
-                    var b = 0;
-                    //Go right to left
-                    for (var j=num.length-2; j>=0; j--) {
-                        var pwr = num.length - j + 1;
-                        if ((pwr % 2) == 0) {
-                            a = a - num[j] * Math.pow(w[i], pwr);
+                        var numAbs = Math.sqrt(a*a + b*b);
+                        
+                        a = den[den.length - 1];
+                        b = 0;
+                        for (var j=den.length-2; j>=0; j--) {
+                            var pwr = den.length - j + 1;
+                            if ((pwr % 2) == 0) {
+                                a = a - den[j] * Math.pow(w[i], pwr);
+                            }
+                            else  {
+                                b = b - den[j] * Math.pow(w[i], pwr);
+                            }
                         }
-                        else  {
-                            b = b - num[j] * Math.pow(w[i], pwr);
-                        }
+                        var denAbs = Math.sqrt(a*a + b*b);
+                        amplitude[i] = {x: w[i], y: 20 * Math.log10(numAbs/denAbs)};
                     }
-                    numAbs = Math.sqrt(a*a + b*b);
-                    
-                    a = den[den.length - 1];
-                    b = 0;
-                    for (var j=den.length-2; j>=0; j--) {
-                        var pwr = den.length - j + 1;
-                        if ((pwr % 2) == 0) {
-                            a = a - den[j] * Math.pow(w[i], pwr);
-                        }
-                        else  {
-                            b = b - den[j] * Math.pow(w[i], pwr);
-                        }
-                    }
-                    denAbs = Math.sqrt(a*a + b*b);
-                    amplitude[i] = {x: w[i], y: 20 * Math.log10(numAbs/denAbs)};
+                    return amplitude;
                 }
-                return amplitude;
-            }
 
-            (function () {
-                var importDoc = document.currentScript.ownerDocument; // importee
-
-                var PMCFilterEditorProto = Object.create(HTMLElement.prototype);
-                PMCFilterEditorProto.constructor = PMCFilterEditor;
-            
-                extendMixin(PMCFilterEditorProto, PMCComponent.prototype);
-
-                PMCFilterEditorProto.currentValuesToString = function() {
-                    var refToDisplay = this.refvalue;
-                    if (this.reference === "plant") {
-                        refToDisplay = this.pltvalue;
-                    }
+                currentValuesToString () {
                     var currentValueTxt = undefined;
                     var currentValue = this.getValue();
                     if (currentValue !== undefined) {
@@ -147,10 +139,20 @@
                         plantValueTxt = plantValue[0] + "/" + plantValue[1];
                     }
 
-                    var referenceValue = this.getReferenceValue();
+                    var reference = this.getReference();
+                    var referenceValue = undefined;
+                    if (reference === "plant") {
+                        referenceValue = plantValue;
+                    }
+                    else if (reference !== "none") {
+                        referenceValue = this.getReferenceValue();
+                    }
                     var referenceValueTxt = undefined;
                     if (referenceValue !== undefined) {
                         referenceValueTxt = referenceValue[0] + "/" + referenceValue[1];
+                    }
+                    else {
+                        referenceValueTxt = "N/A";
                     }
 
                     var initialValue = this.getInitialValue();
@@ -163,44 +165,41 @@
                     return "Current: " + currentValueTxt + " Plant: " + plantValueTxt + " Reference: " + referenceValueTxt + " Initial: " + initialValueTxt;
                 }
 
-                PMCFilterEditorProto.checkValues = function() {
+                checkValues () {
                     if (this.chart !== undefined) {
                         this.chart.data.datasets[0].data = [];
                         this.chart.data.datasets[1].data = [];
                         this.chart.data.datasets[2].data = [];
-                        var numeratorInput = this.shadowRoot.querySelector("#numeratorInput");
-                        var denominatorInput = this.shadowRoot.querySelector("#denominatorInput");
                         if (this.value !== undefined) {
                             var num = this.value[0];
                             var den = this.value[1];
-                            numeratorInput.value = num;
-                            denominatorInput.value = den;
+                            this.numeratorInput.value = num;
+                            this.denominatorInput.value = den;
                             
-                            this.chart.data.datasets[0].data = getFilterResponse(num, den, this.frequencyStep, this.maxFrequency);
+                            this.chart.data.datasets[0].data = this.getFilterResponse(num, den);
                              
-                            var currentTransferFunction = this.shadowRoot.querySelector("#currentTransferFunction");
-                            currentTransferFunction.innerHTML = generateTransferFunctionMathML(num, den);
-                            jqMath.parseMath(currentTransferFunction);
+                            this.currentTransferFunction.innerHTML = this.generateTransferFunctionMathML(num, den);
+                            jqMath.parseMath(this.currentTransferFunction);
 
-                            if(!this.compareValues(numeratorInput.value, this.initvalue[0])) {
-                                numeratorInput.style.color = DIFF_INIT_CHANGED_COLOR;
+                            if(!this.compareValues(this.numeratorInput.value, this.initvalue[0])) {
+                                this.numeratorInput.style.color = DIFF_INIT_CHANGED_COLOR;
                             }
                             else {
-                                numeratorInput.style.color = STANDARD_FCOLOR;
+                                this.numeratorInput.style.color = STANDARD_FCOLOR;
                             }
-                            if(!this.compareValues(denominatorInput.value, this.initvalue[1])) {
-                                denominatorInput.style.color = DIFF_INIT_CHANGED_COLOR;
+                            if(!this.compareValues(this.denominatorInput.value, this.initvalue[1])) {
+                                this.denominatorInput.style.color = DIFF_INIT_CHANGED_COLOR;
                             }
                             else {
-                                denominatorInput.style.color = STANDARD_FCOLOR;
+                                this.denominatorInput.style.color = STANDARD_FCOLOR;
                             }
                         }
 
                         var ref = this.getReference();
                         var refValue = this.getReferenceValue();
                         var plantValue = this.getPlantValue();
-                        var referenceTransferFunction = this.shadowRoot.querySelector("#referenceTransferFunction");
-                        referenceTransferFunction.innerHTML = "";
+                        this.referenceTransferFunction.innerHTML = "";
+                        var newBackgroundColor = STANDARD_BCOLOR;
                         if (ref !== "none") {
                             if (refValue !== undefined) {
                                 var numRef = refValue[0];
@@ -210,90 +209,100 @@
                                 }
                                 var numPlant = plantValue[0];
                                 var denPlant = plantValue[1];
-                                this.chart.data.datasets[1].data = getFilterResponse(numRef, denRef, this.frequencyStep, this.maxFrequency);
-                                referenceTransferFunction.innerHTML = generateTransferFunctionMathML(numRef, denRef);
-                                jqMath.parseMath(referenceTransferFunction);
-                                var newBackgroundColor = STANDARD_BCOLOR;
-                                if (this.compareWithReference(numeratorInput.value, numPlant, numRef)) {
+                                this.chart.data.datasets[1].data = this.getFilterResponse(numRef, denRef);
+                                this.referenceTransferFunction.innerHTML = this.generateTransferFunctionMathML(numRef, denRef);
+                                jqMath.parseMath(this.referenceTransferFunction);
+                                if (this.compareWithReference(this.numeratorInput.value, numPlant, numRef)) {
                                     newBackgroundColor = STANDARD_BCOLOR;
                                 }
                                 else {
                                     newBackgroundColor = PLANT_OR_REF_CHANGED_COLOR;
                                 }
-                                numeratorInput.style.backgroundColor = newBackgroundColor;
+                                this.numeratorInput.style.backgroundColor = newBackgroundColor;
 
-                                if (this.compareWithReference(denominatorInput.value, denPlant, denRef)) {
+                                if (this.compareWithReference(this.denominatorInput.value, denPlant, denRef)) {
                                     newBackgroundColor = STANDARD_BCOLOR;
                                 }
                                 else {
                                     newBackgroundColor = PLANT_OR_REF_CHANGED_COLOR;
                                 }
-                                denominatorInput.style.backgroundColor = newBackgroundColor;
+                                this.denominatorInput.style.backgroundColor = newBackgroundColor;
 
                             }
+                        }
+                        else {
+                            this.numeratorInput.style.backgroundColor = newBackgroundColor;
+                            this.denominatorInput.style.backgroundColor = newBackgroundColor;
                         }
                         if (plantValue !== undefined) {
                             var numPlant = plantValue[0];
                             var denPlant = plantValue[1];
-                            this.chart.data.datasets[2].data = getFilterResponse(numPlant, denPlant, this.frequencyStep, this.maxFrequency);
-                            var plantTransferFunction = this.shadowRoot.querySelector("#plantTransferFunction");
-                            plantTransferFunction.innerHTML = generateTransferFunctionMathML(numPlant, denPlant);
-                            jqMath.parseMath(plantTransferFunction);
+                            this.chart.data.datasets[2].data = this.getFilterResponse(numPlant, denPlant);
+                            this.plantTransferFunction.innerHTML = this.generateTransferFunctionMathML(numPlant, denPlant);
+                            jqMath.parseMath(this.plantTransferFunction);
 
                         }
                         this.chart.update();
                     }
+                    
+
                     this.title = this.currentValuesToString();
                 }
 
-                PMCFilterEditorProto.setValue = function(elementsToSet) {
-
+                setValue (elementsToSet) {
                     this.value = elementsToSet.slice(0);
+                    this.checkValues();
                 }
 
-                // Use Shadow DOM and a template.
-                PMCFilterEditorProto.createdCallback = function() {
-                    // Get template 
+                valueChanged(typeOfChange) {
+                    this.checkValues();
+                }
+
+                getTemplate() {
                     var template = importDoc.querySelector("#tfilter");
-                    // import template into
-                    var clone = document.importNode(template.content, true);
-                    var root = this.createShadowRoot();
-                    this.frequencyStep = 0.2;
-                    this.maxFrequency = 10; 
-                    root.appendChild(clone);
-                    allPMCComponents[this.id] = this;
+                    return template;
+                }
+
+                createdCallback () {
+                    super.createdCallback();
                     var button = this.shadowRoot.querySelector("#refreshButton");
-                    var numeratorInput = this.shadowRoot.querySelector("#numeratorInput");
-                    var denominatorInput = this.shadowRoot.querySelector("#denominatorInput");
-                    var frequencyStepInput = this.shadowRoot.querySelector("#frequencyStepInput");
-                    var maxFrequencyInput = this.shadowRoot.querySelector("#maxFrequencyInput");
-                    frequencyStepInput.value = this.frequencyStep;
-                    maxFrequencyInput.value = this.maxFrequency;
+                    this.numeratorInput = this.shadowRoot.querySelector("#numeratorInput");
+                    this.denominatorInput = this.shadowRoot.querySelector("#denominatorInput");
+                    this.frequencyStepInput = this.shadowRoot.querySelector("#frequencyStepInput");
+                    this.maxFrequencyInput = this.shadowRoot.querySelector("#maxFrequencyInput");
+                    this.currentTransferFunction = this.shadowRoot.querySelector("#currentTransferFunction");
+                    this.referenceTransferFunction = this.shadowRoot.querySelector("#referenceTransferFunction");
+                    this.plantTransferFunction = this.shadowRoot.querySelector("#plantTransferFunction");
+                    this.frequencyStep = 0.2;
+                    this.maxFrequency = 10;
+                    this.frequencyStepInput.value = this.frequencyStep;
+                    this.maxFrequencyInput.value = this.maxFrequency;
                     /*button.addEventListener("click", function (e) {
                         this.frequencyStep = parseFloat(this.shadowRoot.querySelector("#frequencyStepInput").value);
                         this.maxFrequency = parseFloat(this.shadowRoot.querySelector("#maxFrequencyInput").value);
-                        this.value[0] = numeratorInput.value.split(",");
-                        this.value[1] = denominatorInput.value.split(",");
+                        this.value[0] = this.numeratorInput.value.split(",");
+                        this.value[1] = this.denominatorInput.value.split(",");
                         this.checkValues(); 
                     }.bind(this));*/
-                    var allInputs = [numeratorInput, denominatorInput, frequencyStepInput, maxFrequencyInput];
+                    var allInputs = [this.numeratorInput, this.denominatorInput, this.frequencyStepInput, this.maxFrequencyInput];
                     var i;
                     for (i in allInputs) {
                         allInputs[i].addEventListener("input", function (e) {
-                            this.frequencyStep = parseFloat(frequencyStepInput.value);
-                            this.maxFrequency = parseFloat(maxFrequencyInput.value);
+                            this.frequencyStep = parseFloat(this.frequencyStepInput.value);
+                            this.maxFrequency = parseFloat(this.maxFrequencyInput.value);
                             if ((this.maxFrequency / this.frequencyStep) > 100) {
                                 this.frequencyStep = this.maxFrequency / 100;
-                                frequencyStepInput.value = this.frequencyStep;
+                                this.frequencyStepInput.value = this.frequencyStep;
                             }
-                            this.value[0] = numeratorInput.value.split(",");
-                            this.value[1] = denominatorInput.value.split(",");
+                            this.value[0] = this.numeratorInput.value.split(",");
+                            this.value[1] = this.denominatorInput.value.split(",");
                             this.checkValues(); 
                         }.bind(this));
                     }
-                };
+                }
 
-                PMCFilterEditorProto.attachedCallback = function() {
+                attachedCallback () {
+                    super.attachedCallback();
                     var ctx = this.shadowRoot.querySelector("#tcanvas");
                     var chart = new Chart(ctx, {
                         // The type of chart we want to create
@@ -344,31 +353,14 @@
                         }
                     });
                     this.chart = chart;
+                }
+            }
 
-                };
+            document.registerElement("pmc-filter-editor", {
+                prototype: PMCFilterEditor.prototype
+            });
 
-                //To enable to store the chart instance
-                Object.defineProperty(PMCFilterEditor, "chart", {
-                    value: "none",
-                    writable: true
-                });
-
-                //Step of the frequency to plot
-                Object.defineProperty(PMCFilterEditor, "frequencyStep", {
-                    value: "0.2",
-                    writable: true
-                });
-
-                //Maximum frequency
-                Object.defineProperty(PMCFilterEditor, "maxFrequency", {
-                    value: "10",
-                    writable: true
-                });
-
-                document.registerElement("pmc-filter-editor", {
-                    prototype: PMCFilterEditorProto
-                });
-            })();
+       })();
         </script>
    </body>
 </html>
