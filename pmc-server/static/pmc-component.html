@@ -87,7 +87,7 @@
             var titleString = this.currentValuesToString();
             if (error) {
                 newBackgroundColor = ERROR_BCOLOR;
-                titleString = "Failed @ " + fun.name + " [ " + validation.description + " ] ";
+                titleString = "Failed @ " + fun.name + " (" + validation.parameters + ")" + " [ " + validation.description + " ] ";
             }
             component.style.backgroundColor = newBackgroundColor;
             component.title = titleString;

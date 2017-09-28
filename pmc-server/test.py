@@ -145,6 +145,29 @@ def getlibrary():
                     break
     return json.dumps(values)
 
+#Updates the library information associated to a given variable
+@app.route("/savelibrary", methods=["POST", "GET"])
+def savelibrary():
+    if (request.method == "GET"):
+        requestedVariable = request.args["variable"]
+        requestedLibraryName = request.args["libraryName"]
+        requestedLibraryValues = request.args["libraryValues"]
+        with open("static/libraries.json", "r") as jsonFile:
+            librariesJson = json.load(jsonFile)
+
+        allLibraries = librariesJson["libraries"]
+        for v in allLibraries:
+            if (v["variable"] == requestedVariable):
+                variableLibraries = v["libraries"]
+                variableLibraries.append({"name": requestedLibraryName, "values": requestedLibraryValues, "owner": "Unkwnown"})
+                print variableLibraries
+                break
+        with open("static/libraries.json", "w") as jsonFile:
+            json.dump(librariesJson, jsonFile)
+
+    return "ok" 
+
+
 
 #Returns the variables associated to a given schedule
 @app.route("/getschedule", methods=["POST", "GET"])

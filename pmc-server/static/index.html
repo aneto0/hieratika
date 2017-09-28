@@ -114,7 +114,7 @@
 
             //Load parameters from a schedule
             $(function () {
-                $("#loadScheduleForm").on("submit", function (e) {
+                $("#copyScheduleForm").on("submit", function (e) {
                     e.preventDefault();
                     $.ajax({
                         type: "get",
@@ -221,7 +221,7 @@
 
             });
 
-            function loadFromPlant() {
+            function copyFromPlant() {
                 $.each(allPMCComponents, function (i, pmcComp) {
                     pmcComp.setValue(pmcComp.getPlantValue());
                 });
@@ -261,15 +261,21 @@
                     <td>PMC::TEST::VAR6</td>
                     <td><pmc-filter-editor is="pmc" id="PMC::TEST::VAR6" name="PMC::TEST::VAR6"></pmc-filter-editor></td>
                 </tr>
+                <tr>
+                    <td>PMC::TEST::VAR8</td>
+                    <td>
+                        <pmc-cubicle-editor is="pmc" id="PMC::TEST::VAR8">
+                            <pmc-switch is="pmc" id="PMC::TEST::VAR9" data-library-editor="pmc-switch-editor" data-location-cubicle="0">
+                            </pmc-switch>
+                            <pmc-switch is="pmc" id="PMC::TEST::VAR10" data-library-editor="pmc-switch-editor" data-location-cubicle="2">
+                            </pmc-switch>
+                        </pmc-cubicle-editor>
+                    </td>
+                </tr>
             </table>
-            <input type="submit" value="Update values"></input>
+            <input type="submit" value="Load values into the plant"></input>
         </form></br>
         
-        <form id="loadScheduleForm">
-            <select id="schselect" name="schselect"></select>
-            <input type="submit" value="Load from schedule"></input>
-        </form></br>
-
         <form id="setReferenceForm">
             <select id="refselect" name="refselect">
                 <option value="none" text="none">None</option>
@@ -277,16 +283,16 @@
             </select>
             <input type="submit" value="Set reference"></input>
         </form></br>
-            
-        <input type="button" value="Load from plant" onclick="loadFromPlant()"></input>
+
+         <form id="copyScheduleForm">
+            <select id="schselect" name="schselect"></select>
+            <input type="submit" value="Copy from schedule"></input>
+        </form></br>
+
+           
+        <input type="button" value="Copy from plant" onclick="copyFromPlant()"></input>
         <br/>
 
-        <pmc-cubicle-editor is="pmc" id="PMC::TEST::VAR8">
-            <pmc-switch is="pmc" id="PMC::TEST::VAR9" data-library-editor="pmc-switch-editor" data-location-cubicle="0">
-            </pmc-switch>
-            <pmc-switch is="pmc" id="PMC::TEST::VAR10" data-library-editor="pmc-switch-editor" data-location-cubicle="2">
-            </pmc-switch>
-        </pmc-cubicle-editor>
     </body>
 </html>
 

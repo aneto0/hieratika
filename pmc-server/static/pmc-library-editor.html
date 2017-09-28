@@ -152,6 +152,8 @@
                             var selector = this.shadowRoot.querySelector("#tselect");
                             var okButton = this.shadowRoot.querySelector("#tselectorOK");
                             var cancelButton = this.shadowRoot.querySelector("#tselectorCancel");
+                            var saveAsButton = this.shadowRoot.querySelector("#saveAsButton");
+                            var saveAsLibraryName = this.shadowRoot.querySelector("#saveAsLibraryName");
 
                             okButton.onclick = function() {
                                 this.selected = selector.options[selector.selectedIndex].text;
@@ -168,6 +170,32 @@
 
                             selector.onchange = function() {
                                 this.editLibrary();
+                            }.bind(this);
+
+                            saveAsButton.onclick = function() {
+                                var saveAsName = saveAsLibraryName.value;
+                                if (saveAsName.length === 0) {
+                                    alert("Please introduce a library name");
+                                }
+                                else {
+                                    $.ajax({
+                                        type: "get",
+                                        url: "/savelibrary",
+                                        data: {
+                                            variable : this.owner.id, 
+                                            libraryName : saveAsName,
+                                            libraryValues : JSON.stringify(this.editor.getValue())
+                                        },
+                                        success: function (response) {
+//                                            var values = $.parseJSON(response);
+//                                            this.editor.setReferenceValue(values);
+                                        }.bind(this),
+                                        error: function (response) {
+                                            console.log(response);
+                                            alert(response);
+                                        }
+                                    });
+                                }
                             }.bind(this);
 
 
