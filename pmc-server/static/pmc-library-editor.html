@@ -152,6 +152,7 @@
                             var selector = this.shadowRoot.querySelector("#tselect");
                             var okButton = this.shadowRoot.querySelector("#tselectorOK");
                             var cancelButton = this.shadowRoot.querySelector("#tselectorCancel");
+                            var saveButton = this.shadowRoot.querySelector("#saveButton");
                             var saveAsButton = this.shadowRoot.querySelector("#saveAsButton");
                             var saveAsLibraryName = this.shadowRoot.querySelector("#saveAsLibraryName");
 
@@ -172,6 +173,29 @@
                                 this.editLibrary();
                             }.bind(this);
 
+                            saveButton.onclick = function() {
+                                var saveAsName = selector.options[selector.selectedIndex].text;
+                                $.ajax({
+                                    type: "get",
+                                    url: "/savelibrary",
+                                    data: {
+                                        variable : this.owner.id, 
+                                        libraryName : saveAsName,
+                                        libraryValues : JSON.stringify(this.editor.getValue())
+                                    },
+                                    success: function (response) {
+                                        if (response == "ok") {
+                                            alert("Library updated successfully!");
+                                        }
+                                    }.bind(this),
+                                    error: function (response) {
+                                        console.log(response);
+                                        alert(response);
+                                    }
+                                });
+                            }.bind(this);
+
+
                             saveAsButton.onclick = function() {
                                 var saveAsName = saveAsLibraryName.value;
                                 if (saveAsName.length === 0) {
@@ -187,8 +211,9 @@
                                             libraryValues : JSON.stringify(this.editor.getValue())
                                         },
                                         success: function (response) {
-//                                            var values = $.parseJSON(response);
-//                                            this.editor.setReferenceValue(values);
+                                            if (response == "ok") {
+                                                alert("Library updated successfully!");
+                                            }
                                         }.bind(this),
                                         error: function (response) {
                                             console.log(response);
