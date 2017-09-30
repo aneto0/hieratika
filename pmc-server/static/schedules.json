@@ -5,58 +5,47 @@
             "description": "...",
             "variables": [{
                     "name": "PMC::TEST::VAR1",
-                    "value": "1",
-                    "isPV": "True"
+                    "value": "1"
                 },
                 {
                     "name": "PMC::TEST::VAR2",
-                    "value": "2",
-                    "isPV": "True"
+                    "value": "2"
                 },
                 {
                     "name": "PMC::TEST::VAR3",
-                    "value": "Example 1",
-                    "isPV": "True"
+                    "value": "Example 1"
                 },
                 {
                     "name": "PMC::TEST::VAR4",
-                    "value": "Example 3",
-                    "isPV": "True"
+                    "value": "Example 3"
                 },
                 {
                     "name": "PMC::TEST::VAR5",
-                    "value": ["-1", "-3", "-5", "2"],
-                    "isPV": "True"
+                    "value": ["-1", "-3", "-5", "2"]
                 },
                 {
                     "name": "PMC::TEST::VAR6",
-                    "value": [["10"], ["3", "8", "3", "4"]],
-                    "isPV": "True"
+                    "value": [["10"], ["3", "8", "3", "4"]]
                 },
                 {
                     "name": "SUP::PMC::TEST::VAR3",
-                    "value": "3",
-                    "isPV": "False"
+                    "value": "3"
                 },
                 {
                     "name": "PMC::TEST::VAR7",
-                    "value": "Example 1",
-                    "isPV": "True"
+                    "value": "Example 1"
                 },
                 {
                     "name": "PMC::TEST::VAR8",
-                    "value": "Example 1",
-                    "isPV": "True"
+                    "value": "Example 1"
                 },
                 {
                     "name": "PMC::TEST::VAR9",
-                    "value": "Example 2",
-                    "isPV": "True"
+                    "value": "Example 2"
                 },
                 {
                     "name": "PMC::TEST::VAR10",
-                    "value": "Example 4",
-                    "isPV": "True"
+                    "value": "Example 4"
                 }
             ]
         },
@@ -66,58 +55,47 @@
             "description": "...",
             "variables": [{
                     "name": "PMC::TEST::VAR1",
-                    "value": "10",
-                    "isPV": "True"
+                    "value": "10"
                 },
                 {
                     "name": "PMC::TEST::VAR2",
-                    "value": "20",
-                    "isPV": "True"
+                    "value": "20"
                 },
                 {
                     "name": "PMC::TEST::VAR3",
-                    "value": "Example 2",
-                    "isPV": "True"
+                    "value": "Example 2"
                 },
                 {
                     "name": "PMC::TEST::VAR4",
-                    "value": "Example 4",
-                    "isPV": "True"
+                    "value": "Example 4"
                 },
                 {
                     "name": "PMC::TEST::VAR5",
-                    "value": ["6", "9", "10", "15"],
-                    "isPV": "True"
+                    "value": ["6", "9", "10", "15"]
                 },
                 {
                     "name": "PMC::TEST::VAR6",
-                    "value": [["1", "2"], ["8", "3", "4"]],
-                    "isPV": "True"
+                    "value": [["1", "2"], ["8", "3", "4"]]
                 },
                 {
                     "name": "SUP::PMC::TEST::VAR3",
-                    "value": "30",
-                    "isPV": "False"
+                    "value": "30"
                 },
                 {
                     "name": "PMC::TEST::VAR7",
-                    "value": "Example 2",
-                    "isPV": "True"
+                    "value": "Example 2"
                 },
                 {
                     "name": "PMC::TEST::VAR8",
-                    "value": "Example 4",
-                    "isPV": "True"
+                    "value": "Example 4"
                 },
                 {
                     "name": "PMC::TEST::VAR9",
-                    "value": "Example 3",
-                    "isPV": "True"
+                    "value": "Example 3"
                 },
                 {
                     "name": "PMC::TEST::VAR10",
-                    "value": "Example 6",
-                    "isPV": "True"
+                    "value": "Example 6"
                 }
             ]
         }

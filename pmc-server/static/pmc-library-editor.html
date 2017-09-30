@@ -16,8 +16,8 @@
                 <table style="border-style:solid;border-width:1px;width: 100%">
                     <tr>
                         <td><select id="tselect" name="tselect"></select></td>
-                        <td><button id="saveButton">Save</button></td>
-                        <td><button id="saveAsButton">Save as...</button><input type="text" id="saveAsLibraryName"></input></td>
+                        <td><button id="saveButton" disabled="true">Save</button></td>
+                        <td><button id="saveAsButton" disabled="true">Save as...</button><input type="text" id="saveAsLibraryName"></input></td>
                     </tr>
                 </table>
                 </br>
@@ -152,8 +152,8 @@
                             var selector = this.shadowRoot.querySelector("#tselect");
                             var okButton = this.shadowRoot.querySelector("#tselectorOK");
                             var cancelButton = this.shadowRoot.querySelector("#tselectorCancel");
-                            var saveButton = this.shadowRoot.querySelector("#saveButton");
-                            var saveAsButton = this.shadowRoot.querySelector("#saveAsButton");
+                            this.saveButton = this.shadowRoot.querySelector("#saveButton");
+                            this.saveAsButton = this.shadowRoot.querySelector("#saveAsButton");
                             var saveAsLibraryName = this.shadowRoot.querySelector("#saveAsLibraryName");
 
                             okButton.onclick = function() {
@@ -173,7 +173,7 @@
                                 this.editLibrary();
                             }.bind(this);
 
-                            saveButton.onclick = function() {
+                            this.saveButton.onclick = function() {
                                 var saveAsName = selector.options[selector.selectedIndex].text;
                                 $.ajax({
                                     type: "get",
@@ -196,7 +196,7 @@
                             }.bind(this);
 
 
-                            saveAsButton.onclick = function() {
+                            this.saveAsButton.onclick = function() {
                                 var saveAsName = saveAsLibraryName.value;
                                 if (saveAsName.length === 0) {
                                     alert("Please introduce a library name");
@@ -230,9 +230,18 @@
                                 divEditor.removeChild(divEditor);
                             }
                             divEditor.appendChild(this.editor);
+
+                            this.editor.addValueChangedListener(this);
                         }
                     }
 
+                    //TODO FINISH ME. HAVE TO ADD THE SOURCE OF THE EVENT
+                    valueChanged(typeOfChange) {
+                        if (typeOfChange === "value") {
+                            this.saveButton.disabled = false;
+                            this.saveAsButton.disabled = false;
+                        }
+                    }
                 }
                 document.registerElement("pmc-library-editor", {
                     prototype: PMCLibraryEditor.prototype

@@ -65,7 +65,6 @@ def createDB():
                         vp = {
                             "schedule": schedule["name"],
                             "name": v["name"],
-                            "isPV": v["isPV"],
                             "value": pickle.dumps(v["value"])
                         }
                         tableSchedulesVariables.insert(vp)
@@ -109,8 +108,9 @@ def updatePlantVariablesDB(pvName, pvValue):
 def streamData():
     try:
         while True:
+            db = getDB()
             tid = str(threading.current_thread())
-            tablePlantDescription = getDB()["PMC::TEST::PLANT1"]
+            tablePlantDescription = db["PMC::TEST::PLANT1"]
             if tid not in threadQueues:
                 # The first time send all the variables
                 threadQueues[tid] = Queue.Queue()
@@ -137,8 +137,9 @@ def streamData():
 #Gets all the pv information
 @app.route("/getplantinfo")
 def getplantinfo():
-    tablePlantDescription = getDB()["PMC::TEST::PLANT1"]
-    tablePlantValidations = getDB()["PMC::TEST::PLANT1-validations"]
+    db = getDB()
+    tablePlantDescription = db["PMC::TEST::PLANT1"]
+    tablePlantValidations = db["PMC::TEST::PLANT1-validations"]
     encodedPy = {"variables": [] }
     for plantVariable in tablePlantDescription:
         plantVariable["initialValue"] = pickle.loads(plantVariable["initialValue"])  
@@ -175,7 +176,8 @@ def submit():
 #Return the available schedules
 @app.route("/getschedules")
 def getschedules():
-    tableSchedules = getDB()["PMC::TEST::PLANT1-schedules"]
+    db = getDB()
+    tableSchedules = db["PMC::TEST::PLANT1-schedules"]
     scheduleNames = []
     for s in tableSchedules:
         scheduleNames.append(s["name"]);
@@ -184,7 +186,8 @@ def getschedules():
 #Return the available libraries
 @app.route("/getlibraries")
 def getlibraries():
-    tableLibraries = getDB()["PMC::TEST::PLANT1-libraries"]
+    db = getDB()
+    tableLibraries = db["PMC::TEST::PLANT1-libraries"]
     librariesNames = {}
     for library in tableLibraries:
         variable = library["variable"]
@@ -198,7 +201,8 @@ def getlibraries():
 #Returns the library information associated to a given variable
 @app.route("/getlibrary", methods=["POST", "GET"])
 def getlibrary():
-    tableLibraries = getDB()["PMC::TEST::PLANT1-libraries"]
+    db = getDB()
+    tableLibraries = db["PMC::TEST::PLANT1-libraries"]
     values = {}
     if (request.method == "GET"):
         requestedVariable = request.args["variable"]
@@ -210,7 +214,8 @@ def getlibrary():
 #Updates the library information associated to a given variable
 @app.route("/savelibrary", methods=["POST", "GET"])
 def savelibrary():
-    tableLibraries = getDB()["PMC::TEST::PLANT1-libraries"]
+    db = getDB()
+    tableLibraries = db["PMC::TEST::PLANT1-libraries"]
     if (request.method == "GET"):
         requestedVariable = request.args["variable"]
         requestedLibraryName = request.args["libraryName"]
@@ -232,14 +237,14 @@ def savelibrary():
 @app.route("/getschedule", methods=["POST", "GET"])
 def getschedule():
     variables = []
-    tableSchedulesVariables = getDB()["PMC::TEST::PLANT1-schedules-variables"]
+    db = getDB()
+    tableSchedulesVariables = db["PMC::TEST::PLANT1-schedules-variables"]
     if (request.method == "GET"):
         requestedSchedule = request.args["schselect"]
         scheduleVariables = tableSchedulesVariables.find(schedule=requestedSchedule)
         for v in scheduleVariables:
             vp = {
                 "name": v["name"],
-                "isPV": v["isPV"],
                 "value": pickle.loads(v["value"])
             }
             variables.append(vp)
@@ -270,7 +275,8 @@ if __name__ == "__main__":
       
     createDB(); 
 
-    tablePlantDescription = getDB()["PMC::TEST::PLANT1"]
+    db = getDB()
+    tablePlantDescription = db["PMC::TEST::PLANT1"]
     for plantVariable in tablePlantDescription:
         if "value" not in plantVariable:
             plantVariable["value"] = plantVariable["initialValue"]

@@ -142,7 +142,7 @@
         setPlantValue (plantValueToSet) {
             if (plantValueToSet !==  undefined) {
                 this.pltvalue = plantValueToSet.slice(0);
-                this.valueChanged("plantValue");
+                this.fireValueChanged("plantValue");
             }
         }
 
@@ -152,7 +152,7 @@
 
         setInitialValue (initialValueToSet) {
             this.initvalue = initialValueToSet.slice(0);
-            this.valueChanged("initialValue");
+            this.fireValueChanged("initialValue");
         }
 
         getReference () {
@@ -161,7 +161,7 @@
 
         setReference (referenceToSet) {
             this.reference = referenceToSet;
-            this.valueChanged("reference");
+            this.fireValueChanged("reference");
         }
 
         getValue () {
@@ -170,7 +170,7 @@
 
         setValue (valueToSet) {
             this.value = valueToSet;
-            this.valueChanged("value");
+            this.fireValueChanged("value");
         }
 
         setValidations (validationsToSet) {
@@ -190,6 +190,16 @@
         valueChanged(typeOfChange) {
         }
 
+        fireValueChanged(typeOfChange) {
+            for(var f in this.valueChangedListeners) {
+                this.valueChangedListeners[f].valueChanged(typeOfChange);
+            }
+        }
+
+        addValueChangedListener(comp) {
+            this.valueChangedListeners.push(comp);
+        }
+
         createdCallback() {
             var template = this.getTemplate();
             if (template !== undefined) {
@@ -199,6 +209,7 @@
                 root.appendChild(clone);
                 allPMCComponents[this.id] = this;
             }
+            this.valueChangedListeners = [this];
         }
 
         attachedCallback () {

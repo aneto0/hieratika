@@ -49,6 +49,7 @@
                                 }
                                 if(!this.compareValues(cellValue, cellInitValue)) {
                                     cell.style.color = DIFF_INIT_CHANGED_COLOR;
+                                    this.fireValueChanged("value");
                                 }
                                 else {
                                     cell.style.color = STANDARD_FCOLOR;
@@ -121,11 +122,13 @@
                             }.bind(this));
                         }
                         //Make a shallow copy!
-                        this.value = elementsToSet.slice(0);
+                        super.setValue(elementsToSet.slice(0));
                     }
 
                     valueChanged(typeOfChange) {
-                        this.checkValues();
+                        if (typeOfChange !== "value") {
+                            this.checkValues();
+                        }
                     }
 
                     getTemplate() {
