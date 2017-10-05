@@ -87,7 +87,7 @@
                 } 
 
                 getFilterResponse(num, den) {
-                    var numberOfFrequencies = this.maxFrequency / this.frequencyStep;
+                    var numberOfFrequencies = Math.floor(this.maxFrequency / this.frequencyStep);
                     var w = new Array(numberOfFrequencies);
                     var amplitude = new Array(numberOfFrequencies);
                     w[0] = this.frequencyStep;
@@ -254,7 +254,7 @@
                     this.checkValues();
                 }
 
-                valueChanged(typeOfChange) {
+                valueChanged(source, typeOfChange) {
                     this.checkValues();
                 }
 

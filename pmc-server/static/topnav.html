@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="import" href="pmc-helper.html">
+    <link rel="import" href="pmc-schedule-manager.html">
+</head>
+<body>
+    <style>
+        ::shadow button{
+            height: 30px;
+        }
+
+        ::shadow select {
+            height: 30px;
+        }
+    </style>
+    <template id="ttopnav">
+        <table>
+            <tr>
+                <td><button title="Load current values into plant" onclick="loadIntoPlant()">Load</input></td>
+                <td><button title="Copy value from the plant" onclick="copyFromPlant()">Copy</input></td>
+                <td style="padding-left:50px;">
+                    <select id="refselect" name="refselect">
+                        <option value="none" text="none">None</option>
+                        <option value="plant" text="plant">Plant</option>
+                    </select>
+                </td>
+                <td><button title="Set the current reference" id="refselectbtn">Set reference</button></td>
+                <td style="padding-left:50px;">
+                    <select id="cpyreference" name="cpyreference"></select>
+                    </select>
+                </td>
+                <td><button title="Copy from a given schedule" id="cpyreferencebtn">Copy schedule</button></td>
+
+            </tr>
+        </table>
+    </template>
+
+    <script>
+        //This is enclosure is required to protect the importDoc
+        (function () {
+            var importDoc = document.currentScript.ownerDocument; // importee
+            class PMCTopNav extends HTMLElement {
+                constructor() {
+                    super();
+                }
+
+                createdCallback () {
+                    var template = importDoc.querySelector("#ttopnav");
+                    if (template !== undefined) {
+                        // import template into
+                        var clone = document.importNode(template.content, true);
+                        var root = this.createShadowRoot();
+                        root.appendChild(clone);
+                    
+                        PMCScheduleManager.instance().addScheduleListener(this);
+                    }
+                }
+
+                availableSchedulesChanged(availableSchedules) {
+                    var referenceSelect = this.shadowRoot.querySelector("#refselect");
+                    var copyFromReferenceSelect = this.shadowRoot.querySelector("#cpyreference");
+                    for (var s in availableSchedules) {
+                        var scheduleName = String(availableSchedules[s]);
+                        var option1 = document.createElement("option");
+                        var option2 = document.createElement("option");
+                        option1.text = scheduleName;
+                        option1.value = scheduleName;
+                        option2.text = scheduleName;
+                        option2.value = scheduleName;
+                        referenceSelect.appendChild(option1);
+                        copyFromReferenceSelect.appendChild(option2);
+                    }
+                    var referenceSelectButton = this.shadowRoot.querySelector("#refselectbtn");
+                    var copyFromReferenceButon = this.shadowRoot.querySelector("#cpyreferencebtn");
+                    referenceSelectButton.onclick = function () {
+                        setReference(referenceSelect.options[referenceSelect.selectedIndex].text);
+                    }.bind(this); 
+                }
+            }
+
+            document.registerElement("pmc-top-nav", {
+                prototype: PMCTopNav.prototype,
+            });
+
+        }());
+    </script>
+</body>
+</html>

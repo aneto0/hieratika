@@ -187,12 +187,12 @@
         getTemplate() {
         }
 
-        valueChanged(typeOfChange) {
+        valueChanged(source, typeOfChange) {
         }
 
         fireValueChanged(typeOfChange) {
             for(var f in this.valueChangedListeners) {
-                this.valueChangedListeners[f].valueChanged(typeOfChange);
+                this.valueChangedListeners[f].valueChanged(this, typeOfChange);
             }
         }
 

@@ -125,7 +125,7 @@
                         super.setValue(elementsToSet.slice(0));
                     }
 
-                    valueChanged(typeOfChange) {
+                    valueChanged(source, typeOfChange) {
                         if (typeOfChange !== "value") {
                             this.checkValues();
                         }

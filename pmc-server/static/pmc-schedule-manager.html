@@ -1,0 +1,49 @@
+<script>
+
+    class PMCScheduleManager {
+    
+        static instance() {
+            if(this._instance === undefined) {
+                this._instance = new PMCScheduleManager();
+                this.getAvailableSchedules();
+            }
+            return this._instance;
+        }
+
+        addScheduleListener(listener) {
+            if(this.scheduleListeners === undefined) {
+                this.scheduleListeners = [listener];
+            }
+            else {
+                this.scheduleListeners.push(listener);
+            }
+            if (this.availableSchedules !== undefined) {
+                listener.availableSchedulesChanged(this.availableSchedules);
+            }
+        }
+    
+        fireScheduleChanged() {
+            if (this.scheduleListeners !== undefined) {
+                for(var f in this.scheduleListeners) {
+                    this.scheduleListeners[f].availableSchedulesChanged(this.availableSchedules);
+                }
+            }
+        }
+
+        static getAvailableSchedules() {
+            //Load available schedule names. 
+            $.ajax({
+                type: "get",
+                url: "/getschedules",
+                success: function (response) {
+                    PMCScheduleManager.instance().availableSchedules = $.parseJSON(response);
+                    PMCScheduleManager.instance().fireScheduleChanged();
+                },
+                error: function (response) {
+                    console.log(response);
+                    alert(response);
+                }
+            });
+        }
+    } 
+</script>

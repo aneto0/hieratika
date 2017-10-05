@@ -32,7 +32,7 @@
                         return template;
                     }
 
-                    valueChanged(typeOfChange) {
+                    valueChanged(source, typeOfChange) {
                         if (typeOfChange === "value") {
                             this.textInput.value = this.value;
                         }

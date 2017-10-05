@@ -11,6 +11,72 @@
             return CU_UNITS_TO_INCHES * INCHES_TO_PX * units;
         } 
 
+        function loadIntoPlant() {
+            alert("OK!");
+        }
+
+        function getAvailableSchedules(successCallbackFunction, errorCallbackFunciton) {
+            //Load available schedule names. 
+            $.ajax({
+                type: "get",
+                url: "/getschedules",
+                success: function (response) {
+                    var scheduleNames = $.parseJSON(response);
+                    successCallbackFunction(scheduleNames);
+                },
+                error: function (response) {
+                    if (errorCallbackFunciton !== undefined) {
+                        errorCallbackFunciton(response);
+                    }
+                    else {
+                        console.log(response);
+                        alert(response);
+                    }
+                }
+            });
+        }
+
+        function setReference(currentReference) {
+            if (currentReference === "none") {
+                //Reset all the values to N/A
+                var pmcComp;
+                $.each(allPMCComponents, function (i, pmcComp) {
+                    pmcComp.setReferenceValue("N/A");
+                    pmcComp.setReference(currentReference);
+                });
+            }
+            else if (currentReference === "plant") {
+                //Reset all the values to N/A
+                var pmcComp;
+                $.each(allPMCComponents, function (i, pmcComp) {
+                    pmcComp.setReferenceValue(pmcComp.getPlantValue());
+                    pmcComp.setReference(currentReference);
+                });
+            }
+            else {
+                $.ajax({
+                    type: "get",
+                    url: "/getschedule",
+                    data: "schselect=" + currentReference,
+                    success: function (response) {
+                        var variables = $.parseJSON(response);
+                        var variable;
+                        $.each(variables, function(i, variable) {
+                            var targetElement = allPMCComponents[variable.name];
+                            if (targetElement != null) {
+                                targetElement.setReferenceValue(variable.value);
+                                targetElement.setReference(currentReference);
+                            }
+                        });
+                    },
+                    error: function (response) {
+                        console.log(response);
+                        alert(response);
+                    }
+                });
+            }
+        }
+
         var allPMCComponents = {};
     </script>
 </html>

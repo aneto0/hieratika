@@ -84,6 +84,7 @@ def createDB():
                         "variable": variable, 
                         "name": library["name"],
                         "owner": library["owner"],
+                        "description": library["description"],
                         "values": pickle.dumps(library["values"])
                     }
                     tableLibraries.insert(lib)
@@ -203,13 +204,15 @@ def getlibraries():
 def getlibrary():
     db = getDB()
     tableLibraries = db["PMC::TEST::PLANT1-libraries"]
-    values = {}
+    libJson = {}
     if (request.method == "GET"):
         requestedVariable = request.args["variable"]
         requestedLibraryName = request.args["libraryName"]
-        library = tableLibraries.find_one(variable=requestedVariable, name=requestedLibraryName)
-        values = pickle.loads(library["values"])
-    return json.dumps(values)
+        libraryDB = tableLibraries.find_one(variable=requestedVariable, name=requestedLibraryName)
+        libJson["values"] = pickle.loads(libraryDB["values"]),
+        libJson["owner"] = libraryDB["owner"],
+        libJson["description"] = libraryDB["description"] 
+    return json.dumps(libJson)
 
 #Updates the library information associated to a given variable
 @app.route("/savelibrary", methods=["POST", "GET"])
@@ -219,6 +222,7 @@ def savelibrary():
     if (request.method == "GET"):
         requestedVariable = request.args["variable"]
         requestedLibraryName = request.args["libraryName"]
+        requestedLibraryDescription = request.args["libraryDescription"]
         requestedLibraryValues = request.args["libraryValues"]
         lib = {
             "variable": requestedVariable, 

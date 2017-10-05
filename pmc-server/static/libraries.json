@@ -6,12 +6,14 @@
                 {
                     "name":"Example 1",
                     "values": [3, 4, 5],
-                    "owner": "Andre Neto"
+                    "owner": "Andre Neto",
+                    "description": "An example..."
                 },
                 {
                     "name":"Example 2",
                     "values": [6, 7, 8, 9],
-                    "owner": "Andre Neto"
+                    "owner": "Andre Neto",
+                    "description": "Another example..."
                 }
 
             ]
@@ -22,12 +24,14 @@
                 {
                     "name":"Example 3",
                     "values": [1, 2, 3, 4, 5],
-                    "owner": "Andre Neto"
+                    "owner": "Andre Neto",
+                    "description": "More examples..."
                 },
                 {
                     "name":"Example 4",
                     "values": [7, 8, 9],
-                    "owner": "Andre Neto"
+                    "owner": "Andre Neto",
+                    "description": "Yet More examples..."
                 }
 
             ]
@@ -38,12 +42,14 @@
                 {
                     "name":"Example 1",
                     "values": [["1", "1"], ["1", "2", "3"]],
-                    "owner": "Andre Neto"
+                    "owner": "Andre Neto",
+                    "description": "More and more and More examples..."
                 },
                 {
                     "name":"Example 2",
                     "values": [["1"], ["3", "2", "1"]],
-                    "owner": "Andre Neto"
+                    "owner": "Andre Neto",
+                    "description": "Even More and more and More examples..."
                 }
 
             ]
@@ -54,12 +60,14 @@
                 {
                     "name":"Example 2",
                     "values": "ip address 172.22.95.192 255.255.255.0\nboot system system-237; ep-49",
-                    "owner": "Andre Neto"
+                    "owner": "Andre Neto",
+                    "description": "Even even More and more and More examples..."
                 },
                 {
                     "name":"Example 3",
                     "values": "ip address 172.22.95.194 255.255.255.0\nboot system system-237; ep-90",
-                    "owner": "Andre Neto"
+                    "owner": "Andre Neto",
+                    "description": "Even Even even More and more and More examples..."
                 }
 
             ]
@@ -70,12 +78,14 @@
                 {
                     "name":"Example 4",
                     "values": "ip address 172.22.95.110 255.255.255.0\nboot system system-210; ep-49",
-                    "owner": "Andre Neto"
+                    "owner": "Andre Neto",
+                    "description": "More Even Even even More and more and More examples..."
                 },
                 {
                     "name":"Example 6",
                     "values": "ip address 172.22.95.104 255.255.255.0\nboot system system-237; ep-10",
-                    "owner": "Andre Neto"
+                    "owner": "Andre Neto",
+                    "description": "More Even Even Even even More and more and More examples..."
                 }
 
             ]
