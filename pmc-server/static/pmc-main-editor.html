@@ -1,0 +1,59 @@
+<html>
+    <head>
+        <link rel="import" href="libraries.html">
+        <link rel="import" href="pmc-component.html">
+        <link rel="import" href="libraries.html">
+        <link rel="import" href="pmc-input.html">
+        <link rel="import" href="pmc-array-editor.html">
+        <link rel="import" href="pmc-filter-editor.html">
+        <link rel="import" href="pmc-library-button.html">
+        <link rel="import" href="pmc-cubicle-editor.html">
+        <link rel="import" href="pmc-switch.html">
+        <link rel="import" href="pmc-switch-editor.html">
+
+    </head>
+    <body>
+        <template id="tmaineditor">
+            <div id="dmaineditor">
+            </div>
+        </template>
+
+        <script>
+            //This is enclosure is required to protect the importDoc
+            (function () {
+                var importDoc = document.currentScript.ownerDocument; // importee
+                //Constructor
+                class PMCMainEditor extends HTMLElement {
+                    constructor() {
+                        super();
+                    }
+
+                    createdCallback () {
+                        var template = importDoc.querySelector("#tmaineditor");
+                        var clone = document.importNode(template.content, true);
+                        var root = this.createShadowRoot();
+                        root.appendChild(clone);
+
+
+                        var templateDiv = this.shadowRoot.querySelector("#dmaineditor");
+                        var templateURL = this.getAttribute("data-template-url");
+                        if (templateURL !== undefined) {
+                            var httpRequest = new XMLHttpRequest();
+                            httpRequest.onreadystatechange = function() {
+                                if (this.readyState == 4 && this.status == 200) {
+                                    templateDiv.innerHTML = this.responseText;
+                                }
+                            };
+                            httpRequest.open("GET", templateURL, true);
+                            httpRequest.send();
+                        }
+                    }
+                }
+
+                document.registerElement("pmc-main-editor", {
+                    prototype: PMCMainEditor.prototype,
+                });
+            })(); 
+        </script>
+    </body>
+</html>

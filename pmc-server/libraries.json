@@ -1,7 +1,8 @@
 {
     "libraries": [
         {
-            "variable": "PMC::TEST::VAR3",
+            "plant": "PLANT1",
+            "variable": "VAR3",
             "libraries": [
                 {
                     "name":"Example 1",
@@ -19,7 +20,8 @@
             ]
         },
         {
-            "variable": "PMC::TEST::VAR4",
+            "plant": "PLANT1",
+            "variable": "VAR4",
             "libraries": [
                 {
                     "name":"Example 3",
@@ -37,7 +39,8 @@
             ]
         },
         {
-            "variable": "PMC::TEST::VAR7",
+            "plant": "PLANT1",
+            "variable": "VAR7",
             "libraries": [
                 {
                     "name":"Example 1",
@@ -55,7 +58,8 @@
             ]
         },
         {
-            "variable": "PMC::TEST::VAR9",
+            "plant": "PLANT1",
+            "variable": "VAR9",
             "libraries": [
                 {
                     "name":"Example 2",
@@ -73,7 +77,8 @@
             ]
         },
         {
-            "variable": "PMC::TEST::VAR10",
+            "plant": "PLANT1",
+            "variable": "VAR10",
             "libraries": [
                 {
                     "name":"Example 4",

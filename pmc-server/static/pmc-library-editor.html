@@ -70,7 +70,7 @@
                                     },
                                     success: function (response) {
                                         var libInfo = $.parseJSON(response);
-                                        this.editor.setReferenceValue(libInfo["values"][0]);
+                                        this.editor.setReferenceValue(libInfo["value"][0]);
                                     }.bind(this),
                                     error: function (response) {
                                         console.log(response);
@@ -90,7 +90,7 @@
                                 },
                                 success: function (response) {
                                     var libInfo = $.parseJSON(response);
-                                    this.editor.setInitialValue(libInfo["values"][0]);
+                                    this.editor.setInitialValue(libInfo["value"][0]);
                                     this.editor.checkValues();
                                 }.bind(this),
                                 error: function (response) {
@@ -110,7 +110,7 @@
                                 },
                                 success: function (response) {
                                     var libInfo = $.parseJSON(response);
-                                    this.editor.setPlantValue(libInfo["values"][0]);
+                                    this.editor.setPlantValue(libInfo["value"][0]);
                                     this.editor.checkValues();
                                 }.bind(this),
                                 error: function (response) {
@@ -125,11 +125,11 @@
                             url: "/getlibrary",
                             data: {
                                 variable : this.owner.id, 
-                                libraryName : selector.options[selector.selectedIndex].text  
+                                libraryName : selector.options[selector.selectedIndex].text
                             },
                             success: function (response) {
                                 var libInfo = $.parseJSON(response);
-                                this.editor.setValue(libInfo["values"][0]);
+                                this.editor.setValue(libInfo["value"][0]);
                                 this.descriptionTextArea.value = (libInfo["description"]);
                                 this.editor.checkValues();
                             }.bind(this),
@@ -180,7 +180,7 @@
 
                             this.saveButton.onclick = function() {
                                 var saveAsName = selector.options[selector.selectedIndex].text;
-                                var description = descriptionTextArea.value;
+                                var description = this.descriptionTextArea.value;
                                 $.ajax({
                                     type: "get",
                                     url: "/savelibrary",

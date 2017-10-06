@@ -1,10 +1,10 @@
 {
     "plants" : [
         {
-            "id":"PMC::TEST::PLANT1",
+            "id":"PLANT1",
             "variables": [
                 {
-                    "name" : "PMC::TEST::VAR1",
+                    "name" : "VAR1",
                     "initialValue" : "1",
                     "type" : "int32",
                     "numberOfElements" : "1",
@@ -29,7 +29,7 @@
                     ]
                 },
                 {
-                    "name" : "PMC::TEST::VAR2",
+                    "name" : "VAR2",
                     "initialValue" : "2",
                     "type" : "float32",
                     "numberOfElements" : "1",
@@ -54,7 +54,7 @@
                     ]
                 },
                 {
-                    "name" : "PMC::TEST::VAR3",
+                    "name" : "VAR3",
                     "initialValue" : "Example 1",
                     "type" : "int32",
                     "numberOfElements" : "5",
@@ -79,7 +79,7 @@
                     ]
                 },
                 {
-                    "name" : "PMC::TEST::VAR4",
+                    "name" : "VAR4",
                     "initialValue" : "Example 3",
                     "type" : "float32",
                     "numberOfElements" : "3",
@@ -87,7 +87,7 @@
                     "epicsPV" : "true"
                 },
                 {
-                    "name" : "PMC::TEST::VAR5",
+                    "name" : "VAR5",
                     "initialValue" : ["7", "8", "9", "0"],
                     "type" : "float32",
                     "numberOfElements" : "4",
@@ -113,7 +113,7 @@
 
                 },
                 {
-                    "name" : "PMC::TEST::VAR6",
+                    "name" : "VAR6",
                     "initialValue" : [["1"], ["1", "1"]],
                     "type" : "float32",
                     "numberOfElements" : ["1", "2"],
@@ -122,7 +122,7 @@
 
                 },
                 {
-                    "name" : "PMC::TEST::VAR7",
+                    "name" : "VAR7",
                     "initialValue" : "Example 1",
                     "type" : "float32",
                     "numberOfElements" : ["1", "2"],
@@ -130,7 +130,7 @@
                     "epicsPV" : "false"
                 },
                 {
-                    "name" : "PMC::TEST::VAR8",
+                    "name" : "VAR8",
                     "initialValue" : "Example 1",
                     "type" : "string",
                     "numberOfElements" : "1",
@@ -138,7 +138,7 @@
                     "epicsPV" : "false"
                 },
                 {
-                    "name" : "PMC::TEST::VAR9",
+                    "name" : "VAR9",
                     "initialValue" : "Example 2",
                     "type" : "string",
                     "numberOfElements" : "1",
@@ -146,7 +146,7 @@
                     "epicsPV" : "false"
                 },
                 {
-                    "name" : "PMC::TEST::VAR10",
+                    "name" : "VAR10",
                     "initialValue" : "Example 4",
                     "type" : "string",
                     "numberOfElements" : "1",

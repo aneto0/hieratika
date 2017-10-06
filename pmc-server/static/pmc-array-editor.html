@@ -31,7 +31,7 @@
                         super(this);
                     }
                 
-                    checkValues () {
+                    checkValues (userChanged) {
                         //If the current value does not match the initial value set the font color blue
                         var row = this.tbl.rows[0];
                         var initialValue = this.getInitialValue();
@@ -49,7 +49,9 @@
                                 }
                                 if(!this.compareValues(cellValue, cellInitValue)) {
                                     cell.style.color = DIFF_INIT_CHANGED_COLOR;
-                                    this.fireValueChanged("value");
+                                    if (userChanged) {
+                                        this.fireValueChanged("value");
+                                    }
                                 }
                                 else {
                                     cell.style.color = STANDARD_FCOLOR;
@@ -118,7 +120,7 @@
                             col.style.width = "20px";
                             col.style.textAlign = "right";
                             col.addEventListener("input", function (e) {
-                                this.checkValues();
+                                this.checkValues(true);
                             }.bind(this));
                         }
                         //Make a shallow copy!
@@ -126,9 +128,7 @@
                     }
 
                     valueChanged(source, typeOfChange) {
-                        if (typeOfChange !== "value") {
-                            this.checkValues();
-                        }
+                        this.checkValues(false);
                     }
 
                     getTemplate() {
@@ -148,9 +148,9 @@
                             col.style.width = "20px";
                             col.style.textAlign = "right";
                             col.addEventListener("input", function (e) {
-                                this.checkValues();
+                                this.checkValues(true);
                             }.bind(this));
-                            this.checkValues();
+                            this.checkValues(true);
                         }.bind(this);
 
                         var removeButton = this.shadowRoot.querySelector("#removeButton");
@@ -161,7 +161,7 @@
                             }
                             this.numberOfElements--;
                             this.value = this.value.slice(0, this.numberOfElements);
-                            this.checkValues();
+                            this.checkValues(true);
                         }.bind(this);
                     }
                 }

@@ -1,21 +1,21 @@
-record( longin, "PMC::TEST::VAR1")
+record( longin, "PLANT1::VAR1")
 {
    field(DTYP, "Soft Channel")
 }
 
-record( ai, "PMC::TEST::VAR2")
+record( ai, "PLANT1::VAR2")
 {
    field(DTYP, "Soft Channel")
 }
 
-record( waveform, "PMC::TEST::VAR3")
+record( waveform, "PLANT1::VAR3")
 {
    field(DTYP, "Soft Channel")
    field(FTVL, "LONG")
    field(NELM, 5)
 }
 
-record( waveform, "PMC::TEST::VAR4")
+record( waveform, "PLANT1::VAR4")
 {
    field(DTYP, "Soft Channel")
    field(FTVL, "DOUBLE")

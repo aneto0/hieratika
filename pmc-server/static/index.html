@@ -3,77 +3,68 @@
         <meta http-Equiv="Cache-Control" Content="no-cache" />
         <meta http-Equiv="Pragma" Content="no-cache" />
         <meta http-Equiv="Expires" Content="0" />
-        <link rel="import" href="topnav.html">
-        <link rel="import" href="main-editor.html">
+        <link rel="import" href="pmc-top-nav.html">
+        <link rel="import" href="pmc-main-editor.html">
+        <link rel="import" href="pmc-helper.html">
+
+
+        <!-- Handle SSE events from the server-->
+        <script>
+            var eventOutputContainer = document.getElementById("event");
+            var evtSrc = new EventSource("/stream");
+            //Changed values are received in json format
+            evtSrc.onmessage = function(e) {
+                var jsonPlantVariables = $.parseJSON(e.data);
+                var plantVariables = jsonPlantVariables["plantVariables"];
+                for (var i in plantVariables) {
+                    var pv = plantVariables[i];
+                    var pvName = pv.plantId + "::" + pv.variableId;
+                    var targetElement = allPMCComponents[pvName];
+                    if (targetElement !== undefined) {
+                        targetElement.setPlantValue(pv.value);
+                    }
+                }
+            };
+        </script>
+
+
+        <script>
+            $(document).ready(function() {
+                //Check the credentials
+                //areCredentialsUpdated();
+
+                getPlantInfo(); 
+
+                getAvailableLibraries();
+                
+                $.each(allPMCComponents, function (i, pmcComp) {
+                    pmcComp.domLoaded();
+                });
+
+
+            });
+
+            function copyFromPlant() {
+                $.each(allPMCComponents, function (i, pmcComp) {
+                    pmcComp.setValue(pmcComp.getPlantValue());
+                });
+            }
+        </script>
+
     </head>
     <body>
-        <pmc-top-nav></pmc-top-nav>
-
-         <h1>PMC Example 1</h1>
-        <div id="event"></div>
-        <form id="updatePlantForm">
-            <table border="0">
-                <tr>
-                    <td>PMC::TEST::VAR1</td>
-                    <td><pmc-input id="PMC::TEST::VAR1" name="PMC::TEST::VAR1"></pmc-input></td>
-                </tr>
-                <tr>
-                    <td>PMC::TEST::VAR2</td>
-                    <td><pmc-input id="PMC::TEST::VAR2" name="PMC::TEST::VAR2"></pmc-input></td>
-                </tr>
-                <tr>
-                    <td>PMC::TEST::VAR3</td>
-                    <td><pmc-library-button data-library-editor="pmc-array-editor" id="PMC::TEST::VAR3" name="PMC::TEST::VAR3"></pmc-library-button></td>
-                </tr>
-                    <tr>
-                        <td>PMC::TEST::VAR4</td>
-                    <td><pmc-library-button data-library-editor="pmc-array-editor" id="PMC::TEST::VAR4" name="PMC::TEST::VAR4"></pmc-library-button></td>
-                </tr>
-                <tr>
-                    <td>PMC::TEST::VAR7</td>
-                    <td><pmc-library-button data-library-editor="pmc-filter-editor" id="PMC::TEST::VAR7" name="PMC::TEST::VAR7"></pmc-library-button></td>
-                </tr>
-                <tr>
-                    <td>PMC::TEST::VAR5</td>
-                    <td><pmc-array-editor is="pmc" id="PMC::TEST::VAR5" name="PMC::TEST::VAR5"></pmc-array-editor></td>
-                </tr>
-                <tr>
-                    <td>PMC::TEST::VAR6</td>
-                    <td><pmc-filter-editor is="pmc" id="PMC::TEST::VAR6" name="PMC::TEST::VAR6"></pmc-filter-editor></td>
-                </tr>
-                <tr>
-                    <td>PMC::TEST::VAR8</td>
-                    <td>
-                        <pmc-cubicle-editor is="pmc" id="PMC::TEST::VAR8">
-                            <pmc-switch is="pmc" id="PMC::TEST::VAR9" data-library-editor="pmc-switch-editor" data-location-cubicle="0">
-                            </pmc-switch>
-                            <pmc-switch is="pmc" id="PMC::TEST::VAR10" data-library-editor="pmc-switch-editor" data-location-cubicle="2">
-                            </pmc-switch>
-                        </pmc-cubicle-editor>
-                    </td>
-                </tr>
-            </table>
-            <input type="submit" value="Load values into the plant"></input>
-        </form></br>
-        
-        <form id="setReferenceForm">
-            <select id="refselect" name="refselect">
-                <option value="none" text="none">None</option>
-                <option value="plant" text="plant">Plant</option>
-            </select>
-            <input type="submit" value="Set reference"></input>
-        </form></br>
-
-         <form id="copyScheduleForm">
-            <select id="schselect" name="schselect"></select>
-            <input type="submit" value="Copy from schedule"></input>
-        </form></br>
-
-           
-        <input type="button" value="Copy from plant" onclick="copyFromPlant()"></input>
-        <br/>
-
-
+        <table style="width:100%">
+            <tr>
+                <td style="border-style:solid;border-width:1px;background:#353535;">
+                    <pmc-top-nav></pmc-top-nav>
+                </td>
+            </tr>
+            <tr>
+                <td style="border-style:solid;border-width:1px">
+                    <pmc-main-editor data-template-url="ps-example-1.html"/></pmc-main-editor>
+                </td>
+            </tr>
+        </table>
    </body>
 </html>
 

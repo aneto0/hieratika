@@ -1,100 +1,112 @@
 {
     "schedules": [{
             "name": "schedule 1",
-            "owner": "Andre Neto",
+            "owner": "codac-dev-1",
             "description": "...",
             "variables": [{
-                    "name": "PMC::TEST::VAR1",
+                    "plant": "PLANT1",
+                    "name": "VAR1",
                     "value": "1"
                 },
                 {
-                    "name": "PMC::TEST::VAR2",
+                    "plant": "PLANT1",
+                    "name": "VAR2",
                     "value": "2"
                 },
                 {
-                    "name": "PMC::TEST::VAR3",
+                    "plant": "PLANT1",
+                    "name": "VAR3",
                     "value": "Example 1"
                 },
                 {
-                    "name": "PMC::TEST::VAR4",
+                    "plant": "PLANT1",
+                    "name": "VAR4",
                     "value": "Example 3"
                 },
                 {
-                    "name": "PMC::TEST::VAR5",
+                    "plant": "PLANT1",
+                    "name": "VAR5",
                     "value": ["-1", "-3", "-5", "2"]
                 },
                 {
-                    "name": "PMC::TEST::VAR6",
+                    "plant": "PLANT1",
+                    "name": "VAR6",
                     "value": [["10"], ["3", "8", "3", "4"]]
                 },
                 {
-                    "name": "SUP::PMC::TEST::VAR3",
-                    "value": "3"
-                },
-                {
-                    "name": "PMC::TEST::VAR7",
+                    "plant": "PLANT1",
+                    "name": "VAR7",
                     "value": "Example 1"
                 },
                 {
-                    "name": "PMC::TEST::VAR8",
+                    "plant": "PLANT1",
+                    "name": "VAR8",
                     "value": "Example 1"
                 },
                 {
-                    "name": "PMC::TEST::VAR9",
+                    "plant": "PLANT1",
+                    "name": "VAR9",
                     "value": "Example 2"
                 },
                 {
-                    "name": "PMC::TEST::VAR10",
+                    "plant": "PLANT1",
+                    "name": "VAR10",
                     "value": "Example 4"
                 }
             ]
         },
         {
             "name": "schedule 2",
-            "owner": "Andre Neto",
+            "owner": "codac-dev-1",
             "description": "...",
             "variables": [{
-                    "name": "PMC::TEST::VAR1",
+                    "plant": "PLANT1",
+                    "name": "VAR1",
                     "value": "10"
                 },
                 {
-                    "name": "PMC::TEST::VAR2",
+                    "plant": "PLANT1",
+                    "name": "VAR2",
                     "value": "20"
                 },
                 {
-                    "name": "PMC::TEST::VAR3",
+                    "plant": "PLANT1",
+                    "name": "VAR3",
                     "value": "Example 2"
                 },
                 {
-                    "name": "PMC::TEST::VAR4",
+                    "plant": "PLANT1",
+                    "name": "VAR4",
                     "value": "Example 4"
                 },
                 {
-                    "name": "PMC::TEST::VAR5",
+                    "plant": "PLANT1",
+                    "name": "VAR5",
                     "value": ["6", "9", "10", "15"]
                 },
                 {
-                    "name": "PMC::TEST::VAR6",
+                    "plant": "PLANT1",
+                    "name": "VAR6",
                     "value": [["1", "2"], ["8", "3", "4"]]
                 },
                 {
-                    "name": "SUP::PMC::TEST::VAR3",
-                    "value": "30"
-                },
-                {
-                    "name": "PMC::TEST::VAR7",
+                    "plant": "PLANT1",
+                    "name": "VAR7",
                     "value": "Example 2"
                 },
                 {
-                    "name": "PMC::TEST::VAR8",
+                    "plant": "PLANT1",
+                    "name": "VAR8",
                     "value": "Example 4"
                 },
                 {
-                    "name": "PMC::TEST::VAR9",
+                    "plant": "PLANT1",
+                    "name": "VAR9",
                     "value": "Example 3"
                 },
                 {
-                    "name": "PMC::TEST::VAR10",
+                    "plant": "PLANT1",
+                    "name": "VAR10",
                     "value": "Example 6"
                 }
             ]

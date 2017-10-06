@@ -12,26 +12,79 @@
         } 
 
         function loadIntoPlant() {
-            alert("OK!");
-        }
-
-        function getAvailableSchedules(successCallbackFunction, errorCallbackFunciton) {
-            //Load available schedule names. 
+            var allPMCDataJSon = {};
+            $.each(allPMCComponents, function (i, pmcComp) {
+                allPMCDataJSon[pmcComp.id] = pmcComp.getValue();
+            });
+            var dataToSend = "update=" + JSON.stringify(allPMCDataJSon);
             $.ajax({
                 type: "get",
-                url: "/getschedules",
+                url: "/submit",
+                data: dataToSend,
                 success: function (response) {
-                    var scheduleNames = $.parseJSON(response);
-                    successCallbackFunction(scheduleNames);
+                    if (response == "done") {
+                        alert("Values updated successfully!");
+                        var pmcComp;
+                        $.each(allPMCComponents, function (i, pmcComp) {
+                            pmcComp.setInitialValue(pmcComp.getValue());
+                        });
+                    } 
+                    else {
+                        alert("Form submission failed!");
+                    }
                 },
                 error: function (response) {
-                    if (errorCallbackFunciton !== undefined) {
-                        errorCallbackFunciton(response);
-                    }
-                    else {
-                        console.log(response);
-                        alert(response);
-                    }
+                    console.log(response);
+                    alert(response);
+                }
+            });
+        }
+
+        function getPlantInfo() {
+            $.ajax({
+                type: "get",
+                url: "/getplantinfo",
+                success: function (response) {
+                    var pvInfosJson = $.parseJSON(response);
+                    var pvInfos = pvInfosJson["variables"];
+                    $.each(pvInfos, function(i, pvInfo) {
+                        var pvInfoName = pvInfo.plantId + "::" + pvInfo.variableId;
+                        var targetElement = allPMCComponents[pvInfoName];
+                        if (targetElement != null) {
+                            targetElement.setTypeValue(pvInfo.type);
+                            targetElement.setLibrary(pvInfo.library === true);
+                            targetElement.setNumberOfElements(pvInfo.numberOfElements);
+                            targetElement.setReference("none");
+                            targetElement.setInitialValue(pvInfo.value);
+                            targetElement.setValue(pvInfo.value);
+                            targetElement.setValidations(pvInfo.validation);
+                        }
+                    });
+                },
+                error: function (response) {
+                    console.log(response);
+                    alert(response);
+                }
+            });
+        }
+
+        function getAvailableLibraries() {
+            $.ajax({
+                type: "get",
+                url: "/getlibraries",
+                success: function (response) {
+                    var librariesJson = $.parseJSON(response);
+                    var allLibraries = librariesJson["libraries"];
+                    $.each(allLibraries, function(i, librariesJson) {
+                        var targetElement = allPMCComponents[librariesJson.variable];
+                        if (targetElement != null) {
+                            targetElement.availableLibraries = librariesJson.ids;
+                        }
+                    });
+                },
+                error: function (response) {
+                    console.log(response);
+                    alert(response);
                 }
             });
         }
@@ -62,7 +115,8 @@
                         var variables = $.parseJSON(response);
                         var variable;
                         $.each(variables, function(i, variable) {
-                            var targetElement = allPMCComponents[variable.name];
+                            var variableName = variable.plantId + "::" + variable.variableId;
+                            var targetElement = allPMCComponents[variableName];
                             if (targetElement != null) {
                                 targetElement.setReferenceValue(variable.value);
                                 targetElement.setReference(currentReference);
@@ -75,6 +129,28 @@
                     }
                 });
             }
+        }
+
+        function copyFromSchedule(scheduleName) {
+            $.ajax({
+                type: "get",
+                url: "/getschedule",
+                data: "schselect=" + scheduleName,
+                success: function (response) {
+                    variables = $.parseJSON(response);
+                    $.each(variables, function(i, variable) {
+                        var variableName = variable.plantId + "::" + variable.variableId;
+                        var targetElement = allPMCComponents[variableName];
+                        if (targetElement != null) {
+                            targetElement.setValue(variable.value);
+                        }
+                    });
+                },
+                error: function (response) {
+                    console.log(response);
+                    alert(response);
+                }
+            });
         }
 
         var allPMCComponents = {};
