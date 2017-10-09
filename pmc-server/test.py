@@ -37,9 +37,9 @@ def pvValueChanged(pvname=None, value=None, **kw):
 def updatePlantVariablesDB(plantId, variableId, variableValue):
     db = getDB()
     plantVariables = db["plant_variables"]
-    row = plantVariables.find_one(id=pvName,plant_id=plantId)
+    row = plantVariables.find_one(id=variableId,plant_id=plantId)
     if (row is not None):
-        row["value"] = pickle.dumps(pvValue);
+        row["value"] = pickle.dumps(variableValue);
         plantVariables.upsert(row, ["id"])
 
 #Call back for the Server Side Event. One per connection will loop on the while and consume from its own queue
@@ -107,7 +107,7 @@ def submit():
     if (request.method == "GET"):
         updateJSon = request.args["update"]
         jSonUpdateVariables = json.loads(updateJSon)
-        for varName in jSonUpdateVariables:
+        for varName in jSonUpdateVariables.keys():
             newValue = jSonUpdateVariables[varName]
             varName = varName.split("::")
             if len(varName) == 2:
@@ -130,6 +130,25 @@ def getschedules():
     for s in tableSchedules:
         scheduleNames.append(s["id"]);
     return json.dumps(scheduleNames)
+
+#Returns the variables associated to a given schedule
+@app.route("/getschedule", methods=["POST", "GET"])
+def getschedule():
+    variables = []
+    db = getDB()
+    #TODO missing plant id...
+    scheduleVariablesTable = db["schedule_variables"]
+    if (request.method == "GET"):
+        requestedSchedule = request.args["schselect"]
+        scheduleVariables = scheduleVariablesTable.find(schedule_id=requestedSchedule)
+        for v in scheduleVariables:
+            vp = {
+                "variableId": v["variable_id"],
+                "plantId": v["plant_id"],
+                "value": pickle.loads(v["value"])
+            } 
+            variables.append(vp)
+    return json.dumps(variables)
 
 #Return the available libraries
 @app.route("/getlibraries")
@@ -190,26 +209,36 @@ def savelibrary():
         tableLibraries.upsert(lib, ["id", "variable_id", "plant_id"]);    
     return "ok" 
 
-
-
-#Returns the variables associated to a given schedule
-@app.route("/getschedule", methods=["POST", "GET"])
-def getschedule():
-    variables = []
+#Gets the current sessions opened by the user
+@app.route("/getsession", methods=["POST", "GET"])
+def getsession():
+    sessions = []
     db = getDB()
-    #TODO missing plant id...
-    scheduleVariablesTable = db["schedule_variables"]
+    sessionsTable = db["sessions"]
     if (request.method == "GET"):
-        requestedSchedule = request.args["schselect"]
-        scheduleVariables = scheduleVariablesTable.find(schedule_id=requestedSchedule)
-        for v in scheduleVariables:
-            vp = {
-                "variableId": v["variable_id"],
-                "plantId": v["plant_id"],
-                "value": pickle.loads(v["value"])
+        requestedUserId = request.args["userId"]
+        openedSessions = sessionsTable.find(user_id=requestedUserId)
+        for s in openedSessions:
+            session = {
+                "sessionId": (int(s["session_id"]))
             } 
-            variables.append(vp)
-    return json.dumps(variables)
+            sessions.append(session)
+    return json.dumps(sessions)
+
+#Creates a new session
+@app.route("/createsession", methods=["POST", "GET"])
+def createsession():
+    db = getDB()
+    sessionsTable = db["sessions"]
+    if (request.method == "GET"):
+        requestedUserId = request.args["userId"]
+        sessionId = int(time.time()*1e6)
+        session = {
+            "user_id": requestedUserId,
+            "session_id": sessionId 
+        }
+        sessionsTable.insert(session);    
+    return "ok"
 
 
 @app.route("/stream")
