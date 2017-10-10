@@ -41,9 +41,14 @@
         }
 
         function getPlantInfo() {
+            var allVariableIds = [];
+            for (var k in allPMCComponents) {
+                allVariableIds.push(k)
+            }
             $.ajax({
                 type: "get",
                 url: "/getplantinfo",
+                data: "variables=" + JSON.stringify(allVariableIds),
                 success: function (response) {
                     var pvInfosJson = $.parseJSON(response);
                     var pvInfos = pvInfosJson["variables"];
@@ -131,7 +136,7 @@
             }
         }
 
-        function copyFromSchedule(scheduleName) {
+        function copyFromSchedule(scheduleName, resetValue) {
             $.ajax({
                 type: "get",
                 url: "/getschedule",
@@ -142,6 +147,9 @@
                         var variableName = variable.plantId + "::" + variable.variableId;
                         var targetElement = allPMCComponents[variableName];
                         if (targetElement != null) {
+                            if (resetValue) {
+                                targetElement.setInitialValue(variable.value);
+                            }
                             targetElement.setValue(variable.value);
                         }
                     });
@@ -153,6 +161,12 @@
             });
         }
 
+        function login(username, password) {
+        }
+
+
+
         var allPMCComponents = {};
+        var currentScheduleId = undefined;
     </script>
 </html>

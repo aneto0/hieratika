@@ -2,6 +2,7 @@
 <html>
 <head>
     <link rel="import" href="pmc-helper.html">
+    <link rel="import" href="pmc-login.html">
     <link rel="import" href="pmc-schedule-manager.html">
 </head>
 <body>
@@ -17,7 +18,7 @@
     <template id="ttopnav">
         <table>
             <tr>
-                <td><button title="Load current values into plant" onclick="loadIntoPlant()">Load</input></td>
+                <td><button title="Load current values into plant" onclick="loadIntoPlant()">Load</button></td>
                     <td style="padding-left:50px;">
                     <select id="refselect" name="refselect">
                         <option value="none" text="none">None</option>
@@ -32,9 +33,12 @@
                     </select>
                 </td>
                 <td><button title="Copy from a given schedule or from the plant" id="cpyreferencebtn">Copy from</button></td>
-
+                <td style="padding-left:50px;color:white" id="username">...</td>
+                <td style="color:white" id="currentSchedule">(@...)</td>
+                <td><button title="Login" id="loginbtn">Login</button></td>
             </tr>
         </table>
+        <pmc-login id="pmclogin"></pmc-login>
     </template>
 
     <script>
@@ -53,16 +57,45 @@
                         var clone = document.importNode(template.content, true);
                         var root = this.createShadowRoot();
                         root.appendChild(clone);
-                    
+
+                        this.plantId = this.getAttribute("data-plant-id");
+                        var loginButton = this.shadowRoot.querySelector("#loginbtn");
+                        var loginDialog = this.shadowRoot.querySelector("#pmclogin");
+                        loginDialog.addLoginListener(this);
+                        loginDialog.addCurrentScheduleListener(this);
+                        loginButton.onclick = function() {
+                            loginDialog.show();
+                        }.bind(this);
+
                         PMCScheduleManager.instance().addScheduleListener(this);
                     }
+                }
+
+                loginSuccessful(user) {
+                    var usernameTd = this.shadowRoot.querySelector("#username");
+                    usernameTd.innerHTML = user.name; 
+                    usernameTd.title = "username: " + user.id;
+
+                    getPlantInfo(); 
+
+                    getAvailableLibraries();
+                
+                    $.each(allPMCComponents, function (i, pmcComp) {
+                        pmcComp.domLoaded();
+                    });
+                }
+                
+                currentScheduleChanged(schedule) {
+                    var currentScheduleTd = this.shadowRoot.querySelector("#currentSchedule");
+                    currentScheduleTd.innerHTML = "(@ " + schedule.id + ")"; 
+                    copyFromSchedule(schedule.id, true);
                 }
 
                 availableSchedulesChanged(availableSchedules) {
                     var referenceSelect = this.shadowRoot.querySelector("#refselect");
                     var copyFromReferenceSelect = this.shadowRoot.querySelector("#cpyreference");
                     for (var s in availableSchedules) {
-                        var scheduleName = String(availableSchedules[s]);
+                        var scheduleName = String(availableSchedules[s].id);
                         var option1 = document.createElement("option");
                         var option2 = document.createElement("option");
                         option1.text = scheduleName;
@@ -77,17 +110,18 @@
                         setReference(referenceSelect.value);
                     }.bind(this); 
 
-                    var copyFromReferenceButon = this.shadowRoot.querySelector("#cpyreferencebtn");
-                    copyFromReferenceButon.onclick = function () {
+                    var copyFromReferenceButton = this.shadowRoot.querySelector("#cpyreferencebtn");
+                    copyFromReferenceButton.onclick = function () {
                         if (copyFromReferenceSelect.value === "plant") {
                             $.each(allPMCComponents, function (i, pmcComp) {
                                 pmcComp.setValue(pmcComp.getPlantValue());
                             });
                         }
                         else {
-                            copyFromSchedule(copyFromReferenceSelect.value);
+                            copyFromSchedule(copyFromReferenceSelect.value, false);
                         }
-                    }.bind(this); 
+
+                    }
                 }
             }
 

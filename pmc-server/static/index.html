@@ -33,15 +33,7 @@
                 //Check the credentials
                 //areCredentialsUpdated();
 
-                getPlantInfo(); 
-
-                getAvailableLibraries();
                 
-                $.each(allPMCComponents, function (i, pmcComp) {
-                    pmcComp.domLoaded();
-                });
-
-
             });
 
         </script>
@@ -51,7 +43,7 @@
         <table style="width:100%">
             <tr>
                 <td style="border-style:solid;border-width:1px;background:#353535;">
-                    <pmc-top-nav></pmc-top-nav>
+                    <pmc-top-nav data-plant-id="PLANT1"></pmc-top-nav>
                 </td>
             </tr>
             <tr>

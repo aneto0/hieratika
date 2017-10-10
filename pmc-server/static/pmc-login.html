@@ -1,0 +1,280 @@
+<html>
+<head>
+    <link rel="import" href="pmc-helper.html">
+</head>
+</body>
+    <template id="tlogin">
+        <dialog id="dlogin">
+            <div id="divlogin">
+                <table style="border-style:solid;border-width:1px;width: 100%">
+                    <tr>
+                        <td><label for="username">User:</label></td>
+                        <td><input type="text" id="username"></input></td>
+                    </tr>
+                    <tr>
+                        <td><label for="password">Password:</label></td>
+                        <td><input type="password" id="password"></input></td>
+                    </tr>
+                </table>
+                <table style="border-style:solid;border-width:0px;width: 100%">
+                    <tr>
+                        <td style="padding-top:20px;">
+                            <button title="Login" id="loginbtn">Login</button>
+                            <button title="Cancel" id="cancelbtn">Cancel</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="divschedule" hidden>
+                <table style="border-style:solid;border-width:1px;width: 100%">
+                    <tr>
+                        <td>Select schedule:</td>
+                        <td>
+                            <select id="schedulesselect" name="schedulesselect">
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+                <table style="border-style:solid;border-width:0px;width: 100%">
+                    <tr>
+                        <td style="padding-top:20px;">
+                            <button title="OK" id="okbtn">OK</button>
+                            <button title="Cancel" id="cancelschedulebtn">Cancel</button>
+                        </td>
+                        <td style="padding-top:20px;padding-left:20px;">
+                            <button title="Create a new schedule..." id="createschedulebtn">Create schedule</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="divnewschedule" hidden>
+                <table style="border-style:solid;border-width:1px;width: 100%">
+                    <tr>
+                        <td>Schedule name:</td>
+                        <td><input type="text" id="newschedulename"></input></td>
+                    </tr>
+                    <tr>
+                        <td>Schedule description:</td>
+                        <td><textarea rows="4" cols="30" id="newscheduledescription" title="Description"></textarea></td>
+                    </tr>
+                    <tr>
+                        <td>Copy from:</td>
+                        <td>
+                            <select id="newschedulesselect" name="newschedulesselect">
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+                <table style="border-style:solid;border-width:0px;width: 100%">
+                    <tr>
+                        <td style="padding-top:20px;">
+                            <button title="OK" id="oknewschedulebtn">OK</button>
+                            <button title="Cancel" id="cancelnewschedulebtn">Cancel</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+        </dialog>
+    </template>
+
+    <script>
+        //This is enclosure is required to protect the importDoc
+        (function () {
+            var importDoc = document.currentScript.ownerDocument; // importee
+            class PMCLogin extends HTMLElement {
+                constructor() {
+                    super();
+                }
+
+                createdCallback () {
+                    var template = importDoc.querySelector("#tlogin");
+                    if (template !== undefined) {
+                        // import template into
+                        var clone = document.importNode(template.content, true);
+                        var root = this.createShadowRoot();
+                        root.appendChild(clone);
+                   
+                        this.loginDiv = this.shadowRoot.querySelector("#divlogin");
+                        this.scheduleDiv = this.shadowRoot.querySelector("#divschedule");
+                        this.newScheduleDiv = this.shadowRoot.querySelector("#divnewschedule");
+                        this.diag = this.shadowRoot.querySelector("#dlogin");
+                        var loginButton = this.shadowRoot.querySelector("#loginbtn");
+                        loginButton.onclick = function() {
+                            var usernameTxt = this.shadowRoot.querySelector("#username");
+                            this.username = usernameTxt.value; 
+                            $.ajax({
+                                type: "get",
+                                url: "/login",
+                                data: "userId=" + this.username,
+                                success: function (response) {
+                                    var user = $.parseJSON(response);
+                                    if (user.id !== "") {
+                                        this.fireLoginSuccessful(user);
+                                    }
+                                    else {
+                                        alert("Login failed!");
+                                    }
+                                }.bind(this),
+                                error: function (response) {
+                                    console.log(response);
+                                    alert(response);
+                                }
+                            });
+                        }.bind(this);
+
+                        this.schedulesSelect = this.shadowRoot.querySelector("#schedulesselect");
+                        this.newSchedulesSelect = this.shadowRoot.querySelector("#newschedulesselect");
+                        this.newScheduleName = this.shadowRoot.querySelector("#newschedulename")
+                        this.newScheduleDescription = this.shadowRoot.querySelector("#newscheduledescription")
+                        var createNewSchedule = this.shadowRoot.querySelector("#createschedulebtn");
+                        createNewSchedule.onclick = function() {
+                            this.scheduleDiv.setAttribute("hidden", "true");
+                            this.newScheduleDiv.removeAttribute("hidden");
+                            this.newScheduleName.value = (new Date().toISOString());
+                            this.newScheduleDescription.value = "Schedule created on the " + this.newScheduleName.value;
+                        }.bind(this); 
+
+                        var cancelButton = this.shadowRoot.querySelector("#cancelbtn");
+                        cancelButton.onclick = function() {
+                            this.diag.close();
+                        }.bind(this); 
+
+                        var cancelScheduleButton = this.shadowRoot.querySelector("#cancelschedulebtn");
+                        cancelScheduleButton.onclick = function() {
+                            this.diag.close();
+                        }.bind(this); 
+
+                        var cancelNewScheduleButton = this.shadowRoot.querySelector("#cancelnewschedulebtn");
+                        cancelNewScheduleButton.onclick = function() {
+                            this.scheduleDiv.removeAttribute("hidden");
+                            this.newScheduleDiv.setAttribute("hidden", "true");
+                        }.bind(this); 
+
+
+                        var okButton = this.shadowRoot.querySelector("#okbtn");
+                        okButton.onclick = function() {
+                            if (this.schedulesSelect.selectedIndex >= 0) {
+                                this.fireCurrentScheduleChanged(this.availableSchedules[this.schedulesSelect.selectedIndex]);
+                            }
+                            this.diag.close();
+                        }.bind(this); 
+
+                        var okNewScheduleButton = this.shadowRoot.querySelector("#oknewschedulebtn");
+                        okNewScheduleButton.onclick = function() {
+                            var schedule = {
+                                id: this.newScheduleName.value,
+                                name: this.newScheduleName.value,
+                                description: this.newScheduleDescription.value,
+                                userId: this.username
+                            }
+                            if (this.newSchedulesSelect.selectedIndex > 0) {
+                                schedule["sourceSchedule"] = this.newSchedulesSelect[this.newSchedulesSelect.selectedIndex].text;
+                            }
+                            $.ajax({
+                                type: "get",
+                                url: "/createschedule",
+                                data: schedule,
+                                success: function (response) {
+                                    this.scheduleDiv.removeAttribute("hidden");
+                                    this.newScheduleDiv.setAttribute("hidden", "true");
+                                }.bind(this),
+                                error: function (response) {
+                                    console.log(response);
+                                    alert(response);
+                                }
+                            });
+                            var scheduleName = this.newScheduleName.value;
+                            var option = document.createElement("option");
+                            option.text = scheduleName;
+                            option.value = scheduleName;
+                            this.schedulesSelect.appendChild(option);
+                            this.scheduleDiv.removeAttribute("hidden");
+                            this.newScheduleDiv.setAttribute("hidden", "true");
+                            this.availableSchedules.push(schedule);
+                        }.bind(this); 
+
+                    }
+                    
+                    this.loginListeners = [this];
+                    this.scheduleListeners = [this];
+                }
+
+                fireCurrentScheduleChanged(schedule) {
+                    for(var s in this.scheduleListeners) {
+                        this.scheduleListeners[s].currentScheduleChanged(schedule);
+                    }
+                }
+
+                fireLoginSuccessful(user) {
+                    for(var l in this.loginListeners) {
+                        this.loginListeners[l].loginSuccessful(user);
+                    }
+                }
+
+                addLoginListener(comp) {
+                    this.loginListeners.push(comp);
+                }
+
+                addCurrentScheduleListener(comp) {
+                    this.scheduleListeners.push(comp);
+                }
+
+                loginSuccessful(user) {
+                    this.loginDiv.setAttribute("hidden", "true");
+                    this.newScheduleDiv.setAttribute("hidden", "true");
+                    this.scheduleDiv.removeAttribute("hidden");
+                    $.ajax({
+                        type: "get",
+                        url: "/getschedules",
+                        data: "userId=" + this.username,
+                        success: function (response) {
+                            this.availableSchedules = $.parseJSON(response);
+                            this.schedulesSelect.innerHTML = "";
+                            this.newSchedulesSelect.innerHTML = "";
+                            var option2 = document.createElement("option");
+                            var scheduleName = "Plant";
+                            option2.text = scheduleName;
+                            option2.value = scheduleName;
+                            this.newSchedulesSelect.appendChild(option2);
+
+                            for (var s in this.availableSchedules) {
+                                scheduleName = String(this.availableSchedules[s].id);
+                                var option1 = document.createElement("option");
+                                option1.text = scheduleName;
+                                option1.value = scheduleName;
+                                this.schedulesSelect.appendChild(option1);
+                                option2 = document.createElement("option");
+                                option2.text = scheduleName;
+                                option2.value = scheduleName;
+                                this.newSchedulesSelect.appendChild(option2);
+                            }
+                        }.bind(this),
+                        error: function (response) {
+                            console.log(response);
+                            alert(response);
+                        }
+                    });
+                }
+
+                currentScheduleChanged(schedule) {
+                    currentScheduleId = schedule.id;
+                }
+
+                show() {
+                    this.scheduleDiv.setAttribute("hidden", "true");
+                    this.newScheduleDiv.setAttribute("hidden", "true");
+                    this.loginDiv.removeAttribute("hidden");
+                    this.diag.showModal();
+                }
+            }
+
+            document.registerElement("pmc-login", {
+                prototype: PMCLogin.prototype,
+            });
+
+        }());
+    </script>
+
+    </body>
+</html>
