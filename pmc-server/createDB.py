@@ -31,7 +31,7 @@ if not plants.exists:
 
     db.query("CREATE TABLE libraries (id TEXT, plant_id TEXT, variable_id TEXT, user_id TEXT, value TEXT, description TEXT, PRIMARY KEY (id, plant_id, variable_id, user_id), FOREIGN KEY (variable_id, plant_id) REFERENCES plant_variables(id, plant_id), FOREIGN KEY (user_id) REFERENCES users(id))");
 
-    db.query("CREATE TABLE sessions (session_id NUMBER, user_id TEXT, PRIMARY KEY (session_id), FOREIGN KEY (user_id) REFERENCES users(user_id))")
+    db.query("CREATE TABLE logins (token_id TEXT, user_id TEXT, last_interaction_time INTEGER, PRIMARY KEY (token_id), FOREIGN KEY (user_id) REFERENCES users(user_id))")
 
 plants = db["plants"]
 plantVariables = db["plant_variables"]

@@ -10,8 +10,7 @@
 
         <!-- Handle SSE events from the server-->
         <script>
-            var eventOutputContainer = document.getElementById("event");
-            var evtSrc = new EventSource("/stream");
+            var evtSrc = new EventSource("/streamplant");
             //Changed values are received in json format
             evtSrc.onmessage = function(e) {
                 var jsonPlantVariables = $.parseJSON(e.data);
@@ -26,16 +25,25 @@
                 }
             };
         </script>
-
-
         <script>
-            $(document).ready(function() {
-                //Check the credentials
-                //areCredentialsUpdated();
-
-                
-            });
-
+            var evtSrc = new EventSource("/streamschedule");
+            //Changed values are received in json format
+            evtSrc.onmessage = function(e) {
+                var jsonScheduleVariables = $.parseJSON(e.data);
+                var scheduleVariables = jsonScheduleVariables["scheduleVariables"];
+                for (var i in scheduleVariables) {
+                    var pv = scheduleVariables[i];
+                    var pvName = pv.plantId + "::" + pv.variableId;
+                    if (pv.scheduleId === currentScheduleId) {
+                        var targetElement = allPMCComponents[pvName];
+                        if (targetElement !== undefined) {
+                            targetElement.setTriggerRemoteUpdate(false);
+                            targetElement.setValue(pv.value);
+                            targetElement.setTriggerRemoteUpdate(true);
+                        }
+                    }
+                }
+            };
         </script>
 
     </head>

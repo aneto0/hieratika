@@ -14,7 +14,9 @@
                 this.scheduleListeners = [listener];
             }
             else {
-                this.scheduleListeners.push(listener);
+                if (!this.scheduleListeners.contains(listener)) {
+                    this.scheduleListeners.push(listener);
+                }
             }
             if (this.availableSchedules !== undefined) {
                 listener.availableSchedulesChanged(this.availableSchedules);
@@ -34,6 +36,9 @@
             $.ajax({
                 type: "get",
                 url: "/getschedules",
+                data: {
+                    token: currentToken,
+                },
                 success: function (response) {
                     PMCScheduleManager.instance().availableSchedules = $.parseJSON(response);
                     PMCScheduleManager.instance().fireScheduleChanged();

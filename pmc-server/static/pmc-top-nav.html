@@ -33,9 +33,16 @@
                     </select>
                 </td>
                 <td><button title="Copy from a given schedule or from the plant" id="cpyreferencebtn">Copy from</button></td>
+
+                <td style="padding-left:50px;">
+                    <button title="Commit all changes to current schedule" id="commitbtn">Commit</button>
+                    <button title="Undo all changes" id="undobtn">Undo</button>
+                </td>
+
                 <td style="padding-left:50px;color:white" id="username">...</td>
                 <td style="color:white" id="currentSchedule">(@...)</td>
                 <td><button title="Login" id="loginbtn">Login</button></td>
+                <td><button title="Logout" id="logoutbtn">Logout</button></td>
             </tr>
         </table>
         <pmc-login id="pmclogin"></pmc-login>
@@ -59,25 +66,48 @@
                         root.appendChild(clone);
 
                         this.plantId = this.getAttribute("data-plant-id");
-                        var loginButton = this.shadowRoot.querySelector("#loginbtn");
+                        this.loginButton = this.shadowRoot.querySelector("#loginbtn");
+                        this.logoutButton = this.shadowRoot.querySelector("#logoutbtn");
                         var loginDialog = this.shadowRoot.querySelector("#pmclogin");
                         loginDialog.addLoginListener(this);
                         loginDialog.addCurrentScheduleListener(this);
-                        loginButton.onclick = function() {
+                        this.loginButton.onclick = function() {
                             loginDialog.show();
                         }.bind(this);
 
-                        PMCScheduleManager.instance().addScheduleListener(this);
+                        this.logoutButton.onclick = function() {
+                            localStorage.removeItem("user");
+                            localStorage.removeItem("schedule");
+                            this.usernameTd.innerHTML = "...";
+                            this.currentScheduleTd.innerHTML = "(@...)"; 
+                            this.loginButton.innerHTML = "Login";
+                        }.bind(this);
+
+
+                        this.usernameTd = this.shadowRoot.querySelector("#username");
+                        this.currentScheduleTd = this.shadowRoot.querySelector("#currentSchedule");
+
+                        if (localStorage.user === undefined) {
+                            this.loginButton.innerHTML = "Login";
+                        }
+                        else {
+                            var user = JSON.parse(localStorage.user);
+                            this.loginButton.innerHTML = "Change schedule";
+                            this.usernameTd.innerHTML =user.name; 
+                            this.usernameTd.title = "username: " + user.id;
+                        }
                     }
                 }
 
                 loginSuccessful(user) {
-                    var usernameTd = this.shadowRoot.querySelector("#username");
-                    usernameTd.innerHTML = user.name; 
-                    usernameTd.title = "username: " + user.id;
+                    this.usernameTd.innerHTML = user.name; 
+                    this.usernameTd.title = "username: " + user.id;
 
+                    localStorage.user = JSON.stringify(user);
+                    this.loginButton.innerHTML = "Change schedule";
                     getPlantInfo(); 
 
+                    PMCScheduleManager.instance().addScheduleListener(this);
                     getAvailableLibraries();
                 
                     $.each(allPMCComponents, function (i, pmcComp) {
@@ -86,9 +116,9 @@
                 }
                 
                 currentScheduleChanged(schedule) {
-                    var currentScheduleTd = this.shadowRoot.querySelector("#currentSchedule");
-                    currentScheduleTd.innerHTML = "(@ " + schedule.id + ")"; 
+                    this.currentScheduleTd.innerHTML = "(@ " + schedule.id + ")"; 
                     copyFromSchedule(schedule.id, true);
+                    localStorage.currentSchedule = JSON.stringify(schedule);
                 }
 
                 availableSchedulesChanged(availableSchedules) {
@@ -120,8 +150,19 @@
                         else {
                             copyFromSchedule(copyFromReferenceSelect.value, false);
                         }
-
                     }
+
+                    var commitButton = this.shadowRoot.querySelector("#commitbtn");
+                    commitButton.onclick = function () {
+                        commitAllChangesToSchedule();
+                    }
+
+                    var undoButton = this.shadowRoot.querySelector("#undobtn");
+                    undoButton.onclick = function () {
+                        undoAllChangesToSchedule();
+                    }
+
+
                 }
             }
 

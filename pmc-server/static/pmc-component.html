@@ -171,23 +171,25 @@
         setValue (valueToSet) {
             this.value = valueToSet;
             this.fireValueChanged("value");
-            if (currentScheduleId !== undefined) {
-                var valueToUpdate = {
-                    id:this.id,
-                    scheduleId:currentScheduleId,
-                    value:valueToSet
-                }
-                $.ajax({
-                    type: "get",
-                    url: "/updateschedule",
-                    data: "update=" + JSON.stringify(valueToUpdate),
-                    success: function (response) {
-                    }.bind(this),
-                    error: function (response) {
-                        console.log(response);
-                        alert(response);
+            if (this.triggerRemoteUpdate) {
+                if (currentScheduleId !== undefined) {
+                    var valueToUpdate = {
+                        id:this.id,
+                        scheduleId:currentScheduleId,
+                        value:valueToSet
                     }
-                });
+                    $.ajax({
+                        type: "get",
+                        url: "/updateschedule",
+                        data: "update=" + JSON.stringify(valueToUpdate),
+                        success: function (response) {
+                        }.bind(this),
+                        error: function (response) {
+                            console.log(response);
+                            alert(response);
+                        }
+                    });
+                }
             }
         }
 
@@ -218,7 +220,12 @@
             this.valueChangedListeners.push(comp);
         }
 
+        setTriggerRemoteUpdate(triggerRemote) {
+            this.triggerRemoteUpdate = triggerRemote;
+        }
+
         createdCallback() {
+            this.triggerRemoteUpdate = true;
             var template = this.getTemplate();
             if (template !== undefined) {
                 // import template into

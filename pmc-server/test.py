@@ -5,6 +5,7 @@ import epics
 from epics import caget, caput, camonitor
 import time
 import json
+import uuid
 from flask import Flask, Response, request, send_from_directory
 
 #Manage easy integration with SQLAlchemy
@@ -12,23 +13,63 @@ import dataset
 #To serialize arrays into the database
 import pickle
 
+#The web app which is a Flask standard application
 app = Flask(__name__, static_url_path="")
 
-#TODO this will have to be purged from time to time...
+#Synchronised queue between the SSE stream_data and stream_schedule_data functions. One queue per consumer thread. Should be further protected with semaphores
+threadPlantQueues = {}
+threadScheduleQueues = {}
+
+#Maximum time that a user is allowed to be logged in without interacting with the database
+LOGIN_TIMEOUT = 600
+
+#Cleans the threadDBs, threadPlantQueues and threadScheduleQueues 
+alive = True
+def threadCleaner():
+    db = getDB()
+    while alive:
+        time.sleep(5)
+        for t in allThreads:
+#            print t
+            if (not t.isAlive()):
+                tid = str(t)
+                allThreads.remove(t)
+                #Do not delete the MainThread!
+                if ("MainThread" not in tid):
+#                    print "Deleting: " + tid
+                    threadDBs.pop(tid, None)
+                    threadPlantQueues.pop(tid, None)
+                    threadScheduleQueues.pop(tid, None)
+        #Clean all the users that have not interacted with the server for a while
+        currentTime = int(time.time())
+        db.query("DELETE FROM logins WHERE '(" + str(currentTime) + " - last_interaction_time) > " + str(LOGIN_TIMEOUT) + "'");
+       
+def isTokenValid(request):
+    ok = ("token" in request.args)
+    if (ok): 
+        db = getDB()
+        loginsTable = db["logins"]
+        row = loginsTable.find_one(token_id=request.args["token"])
+        ok = (row is not None)
+    return ok
+
+#A DB access cannot be shared between different threads.
+#This function allocates a DB instance for any given thread
 threadDBs = {}
+allThreads = []
 def getDB():
-    tid = str(threading.current_thread())
+    ct = threading.current_thread()
+    tid = str(ct)
     if tid not in threadDBs:
         threadDBs[tid] = dataset.connect('sqlite:////tmp/pmc-server.db')
+        if (ct not in allThreads):
+            allThreads.append(ct)
     return threadDBs[tid]
     
-#Synchronised queue between the SSE stream_data function and the pvValueChanged. One queue per consumer thread. Should be further protected with semaphores
-#TODO this will have to be cleared from time to time
-threadQueues = {}
 
 #see http://cars9.uchicago.edu/software/python/pyepics3/pv.html#pv-callbacks-label for other arguments that could be retrieved
 def pvValueChanged(pvname=None, value=None, **kw):
-    for k, q in threadQueues.iteritems():
+    for k, q in threadPlantQueues.iteritems():
         pvname = pvname.split("::")
         plantId = pvname[0]
         variableId = pvname[1]
@@ -50,17 +91,20 @@ def updateScheduleVariablesDB(plantId, variableId, scheduleId, variableValue):
         row["value"] = pickle.dumps(variableValue);
         scheduleVariables.upsert(row, ["variable_id", "plant_id", "schedule_id"])
 
-
+#Streams plant data changes
 #Call back for the Server Side Event. One per connection will loop on the while and consume from its own queue
-def streamData():
+def streamPlantData():
     try:
         while True:
             db = getDB()
-            tid = str(threading.current_thread())
+            ct = threading.current_thread()
+            tid = str(ct)
             plantVariables = db["plant_variables"]
-            if tid not in threadQueues:
+            if tid not in threadPlantQueues:
                 # The first time send all the variables
-                threadQueues[tid] = Queue.Queue()
+                threadPlantQueues[tid] = Queue.Queue()
+                if (ct not in allThreads):
+                    allThreads.append(ct)
                 encodedPy = {"plantVariables": [ ] }
                 for plantVariable in plantVariables:
                     variableId = plantVariable["id"]
@@ -70,17 +114,48 @@ def streamData():
                 encodedJson = json.dumps(encodedPy)
             else:
                 # Just monitor on change 
-                monitorQueue = threadQueues[tid]
+                monitorQueue = threadPlantQueues[tid]
                 updatedPV = monitorQueue.get(True)
                 plantId = updatedPV[0]
                 variableId = updatedPV[1]
-                encodedPy = {"plantVariables": [ {"variableId" : variableId, "plantId" : plantId, "value" : pvValue}] }
+                value = updatedPV[2]
+                encodedPy = {"plantVariables": [ {"variableId" : variableId, "plantId" : plantId, "value" : value}] }
                 encodedJson = json.dumps(encodedPy)
                 monitorQueue.task_done()
             yield "data: {0}\n\n".format(encodedJson)
-    except Exception:
+    except Exception as e:
         print "Exception ignored"
+        print e
         #ignore
+
+def streamScheduleData():
+    try:
+        while True:
+            db = getDB()
+            ct = threading.current_thread()
+            tid = str(ct)
+            scheduleVariables = db["schedule_variables"]
+            if tid not in threadScheduleQueues:
+                # The first time just register the Queue 
+                threadScheduleQueues[tid] = Queue.Queue()
+                if (ct not in allThreads):
+                    allThreads.append(ct)
+            # Monitor on change 
+            monitorQueue = threadScheduleQueues[tid]
+            updatedPV = monitorQueue.get(True)
+            plantId = updatedPV[0]
+            variableId = updatedPV[1]
+            scheduleId = updatedPV[2]
+            value = updatedPV[3]
+            encodedPy = {"scheduleVariables": [ {"variableId" : variableId, "plantId" : plantId, "scheduleId": scheduleId, "value" : value}] }
+            encodedJson = json.dumps(encodedPy)
+            monitorQueue.task_done()
+            yield "data: {0}\n\n".format(encodedJson)
+    except Exception as e:
+        print "Exception ignored"
+        print e
+        #ignore
+
 
 #Gets all the pv information
 @app.route("/getplantinfo")
@@ -88,10 +163,14 @@ def getplantinfo():
     db = getDB()
     plantVariables = db["plant_variables"]
     validations = db["validations"]
-    if (request.method == "GET"):
-#        plantId = request.args["plantId"]
+    toReturn = ""
+   
+    if (not isTokenValid(request)):
+        toReturn = "InvalidToken"
+    elif ("variables" not in request.args):
+        toReturn = "InvalidParameters"
+    else: 
         requestedVariables = request.args["variables"]
-        print requestedVariables
         jSonRequestedVariables = json.loads(requestedVariables)
         encodedPy = {"variables": [] }
         for requestedVariable in jSonRequestedVariables:
@@ -116,13 +195,18 @@ def getplantinfo():
                             "parameters": pickle.loads(v["parameters"])
                         })
                     encodedPy["variables"].append(plantVariable) 
-        encodedJson = json.dumps(encodedPy)
-    return encodedJson
+        toReturn = json.dumps(encodedPy)
+    return toReturn 
   
 #Try to update the values in the plant
 @app.route("/submit", methods=["POST", "GET"])
 def submit():
-    if (request.method == "GET"):
+    toReturn = "done"
+    if (not isTokenValid(request)):
+        toReturn = "InvalidToken"
+    elif ("update" not in request.args):
+        toReturn = "InvalidParameters"
+    else: 
         updateJSon = request.args["update"]
         jSonUpdateVariables = json.loads(updateJSon)
         for varName in jSonUpdateVariables.keys():
@@ -133,11 +217,11 @@ def submit():
                 variableId = varName[1]
                 updatePlantVariablesDB(plantId, variableId, newValue)
                 #Warn others that the plant values have changed!
-                for k, q in threadQueues.iteritems():
+                for k, q in threadPlantQueues.iteritems():
                     q.put((plantId, variableId, newValue), True)
 
             #caput(k, request.args[k])
-    return "done"
+    return toReturn
 
 #Return the available schedules
 @app.route("/getschedules")
@@ -145,20 +229,22 @@ def getschedules():
     db = getDB()
     userId = ""
     schedules = []
-    if (request.method == "GET"):
+    toReturn = "done"
+    if (not isTokenValid(request)):
+        toReturn = "InvalidToken"
+    else:
         if "userId" in request.args:
             userId = request.args["userId"]
-
-    tableSchedules = db["schedules"]
-    if (len(userId) == 0):
-        for s in tableSchedules:
-            schedules.append(s);
-    else:
-        schedulesUser = tableSchedules.find(user_id=userId)
-        for s in schedulesUser:
-            schedules.append(s);
-        
-    return json.dumps(schedules)
+        tableSchedules = db["schedules"]
+        if (len(userId) == 0):
+            for s in tableSchedules:
+                schedules.append(s);
+        else:
+            schedulesUser = tableSchedules.find(user_id=userId)
+            for s in schedulesUser:
+                schedules.append(s);
+        toReturn = json.dumps(schedules)
+    return toReturn
 
 #Returns the variables associated to a given schedule
 @app.route("/getschedule", methods=["POST", "GET"])
@@ -248,6 +334,14 @@ def login():
         user = usersTable.find_one(id=requestedUserId)
         if (user is not None): 
             user["password"] = ""
+            user["token"] = "" + uuid.uuid4().hex
+            loginsTable = db["logins"]
+            login = {
+                "token_id": user["token"],
+                "user_id": user["id"],
+                "last_interaction_time": int(time.time())
+            }
+            loginsTable.insert(login)
         else:
             user = {
                 "id": ""
@@ -268,6 +362,11 @@ def updateschedule():
             scheduleId = jSonUpdateVariable["scheduleId"]
             value = jSonUpdateVariable["value"]
             updateScheduleVariablesDB(plantId, variableId, scheduleId, value)
+            #Warn (only the!) others that the scheduler values have changed!
+            for k, q in threadScheduleQueues.iteritems():
+                tid = str(threading.current_thread())
+                if (k != tid):
+                    q.put((plantId, variableId, scheduleId, value), True)
     return "ok"
 
 #Creates a new schedule
@@ -289,9 +388,14 @@ def createschedule():
     return "ok"
 
 
-@app.route("/stream")
-def stream():
-    return Response(streamData(), mimetype="text/event-stream")
+@app.route("/streamplant")
+def streamplant():
+    return Response(streamPlantData(), mimetype="text/event-stream")
+
+@app.route("/streamschedule")
+def streamschedule():
+    return Response(streamScheduleData(), mimetype="text/event-stream")
+
 
 @app.route("/")
 def index():
@@ -321,5 +425,15 @@ if __name__ == "__main__":
             pvName = plantVariable["plant_id"] + "::" + plantVariable["id"]
             camonitor(pvName, None, pvValueChanged)
 
+    #Clean dead threads
+    t = threading.Thread(target=threadCleaner)
+    #To force the killing of the threadCleaner thread with Ctrl+C
+    t.daemon = True
+    t.start()
+
+
     app.debug = True
+    #Running a threaded Flask is ok only for debugging
     app.run(threaded= True, host=args.host, port=args.port)
+
+    alive = False

@@ -16,11 +16,13 @@
             $.each(allPMCComponents, function (i, pmcComp) {
                 allPMCDataJSon[pmcComp.id] = pmcComp.getValue();
             });
-            var dataToSend = "update=" + JSON.stringify(allPMCDataJSon);
             $.ajax({
                 type: "get",
                 url: "/submit",
-                data: dataToSend,
+                data: {
+                    token: currentToken,
+                    update: JSON.stringify(allPMCDataJSon)
+                },
                 success: function (response) {
                     if (response == "done") {
                         alert("Values updated successfully!");
@@ -48,7 +50,10 @@
             $.ajax({
                 type: "get",
                 url: "/getplantinfo",
-                data: "variables=" + JSON.stringify(allVariableIds),
+                data: {
+                    token: currentToken,
+                    variables: JSON.stringify(allVariableIds)
+                },
                 success: function (response) {
                     var pvInfosJson = $.parseJSON(response);
                     var pvInfos = pvInfosJson["variables"];
@@ -60,8 +65,8 @@
                             targetElement.setLibrary(pvInfo.library === true);
                             targetElement.setNumberOfElements(pvInfo.numberOfElements);
                             targetElement.setReference("none");
-                            targetElement.setInitialValue(pvInfo.value);
-                            targetElement.setValue(pvInfo.value);
+                            //targetElement.setInitialValue(pvInfo.value);
+                            //targetElement.setValue(pvInfo.value);
                             targetElement.setValidations(pvInfo.validation);
                         }
                     });
@@ -161,12 +166,20 @@
             });
         }
 
-        function login(username, password) {
+        function commitAllChangesToSchedule() {
+            $.each(allPMCComponents, function (i, pmcComp) {
+                pmcComp.setInitialValue(pmcComp.getValue());
+            });
         }
 
-
+        function undoAllChangesToSchedule() {
+            $.each(allPMCComponents, function (i, pmcComp) {
+                pmcComp.setValue(pmcComp.getInitialValue());
+            });
+        }
 
         var allPMCComponents = {};
         var currentScheduleId = undefined;
+        var currentToken = undefined;
     </script>
 </html>

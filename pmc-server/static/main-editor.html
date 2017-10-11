@@ -181,30 +181,6 @@
                 });
 
                 //Load all the types
-                $.ajax({
-                    type: "get",
-                    url: "/getplantinfo",
-                    success: function (response) {
-                        var pvInfosJson = $.parseJSON(response);
-                        var pvInfos = pvInfosJson["variables"];
-                        $.each(pvInfos, function(i, pvInfo) {
-                            var targetElement = allPMCComponents[pvInfo.name];
-                            if (targetElement != null) {
-                                targetElement.setTypeValue(pvInfo.type);
-                                targetElement.setLibrary(pvInfo.library.toLowerCase() === "true");
-                                targetElement.setNumberOfElements(pvInfo.numberOfElements);
-                                targetElement.setReference("none");
-                                targetElement.setInitialValue(pvInfo.value);
-                                targetElement.setValue(pvInfo.value);
-                                targetElement.setValidations(pvInfo.validation);
-                            }
-                        });
-                    },
-                    error: function (response) {
-                        console.log(response);
-                        alert(response);
-                    }
-                });
 
                 //Load all the librariesj
                 $.ajax({

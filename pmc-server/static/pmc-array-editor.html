@@ -99,7 +99,9 @@
                             newBackgroundColor = ERROR_BCOLOR;
                             for (var i=0; (i<this.numberOfElements); i++) { 
                                 var cell = row.cells[i];
-                                cell.style.backgroundColor = ERROR_BCOLOR;
+                                if (cell !== undefined) {
+                                    cell.style.backgroundColor = ERROR_BCOLOR;
+                                }
                             }
 
                             this.title = "Failed @ " + fun.name + " (" + validation.parameters + ")" + " [ " + validation.description + " ] ";

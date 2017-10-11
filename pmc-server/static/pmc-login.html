@@ -102,11 +102,11 @@
                         var loginButton = this.shadowRoot.querySelector("#loginbtn");
                         loginButton.onclick = function() {
                             var usernameTxt = this.shadowRoot.querySelector("#username");
-                            this.username = usernameTxt.value; 
+                            var username = usernameTxt.value; 
                             $.ajax({
                                 type: "get",
                                 url: "/login",
-                                data: "userId=" + this.username,
+                                data: "userId=" + username,
                                 success: function (response) {
                                     var user = $.parseJSON(response);
                                     if (user.id !== "") {
@@ -162,11 +162,13 @@
 
                         var okNewScheduleButton = this.shadowRoot.querySelector("#oknewschedulebtn");
                         okNewScheduleButton.onclick = function() {
+                            var usernameTxt = this.shadowRoot.querySelector("#username");
+                            var username = usernameTxt.value; 
                             var schedule = {
                                 id: this.newScheduleName.value,
                                 name: this.newScheduleName.value,
                                 description: this.newScheduleDescription.value,
-                                userId: this.username
+                                userId: username
                             }
                             if (this.newSchedulesSelect.selectedIndex > 0) {
                                 schedule["sourceSchedule"] = this.newSchedulesSelect[this.newSchedulesSelect.selectedIndex].text;
@@ -221,13 +223,17 @@
                 }
 
                 loginSuccessful(user) {
+                    currentToken = user.token;
                     this.loginDiv.setAttribute("hidden", "true");
                     this.newScheduleDiv.setAttribute("hidden", "true");
                     this.scheduleDiv.removeAttribute("hidden");
                     $.ajax({
                         type: "get",
                         url: "/getschedules",
-                        data: "userId=" + this.username,
+                        data: {
+                            token: currentToken,
+                            userId: user.id
+                        },
                         success: function (response) {
                             this.availableSchedules = $.parseJSON(response);
                             this.schedulesSelect.innerHTML = "";
@@ -262,9 +268,15 @@
                 }
 
                 show() {
-                    this.scheduleDiv.setAttribute("hidden", "true");
-                    this.newScheduleDiv.setAttribute("hidden", "true");
-                    this.loginDiv.removeAttribute("hidden");
+                    if (localStorage.user === undefined) {
+                        this.scheduleDiv.setAttribute("hidden", "true");
+                        this.newScheduleDiv.setAttribute("hidden", "true");
+                        this.loginDiv.removeAttribute("hidden");
+                    }
+                    else {
+                        var user = JSON.parse(localStorage.user);
+                        this.fireLoginSuccessful(user);
+                    }
                     this.diag.showModal();
                 }
             }
