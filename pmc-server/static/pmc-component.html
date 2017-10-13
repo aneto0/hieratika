@@ -171,17 +171,24 @@
         setValue (valueToSet) {
             this.value = valueToSet;
             this.fireValueChanged("value");
+            this.updateRemote(valueToSet); 
+        }
+
+        updateRemote (valueToUpdate) {
             if (this.triggerRemoteUpdate) {
-                if (currentScheduleId !== undefined) {
+                /*if (currentScheduleId !== undefined) {*/
                     var valueToUpdate = {
                         id:this.id,
-                        scheduleId:currentScheduleId,
-                        value:valueToSet
+                     //   scheduleId:currentScheduleId,
+                        value:valueToUpdate
                     }
-                    $.ajax({
-                        type: "get",
+                    /*$.ajax({
+                        type: "post",
                         url: "/updateschedule",
-                        data: "update=" + JSON.stringify(valueToUpdate),
+                        data: {
+                            token: currentToken,
+                            update: JSON.stringify(valueToUpdate)
+                        },
                         success: function (response) {
                         }.bind(this),
                         error: function (response) {
@@ -189,7 +196,8 @@
                             alert(response);
                         }
                     });
-                }
+                }*/
+                valuesToSynchroniseRemote.push(valueToUpdate);
             }
         }
 

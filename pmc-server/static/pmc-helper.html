@@ -17,7 +17,7 @@
                 allPMCDataJSon[pmcComp.id] = pmcComp.getValue();
             });
             $.ajax({
-                type: "get",
+                type: "post",
                 url: "/submit",
                 data: {
                     token: currentToken,
@@ -48,7 +48,7 @@
                 allVariableIds.push(k)
             }
             $.ajax({
-                type: "get",
+                type: "post",
                 url: "/getplantinfo",
                 data: {
                     token: currentToken,
@@ -65,7 +65,7 @@
                             targetElement.setLibrary(pvInfo.library === true);
                             targetElement.setNumberOfElements(pvInfo.numberOfElements);
                             targetElement.setReference("none");
-                            //targetElement.setInitialValue(pvInfo.value);
+                            targetElement.setInitialValue(pvInfo.value);
                             //targetElement.setValue(pvInfo.value);
                             targetElement.setValidations(pvInfo.validation);
                         }
@@ -80,8 +80,11 @@
 
         function getAvailableLibraries() {
             $.ajax({
-                type: "get",
+                type: "post",
                 url: "/getlibraries",
+                data: {
+                    token: currentToken
+                },
                 success: function (response) {
                     var librariesJson = $.parseJSON(response);
                     var allLibraries = librariesJson["libraries"];
@@ -118,9 +121,12 @@
             }
             else {
                 $.ajax({
-                    type: "get",
+                    type: "post",
                     url: "/getschedule",
-                    data: "schselect=" + currentReference,
+                    data: {
+                        token: currentToken,
+                        schselect: currentReference
+                    },
                     success: function (response) {
                         var variables = $.parseJSON(response);
                         var variable;
@@ -143,9 +149,12 @@
 
         function copyFromSchedule(scheduleName, resetValue) {
             $.ajax({
-                type: "get",
+                type: "post",
                 url: "/getschedule",
-                data: "schselect=" + scheduleName,
+                data: {
+                    token: currentToken,
+                    schselect: scheduleName
+                },
                 success: function (response) {
                     variables = $.parseJSON(response);
                     $.each(variables, function(i, variable) {
@@ -178,8 +187,47 @@
             });
         }
 
+        function synchroniseRemote() {
+            if (currentScheduleId !== undefined) {
+                var toPop = valuesToSynchroniseRemote.length;
+                if (toPop > 0) {
+                    var scheduleToUpdate = {
+                        scheduleId:currentScheduleId,
+                        values:valuesToSynchroniseRemote
+                    }
+                    var jSonData = {
+                        token: currentToken,
+                        update: JSON.stringify(scheduleToUpdate)
+                    }
+                    var i = 0;
+                    //Not perfectly safe, but worst comes to the worst I send twice the same thing from time to time
+                    while (i < toPop) {
+                        valuesToSynchroniseRemote.pop();
+                        i++;
+                    }
+                    $.ajax({
+                        type: "post",
+                        url: "/updateschedule",
+                        data: jSonData,
+                        success: function (response) {
+                            setTimeout(synchroniseRemote, 2000);
+                        }.bind(this),
+                        error: function (response) {
+                            setTimeout(synchroniseRemote, 2000);
+                            console.log(response);
+                            alert(response);
+                        }.bind(this)
+                    });
+                }
+            }
+            setTimeout(synchroniseRemote, 2000);
+        }
+
+        var valuesToSynchroniseRemote = [];
         var allPMCComponents = {};
         var currentScheduleId = undefined;
         var currentToken = undefined;
+    
+        synchroniseRemote();
     </script>
 </html>

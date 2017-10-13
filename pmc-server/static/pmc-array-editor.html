@@ -51,6 +51,7 @@
                                     cell.style.color = DIFF_INIT_CHANGED_COLOR;
                                     if (userChanged) {
                                         this.fireValueChanged("value");
+                                        this.updateRemote(this.getValue());
                                     }
                                 }
                                 else {

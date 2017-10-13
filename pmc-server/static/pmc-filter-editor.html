@@ -180,18 +180,23 @@
                              
                             this.currentTransferFunction.innerHTML = this.generateTransferFunctionMathML(num, den);
                             jqMath.parseMath(this.currentTransferFunction);
-
+                            var changed = false;
                             if(!this.compareValues(this.numeratorInput.value, this.initvalue[0])) {
                                 this.numeratorInput.style.color = DIFF_INIT_CHANGED_COLOR;
+                                changed = true;
                             }
                             else {
                                 this.numeratorInput.style.color = STANDARD_FCOLOR;
                             }
                             if(!this.compareValues(this.denominatorInput.value, this.initvalue[1])) {
                                 this.denominatorInput.style.color = DIFF_INIT_CHANGED_COLOR;
+                                changed = true;
                             }
                             else {
                                 this.denominatorInput.style.color = STANDARD_FCOLOR;
+                            }
+                            if (changed) {
+                                this.updateRemote(this.value);
                             }
                         }
 

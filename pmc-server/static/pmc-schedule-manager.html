@@ -14,7 +14,7 @@
                 this.scheduleListeners = [listener];
             }
             else {
-                if (!this.scheduleListeners.contains(listener)) {
+                if (!this.scheduleListeners.includes(listener)) {
                     this.scheduleListeners.push(listener);
                 }
             }
@@ -34,7 +34,7 @@
         static getAvailableSchedules() {
             //Load available schedule names. 
             $.ajax({
-                type: "get",
+                type: "post",
                 url: "/getschedules",
                 data: {
                     token: currentToken,

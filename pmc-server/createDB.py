@@ -11,7 +11,7 @@ plants = db["plants"]
 if not plants.exists:
     db.query("CREATE TABLE plants(id TEXT PRIMARY KEY, name TEXT NOT NULL, description TEXT)")
 
-    db.query("CREATE TABLE plant_variables(id TEXT, plant_id TEXT, type TEXT, description TEXT, initialValue TEXT, numberOfElements TEXT, library BOOLEAN, epicsPV BOOLEAN, PRIMARY KEY(id, plant_id), FOREIGN KEY (plant_id) REFERENCES plants(id))")
+    db.query("CREATE TABLE plant_variables(id TEXT, plant_id TEXT, type TEXT, description TEXT, initialValue TEXT, numberOfElements TEXT, library BOOLEAN, epicsPV BOOLEAN, value TEXT, PRIMARY KEY(id, plant_id), FOREIGN KEY (plant_id) REFERENCES plants(id))")
 
     db.query("CREATE INDEX id_plant_id ON plant_variables(id,plant_id)")
 
@@ -138,3 +138,26 @@ with open("libraries.json") as jsonFile:
             }
             libraries.upsert(library, ["id", "plant_id", "variable_id", "user_id"])
 
+nCols = 10
+idx = 1
+maxIdx = 10000
+sourcePlantId = "PLANT1"
+sourceVarId = "VAR1"
+destPlantId = "PLANT2"
+with open("static/ps-example-2.html", "w") as f:
+    f.write("<table border=\"0\">\n") 
+    db.begin()
+    while (idx < maxIdx):
+        if (idx % nCols == 0):
+            if (idx > 0):
+                f.write("\n</tr>\n") 
+            f.write("<tr>\n") 
+
+        varName = destPlantId + "::" + "VAR" + str(idx)
+        f.write("<td>" + varName + "</td>")
+        f.write("<td><pmc-input id=\"" + varName + "\" name=\"" + varName + "\"></pmc-input></td>")
+        db.query("INSERT INTO plant_variables(id, plant_id, type, description, initialValue, numberOfElements, library, epicsPV, value) SELECT 'VAR" + str(idx) + "','" + destPlantId + "', plant_variables.type, plant_variables.description, plant_variables.initialValue, plant_variables.numberOfElements, plant_variables.library, 0, plant_variables.value FROM plant_variables WHERE plant_variables.plant_id='" + sourcePlantId + "' AND id='" + sourceVarId + "'")
+        db.query("INSERT INTO validations(fun, variable_id, plant_id, description, parameters) SELECT validations.fun, 'VAR" + str(idx) + "','" + destPlantId + "', validations.description, validations.parameters FROM validations where validations.plant_id='" + sourcePlantId + "' and validations.variable_id='" + sourceVarId + "'")
+        idx = idx + 1
+    f.write("</table>\n") 
+    db.commit()

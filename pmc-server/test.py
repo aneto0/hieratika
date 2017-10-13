@@ -8,6 +8,11 @@ import json
 import uuid
 from flask import Flask, Response, request, send_from_directory
 
+#Only log errors
+import logging
+log = logging.getLogger('werkzeug')
+#log.setLevel(logging.ERROR)
+
 #Manage easy integration with SQLAlchemy
 import dataset
 #To serialize arrays into the database
@@ -21,7 +26,7 @@ threadPlantQueues = {}
 threadScheduleQueues = {}
 
 #Maximum time that a user is allowed to be logged in without interacting with the database
-LOGIN_TIMEOUT = 600
+LOGIN_TIMEOUT = 3600
 
 #Cleans the threadDBs, threadPlantQueues and threadScheduleQueues 
 alive = True
@@ -45,11 +50,11 @@ def threadCleaner():
         db.query("DELETE FROM logins WHERE '(" + str(currentTime) + " - last_interaction_time) > " + str(LOGIN_TIMEOUT) + "'");
        
 def isTokenValid(request):
-    ok = ("token" in request.args)
+    ok = ("token" in request.form)
     if (ok): 
         db = getDB()
         loginsTable = db["logins"]
-        row = loginsTable.find_one(token_id=request.args["token"])
+        row = loginsTable.find_one(token_id=request.form["token"])
         ok = (row is not None)
     return ok
 
@@ -86,10 +91,13 @@ def updatePlantVariablesDB(plantId, variableId, variableValue):
 def updateScheduleVariablesDB(plantId, variableId, scheduleId, variableValue):
     db = getDB()
     scheduleVariables = db["schedule_variables"]
-    row = scheduleVariables.find_one(variable_id=variableId,plant_id=plantId,schedule_id=scheduleId)
-    if (row is not None):
-        row["value"] = pickle.dumps(variableValue);
-        scheduleVariables.upsert(row, ["variable_id", "plant_id", "schedule_id"])
+    row = {
+        "variable_id": variableId,
+        "plant_id": plantId,
+        "schedule_id": scheduleId,
+        "value": pickle.dumps(variableValue)
+    }
+    scheduleVariables.upsert(row, ["variable_id", "plant_id", "schedule_id"])
 
 #Streams plant data changes
 #Call back for the Server Side Event. One per connection will loop on the while and consume from its own queue
@@ -158,7 +166,7 @@ def streamScheduleData():
 
 
 #Gets all the pv information
-@app.route("/getplantinfo")
+@app.route("/getplantinfo", methods=["POST", "GET"])
 def getplantinfo():
     db = getDB()
     plantVariables = db["plant_variables"]
@@ -167,10 +175,10 @@ def getplantinfo():
    
     if (not isTokenValid(request)):
         toReturn = "InvalidToken"
-    elif ("variables" not in request.args):
+    elif ("variables" not in request.form):
         toReturn = "InvalidParameters"
     else: 
-        requestedVariables = request.args["variables"]
+        requestedVariables = request.form["variables"]
         jSonRequestedVariables = json.loads(requestedVariables)
         encodedPy = {"variables": [] }
         for requestedVariable in jSonRequestedVariables:
@@ -204,10 +212,10 @@ def submit():
     toReturn = "done"
     if (not isTokenValid(request)):
         toReturn = "InvalidToken"
-    elif ("update" not in request.args):
+    elif ("update" not in request.form):
         toReturn = "InvalidParameters"
     else: 
-        updateJSon = request.args["update"]
+        updateJSon = request.form["update"]
         jSonUpdateVariables = json.loads(updateJSon)
         for varName in jSonUpdateVariables.keys():
             newValue = jSonUpdateVariables[varName]
@@ -224,7 +232,7 @@ def submit():
     return toReturn
 
 #Return the available schedules
-@app.route("/getschedules")
+@app.route("/getschedules", methods=["POST", "GET"])
 def getschedules():
     db = getDB()
     userId = ""
@@ -233,8 +241,8 @@ def getschedules():
     if (not isTokenValid(request)):
         toReturn = "InvalidToken"
     else:
-        if "userId" in request.args:
-            userId = request.args["userId"]
+        if "userId" in request.form:
+            userId = request.form["userId"]
         tableSchedules = db["schedules"]
         if (len(userId) == 0):
             for s in tableSchedules:
@@ -249,11 +257,14 @@ def getschedules():
 #Returns the variables associated to a given schedule
 @app.route("/getschedule", methods=["POST", "GET"])
 def getschedule():
+    toReturn = ""
     variables = []
     db = getDB()
-    scheduleVariablesTable = db["schedule_variables"]
-    if (request.method == "GET"):
-        requestedSchedule = request.args["schselect"]
+    if (not isTokenValid(request)):
+        toReturn = "InvalidToken"
+    else: 
+        scheduleVariablesTable = db["schedule_variables"]
+        requestedSchedule = request.form["schselect"]
         scheduleVariables = scheduleVariablesTable.find(schedule_id=requestedSchedule)
         for v in scheduleVariables:
             vp = {
@@ -262,24 +273,29 @@ def getschedule():
                 "value": pickle.loads(v["value"])
             } 
             variables.append(vp)
-    return json.dumps(variables)
+        toReturn = json.dumps(variables)
+    return toReturn
 
 #Return the available libraries
-@app.route("/getlibraries")
+@app.route("/getlibraries", methods=["POST", "GET"])
 def getlibraries():
     db = getDB()
     tableLibraries = db["libraries"]
     librariesNames = {}
-    for library in tableLibraries:
-        plantId = library["plant_id"]
-        variableId = library["variable_id"]
-        variable = plantId + "::" + variableId
-        if variable in librariesNames:
-            librariesNames[variable]["ids"].append(library["id"])
-        else:
-            librariesNames[variable] = {"variable":variable, "ids": [library["id"]]}
-       
-    return json.dumps({"libraries": librariesNames.values()})
+    toReturn = ""
+    if (not isTokenValid(request)):
+        toReturn = "InvalidToken"
+    else: 
+        for library in tableLibraries:
+            plantId = library["plant_id"]
+            variableId = library["variable_id"]
+            variable = plantId + "::" + variableId
+            if variable in librariesNames:
+                librariesNames[variable]["ids"].append(library["id"])
+            else:
+                librariesNames[variable] = {"variable":variable, "ids": [library["id"]]}
+        toReturn = json.dumps({"libraries": librariesNames.values()}) 
+    return toReturn
 
 #Returns the library information associated to a given variable
 @app.route("/getlibrary", methods=["POST", "GET"])
@@ -287,29 +303,36 @@ def getlibrary():
     db = getDB()
     tableLibraries = db["libraries"]
     libJson = {}
-    if (request.method == "GET"):
-        requestedVariable = request.args["variable"].split("::")
+    toReturn = ""
+    if (not isTokenValid(request)):
+        toReturn = "InvalidToken"
+    else:
+        requestedVariable = request.form["variable"].split("::")
         plantId = requestedVariable[0]  
         variableId = requestedVariable[1]  
-        requestedLibraryName = request.args["libraryName"]
+        requestedLibraryName = request.form["libraryName"]
         libraryDB = tableLibraries.find_one(plant_id=plantId, variable_id=requestedVariable, id=requestedLibraryName)
         libJson["value"] = pickle.loads(libraryDB["value"]),
         libJson["owner"] = libraryDB["user_id"],
         libJson["description"] = libraryDB["description"] 
-    return json.dumps(libJson)
+        toReturn = json.dumps(libJson)
+    return toReturn
 
 #Updates the library information associated to a given variable
 @app.route("/savelibrary", methods=["POST", "GET"])
 def savelibrary():
     db = getDB()
     tableLibraries = db["libraries"]
-    if (request.method == "GET"):
-        requestedVariable = request.args["variable"].split("::")
+    toReturn = ""
+    if (not isTokenValid(request)):
+        toReturn = "InvalidToken"
+    else:
+        requestedVariable = request.form["variable"].split("::")
         plantId = requestedVariable[0]  
         variableId = requestedVariable[1]  
-        requestedLibraryName = request.args["libraryName"]
-        requestedLibraryDescription = request.args["libraryDescription"]
-        requestedLibraryValues = request.args["libraryValues"]
+        requestedLibraryName = request.form["libraryName"]
+        requestedLibraryDescription = request.form["libraryDescription"]
+        requestedLibraryValues = request.form["libraryValues"]
         lib = {
             "plant_id": plantId,
             "variable_id": variableId, 
@@ -321,7 +344,8 @@ def savelibrary():
 
         #Check if the library already exists (and in the future prevent it from being overwritten if was ever used)
         tableLibraries.upsert(lib, ["id", "variable_id", "plant_id"]);    
-    return "ok" 
+        toReturn = "ok"
+    return toReturn
 
 #Tries to login the current user
 @app.route("/login", methods=["POST", "GET"])
@@ -329,63 +353,82 @@ def login():
     db = getDB()
     usersTable = db["users"]
     user = {}
-    if (request.method == "GET"):
-        requestedUserId = request.args["userId"]
-        user = usersTable.find_one(id=requestedUserId)
-        if (user is not None): 
-            user["password"] = ""
-            user["token"] = "" + uuid.uuid4().hex
-            loginsTable = db["logins"]
-            login = {
-                "token_id": user["token"],
-                "user_id": user["id"],
-                "last_interaction_time": int(time.time())
-            }
-            loginsTable.insert(login)
-        else:
-            user = {
-                "id": ""
-            }
+    requestedUserId = request.form["userId"]
+    user = usersTable.find_one(id=requestedUserId)
+    if (user is not None): 
+        user["password"] = ""
+        user["token"] = "" + uuid.uuid4().hex
+        loginsTable = db["logins"]
+        login = {
+            "token_id": user["token"],
+            "user_id": user["id"],
+            "last_interaction_time": int(time.time())
+        }
+        loginsTable.insert(login)
+    else:
+        user = {
+            "id": ""
+        }
     return json.dumps(user)
 
 #Updates a schedule variable
 @app.route("/updateschedule", methods=["POST", "GET"])
 def updateschedule():
-    if (request.method == "GET"):
-        updateJSon = request.args["update"]
-        jSonUpdateVariable = json.loads(updateJSon)
-        requestedVariable = jSonUpdateVariable["id"]
-        varName = requestedVariable.split("::")
-        if (len(varName) == 2):
-            plantId = varName[0]
-            variableId = varName[1]
-            scheduleId = jSonUpdateVariable["scheduleId"]
-            value = jSonUpdateVariable["value"]
-            updateScheduleVariablesDB(plantId, variableId, scheduleId, value)
-            #Warn (only the!) others that the scheduler values have changed!
-            for k, q in threadScheduleQueues.iteritems():
-                tid = str(threading.current_thread())
-                if (k != tid):
-                    q.put((plantId, variableId, scheduleId, value), True)
-    return "ok"
+    toReturn = ""
+    if (not isTokenValid(request)):
+        toReturn = "InvalidToken"
+    else:
+        updateJSon = request.form["update"]
+        jSonUpdateSchedule = json.loads(updateJSon)
+        scheduleId = jSonUpdateSchedule["scheduleId"]
+        values = jSonUpdateSchedule["values"]
+        for v in values:
+            varName = v["id"].split("::")
+            if (len(varName) == 2):
+                plantId = varName[0]
+                variableId = varName[1]
+                value = v["value"]
+                updateScheduleVariablesDB(plantId, variableId, scheduleId, value)
+                #Warn (only the!) others that the scheduler values have changed!
+                for k, q in threadScheduleQueues.iteritems():
+                    tid = str(threading.current_thread())
+                    if (k != tid):
+                        q.put((plantId, variableId, scheduleId, value), True)
+        toReturn = "ok"
+    return toReturn
 
 #Creates a new schedule
 @app.route("/createschedule", methods=["POST", "GET"])
 def createschedule():
     db = getDB()
     schedulesTable = db["schedules"]
-    if (request.method == "GET"):
+    toReturn = ""
+    if (not isTokenValid(request)):
+        toReturn = "InvalidToken"
+    else:
         schedule = {
-            "id": request.args["name"],
-            "name": request.args["name"],
-            "description": request.args["description"],
-            "user_id": request.args["userId"],
+            "id": request.form["name"],
+            "name": request.form["name"],
+            "description": request.form["description"],
+            "user_id": request.form["userId"],
         }
         schedulesTable.insert(schedule);    
 
-        if ("sourceSchedule" in request.args):
-            db.query("INSERT INTO schedule_variables(variable_id, plant_id, schedule_id, user_id, value) SELECT schedule_variables.variable_id, schedule_variables.plant_id, '" + schedule["id"] + "', '" + schedule["user_id"] + "', schedule_variables.value FROM schedule_variables WHERE schedule_variables.schedule_id='" + request.args["sourceSchedule"] + "'")
-    return "ok"
+        if ("sourceSchedule" in request.form):
+            db.query("INSERT INTO schedule_variables(variable_id, plant_id, schedule_id, user_id, value) SELECT schedule_variables.variable_id, schedule_variables.plant_id, '" + schedule["id"] + "', '" + schedule["user_id"] + "', schedule_variables.value FROM schedule_variables WHERE schedule_variables.schedule_id='" + request.form["sourceSchedule"] + "'")
+        else:
+            db.begin()
+            jSonRequestedVariables = json.loads(request.form["plantVariables"])
+            for requestedVariable in jSonRequestedVariables:
+                varName = requestedVariable.split("::")
+                if (len(varName) == 2):
+                    plantId = varName[0]
+                    variableId = varName[1]
+                    db.query("INSERT INTO schedule_variables(variable_id, plant_id, schedule_id, user_id, value) SELECT '" + variableId + "','" + plantId + "','" + schedule["id"] + "', '" + schedule["user_id"] + "', plant_variables.value FROM plant_variables WHERE id='" + variableId + "' AND plant_id='" + plantId + "'")
+            db.commit()
+            
+        toReturn = "ok"
+    return toReturn
 
 
 @app.route("/streamplant")
@@ -419,7 +462,7 @@ if __name__ == "__main__":
     for plantVariable in plantVariables:
         if ("value" not in plantVariable) or (plantVariable["value"] == None):
             plantVariable["value"] = plantVariable["initialValue"]
-            plantVariables.upsert(plantVariable, ["id"])
+            plantVariables.upsert(plantVariable, ["id", "plant_id"])
 
         if plantVariable["epicsPV"] == 1:
             pvName = plantVariable["plant_id"] + "::" + plantVariable["id"]
@@ -432,7 +475,7 @@ if __name__ == "__main__":
     t.start()
 
 
-    app.debug = True
+    #app.debug = True
     #Running a threaded Flask is ok only for debugging
     app.run(threaded= True, host=args.host, port=args.port)
 

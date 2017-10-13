@@ -104,7 +104,7 @@
                             var usernameTxt = this.shadowRoot.querySelector("#username");
                             var username = usernameTxt.value; 
                             $.ajax({
-                                type: "get",
+                                type: "post",
                                 url: "/login",
                                 data: "userId=" + username,
                                 success: function (response) {
@@ -162,19 +162,26 @@
 
                         var okNewScheduleButton = this.shadowRoot.querySelector("#oknewschedulebtn");
                         okNewScheduleButton.onclick = function() {
-                            var usernameTxt = this.shadowRoot.querySelector("#username");
-                            var username = usernameTxt.value; 
                             var schedule = {
+                                token: currentToken,
                                 id: this.newScheduleName.value,
                                 name: this.newScheduleName.value,
                                 description: this.newScheduleDescription.value,
-                                userId: username
                             }
+                            var user = JSON.parse(localStorage.user);
+                            schedule["userId"] = user.id;
                             if (this.newSchedulesSelect.selectedIndex > 0) {
                                 schedule["sourceSchedule"] = this.newSchedulesSelect[this.newSchedulesSelect.selectedIndex].text;
                             }
+                            else {
+                                var allVariableIds = [];
+                                for (var k in allPMCComponents) {
+                                    allVariableIds.push(k)
+                                }
+                                schedule["plantVariables"] = JSON.stringify(allVariableIds);
+                            }
                             $.ajax({
-                                type: "get",
+                                type: "post",
                                 url: "/createschedule",
                                 data: schedule,
                                 success: function (response) {
@@ -191,6 +198,7 @@
                             option.text = scheduleName;
                             option.value = scheduleName;
                             this.schedulesSelect.appendChild(option);
+                            this.schedulesSelect.value = scheduleName;
                             this.scheduleDiv.removeAttribute("hidden");
                             this.newScheduleDiv.setAttribute("hidden", "true");
                             this.availableSchedules.push(schedule);
@@ -228,7 +236,7 @@
                     this.newScheduleDiv.setAttribute("hidden", "true");
                     this.scheduleDiv.removeAttribute("hidden");
                     $.ajax({
-                        type: "get",
+                        type: "post",
                         url: "/getschedules",
                         data: {
                             token: currentToken,

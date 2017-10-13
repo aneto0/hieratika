@@ -60,9 +60,10 @@
                         if (this.owner.getReference() !== "none") {
                             if (this.owner.getReferenceValue() !== undefined) {
                                 $.ajax({
-                                    type: "get",
+                                    type: "post",
                                     url: "/getlibrary",
                                     data: {
+                                        token: currentToken,
                                         variable : this.owner.id, 
                                         libraryName : this.owner.getReferenceValue()  
                                     },
@@ -80,9 +81,10 @@
 
                         if (this.owner.getInitialValue() !== undefined) {
                             $.ajax({
-                                type: "get",
+                                type: "post",
                                 url: "/getlibrary",
                                 data: {
+                                    token: currentToken,
                                     variable : this.owner.id, 
                                     libraryName : this.owner.getInitialValue()  
                                 },
@@ -100,9 +102,10 @@
 
                         if (this.owner.getPlantValue() !== undefined) {
                             $.ajax({
-                                type: "get",
+                                type: "post",
                                 url: "/getlibrary",
                                 data: {
+                                    token: currentToken,
                                     variable : this.owner.id, 
                                     libraryName : this.owner.getPlantValue()  
                                 },
@@ -119,9 +122,10 @@
                         }
 
                         $.ajax({
-                            type: "get",
+                            type: "post",
                             url: "/getlibrary",
                             data: {
+                                token: currentToken,
                                 variable : this.owner.id, 
                                 libraryName : selector.options[selector.selectedIndex].text
                             },
@@ -180,9 +184,10 @@
                                 var saveAsName = selector.options[selector.selectedIndex].text;
                                 var description = this.descriptionTextArea.value;
                                 $.ajax({
-                                    type: "get",
+                                    type: "post",
                                     url: "/savelibrary",
                                     data: {
+                                        token: currentToken,
                                         variable : this.owner.id, 
                                         libraryName : saveAsName,
                                         libraryDescription: description,
@@ -209,9 +214,10 @@
                                 }
                                 else {
                                     $.ajax({
-                                        type: "get",
+                                        type: "post",
                                         url: "/savelibrary",
                                         data: {
+                                            token: currentToken,
                                             variable : this.owner.id, 
                                             libraryName : saveAsName,
                                             libraryDescription: description,
@@ -237,13 +243,6 @@
                                 divEditor.removeChild(divEditor);
                             }
                             divEditor.appendChild(this.editor);
-
-                            this.editor.addValueChangedListener(this);
-                        }
-                    }
-
-                    valueChanged(source, typeOfChange) {
-                        if (source === this.editor) {
                         }
                     }
                 }
