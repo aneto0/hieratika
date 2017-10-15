@@ -35,13 +35,11 @@ def threadCleaner():
     while alive:
         time.sleep(5)
         for t in allThreads:
-#            print t
             if (not t.isAlive()):
                 tid = str(t)
                 allThreads.remove(t)
                 #Do not delete the MainThread!
                 if ("MainThread" not in tid):
-#                    print "Deleting: " + tid
                     threadDBs.pop(tid, None)
                     threadPlantQueues.pop(tid, None)
                     threadScheduleQueues.pop(tid, None)
@@ -171,6 +169,7 @@ def getplantinfo():
     db = getDB()
     plantVariables = db["plant_variables"]
     validations = db["validations"]
+    permissions = db["permissions"]
     toReturn = ""
    
     if (not isTokenValid(request)):
@@ -202,7 +201,15 @@ def getplantinfo():
                             "fun": v["fun"],
                             "parameters": pickle.loads(v["parameters"])
                         })
+
+                    plantVariable["permissions"] = []
+                    permission = permissions.find(plant_id=plantVariable["plant_id"], variable_id=plantVariable["id"])
+                    for p in permission:
+                        plantVariable["permissions"].append(p["group_id"])
+                    
                     encodedPy["variables"].append(plantVariable) 
+        
+
         toReturn = json.dumps(encodedPy)
     return toReturn 
   
@@ -352,12 +359,18 @@ def savelibrary():
 def login():
     db = getDB()
     usersTable = db["users"]
+    groupMembersTable = db["group_members"]
     user = {}
     requestedUserId = request.form["userId"]
     user = usersTable.find_one(id=requestedUserId)
     if (user is not None): 
         user["password"] = ""
         user["token"] = "" + uuid.uuid4().hex
+        user["groups"] = []
+        groups = groupMembersTable.find(user_id=requestedUserId)
+        for group in groups:
+            user["groups"].append(group["group_id"])
+
         loginsTable = db["logins"]
         login = {
             "token_id": user["token"],
@@ -460,9 +473,11 @@ if __name__ == "__main__":
     db = getDB()
     plantVariables = db["plant_variables"]
     for plantVariable in plantVariables:
+        db.begin()
         if ("value" not in plantVariable) or (plantVariable["value"] == None):
             plantVariable["value"] = plantVariable["initialValue"]
             plantVariables.upsert(plantVariable, ["id", "plant_id"])
+        db.commit()
 
         if plantVariable["epicsPV"] == 1:
             pvName = plantVariable["plant_id"] + "::" + plantVariable["id"]
@@ -475,8 +490,8 @@ if __name__ == "__main__":
     t.start()
 
 
-    #app.debug = True
+    app.debug = True
     #Running a threaded Flask is ok only for debugging
-    app.run(threaded= True, host=args.host, port=args.port)
+    app.run(threaded=True, host=args.host, port=args.port)
 
     alive = False

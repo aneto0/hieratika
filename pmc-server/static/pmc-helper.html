@@ -57,6 +57,7 @@
                 success: function (response) {
                     var pvInfosJson = $.parseJSON(response);
                     var pvInfos = pvInfosJson["variables"];
+                    var user = JSON.parse(localStorage.user);
                     $.each(pvInfos, function(i, pvInfo) {
                         var pvInfoName = pvInfo.plantId + "::" + pvInfo.variableId;
                         var targetElement = allPMCComponents[pvInfoName];
@@ -68,6 +69,15 @@
                             targetElement.setInitialValue(pvInfo.value);
                             //targetElement.setValue(pvInfo.value);
                             targetElement.setValidations(pvInfo.validation);
+                            targetElement.setPermissionGroups(pvInfo.permissions);
+                            var userAllowed = false;
+                            for (var g in user.groups) {
+                                userAllowed = pvInfo.permissions.includes(user.groups[g]); 
+                                if (userAllowed) {
+                                    break;
+                                }
+                            }
+                            targetElement.setUserAllowedToWrite(userAllowed);
                         }
                     });
                 },
@@ -147,7 +157,7 @@
             }
         }
 
-        function copyFromSchedule(scheduleName, resetValue) {
+        function copyFromSchedule(scheduleName, resetValue, updateRemote) {
             $.ajax({
                 type: "post",
                 url: "/getschedule",
@@ -164,7 +174,7 @@
                             if (resetValue) {
                                 targetElement.setInitialValue(variable.value);
                             }
-                            targetElement.setValue(variable.value);
+                            targetElement.setValue(variable.value, updateRemote);
                         }
                     });
                 },

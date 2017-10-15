@@ -117,13 +117,15 @@
                 
                 currentScheduleChanged(schedule) {
                     this.currentScheduleTd.innerHTML = "(@ " + schedule.id + ")"; 
-                    copyFromSchedule(schedule.id, true);
+                    copyFromSchedule(schedule.id, true, false);
                     localStorage.currentSchedule = JSON.stringify(schedule);
                 }
 
                 availableSchedulesChanged(availableSchedules) {
                     var referenceSelect = this.shadowRoot.querySelector("#refselect");
                     var copyFromReferenceSelect = this.shadowRoot.querySelector("#cpyreference");
+                    referenceSelect.innerHTML = "";
+                    copyFromReferenceSelect.innerHTML = "";
                     for (var s in availableSchedules) {
                         var scheduleName = String(availableSchedules[s].id);
                         var option1 = document.createElement("option");
@@ -148,7 +150,7 @@
                             });
                         }
                         else {
-                            copyFromSchedule(copyFromReferenceSelect.value, false);
+                            copyFromSchedule(copyFromReferenceSelect.value, false, true);
                         }
                     }
 

@@ -63,7 +63,12 @@
 
             var newBackgroundColor = STANDARD_BCOLOR;
             if (this.compareWithReference(this.getValue(), this.getPlantValue(), this.getReferenceValue())) {
-                newBackgroundColor = STANDARD_BCOLOR;
+                if (this.userAllowedToWrite) {
+                    newBackgroundColor = STANDARD_BCOLOR;
+                }
+                else {
+                    newBackgroundColor = DISABLED_COLOR;
+                }
             }
             else {
                 newBackgroundColor = PLANT_OR_REF_CHANGED_COLOR;
@@ -168,37 +173,20 @@
             return this.value;
         }
 
-        setValue (valueToSet) {
+        setValue (valueToSet, updateRemote = true) {
             this.value = valueToSet;
             this.fireValueChanged("value");
-            this.updateRemote(valueToSet); 
+            if (updateRemote) {
+                this.updateRemote(valueToSet); 
+            }
         }
 
         updateRemote (valueToUpdate) {
-            if (this.triggerRemoteUpdate) {
-                /*if (currentScheduleId !== undefined) {*/
-                    var valueToUpdate = {
-                        id:this.id,
-                     //   scheduleId:currentScheduleId,
-                        value:valueToUpdate
-                    }
-                    /*$.ajax({
-                        type: "post",
-                        url: "/updateschedule",
-                        data: {
-                            token: currentToken,
-                            update: JSON.stringify(valueToUpdate)
-                        },
-                        success: function (response) {
-                        }.bind(this),
-                        error: function (response) {
-                            console.log(response);
-                            alert(response);
-                        }
-                    });
-                }*/
-                valuesToSynchroniseRemote.push(valueToUpdate);
+            var valueToUpdate = {
+                id:this.id,
+                value:valueToUpdate
             }
+            valuesToSynchroniseRemote.push(valueToUpdate);
         }
 
         setValidations (validationsToSet) {
@@ -228,12 +216,7 @@
             this.valueChangedListeners.push(comp);
         }
 
-        setTriggerRemoteUpdate(triggerRemote) {
-            this.triggerRemoteUpdate = triggerRemote;
-        }
-
         createdCallback() {
-            this.triggerRemoteUpdate = true;
             var template = this.getTemplate();
             if (template !== undefined) {
                 // import template into
@@ -243,6 +226,21 @@
                 allPMCComponents[this.id] = this;
             }
             this.valueChangedListeners = [this];
+            this.permissionGroups = [];
+            this.userAllowedToWrite = false;
+        }
+
+        setPermissionGroups (groups) {
+            this.permissionGroups = groups;
+        }
+
+        isUserAllowedToWrite () {
+            return this.userAllowedToWrite;
+        }
+
+        setUserAllowedToWrite(allowed) {
+            this.userAllowedToWrite = allowed;
+            this.checkValues();
         }
 
         attachedCallback () {

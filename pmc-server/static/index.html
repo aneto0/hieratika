@@ -37,9 +37,7 @@
                     if (pv.scheduleId === currentScheduleId) {
                         var targetElement = allPMCComponents[pvName];
                         if (targetElement !== undefined) {
-                            targetElement.setTriggerRemoteUpdate(false);
-                            targetElement.setValue(pv.value);
-                            targetElement.setTriggerRemoteUpdate(true);
+                            targetElement.setValue(pv.value, false);
                         }
                     }
                 }
