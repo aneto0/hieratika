@@ -34,22 +34,39 @@
                         var root = this.createShadowRoot();
                         root.appendChild(clone);
 
+                        var topNav = document.getElementById("top-nav");
+                        topNav.addPageListener(this); 
+                        topNav.addUserLogoutListener(this);
+                    }
 
+                    pageChanged (page) {
+                        var pageUrl = page.id + ".html?" + new Date().getTime(); //new Date... to force reloading with no caching
                         var templateDiv = this.shadowRoot.querySelector("#dmaineditor");
-                        var templateURL = this.getAttribute("data-template-url");
-                        if (templateURL !== undefined) {
+                        if (pageUrl !== undefined) {
                             var httpRequest = new XMLHttpRequest();
                             httpRequest.onreadystatechange = function() {
                                 if (this.readyState == 4 && this.status == 200) {
+                                    allPMCComponents = {};
+
                                     templateDiv.innerHTML = this.responseText;
+
+                                    getPlantInfo(); 
+
+                                    $.each(allPMCComponents, function (i, pmcComp) {
+                                        pmcComp.domLoaded();
+                                    });
                                 }
                             };
-                            httpRequest.open("GET", templateURL, true);
+                            httpRequest.open("GET", pageUrl , true);
                             httpRequest.send();
                         }
                     }
+    
+                    userLogout () {
+                        var templateDiv = this.shadowRoot.querySelector("#dmaineditor");
+                        templateDiv.innerHTML = "";
+                    }
                 }
-
                 document.registerElement("pmc-main-editor", {
                     prototype: PMCMainEditor.prototype,
                 });

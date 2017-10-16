@@ -21,13 +21,13 @@
                     value = compValue;
                 }
                 if (typeof max === "string") {
-                    maxA = [max];
+                    maxA = [eval(max)];
                 }
                 else if (max.length === undefined) {
-                    maxA = [max];
+                    maxA = [eval(max)];
                 }
                 else {
-                    maxA = max;
+                    maxA = eval(max);
                 }
 
                 if((value.length > 1) && (maxA.length == 1)) {

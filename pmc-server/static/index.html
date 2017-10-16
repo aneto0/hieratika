@@ -13,12 +13,11 @@
             var evtSrc = new EventSource("/streamplant");
             //Changed values are received in json format
             evtSrc.onmessage = function(e) {
-                var jsonPlantVariables = $.parseJSON(e.data);
-                var plantVariables = jsonPlantVariables["plantVariables"];
-                for (var i in plantVariables) {
-                    var pv = plantVariables[i];
-                    var pvName = pv.plantId + "::" + pv.variableId;
-                    var targetElement = allPMCComponents[pvName];
+                var jsonVariables = $.parseJSON(e.data);
+                var variables = jsonVariables["variables"];
+                for (var i in variables) {
+                    var pv = variables[i];
+                    var targetElement = allPMCComponents[pv.variableId];
                     if (targetElement !== undefined) {
                         targetElement.setPlantValue(pv.value);
                     }
@@ -33,15 +32,15 @@
                 var scheduleVariables = jsonScheduleVariables["scheduleVariables"];
                 for (var i in scheduleVariables) {
                     var pv = scheduleVariables[i];
-                    var pvName = pv.plantId + "::" + pv.variableId;
                     if (pv.scheduleId === currentScheduleId) {
-                        var targetElement = allPMCComponents[pvName];
+                        var targetElement = allPMCComponents[pv.variableId];
                         if (targetElement !== undefined) {
                             targetElement.setValue(pv.value, false);
                         }
                     }
                 }
             };
+
         </script>
 
     </head>
@@ -49,12 +48,12 @@
         <table style="width:100%">
             <tr>
                 <td style="border-style:solid;border-width:1px;background:#353535;">
-                    <pmc-top-nav data-plant-id="PLANT1"></pmc-top-nav>
+                    <pmc-top-nav id="top-nav"></pmc-top-nav>
                 </td>
             </tr>
             <tr>
                 <td style="border-style:solid;border-width:1px">
-                    <pmc-main-editor data-template-url="ps-example-2.html"/></pmc-main-editor>
+                    <pmc-main-editor id="main-editor"/></pmc-main-editor>
                 </td>
             </tr>
         </table>

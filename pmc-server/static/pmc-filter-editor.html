@@ -205,6 +205,9 @@
                         var plantValue = this.getPlantValue();
                         this.referenceTransferFunction.innerHTML = "";
                         var newBackgroundColor = STANDARD_BCOLOR;
+                        if (!this.userAllowedToWrite) {
+                            newBackgroundColor = DISABLED_COLOR;
+                        }
                         if (ref !== "none") {
                             if (refValue !== undefined) {
                                 var numRef = refValue[0];
@@ -217,18 +220,17 @@
                                 this.chart.data.datasets[1].data = this.getFilterResponse(numRef, denRef);
                                 this.referenceTransferFunction.innerHTML = this.generateTransferFunctionMathML(numRef, denRef);
                                 jqMath.parseMath(this.referenceTransferFunction);
-                                if (this.compareWithReference(this.numeratorInput.value, numPlant, numRef)) {
-                                    newBackgroundColor = STANDARD_BCOLOR;
-                                }
-                                else {
+
+                                if (!this.compareWithReference(this.numeratorInput.value, numPlant, numRef)) {
                                     newBackgroundColor = PLANT_OR_REF_CHANGED_COLOR;
                                 }
                                 this.numeratorInput.style.backgroundColor = newBackgroundColor;
 
-                                if (this.compareWithReference(this.denominatorInput.value, denPlant, denRef)) {
-                                    newBackgroundColor = STANDARD_BCOLOR;
+                                newBackgroundColor = STANDARD_BCOLOR;
+                                if (!this.userAllowedToWrite) {
+                                    newBackgroundColor = DISABLED_COLOR;
                                 }
-                                else {
+                                if (!this.compareWithReference(this.denominatorInput.value, denPlant, denRef)) {
                                     newBackgroundColor = PLANT_OR_REF_CHANGED_COLOR;
                                 }
                                 this.denominatorInput.style.backgroundColor = newBackgroundColor;
@@ -254,9 +256,10 @@
                     this.title = this.currentValuesToString();
                 }
 
-                setValue (elementsToSet) {
+                setValue (elementsToSet, updateRemote=true) {
                     this.value = elementsToSet.slice(0);
                     this.checkValues();
+                    super.setValue(this.value, updateRemote);
                 }
 
                 valueChanged(source, typeOfChange) {

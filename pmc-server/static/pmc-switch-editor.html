@@ -18,9 +18,9 @@
                         super();
                     }
 
-                    setValue (elementsToSet) {
+                    setValue (elementsToSet, updateRemote=true) {
                         this.txtArea.value = elementsToSet;
-                        super.setValue(elementsToSet);
+                        super.setValue(elementsToSet, updateRemote);
                     }
 
                     valueChanged(source, typeOfChange) {

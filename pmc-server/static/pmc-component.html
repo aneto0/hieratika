@@ -62,15 +62,10 @@
             }
 
             var newBackgroundColor = STANDARD_BCOLOR;
-            if (this.compareWithReference(this.getValue(), this.getPlantValue(), this.getReferenceValue())) {
-                if (this.userAllowedToWrite) {
-                    newBackgroundColor = STANDARD_BCOLOR;
-                }
-                else {
-                    newBackgroundColor = DISABLED_COLOR;
-                }
+            if (!this.userAllowedToWrite) {
+                newBackgroundColor = DISABLED_COLOR;
             }
-            else {
+            if (!this.compareWithReference(this.getValue(), this.getPlantValue(), this.getReferenceValue())) {
                 newBackgroundColor = PLANT_OR_REF_CHANGED_COLOR;
             }
 

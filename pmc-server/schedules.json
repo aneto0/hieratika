@@ -4,53 +4,43 @@
             "owner": "codac-dev-1",
             "description": "...",
             "variables": [{
-                    "plant": "PLANT1",
-                    "name": "VAR1",
+                    "name": "PLANT1::VAR1",
                     "value": "1"
                 },
                 {
-                    "plant": "PLANT1",
-                    "name": "VAR2",
+                    "name": "PLANT1::VAR2",
                     "value": "2"
                 },
                 {
-                    "plant": "PLANT1",
-                    "name": "VAR3",
+                    "name": "PLANT1::VAR3",
                     "value": "Example 1"
                 },
                 {
-                    "plant": "PLANT1",
-                    "name": "VAR4",
+                    "name": "PLANT1::VAR4",
                     "value": "Example 3"
                 },
                 {
-                    "plant": "PLANT1",
-                    "name": "VAR5",
+                    "name": "PLANT1::VAR5",
                     "value": ["-1", "-3", "-5", "2"]
                 },
                 {
-                    "plant": "PLANT1",
-                    "name": "VAR6",
+                    "name": "PLANT1::VAR6",
                     "value": [["10"], ["3", "8", "3", "4"]]
                 },
                 {
-                    "plant": "PLANT1",
-                    "name": "VAR7",
+                    "name": "PLANT1::VAR7",
                     "value": "Example 1"
                 },
                 {
-                    "plant": "PLANT1",
-                    "name": "VAR8",
+                    "name": "PLANT1::VAR8",
                     "value": "Example 1"
                 },
                 {
-                    "plant": "PLANT1",
-                    "name": "VAR9",
+                    "name": "PLANT1::VAR9",
                     "value": "Example 2"
                 },
                 {
-                    "plant": "PLANT1",
-                    "name": "VAR10",
+                    "name": "PLANT1::VAR10",
                     "value": "Example 4"
                 }
             ]
@@ -60,53 +50,43 @@
             "owner": "codac-dev-1",
             "description": "...",
             "variables": [{
-                    "plant": "PLANT1",
-                    "name": "VAR1",
+                    "name": "PLANT1::VAR1",
                     "value": "10"
                 },
                 {
-                    "plant": "PLANT1",
-                    "name": "VAR2",
+                    "name": "PLANT1::VAR2",
                     "value": "20"
                 },
                 {
-                    "plant": "PLANT1",
-                    "name": "VAR3",
+                    "name": "PLANT1::VAR3",
                     "value": "Example 2"
                 },
                 {
-                    "plant": "PLANT1",
-                    "name": "VAR4",
+                    "name": "PLANT1::VAR4",
                     "value": "Example 4"
                 },
                 {
-                    "plant": "PLANT1",
-                    "name": "VAR5",
+                    "name": "PLANT1::VAR5",
                     "value": ["6", "9", "10", "15"]
                 },
                 {
-                    "plant": "PLANT1",
-                    "name": "VAR6",
+                    "name": "PLANT1::VAR6",
                     "value": [["1", "2"], ["8", "3", "4"]]
                 },
                 {
-                    "plant": "PLANT1",
-                    "name": "VAR7",
+                    "name": "PLANT1::VAR7",
                     "value": "Example 2"
                 },
                 {
-                    "plant": "PLANT1",
-                    "name": "VAR8",
+                    "name": "PLANT1::VAR8",
                     "value": "Example 4"
                 },
                 {
-                    "plant": "PLANT1",
-                    "name": "VAR9",
+                    "name": "PLANT1::VAR9",
                     "value": "Example 3"
                 },
                 {
-                    "plant": "PLANT1",
-                    "name": "VAR10",
+                    "name": "PLANT1::VAR10",
                     "value": "Example 6"
                 }
             ]

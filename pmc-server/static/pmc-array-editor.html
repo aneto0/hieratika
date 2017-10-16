@@ -57,7 +57,6 @@
                                 else {
                                     cell.style.color = STANDARD_FCOLOR;
                                 }
-                                var newBackgroundColor = STANDARD_BCOLOR;
                                
                                 var cellRefValue = "";
                                 if (refValue !== undefined) { 
@@ -68,10 +67,11 @@
                                     cellPlantValue = plantValue[i];
                                 }
 
-                                if (this.compareWithReference(cellValue, cellPlantValue, cellRefValue)) {
-                                    newBackgroundColor = STANDARD_BCOLOR;
+                                var newBackgroundColor = STANDARD_BCOLOR;
+                                if (!this.userAllowedToWrite) {
+                                    newBackgroundColor = DISABLED_COLOR;
                                 }
-                                else {
+                                if (!this.compareWithReference(cellValue, cellPlantValue, cellRefValue)) {
                                     newBackgroundColor = PLANT_OR_REF_CHANGED_COLOR;
                                 }
                                 cell.style.backgroundColor = newBackgroundColor;
@@ -112,7 +112,7 @@
                         }
                     }
 
-                    setValue (elementsToSet) {
+                    setValue (elementsToSet, updateRemote=true) {
                         this.setNumberOfElements(elementsToSet.length);
                         this.tbl.deleteRow(0);
                         var row = this.tbl.insertRow(0);
@@ -127,7 +127,7 @@
                             }.bind(this));
                         }
                         //Make a shallow copy!
-                        super.setValue(elementsToSet.slice(0));
+                        super.setValue(elementsToSet.slice(0), updateRemote);
                     }
 
                     valueChanged(source, typeOfChange) {

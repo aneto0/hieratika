@@ -59,15 +59,14 @@
                     var pvInfos = pvInfosJson["variables"];
                     var user = JSON.parse(localStorage.user);
                     $.each(pvInfos, function(i, pvInfo) {
-                        var pvInfoName = pvInfo.plantId + "::" + pvInfo.variableId;
-                        var targetElement = allPMCComponents[pvInfoName];
+                        var targetElement = allPMCComponents[pvInfo.variableId];
                         if (targetElement != null) {
                             targetElement.setTypeValue(pvInfo.type);
                             targetElement.setLibrary(pvInfo.library === true);
                             targetElement.setNumberOfElements(pvInfo.numberOfElements);
                             targetElement.setReference("none");
                             targetElement.setInitialValue(pvInfo.value);
-                            //targetElement.setValue(pvInfo.value);
+                            targetElement.setPlantValue(pvInfo.value);
                             targetElement.setValidations(pvInfo.validation);
                             targetElement.setPermissionGroups(pvInfo.permissions);
                             var userAllowed = false;
@@ -80,6 +79,7 @@
                             targetElement.setUserAllowedToWrite(userAllowed);
                         }
                     });
+                    getAvailableLibraries();
                 },
                 error: function (response) {
                     console.log(response);
@@ -89,11 +89,19 @@
         }
 
         function getAvailableLibraries() {
+            var allPMCLibVariablesJSon = [];
+            $.each(allPMCComponents, function (i, pmcComp) {
+                if (pmcComp.isLibrary()) {
+                    allPMCLibVariablesJSon.push(pmcComp.id);
+                }
+            });
+
             $.ajax({
                 type: "post",
                 url: "/getlibraries",
                 data: {
-                    token: currentToken
+                    token: currentToken,
+                    variables: JSON.stringify(allPMCLibVariablesJSon)
                 },
                 success: function (response) {
                     var librariesJson = $.parseJSON(response);
@@ -141,8 +149,7 @@
                         var variables = $.parseJSON(response);
                         var variable;
                         $.each(variables, function(i, variable) {
-                            var variableName = variable.plantId + "::" + variable.variableId;
-                            var targetElement = allPMCComponents[variableName];
+                            var targetElement = allPMCComponents[variable.variableId];
                             if (targetElement != null) {
                                 targetElement.setReferenceValue(variable.value);
                                 targetElement.setReference(currentReference);
@@ -168,8 +175,7 @@
                 success: function (response) {
                     variables = $.parseJSON(response);
                     $.each(variables, function(i, variable) {
-                        var variableName = variable.plantId + "::" + variable.variableId;
-                        var targetElement = allPMCComponents[variableName];
+                        var targetElement = allPMCComponents[variable.variableId];
                         if (targetElement != null) {
                             if (resetValue) {
                                 targetElement.setInitialValue(variable.value);

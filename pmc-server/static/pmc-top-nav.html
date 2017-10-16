@@ -3,7 +3,7 @@
 <head>
     <link rel="import" href="pmc-helper.html">
     <link rel="import" href="pmc-login.html">
-    <link rel="import" href="pmc-schedule-manager.html">
+    <link rel="import" href="pmc-schedule.html">
 </head>
 <body>
     <style>
@@ -18,34 +18,41 @@
     <template id="ttopnav">
         <table>
             <tr>
-                <td><button title="Load current values into plant" onclick="loadIntoPlant()">Load</button></td>
-                    <td style="padding-left:50px;">
-                    <select id="refselect" name="refselect">
-                        <option value="none" text="none">None</option>
-                        <option value="plant" text="plant">Plant</option>
+                <td><button title="Load current values into plant" id="loadplantbtn" disabled="true">Load</button></td>
+                <td style="padding-left:50px;">
+                    <select id="pageselect" name="pageselect">
                     </select>
                 </td>
-                <td><button title="Set the current reference" id="refselectbtn">Set reference</button></td>
+                <td><button title="Set the current pages" id="pageselectbtn" disabled="true">Change page</button></td>
+                <td><button title="Set the current schedule" id="changeshedulebtn" disabled="true">Change schedule</button></td>
+
+                <td style="padding-left:50px;">
+                    <select id="refselect" name="refselect">
+                        <option value="none" text="none">none</option>
+                        <option value="plant" text="plant">plant</option>
+                    </select>
+                </td>
+                <td><button title="Set the current reference" id="refselectbtn" disabled="true">Set reference</button></td>
 
                 <td style="padding-left:50px;">
                     <select id="cpyreference" name="cpyreference">
                         <option value="plant" text="plant">Plant</option>
                     </select>
                 </td>
-                <td><button title="Copy from a given schedule or from the plant" id="cpyreferencebtn">Copy from</button></td>
+                <td><button title="Copy from a given schedule or from the plant" id="cpyreferencebtn" disabled="true">Copy from</button></td>
 
                 <td style="padding-left:50px;">
-                    <button title="Commit all changes to current schedule" id="commitbtn">Commit</button>
-                    <button title="Undo all changes" id="undobtn">Undo</button>
+                    <button title="Commit all changes to current schedule" id="commitbtn" disabled="true">Commit</button>
+                    <button title="Undo all changes" id="undobtn" disabled="true">Undo</button>
                 </td>
 
                 <td style="padding-left:50px;color:white" id="username">...</td>
                 <td style="color:white" id="currentSchedule">(@...)</td>
                 <td><button title="Login" id="loginbtn">Login</button></td>
-                <td><button title="Logout" id="logoutbtn">Logout</button></td>
             </tr>
         </table>
         <pmc-login id="pmclogin"></pmc-login>
+        <pmc-schedule id="pmcschedule"></pmc-schedule>
     </template>
 
     <script>
@@ -65,24 +72,37 @@
                         var root = this.createShadowRoot();
                         root.appendChild(clone);
 
-                        this.plantId = this.getAttribute("data-plant-id");
+                        this.mainEditor = document.getElementById("main-editor");
+
+                        this.loadPlantButton = this.shadowRoot.querySelector("#loadplantbtn");
+                        this.loadPlantButton.onclick = function() {
+                            loadIntoPlant();
+                        }.bind(this); 
+
+                        this.pageSelectButton = this.shadowRoot.querySelector("#pageselectbtn");
                         this.loginButton = this.shadowRoot.querySelector("#loginbtn");
-                        this.logoutButton = this.shadowRoot.querySelector("#logoutbtn");
                         var loginDialog = this.shadowRoot.querySelector("#pmclogin");
                         loginDialog.addLoginListener(this);
-                        loginDialog.addCurrentScheduleListener(this);
                         this.loginButton.onclick = function() {
-                            loginDialog.show();
+                            if (localStorage.user === undefined) {
+                                loginDialog.show();
+                            }
+                            else {
+                                this.fireUserLogout();
+                            }
                         }.bind(this);
 
-                        this.logoutButton.onclick = function() {
-                            localStorage.removeItem("user");
-                            localStorage.removeItem("schedule");
-                            this.usernameTd.innerHTML = "...";
-                            this.currentScheduleTd.innerHTML = "(@...)"; 
-                            this.loginButton.innerHTML = "Login";
+                        this.pageSelectButton.onclick = function() {
+                            this.pageSelectButton.disabled = true;
+                            this.getSelectedPage();     
                         }.bind(this);
-
+                        
+                        var scheduleDialog = this.shadowRoot.querySelector("#pmcschedule");
+                        scheduleDialog.addCurrentScheduleListener(this);
+                        this.changeScheduleButton = this.shadowRoot.querySelector("#changeshedulebtn");
+                        this.changeScheduleButton.onclick = function() {
+                            scheduleDialog.show();
+                        }.bind(this);
 
                         this.usernameTd = this.shadowRoot.querySelector("#username");
                         this.currentScheduleTd = this.shadowRoot.querySelector("#currentSchedule");
@@ -92,80 +112,202 @@
                         }
                         else {
                             var user = JSON.parse(localStorage.user);
-                            this.loginButton.innerHTML = "Change schedule";
-                            this.usernameTd.innerHTML =user.name; 
-                            this.usernameTd.title = "username: " + user.id;
+                            currentToken = localStorage.currentToken;
+                            this.loginSuccessful(user);
                         }
+   
+                        this.pageSelect = this.shadowRoot.querySelector("#pageselect");
+                        this.referenceSelect = this.shadowRoot.querySelector("#refselect");
+                        this.copyFromReferenceSelect = this.shadowRoot.querySelector("#cpyreference");
+                        this.referenceSelectButton = this.shadowRoot.querySelector("#refselectbtn");
+                        this.referenceSelectButton.onclick = function () {
+                            setReference(this.referenceSelect.value);
+                        }.bind(this); 
+
+                        this.copyFromReferenceButton = this.shadowRoot.querySelector("#cpyreferencebtn");
+                        this.copyFromReferenceButton.onclick = function () {
+                            if (this.copyFromReferenceSelect.value === "plant") {
+                                $.each(allPMCComponents, function (i, pmcComp) {
+                                    pmcComp.setValue(pmcComp.getPlantValue());
+                                });
+                            }
+                            else {
+                                copyFromSchedule(this.copyFromReferenceSelect.value, false, true);
+                            }
+                        }.bind(this);
+
+                        this.commitButton = this.shadowRoot.querySelector("#commitbtn");
+                        this.commitButton.onclick = function () {
+                            commitAllChangesToSchedule();
+                        }
+
+                        this.undoButton = this.shadowRoot.querySelector("#undobtn");
+                        this.undoButton.onclick = function () {
+                            undoAllChangesToSchedule();
+                        }
+
+                        this.pageListeners = [this];
+                        this.userLogoutListeners = [this];
+                        this.addPageListener(scheduleDialog);
                     }
+                }
+
+                getSelectedPage() {
+                    var pgId = this.pageSelect[this.pageSelect.selectedIndex].value;
+                    $.ajax({
+                        type: "post",
+                        url: "/getpage",
+                        data: {
+                            token: currentToken,
+                            pageId: pgId
+                        },
+                        success: function (response) {
+                            var pageJson = $.parseJSON(response);
+                            this.firePageChanged(pageJson);
+                            this.pageSelectButton.disabled = false;
+                        }.bind(this),
+                        error: function (response) {
+                            console.log(response);
+                            alert(response);
+                        }
+                    });
+                }
+
+                getPages() {
+                    $.ajax({
+                        type: "post",
+                        url: "/getpages",
+                        data: {
+                            token: currentToken,
+                        },
+                        success: function (response) {
+                            var pagesJson = $.parseJSON(response);
+                            this.pageSelect = this.shadowRoot.querySelector("#pageselect");
+                            this.pageSelect.innerHTML = "";
+                            for (var p in pagesJson) {
+                                var option1 = document.createElement("option");
+                                var pageId = pagesJson[p].id;
+                                option1.text = pageId;
+                                option1.value = pageId;
+                                this.pageSelect.appendChild(option1);
+                            }
+                        }.bind(this),
+                        error: function (response) {
+                            console.log(response);
+                            alert(response);
+                        }
+                    });
                 }
 
                 loginSuccessful(user) {
                     this.usernameTd.innerHTML = user.name; 
                     this.usernameTd.title = "username: " + user.id;
 
-                    localStorage.user = JSON.stringify(user);
-                    this.loginButton.innerHTML = "Change schedule";
-                    getPlantInfo(); 
+                    this.loginButton.innerHTML = "Logout";
 
-                    PMCScheduleManager.instance().addScheduleListener(this);
-                    getAvailableLibraries();
-                
-                    $.each(allPMCComponents, function (i, pmcComp) {
-                        pmcComp.domLoaded();
-                    });
+                    this.getPages(); 
+                    this.pageSelectButton.disabled = false;
                 }
                 
                 currentScheduleChanged(schedule) {
                     this.currentScheduleTd.innerHTML = "(@ " + schedule.id + ")"; 
                     copyFromSchedule(schedule.id, true, false);
                     localStorage.currentSchedule = JSON.stringify(schedule);
+                    this.loadPlantButton.disabled = false;
                 }
 
-                availableSchedulesChanged(availableSchedules) {
-                    var referenceSelect = this.shadowRoot.querySelector("#refselect");
-                    var copyFromReferenceSelect = this.shadowRoot.querySelector("#cpyreference");
-                    referenceSelect.innerHTML = "";
-                    copyFromReferenceSelect.innerHTML = "";
+                updateSchedules(availableSchedules) {
+                    this.referenceSelect.innerHTML = "";
+                    this.copyFromReferenceSelect.innerHTML = "";
+                    var option1 = document.createElement("option");
+                    var option2 = document.createElement("option");
+                    var option3 = document.createElement("option");
+                    var scheduleName = "none";
+                    option3.text = scheduleName;
+                    option3.value = scheduleName;
+                    this.referenceSelect.appendChild(option3);
+                   
+                    scheduleName = "plant";
+                    option1.text = scheduleName;
+                    option1.value = scheduleName;
+                    option2.text = scheduleName;
+                    option2.value = scheduleName;
+                    this.referenceSelect.appendChild(option1);
+                    this.copyFromReferenceSelect.appendChild(option2);
+
                     for (var s in availableSchedules) {
-                        var scheduleName = String(availableSchedules[s].id);
-                        var option1 = document.createElement("option");
-                        var option2 = document.createElement("option");
+                        scheduleName = String(availableSchedules[s].id);
+                        option1 = document.createElement("option");
+                        option2 = document.createElement("option");
                         option1.text = scheduleName;
                         option1.value = scheduleName;
                         option2.text = scheduleName;
                         option2.value = scheduleName;
-                        referenceSelect.appendChild(option1);
-                        copyFromReferenceSelect.appendChild(option2);
+                        this.referenceSelect.appendChild(option1);
+                        this.copyFromReferenceSelect.appendChild(option2);
                     }
-                    var referenceSelectButton = this.shadowRoot.querySelector("#refselectbtn");
-                    referenceSelectButton.onclick = function () {
-                        setReference(referenceSelect.value);
-                    }.bind(this); 
-
-                    var copyFromReferenceButton = this.shadowRoot.querySelector("#cpyreferencebtn");
-                    copyFromReferenceButton.onclick = function () {
-                        if (copyFromReferenceSelect.value === "plant") {
-                            $.each(allPMCComponents, function (i, pmcComp) {
-                                pmcComp.setValue(pmcComp.getPlantValue());
-                            });
-                        }
-                        else {
-                            copyFromSchedule(copyFromReferenceSelect.value, false, true);
-                        }
-                    }
-
-                    var commitButton = this.shadowRoot.querySelector("#commitbtn");
-                    commitButton.onclick = function () {
-                        commitAllChangesToSchedule();
-                    }
-
-                    var undoButton = this.shadowRoot.querySelector("#undobtn");
-                    undoButton.onclick = function () {
-                        undoAllChangesToSchedule();
-                    }
-
-
+                    
                 }
+                
+                firePageChanged(page) {
+                    for(var l in this.pageListeners) {
+                        this.pageListeners[l].pageChanged(page);
+                    }
+                }
+
+                fireUserLogout() {
+                    for(var l in this.userLogoutListeners) {
+                        this.userLogoutListeners[l].userLogout();
+                    }
+                }
+
+                userLogout() {
+                    localStorage.removeItem("user");
+                    localStorage.removeItem("schedule");
+                    this.usernameTd.innerHTML = "...";
+                    this.currentScheduleTd.innerHTML = "(@...)"; 
+                    this.loginButton.innerHTML = "Login";
+                    this.loadPlantButton.disabled = true;
+                    this.changeScheduleButton.disabled = true;
+                    this.pageSelectButton.disabled = true;
+                    this.referenceSelectButton.disabled = true;
+                    this.copyFromReferenceButton.disabled = true;
+                    this.commitButton.disabled = true;
+                    this.undoButton.disabled = true;
+                }
+
+                pageChanged(page) {
+                    this.changeScheduleButton.disabled = false;
+                    $.ajax({
+                        type: "post",
+                        url: "/getschedules",
+                        data: {
+                            token: currentToken,
+                            pageId: page.id
+                        },
+                        success: function (response) {
+                            var availableSchedules = $.parseJSON(response);
+                            this.updateSchedules(availableSchedules);
+                            this.referenceSelectButton.disabled = false;
+                            this.copyFromReferenceButton.disabled = false;
+                            this.commitButton.disabled = false;
+                            this.undoButton.disabled = false;
+                        }.bind(this),
+                        error: function (response) {
+                            console.log(response);
+                            alert(response);
+                        }
+                    });
+                }
+
+                addPageListener(listener) {
+                    this.pageListeners.push(listener);
+                }
+    
+                addUserLogoutListener(listener) {
+                    this.userLogoutListeners.push(listener);
+                }
+
             }
 
             document.registerElement("pmc-top-nav", {

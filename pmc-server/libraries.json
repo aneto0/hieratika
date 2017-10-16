@@ -1,8 +1,7 @@
 {
     "libraries": [
         {
-            "plant": "PLANT1",
-            "variable": "VAR3",
+            "variable": "PLANT1::VAR3",
             "libraries": [
                 {
                     "name":"Example 1",
@@ -20,8 +19,7 @@
             ]
         },
         {
-            "plant": "PLANT1",
-            "variable": "VAR4",
+            "variable": "PLANT1::VAR4",
             "libraries": [
                 {
                     "name":"Example 3",
@@ -39,8 +37,7 @@
             ]
         },
         {
-            "plant": "PLANT1",
-            "variable": "VAR7",
+            "variable": "PLANT1::VAR7",
             "libraries": [
                 {
                     "name":"Example 1",
@@ -58,8 +55,7 @@
             ]
         },
         {
-            "plant": "PLANT1",
-            "variable": "VAR9",
+            "variable": "PLANT1::VAR9",
             "libraries": [
                 {
                     "name":"Example 2",
@@ -77,8 +73,7 @@
             ]
         },
         {
-            "plant": "PLANT1",
-            "variable": "VAR10",
+            "variable": "PLANT1::VAR10",
             "libraries": [
                 {
                     "name":"Example 4",

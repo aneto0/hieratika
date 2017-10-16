@@ -42,11 +42,6 @@
                     getValue() {
                         return this.textInput.value;
                     }
-
-                    setUserAllowedToWrite(allowed) {
-                        super.setUserAllowedToWrite(allowed);
-                        this.textInput.disabled = !allowed;
-                    }
                 }
 
                 document.registerElement("pmc-input", {
