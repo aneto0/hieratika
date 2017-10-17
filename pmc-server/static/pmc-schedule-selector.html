@@ -1,0 +1,199 @@
+<html>
+<head>
+    <link rel="import" href="pmc-helper.html">
+</head>
+</body>
+    <template id="tscheduleselector">
+        <dialog id="dscheduleselector">
+            <table style="border-style:solid;border-width:1px;width: 100%">
+                <tr>
+                    <td>
+                        User
+                    </td>
+                    <td>
+                        Schedules 
+                    </td>
+                    <td>
+                        Description
+                    </td>
+                </tr>
+                <tr>
+                    <td><select id="userselect" size="20" style="width:150px;overflow-x:scroll"></select></td>
+                    <td><select id="scheduleselect" size="20" style="width:150px;overflow-x:scroll"></select></td>
+                    <td id="descriptionarea" style="width:250px;vertical-align:top;background-color:#F5F5F5"></td>
+                </tr>
+            </table>
+            <table style="border-style:solid;border-width:0px;width: 100%">
+                <tr>
+                    <td style="padding-top:20px;">
+                        <button title="OK" id="okbtn">OK</button>
+                        <button title="Cancel" id="cancelbtn">Cancel</button>
+                    </td>
+                </tr>
+            </table>
+        </dialog>
+    </template>
+
+    <script>
+        //This is enclosure is required to protect the importDoc
+        (function () {
+            var importDoc = document.currentScript.ownerDocument; // importee
+            class PMCScheduleSelector extends HTMLElement {
+                constructor() {
+                    super();
+                }
+
+                createdCallback () {
+                    var template = importDoc.querySelector("#tscheduleselector");
+                    if (template !== undefined) {
+                        // import template into
+                        var clone = document.importNode(template.content, true);
+                        var root = this.createShadowRoot();
+                        root.appendChild(clone);
+                  
+                        this.pageId = ""; 
+                        this.diag = this.shadowRoot.querySelector("#dscheduleselector");
+                        this.userSelect = this.shadowRoot.querySelector("#userselect");
+                        this.userSelect.onclick = function() {
+                            this.okButton.disabled = true;
+                            this.updateUserSchedules(); 
+                        }.bind(this);
+
+                        this.scheduleSelect = this.shadowRoot.querySelector("#scheduleselect");
+                        this.scheduleSelect.onclick = function() {
+                            this.updateScheduleDescription();
+                        }.bind(this);
+                        
+                        this.descriptionArea = this.shadowRoot.querySelector("#descriptionarea");
+                        this.okButton = this.shadowRoot.querySelector("#okbtn");
+                        this.okButton.onclick = function() {
+                            var schId = this.scheduleSelect[this.scheduleSelect.selectedIndex].value;
+                            this.okCallbackFunction(schId);
+                            this.diag.close();
+                        }.bind(this);
+
+                        var cancelButton = this.shadowRoot.querySelector("#cancelbtn");
+                        cancelButton.onclick = function() {
+                            this.diag.close();
+                        }.bind(this); 
+
+                    }
+                }
+
+                updateScheduleDescription() {
+                    var userId;
+                    if (this.userSelect.selectedIndex >= 0) {
+                        userId = this.userSelect[this.userSelect.selectedIndex].value;
+                    }
+                    if (this.scheduleSelect.selectedIndex >= 0) {
+                        var schId = this.scheduleSelect[this.scheduleSelect.selectedIndex].value;
+                        $.ajax({
+                            type: "post",
+                            url: "/getschedule",
+                            data: {
+                                token: currentToken,
+                                scheduleId: schId
+                            },
+                            success: function (response) {
+                                var schedule = $.parseJSON(response);
+                                this.okButton.disabled = false;
+                                this.descriptionArea.innerHTML = schedule.description;
+                            }.bind(this),
+                            error: function (response) {
+                                console.log(response);
+                                alert(response);
+                            }
+                        });
+                    }
+
+                }
+
+                updateUserSchedules() {
+                    if (this.userSelect.selectedIndex >= 0) {
+                        var userId = this.userSelect[this.userSelect.selectedIndex].value;
+                        $.ajax({
+                            type: "post",
+                            url: "/getschedules",
+                            data: {
+                                token: currentToken,
+                                userId: userId,
+                                pageId: this.pageId
+                            },
+                            success: function (response) {
+                                var availableSchedules = $.parseJSON(response);
+                                this.scheduleSelect.innerHTML = "";
+                                if (availableSchedules.length === 0) {
+                                    this.scheduleSelect.disabled = true;
+                                    var option1 = document.createElement("option");
+                                    option1.text = "No schedule available...";
+                                    option1.value = "none";
+                                    this.scheduleSelect.appendChild(option1);
+                                }
+                                else {
+                                    this.scheduleSelect.disabled = false;
+                                    for (var s in availableSchedules) {
+                                        var scheduleName = String(availableSchedules[s].name);
+                                        var scheduleId = String(availableSchedules[s].id);
+                                        var option1 = document.createElement("option");
+                                        option1.text = scheduleName;
+                                        option1.value = scheduleId;
+                                        this.scheduleSelect.appendChild(option1);
+                                    }
+                                }
+                            }.bind(this),
+                            error: function (response) {
+                                console.log(response);
+                                alert(response);
+                            }
+                        });
+                    }
+                }
+
+                pageChanged(page) {
+                    this.pageId = page.id;
+                }
+
+                show(okCallbackFun) {
+                    this.okCallbackFunction = okCallbackFun;
+                    this.okButton.disabled = true;
+                    this.scheduleSelect.disabled = true;
+                    $.ajax({
+                        type: "post",
+                        url: "/getusers",
+                        data: {
+                            token : currentToken
+                        },
+                        success: function (response) {
+                            var usersJSon = $.parseJSON(response);
+                            this.userSelect.innerHTML = "";
+                            this.scheduleSelect.innerHTML = "";
+                            var option1 = document.createElement("option");
+                            option1.text = "Select user";
+                            option1.value = "none";
+                            this.scheduleSelect.appendChild(option1);
+                            for (var u in usersJSon) {
+                                option1 = document.createElement("option");
+                                var userId = usersJSon[u].id;
+                                option1.text = userId;
+                                option1.value = userId;
+                                this.userSelect.appendChild(option1);
+                            }
+                            this.diag.showModal();
+                        }.bind(this),
+                        error: function (response) {
+                            console.log(response);
+                            alert(response);
+                        }
+                    });
+                }
+            }
+
+            document.registerElement("pmc-schedule-selector", {
+                prototype: PMCScheduleSelector.prototype,
+            });
+
+        }());
+    </script>
+
+    </body>
+</html>

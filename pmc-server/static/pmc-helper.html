@@ -140,10 +140,10 @@
             else {
                 $.ajax({
                     type: "post",
-                    url: "/getschedule",
+                    url: "/getschedulevariables",
                     data: {
                         token: currentToken,
-                        schselect: currentReference
+                        scheduleId: currentReference
                     },
                     success: function (response) {
                         var variables = $.parseJSON(response);
@@ -164,13 +164,13 @@
             }
         }
 
-        function copyFromSchedule(scheduleName, resetValue, updateRemote) {
+        function copyFromSchedule(schId, resetValue, updateRemote) {
             $.ajax({
                 type: "post",
-                url: "/getschedule",
+                url: "/getschedulevariables",
                 data: {
                     token: currentToken,
-                    schselect: scheduleName
+                    scheduleId: schId
                 },
                 success: function (response) {
                     variables = $.parseJSON(response);

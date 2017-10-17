@@ -23,11 +23,9 @@ if not users.exists:
 
     db.query("CREATE TABLE group_members(group_id, user_id, PRIMARY KEY (group_id, user_id), FOREIGN KEY (group_id) REFERENCES groups(id), FOREIGN KEY (user_id) REFERENCES users(id))")
 
-    db.query("CREATE TABLE schedules (id TEXT, user_id TEXT, name TEXT, description TEXT, page_id TEXT, PRIMARY KEY (id, user_id), FOREIGN KEY (user_id) REFERENCES users(id), FOREIGN KEY (page_id) REFERENCES pages(id))")
+    db.query("CREATE TABLE schedules (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id TEXT, name TEXT, description TEXT, page_id TEXT, UNIQUE (user_id, page_id, name), FOREIGN KEY (user_id) REFERENCES users(id), FOREIGN KEY (page_id) REFERENCES pages(id))")
 
-    db.query("CREATE TABLE schedule_variables (variable_id TEXT, schedule_id TEXT, user_id TEXT, value TEXT, PRIMARY KEY (variable_id, schedule_id, user_id), FOREIGN KEY (variable_id) REFERENCES variables(id), FOREIGN KEY (schedule_id, user_id) REFERENCES schedules(id, user_id))");
-
-    db.query("CREATE INDEX schedule_id_user_id ON schedule_variables(user_id,schedule_id)")
+    db.query("CREATE TABLE schedule_variables (variable_id TEXT, schedule_id INTEGER, value TEXT, PRIMARY KEY (variable_id, schedule_id), FOREIGN KEY (variable_id) REFERENCES variables(id), FOREIGN KEY (schedule_id) REFERENCES schedules(id))");
 
     db.query("CREATE TABLE libraries (id TEXT, variable_id TEXT, user_id TEXT, value TEXT, description TEXT, PRIMARY KEY (id, variable_id, user_id), FOREIGN KEY (variable_id) REFERENCES variables(id), FOREIGN KEY (user_id) REFERENCES users(id))");
 
@@ -37,6 +35,7 @@ variables = db["variables"]
 validations = db["validations"]
 permissions = db["permissions"]
 schedules = db["schedules"]
+schedules.table.primary_key.columns["id"].autoincrement=True
 pages = db["pages"]
 scheduleVariables = db["schedule_variables"]
 groups = db["groups"]
@@ -132,22 +131,23 @@ with open("schedules.json") as jsonFile:
     schedulesJSon = schedulesDBJSon["schedules"]
     for scheduleJSon in schedulesJSon:
         schedule = {
-            "id": scheduleJSon["name"],
             "user_id": scheduleJSon["owner"],
             "name": scheduleJSon["name"],
             "description": scheduleJSon["description"],
             "page_id": "ps-example-1"
         }
-        schedules.upsert(schedule, ["id", "user_id"])
+        #schedule["id"] = schedule["name"] + "_" + schedule["user_id"] + "_" + schedule["page_id"]
+        #db.query("INSERT INTO schedules (user_id, name, description, page_id) VALUES('{}', '{}', '{}', '{}')".format(schedule["user_id"], schedule["name"], schedule["description"], schedule["page_id"]))
+        schedules.insert(schedule)
+        createdSchedule = schedules.find_one(user_id=schedule["user_id"], name=schedule["name"], page_id=schedule["page_id"])
         variablesJSon = scheduleJSon["variables"]
         for variableJSon in variablesJSon:
             variable = {
                 "variable_id": variableJSon["name"],
-                "schedule_id": scheduleJSon["name"],
-                "user_id": scheduleJSon["owner"],
+                "schedule_id": createdSchedule["id"],
                 "value": pickle.dumps(variableJSon["value"])
             }
-            scheduleVariables.upsert(variable, ["variable_id", "schedule_id", "user_id"])
+            scheduleVariables.upsert(variable, ["variable_id", "schedule_id"])
 
 with open("libraries.json") as jsonFile:
     librariesDBJSon = json.load(jsonFile)
@@ -176,13 +176,13 @@ newScheduleOwner = "codac-dev-2"
 
 db.begin()
 schedule = {
-    "id": newScheduleName,
     "user_id": newScheduleOwner,
     "name": newScheduleName,
     "description": "...",
     "page_id": "ps-example-2"
 }
-schedules.upsert(schedule, ["id", "user_id"])
+schedules.insert(schedule)
+createdSchedule = schedules.find_one(user_id=schedule["user_id"], name=schedule["name"], page_id=schedule["page_id"])
 
 while (idx < maxIdx):
     varId = "VAR" + str(idx)
@@ -195,7 +195,7 @@ while (idx < maxIdx):
 
     variable = {
         "variable_id": varName,
-        "schedule_id": newScheduleName,
+        "schedule_id": createdSchedule["id"],
         "user_id": newScheduleOwner,
         "value": pickle.dumps(str(idx % 10))
     }

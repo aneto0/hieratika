@@ -191,20 +191,21 @@
                             this.schedulesSelect.innerHTML = "";
                             this.newSchedulesSelect.innerHTML = "";
                             var option2 = document.createElement("option");
-                            var scheduleName = "Plant";
+                            var scheduleName = "plant";
                             option2.text = scheduleName;
                             option2.value = scheduleName;
                             this.newSchedulesSelect.appendChild(option2);
 
                             for (var s in this.availableSchedules) {
-                                scheduleName = String(this.availableSchedules[s].id);
+                                scheduleName = String(this.availableSchedules[s].name);
+                                var scheduleId = String(this.availableSchedules[s].id);
                                 var option1 = document.createElement("option");
                                 option1.text = scheduleName;
-                                option1.value = scheduleName;
+                                option1.value = scheduleId;
                                 this.schedulesSelect.appendChild(option1);
                                 option2 = document.createElement("option");
                                 option2.text = scheduleName;
-                                option2.value = scheduleName;
+                                option2.value = scheduleId;
                                 this.newSchedulesSelect.appendChild(option2);
                             }
                         }.bind(this),

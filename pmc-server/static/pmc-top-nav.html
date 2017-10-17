@@ -4,6 +4,7 @@
     <link rel="import" href="pmc-helper.html">
     <link rel="import" href="pmc-login.html">
     <link rel="import" href="pmc-schedule.html">
+    <link rel="import" href="pmc-schedule-selector.html">
 </head>
 <body>
     <style>
@@ -25,21 +26,21 @@
                 </td>
                 <td><button title="Set the current pages" id="pageselectbtn" disabled="true">Change page</button></td>
                 <td><button title="Set the current schedule" id="changeshedulebtn" disabled="true">Change schedule</button></td>
-
-                <td style="padding-left:50px;">
-                    <select id="refselect" name="refselect">
-                        <option value="none" text="none">none</option>
-                        <option value="plant" text="plant">plant</option>
-                    </select>
+        
+                <td style="padding-left:50px">
+                    <table style="border-style: dotted; border-width: 1px;">
+                        <td><button title="Remove the compare reference" id="refselectnonebtn" disabled="true"><img width="24px" height="24px" src="icons/reference-set-none-24.png"/></button></td>
+                        <td><button title="Set the plant as the compare reference" id="refselectplantbtn" disabled="true"><img width="24px" height="24px" src="icons/reference-set-plant-24.png"/></button></td>
+                        <td><button title="Set another schedule as the compare reference" id="refselectschedulebtn" disabled="true"><img width="24px" height="24px" src="icons/reference-set-schedule-24.png"/></button></td>
+                    </table>
                 </td>
-                <td><button title="Set the current reference" id="refselectbtn" disabled="true">Set reference</button></td>
 
-                <td style="padding-left:50px;">
-                    <select id="cpyreference" name="cpyreference">
-                        <option value="plant" text="plant">Plant</option>
-                    </select>
+                <td style="padding-left:50px">
+                    <table style="border-style: dotted; border-width: 1px;">
+                        <td><button title="Copy from the plant" id="cpyreferenceplantbtn" disabled="true"><img width="24px" height="24px" src="icons/reference-copy-plant-24.png"/></button></td>
+                        <td><button title="Copy from a given schedule" id="cpyreferenceschedulebtn" disabled="true"><img width="24px" height="24px" src="icons/reference-copy-schedule-24.png"/></button></td>
+                    </table>
                 </td>
-                <td><button title="Copy from a given schedule or from the plant" id="cpyreferencebtn" disabled="true">Copy from</button></td>
 
                 <td style="padding-left:50px;">
                     <button title="Commit all changes to current schedule" id="commitbtn" disabled="true">Commit</button>
@@ -53,6 +54,8 @@
         </table>
         <pmc-login id="pmclogin"></pmc-login>
         <pmc-schedule id="pmcschedule"></pmc-schedule>
+        <pmc-schedule-selector id="referencescheduleselector"></pmc-schedule-selector>
+        <pmc-schedule-selector id="copyscheduleselector"></pmc-schedule-selector>
     </template>
 
     <script>
@@ -115,26 +118,39 @@
                             currentToken = localStorage.currentToken;
                             this.loginSuccessful(user);
                         }
-   
+  
+                        this.referenceScheduleSelector = this.shadowRoot.querySelector("#referencescheduleselector");
+                        this.copyScheduleSelector = this.shadowRoot.querySelector("#copyscheduleselector");
                         this.pageSelect = this.shadowRoot.querySelector("#pageselect");
-                        this.referenceSelect = this.shadowRoot.querySelector("#refselect");
-                        this.copyFromReferenceSelect = this.shadowRoot.querySelector("#cpyreference");
-                        this.referenceSelectButton = this.shadowRoot.querySelector("#refselectbtn");
-                        this.referenceSelectButton.onclick = function () {
-                            setReference(this.referenceSelect.value);
+
+                        this.referenceSelectNoneButton = this.shadowRoot.querySelector("#refselectnonebtn");
+                        this.referenceSelectNoneButton.onclick = function () {
+                            setReference("none");
+                        }.bind(this);
+
+                        this.referenceSelectPlantButton = this.shadowRoot.querySelector("#refselectplantbtn");
+                        this.referenceSelectPlantButton.onclick = function () {
+                            setReference("plant");
+                        }.bind(this);
+
+
+                        this.referenceSelectScheduleButton = this.shadowRoot.querySelector("#refselectschedulebtn");
+                        this.referenceSelectScheduleButton.onclick = function () {
+                            this.referenceScheduleSelector.show(this.refererenceScheduleChanged);
                         }.bind(this); 
 
-                        this.copyFromReferenceButton = this.shadowRoot.querySelector("#cpyreferencebtn");
-                        this.copyFromReferenceButton.onclick = function () {
-                            if (this.copyFromReferenceSelect.value === "plant") {
-                                $.each(allPMCComponents, function (i, pmcComp) {
-                                    pmcComp.setValue(pmcComp.getPlantValue());
-                                });
-                            }
-                            else {
-                                copyFromSchedule(this.copyFromReferenceSelect.value, false, true);
-                            }
+                        this.copyFromReferenceScheduleButton = this.shadowRoot.querySelector("#cpyreferenceschedulebtn");
+                        this.copyFromReferenceScheduleButton.onclick = function () {
+                            this.referenceScheduleSelector.show(this.copyFromScheduleChanged);
                         }.bind(this);
+
+                        this.copyFromReferencePlantButton = this.shadowRoot.querySelector("#cpyreferenceplantbtn");
+                        this.copyFromReferencePlantButton.onclick = function () {
+                            $.each(allPMCComponents, function (i, pmcComp) {
+                                pmcComp.setValue(pmcComp.getPlantValue());
+                            });
+                        }.bind(this);
+
 
                         this.commitButton = this.shadowRoot.querySelector("#commitbtn");
                         this.commitButton.onclick = function () {
@@ -149,6 +165,8 @@
                         this.pageListeners = [this];
                         this.userLogoutListeners = [this];
                         this.addPageListener(scheduleDialog);
+                        this.addPageListener(this.referenceScheduleSelector);
+                        this.addPageListener(this.copyScheduleSelector);
                     }
                 }
 
@@ -216,39 +234,6 @@
                     this.loadPlantButton.disabled = false;
                 }
 
-                updateSchedules(availableSchedules) {
-                    this.referenceSelect.innerHTML = "";
-                    this.copyFromReferenceSelect.innerHTML = "";
-                    var option1 = document.createElement("option");
-                    var option2 = document.createElement("option");
-                    var option3 = document.createElement("option");
-                    var scheduleName = "none";
-                    option3.text = scheduleName;
-                    option3.value = scheduleName;
-                    this.referenceSelect.appendChild(option3);
-                   
-                    scheduleName = "plant";
-                    option1.text = scheduleName;
-                    option1.value = scheduleName;
-                    option2.text = scheduleName;
-                    option2.value = scheduleName;
-                    this.referenceSelect.appendChild(option1);
-                    this.copyFromReferenceSelect.appendChild(option2);
-
-                    for (var s in availableSchedules) {
-                        scheduleName = String(availableSchedules[s].id);
-                        option1 = document.createElement("option");
-                        option2 = document.createElement("option");
-                        option1.text = scheduleName;
-                        option1.value = scheduleName;
-                        option2.text = scheduleName;
-                        option2.value = scheduleName;
-                        this.referenceSelect.appendChild(option1);
-                        this.copyFromReferenceSelect.appendChild(option2);
-                    }
-                    
-                }
-                
                 firePageChanged(page) {
                     for(var l in this.pageListeners) {
                         this.pageListeners[l].pageChanged(page);
@@ -270,8 +255,11 @@
                     this.loadPlantButton.disabled = true;
                     this.changeScheduleButton.disabled = true;
                     this.pageSelectButton.disabled = true;
-                    this.referenceSelectButton.disabled = true;
-                    this.copyFromReferenceButton.disabled = true;
+                    this.referenceSelectScheduleButton.disabled = true;
+                    this.referenceSelectNoneButton.disabled = true;
+                    this.referenceSelectPlantButton.disabled = true;
+                    this.copyFromReferenceScheduleButton.disabled = true;
+                    this.copyFromReferencePlantButton.disabled = true;
                     this.commitButton.disabled = true;
                     this.undoButton.disabled = true;
                 }
@@ -287,9 +275,11 @@
                         },
                         success: function (response) {
                             var availableSchedules = $.parseJSON(response);
-                            this.updateSchedules(availableSchedules);
-                            this.referenceSelectButton.disabled = false;
-                            this.copyFromReferenceButton.disabled = false;
+                            this.referenceSelectScheduleButton.disabled = false;
+                            this.referenceSelectNoneButton.disabled = false;
+                            this.referenceSelectPlantButton.disabled = false;
+                            this.copyFromReferenceScheduleButton.disabled = false;
+                            this.copyFromReferencePlantButton.disabled = false;
                             this.commitButton.disabled = false;
                             this.undoButton.disabled = false;
                         }.bind(this),
@@ -298,6 +288,14 @@
                             alert(response);
                         }
                     });
+                }
+
+                refererenceScheduleChanged(schId) {
+                    setReference(schId);
+                }
+
+                copyFromScheduleChanged(schId) {
+                    copyFromSchedule(schId, false, true);
                 }
 
                 addPageListener(listener) {

@@ -248,6 +248,24 @@ def getschedules():
         toReturn = json.dumps(schedules)
     return toReturn
 
+#Return the available users
+@app.route("/getusers", methods=["POST", "GET"])
+def getusers():
+    db = getDB()
+    userId = ""
+    users = []
+    toReturn = ""
+    if (not isTokenValid(request)):
+        toReturn = "InvalidToken"
+    else:
+        allUsers = db["users"]
+        for u in allUsers:
+            u["password"] = ""
+            users.append(u);
+        toReturn = json.dumps(users)
+    return toReturn
+
+
 #Return the available pages
 @app.route("/getpages", methods=["POST", "GET"])
 def getpages():
@@ -279,10 +297,24 @@ def getpage():
         toReturn = json.dumps(page)
     return toReturn
 
-
-#Returns the variables associated to a given schedule
+#Returns the properties of a given schedule
 @app.route("/getschedule", methods=["POST", "GET"])
 def getschedule():
+    toReturn = ""
+    db = getDB()
+    if (not isTokenValid(request)):
+        toReturn = "InvalidToken"
+    else: 
+        scheduleId = request.form["scheduleId"]
+        schedules = db["schedules"]
+        schedule = schedules.find_one(id=scheduleId)
+        toReturn = json.dumps(schedule)
+    return toReturn
+
+
+#Returns the variables associated to a given schedule
+@app.route("/getschedulevariables", methods=["POST", "GET"])
+def getschedulevariables():
     toReturn = ""
     variables = []
     db = getDB()
@@ -290,7 +322,7 @@ def getschedule():
         toReturn = "InvalidToken"
     else: 
         scheduleVariablesTable = db["schedule_variables"]
-        requestedSchedule = request.form["schselect"]
+        requestedSchedule = request.form["scheduleId"]
         scheduleVariables = scheduleVariablesTable.find(schedule_id=requestedSchedule)
         for v in scheduleVariables:
             vp = {
@@ -430,21 +462,21 @@ def createschedule():
         toReturn = "InvalidToken"
     else:
         schedule = {
-            "id": request.form["name"],
             "name": request.form["name"],
             "description": request.form["description"],
             "user_id": request.form["userId"],
             "page_id": request.form["pageId"]
         }
-        schedulesTable.insert(schedule);    
+        schedulesTable.insert(schedule)
+        createdSchedule = schedulesTable.find_one(user_id=schedule["user_id"], name=schedule["name"], page_id=schedule["page_id"])
 
         if ("sourceSchedule" in request.form):
-            db.query("INSERT INTO schedule_variables(variable_id, schedule_id, user_id, value) SELECT schedule_variables.variable_id, '" + schedule["id"] + "', '" + schedule["user_id"] + "', schedule_variables.value FROM schedule_variables WHERE schedule_variables.schedule_id='" + request.form["sourceSchedule"] + "'")
+            db.query("INSERT INTO schedule_variables(variable_id, schedule_id, value) SELECT schedule_variables.variable_id,'" + str(createdSchedule["id"]) + "', schedule_variables.value FROM schedule_variables WHERE schedule_variables.schedule_id='" + request.form["sourceSchedule"] + "'")
         else:
             db.begin()
             jSonRequestedVariables = json.loads(request.form["variables"])
             for variableId in jSonRequestedVariables:
-                db.query("INSERT INTO schedule_variables(variable_id, schedule_id, user_id, value) SELECT '" + variableId + "','" + schedule["id"] + "', '" + schedule["user_id"] + "', variables.value FROM variables WHERE id='" + variableId + "'")
+                db.query("INSERT INTO schedule_variables(variable_id, schedule_id, value) SELECT '" + variableId + "','" + str(createdSchedule["id"]) + "', variables.value FROM variables WHERE id='" + variableId + "'")
             db.commit()
             
         toReturn = "ok"

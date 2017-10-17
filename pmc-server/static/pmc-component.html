@@ -218,7 +218,11 @@
                 var clone = document.importNode(template.content, true);
                 var root = this.createShadowRoot();
                 root.appendChild(clone);
-                allPMCComponents[this.id] = this;
+                if (this.id !== undefined) {
+                    if (this.id.length > 0) {
+                        allPMCComponents[this.id] = this;
+                    }
+                }
             }
             this.valueChangedListeners = [this];
             this.permissionGroups = [];

@@ -165,7 +165,7 @@
                     return "Current: " + currentValueTxt + " Plant: " + plantValueTxt + " Reference: " + referenceValueTxt + " Initial: " + initialValueTxt;
                 }
 
-                checkValues () {
+                checkValues (userChanged = true) {
                     if (this.chart !== undefined) {
                         this.chart.data.datasets[0].data = [];
                         this.chart.data.datasets[1].data = [];
@@ -196,7 +196,9 @@
                                 this.denominatorInput.style.color = STANDARD_FCOLOR;
                             }
                             if (changed) {
-                                this.updateRemote(this.value);
+                                if (userChanged) {
+                                    this.updateRemote(this.value);
+                                }
                             }
                         }
 
@@ -258,12 +260,12 @@
 
                 setValue (elementsToSet, updateRemote=true) {
                     this.value = elementsToSet.slice(0);
-                    this.checkValues();
+                    this.checkValues(false);
                     super.setValue(this.value, updateRemote);
                 }
 
                 valueChanged(source, typeOfChange) {
-                    this.checkValues();
+                    this.checkValues(false);
                 }
 
                 getTemplate() {
@@ -304,7 +306,7 @@
                             }
                             this.value[0] = this.numeratorInput.value.split(",");
                             this.value[1] = this.denominatorInput.value.split(",");
-                            this.checkValues(); 
+                            this.checkValues(true); 
                         }.bind(this));
                     }
                 }
