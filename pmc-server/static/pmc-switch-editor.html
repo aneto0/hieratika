@@ -2,7 +2,7 @@
 <html>
     <head>
         <link rel="import" href="libraries.html">
-        <link rel="import" href="pmc-component.html">
+        <link rel="import" href="pmc-abstract-input.html">
     </head>
     <body>
         <template id="tswitche">
@@ -13,17 +13,12 @@
             (function () {
                 var importDoc = document.currentScript.ownerDocument; // importee
 
-                class PMCSwitchEditor extends PMCComponent {
+                class PMCSwitchEditor extends PMCAbstractInput {
                     constructor() {
                         super();
                     }
 
-                    setValue (elementsToSet, updateRemote=true) {
-                        this.txtArea.value = elementsToSet;
-                        super.setValue(elementsToSet, updateRemote);
-                    }
-
-                    valueChanged(source, typeOfChange) {
+                    refresh() {
                         this.checkValues(this.txtArea);
                     }
 

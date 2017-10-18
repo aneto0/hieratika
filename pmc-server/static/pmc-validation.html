@@ -41,11 +41,12 @@
                 ok = (value.length === maxA.length);
             }
             for (var i=0; (i<value.length) && (ok); i++) {
-                if ((component.typevalue === "float32") || (component.typevalue === "float64")) {
+                var typeValue = component.getTypeValue();
+                if ((typeValue === "float32") || (typeValue === "float64")) {
                     value[i] = parseFloat(value[i]);
                     maxA[i] = parseFloat(maxA[i]);
                 }
-                else if ((component.typevalue.startsWith("int") || (component.typevalue.startsWith("uint")))) {
+                else if ((typeValue.startsWith("int") || (typeValue.startsWith("uint")))) {
                     value[i] = parseInt(value[i]);
                     maxA[i] = parseInt(maxA[i]);
                 }
@@ -70,13 +71,13 @@
                     value = compValue;
                 }
                 if (typeof min === "string") {
-                    minI = [min];
+                    minI = [eval(min)];
                 }
                 else if (min.length === undefined) {
-                    minI = [min];
+                    minI = [eval(min)];
                 }
                 else {
-                    minI = min;
+                    minI = eval(min);
                 }
                 if((value.length > 1) && (minI.length == 1)) {
                     //Compare all elements against a single maximuma
@@ -89,11 +90,12 @@
                 ok = (value.length === minI .length);
             }
             for (var i=0; (i<value.length) && (ok); i++) {
-                if ((component.typevalue === "float32") || (component.typevalue === "float64")) {
+                var typeValue = component.getTypeValue();
+                if ((typeValue === "float32") || (typeValue === "float64")) {
                     value[i] = parseFloat(value[i]);
                     minI [i] = parseFloat(minI [i]);
                 }
-                else if ((component.typevalue.startsWith("int") || (component.typevalue.startsWith("uint")))) {
+                else if ((typeValue.startsWith("int") || (typeValue.startsWith("uint")))) {
                     value[i] = parseInt(value[i]);
                     minI [i] = parseInt(minI [i]);
                 }
@@ -119,10 +121,11 @@
                 ok = !component.isLibrary();
             }
             for (var i=0; (i<value.length) && (ok); i++) {
-                if ((component.typevalue === "float32") || (component.typevalue === "float64")) {
+                var typeValue = component.getTypeValue();
+                if ((typeValue === "float32") || (typeValue === "float64")) {
                     ok = !isNaN(value[i]);
                 }
-                else if ((component.typevalue.startsWith("int") || (component.typevalue.startsWith("uint")))) {
+                else if ((typeValue.startsWith("int") || (typeValue.startsWith("uint")))) {
                     ok = !isNaN(value[i]);
                     if (ok) {
                         ok = Number.isInteger(parseFloat(value[i]));

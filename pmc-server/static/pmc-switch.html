@@ -110,12 +110,12 @@
                             this.layerChanges2.setAttribute("opacity", "0.5");
                         }
 
-                        var titleString = this.currentValuesToString();
+                        var titleString = this.toString();
                         this.svg.setAttribute("title", titleString);
                         this.title = titleString;
                     }
 
-                    valueChanged(typeOfChange) {
+                    refresh() {
                         this.checkValues();
                     }
                 }

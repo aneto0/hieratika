@@ -42,49 +42,11 @@
             });
         }
 
-        function getPlantInfo() {
-            var allVariableIds = [];
-            for (var k in allPMCComponents) {
-                allVariableIds.push(k)
-            }
-            $.ajax({
-                type: "post",
-                url: "/getplantinfo",
-                data: {
-                    token: currentToken,
-                    variables: JSON.stringify(allVariableIds)
-                },
-                success: function (response) {
-                    var pvInfosJson = $.parseJSON(response);
-                    var pvInfos = pvInfosJson["variables"];
-                    var user = JSON.parse(localStorage.user);
-                    $.each(pvInfos, function(i, pvInfo) {
-                        var targetElement = allPMCComponents[pvInfo.variableId];
-                        if (targetElement != null) {
-                            targetElement.setTypeValue(pvInfo.type);
-                            targetElement.setLibrary(pvInfo.library === true);
-                            targetElement.setNumberOfElements(pvInfo.numberOfElements);
-                            targetElement.setReference("none");
-                            targetElement.setInitialValue(pvInfo.value);
-                            targetElement.setPlantValue(pvInfo.value);
-                            targetElement.setValidations(pvInfo.validation);
-                            targetElement.setPermissionGroups(pvInfo.permissions);
-                            var userAllowed = false;
-                            for (var g in user.groups) {
-                                userAllowed = pvInfo.permissions.includes(user.groups[g]); 
-                                if (userAllowed) {
-                                    break;
-                                }
-                            }
-                            targetElement.setUserAllowedToWrite(userAllowed);
-                        }
-                    });
-                    getAvailableLibraries();
-                },
-                error: function (response) {
-                    console.log(response);
-                    alert(response);
-                }
+        
+        function displayPlant() {
+            $.each(allPMCComponents, function (i, pmcComp) {
+                pmcComp.setReadOnly(true);
+                pmcComp.setValue(pmcComp.getPlantValue(), false);
             });
         }
 
@@ -121,7 +83,7 @@
         }
 
         function setReference(currentReference) {
-            if (currentReference === "none") {
+            if (currentReference === NONE_NAME) {
                 //Reset all the values to N/A
                 var pmcComp;
                 $.each(allPMCComponents, function (i, pmcComp) {
@@ -129,7 +91,7 @@
                     pmcComp.setReference(currentReference);
                 });
             }
-            else if (currentReference === "plant") {
+            else if (currentReference === PLANT_NAME) {
                 //Reset all the values to N/A
                 var pmcComp;
                 $.each(allPMCComponents, function (i, pmcComp) {
@@ -164,7 +126,7 @@
             }
         }
 
-        function copyFromSchedule(schId, resetValue, updateRemote) {
+        function copyFromSchedule(schId, resetValue, updateRemote, setReadOnly) {
             $.ajax({
                 type: "post",
                 url: "/getschedulevariables",
@@ -181,6 +143,7 @@
                                 targetElement.setInitialValue(variable.value);
                             }
                             targetElement.setValue(variable.value, updateRemote);
+                            targetElement.setReadOnly(setReadOnly);
                         }
                     });
                 },
@@ -213,6 +176,7 @@
                     }
                     var jSonData = {
                         token: currentToken,
+                        tid: remoteServerTid,
                         update: JSON.stringify(scheduleToUpdate)
                     }
                     var i = 0;
@@ -239,6 +203,9 @@
             setTimeout(synchroniseRemote, 2000);
         }
 
+        
+        //The thread identifier on the remote server which is sending events through the SSE. This is to avoid receiving updates from ourselves.
+        var remoteServerTid = "";
         var valuesToSynchroniseRemote = [];
         var allPMCComponents = {};
         var currentScheduleId = undefined;

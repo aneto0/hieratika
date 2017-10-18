@@ -5,44 +5,6 @@
         <meta http-Equiv="Expires" Content="0" />
         <link rel="import" href="pmc-top-nav.html">
         <link rel="import" href="pmc-main-editor.html">
-        <link rel="import" href="pmc-helper.html">
-
-
-        <!-- Handle SSE events from the server-->
-        <script>
-            var evtSrc = new EventSource("/streamplant");
-            //Changed values are received in json format
-            evtSrc.onmessage = function(e) {
-                var jsonVariables = $.parseJSON(e.data);
-                var variables = jsonVariables["variables"];
-                for (var i in variables) {
-                    var pv = variables[i];
-                    var targetElement = allPMCComponents[pv.variableId];
-                    if (targetElement !== undefined) {
-                        targetElement.setPlantValue(pv.value);
-                    }
-                }
-            };
-        </script>
-        <script>
-            var evtSrc = new EventSource("/streamschedule");
-            //Changed values are received in json format
-            evtSrc.onmessage = function(e) {
-                var jsonScheduleVariables = $.parseJSON(e.data);
-                var scheduleVariables = jsonScheduleVariables["scheduleVariables"];
-                for (var i in scheduleVariables) {
-                    var pv = scheduleVariables[i];
-                    if (pv.scheduleId === currentScheduleId) {
-                        var targetElement = allPMCComponents[pv.variableId];
-                        if (targetElement !== undefined) {
-                            targetElement.setValue(pv.value, false);
-                        }
-                    }
-                }
-            };
-
-        </script>
-
     </head>
     <body>
         <table style="width:100%">

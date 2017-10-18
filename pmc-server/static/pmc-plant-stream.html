@@ -1,0 +1,29 @@
+<script>
+    class PlantStream {
+        constructor() {
+        }
+
+        start () {
+            stop();
+            this.evtSrc = new EventSource("/plantstream?token=" + currentToken);
+            //Changed values are received in json format
+            this.evtSrc.onmessage = function(e) {
+                var jsonVariables = $.parseJSON(e.data);
+                var variables = jsonVariables["variables"];
+                for (var i in variables) {
+                    var pv = variables[i];
+                    var targetElement = allPMCComponents[pv.variableId];
+                    if (targetElement !== undefined) {
+                        targetElement.setPlantValue(pv.value);
+                    }
+                }
+            };
+        }
+
+        stop () {
+            if (this.evtSrc !== undefined) {
+                this.evtSrc.close();
+            }
+        }
+    }
+</script>

@@ -1,7 +1,7 @@
 <html>
     <head>
         <link rel="import" href="libraries.html">
-        <link rel="import" href="pmc-component.html">
+        <link rel="import" href="pmc-abstract-input.html">
     </head>
     <body>
         <template id="ttinput">
@@ -13,7 +13,7 @@
             (function () {
                 var importDoc = document.currentScript.ownerDocument; // importee
                 //Constructor
-                class PMCInput extends PMCComponent {
+                class PMCInput extends PMCAbstractInput {
                     constructor() {
                         super();
                     }
@@ -32,16 +32,20 @@
                         return template;
                     }
 
-                    valueChanged(source, typeOfChange) {
-                        if (typeOfChange === "value") {
-                            this.textInput.value = this.value;
-                        }
+                    refresh() {
+                        this.textInput.value = this.value;
                         this.checkValues(this.textInput);
                     }
 
                     getValue() {
                         return this.textInput.value;
                     }
+
+                    setReadOnly (isReadOnly) {
+                        super.setReadOnly(isReadOnly);
+                        this.textInput.disabled = isReadOnly;
+                    }
+                    
                 }
 
                 document.registerElement("pmc-input", {

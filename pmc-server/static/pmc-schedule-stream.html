@@ -1,0 +1,37 @@
+<script>
+    class ScheduleStream {
+        constructor() {
+        }
+
+        start () {
+            stop();
+            this.evtSrc = new EventSource("/schedulestream?token=" + currentToken);
+            //Changed values are received in json format
+            this.evtSrc.onmessage = function(e) {
+                var jsonData = $.parseJSON(e.data);
+                var tid = jsonData["tid"];
+                if (tid !== undefined) {
+                    remoteServerTid = tid;
+                }
+                else {
+                    var scheduleVariables = jsonData["scheduleVariables"];
+                    for (var i in scheduleVariables) {
+                        var pv = scheduleVariables[i];
+                        if (pv.scheduleId === currentScheduleId) {
+                            var targetElement = allPMCComponents[pv.variableId];
+                            if (targetElement !== undefined) {
+                                targetElement.setValue(pv.value, false);
+                            }
+                        }
+                    }
+                }
+            } 
+        }
+
+        stop () {
+            if (this.evtSrc !== undefined) {
+                this.evtSrc.close();
+            }
+        }
+    }
+</script>

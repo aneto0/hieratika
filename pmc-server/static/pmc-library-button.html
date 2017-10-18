@@ -28,10 +28,8 @@
                         this.attachLibraryHandler();
                     }
                     
-                    valueChanged(source, typeOfChange) {
-                        if (typeOfChange === "value") {
-                            this.buttonInput.innerHTML = this.value;
-                        }
+                    refresh() {
+                        this.buttonInput.innerHTML = this.value;
                         this.checkValues(this.buttonInput);
                     }
 
@@ -42,6 +40,11 @@
                     getTemplate() {
                         var template = importDoc.querySelector("#ttlibrary");
                         return template;
+                    }
+
+                    setReadOnly (isReadOnly) {
+                        super.setReadOnly(isReadOnly);
+                        this.buttonInput.backgroundColor = DISABLED_COLOR;
                     }
 
                     libraryChanged (newLibraryName) {

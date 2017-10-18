@@ -5,33 +5,65 @@
 </body>
     <template id="tscheduleselector">
         <dialog id="dscheduleselector">
+            <div id="divschedule">
+                <table style="border-style:solid;border-width:1px;width: 100%">
+                    <tr>
+                        <td>
+                            User
+                        </td>
+                        <td>
+                            Schedules 
+                        </td>
+                        <td>
+                            Description
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><select id="userselect" size="20" style="width:150px;overflow-x:scroll"></select></td>
+                        <td><select id="scheduleselect" size="20" style="width:150px;overflow-x:scroll"></select></td>
+                        <td id="descriptionarea" style="width:250px;vertical-align:top;background-color:#F5F5F5"></td>
+                    </tr>
+                </table>
+                <table style="border-style:solid;border-width:0px;width: 100%">
+                    <tr>
+                        <td style="padding-top:20px;">
+                            <button title="OK" id="okbtn">OK</button>
+                            <button title="Cancel" id="cancelbtn">Cancel</button>
+                        </td>
+                         <td style="padding-top:20px;text-align:right;">
+                            <button title="Create a new schedule..." id="createschedulebtn">New schedule...</button>
+                        </td>
+                   </tr>
+                </table>
+            </dialog>
+        </div>
+        <div id="divnewschedule" hidden>
             <table style="border-style:solid;border-width:1px;width: 100%">
                 <tr>
-                    <td>
-                        User
-                    </td>
-                    <td>
-                        Schedules 
-                    </td>
-                    <td>
-                        Description
-                    </td>
+                    <td>Schedule name:</td>
+                    <td><input type="text" id="newschedulename"></input></td>
                 </tr>
                 <tr>
-                    <td><select id="userselect" size="20" style="width:150px;overflow-x:scroll"></select></td>
-                    <td><select id="scheduleselect" size="20" style="width:150px;overflow-x:scroll"></select></td>
-                    <td id="descriptionarea" style="width:250px;vertical-align:top;background-color:#F5F5F5"></td>
+                    <td>Schedule description:</td>
+                    <td><textarea rows="4" cols="30" id="newscheduledescription" title="Description"></textarea></td>
+                </tr>
+                <tr>
+                    <td>Copy from:</td>
+                    <td>
+                        <select id="newschedulesselect" name="newschedulesselect">
+                        </select>
+                    </td>
                 </tr>
             </table>
             <table style="border-style:solid;border-width:0px;width: 100%">
                 <tr>
                     <td style="padding-top:20px;">
-                        <button title="OK" id="okbtn">OK</button>
-                        <button title="Cancel" id="cancelbtn">Cancel</button>
+                        <button title="OK" id="oknewschedulebtn">OK</button>
+                        <button title="Cancel" id="cancelnewschedulebtn">Cancel</button>
                     </td>
                 </tr>
             </table>
-        </dialog>
+        </div>
     </template>
 
     <script>
@@ -67,8 +99,8 @@
                         this.descriptionArea = this.shadowRoot.querySelector("#descriptionarea");
                         this.okButton = this.shadowRoot.querySelector("#okbtn");
                         this.okButton.onclick = function() {
-                            var schId = this.scheduleSelect[this.scheduleSelect.selectedIndex].value;
-                            this.okCallbackFunction(schId);
+                            var schedule = this.scheduleSelect[this.scheduleSelect.selectedIndex].scheduleInfo;
+                            this.okCallbackFunction(schedule);
                             this.diag.close();
                         }.bind(this);
 
@@ -77,33 +109,93 @@
                             this.diag.close();
                         }.bind(this); 
 
+                        this.scheduleDiv = this.shadowRoot.querySelector("#divschedule");
+                        this.newScheduleDiv = this.shadowRoot.querySelector("#divnewschedule");
+                        this.newSchedulesSelect = this.shadowRoot.querySelector("#newschedulesselect");
+                        this.newScheduleName = this.shadowRoot.querySelector("#newschedulename")
+                        this.newScheduleDescription = this.shadowRoot.querySelector("#newscheduledescription")
+                        var createNewSchedule = this.shadowRoot.querySelector("#createschedulebtn");
+                        createNewSchedule.onclick = function() {
+                            this.scheduleDiv.setAttribute("hidden", "true");
+                            this.newScheduleDiv.removeAttribute("hidden");
+                            this.newScheduleName.value = (new Date().toISOString());
+                            this.newScheduleDescription.value = "Schedule created on the " + this.newScheduleName.value;
+
+                            this.newSchedulesSelect.innerHTML = "";
+                            var option1 = document.createElement("option");
+                            var scheduleName = PLANT_NAME;
+                            option1.text = scheduleName;
+                            option1.value = scheduleName;
+                            this.newSchedulesSelect.appendChild(option1);
+                            
+                            if ((this.userSelect.selectedIndex >= 0) && (this.scheduleSelect.selectedIndex >= 0)) {
+                                var userId = this.userSelect[this.userSelect.selectedIndex].value;
+                                var schedule = this.scheduleSelect[this.scheduleSelect.selectedIndex].scheduleInfo;
+                                option1 = document.createElement("option");
+                                scheduleName = schedule.name + " (owner: " + userId + ")";
+                                option1.text = scheduleName;
+                                option1.value = schedule.id;
+                                this.newSchedulesSelect.appendChild(option1);
+                            }
+                        }.bind(this); 
+
+                        var cancelNewScheduleButton = this.shadowRoot.querySelector("#cancelnewschedulebtn");
+                        cancelNewScheduleButton.onclick = function() {
+                            this.scheduleDiv.removeAttribute("hidden");
+                            this.newScheduleDiv.setAttribute("hidden", "true");
+                        }.bind(this); 
+
+                        var okNewScheduleButton = this.shadowRoot.querySelector("#oknewschedulebtn");
+                        okNewScheduleButton.onclick = function() {
+                            var schedule = {
+                                token: currentToken,
+                                id: this.newScheduleName.value,
+                                name: this.newScheduleName.value,
+                                description: this.newScheduleDescription.value,
+                                pageId: this.pageId
+                            }
+                            var user = JSON.parse(localStorage.user);
+                            schedule["userId"] = user.id;
+                            if (this.newSchedulesSelect.selectedIndex > 0) {
+                                schedule["sourceSchedule"] = this.newSchedulesSelect[this.newSchedulesSelect.selectedIndex].value;
+                            }
+                            else {
+                                var allVariableIds = [];
+                                for (var k in allPMCComponents) {
+                                    allVariableIds.push(k)
+                                }
+                                schedule["variables"] = JSON.stringify(allVariableIds);
+                            }
+                            $.ajax({
+                                type: "post",
+                                url: "/createschedule",
+                                data: schedule,
+                                success: function (response) {
+                                    this.scheduleDiv.removeAttribute("hidden");
+                                    this.newScheduleDiv.setAttribute("hidden", "true");
+                                    this.updateUserSchedules();
+                                }.bind(this),
+                                error: function (response) {
+                                    console.log(response);
+                                    alert(response);
+                                }
+                            });
+                        }.bind(this); 
                     }
                 }
 
                 updateScheduleDescription() {
-                    var userId;
                     if (this.userSelect.selectedIndex >= 0) {
-                        userId = this.userSelect[this.userSelect.selectedIndex].value;
-                    }
-                    if (this.scheduleSelect.selectedIndex >= 0) {
-                        var schId = this.scheduleSelect[this.scheduleSelect.selectedIndex].value;
-                        $.ajax({
-                            type: "post",
-                            url: "/getschedule",
-                            data: {
-                                token: currentToken,
-                                scheduleId: schId
-                            },
-                            success: function (response) {
-                                var schedule = $.parseJSON(response);
-                                this.okButton.disabled = false;
-                                this.descriptionArea.innerHTML = schedule.description;
-                            }.bind(this),
-                            error: function (response) {
-                                console.log(response);
-                                alert(response);
+                        var userId = this.userSelect[this.userSelect.selectedIndex].value;
+                        if (this.scheduleSelect.selectedIndex >= 0) {
+                            if (this.currentUserId !== undefined) {
+                                this.okButton.disabled = (this.currentUserId !== userId);
                             }
-                        });
+                            else {
+                                this.okButton.disabled = false;
+                            }
+                            this.descriptionArea.innerHTML = this.scheduleSelect[this.scheduleSelect.selectedIndex].scheduleInfo.description;
+                        }
                     }
 
                 }
@@ -126,17 +218,17 @@
                                     this.scheduleSelect.disabled = true;
                                     var option1 = document.createElement("option");
                                     option1.text = "No schedule available...";
-                                    option1.value = "none";
+                                    option1.value = NONE_NAME;
                                     this.scheduleSelect.appendChild(option1);
                                 }
                                 else {
                                     this.scheduleSelect.disabled = false;
                                     for (var s in availableSchedules) {
                                         var scheduleName = String(availableSchedules[s].name);
-                                        var scheduleId = String(availableSchedules[s].id);
                                         var option1 = document.createElement("option");
                                         option1.text = scheduleName;
-                                        option1.value = scheduleId;
+                                        option1.value = scheduleName;
+                                        option1.scheduleInfo = availableSchedules[s];
                                         this.scheduleSelect.appendChild(option1);
                                     }
                                 }
@@ -153,7 +245,8 @@
                     this.pageId = page.id;
                 }
 
-                show(okCallbackFun) {
+                show(okCallbackFun, currentUserId = undefined) {
+                    this.currentUserId = currentUserId;
                     this.okCallbackFunction = okCallbackFun;
                     this.okButton.disabled = true;
                     this.scheduleSelect.disabled = true;
@@ -169,7 +262,7 @@
                             this.scheduleSelect.innerHTML = "";
                             var option1 = document.createElement("option");
                             option1.text = "Select user";
-                            option1.value = "none";
+                            option1.value = NONE_NAME;
                             this.scheduleSelect.appendChild(option1);
                             for (var u in usersJSon) {
                                 option1 = document.createElement("option");

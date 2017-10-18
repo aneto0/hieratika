@@ -1,0 +1,59 @@
+<link rel="import" href="libraries.html">
+<link rel="import" href="pmc-component.html">
+<script type="text/javascript">
+    /**
+     * @brief Provides common methods for all the standard input components
+     */
+    //Constructor
+    class PMCAbstractInput extends PMCComponent {
+        constructor() {
+            super();
+        }
+
+        checkValues (component) {
+            if (component === undefined) {
+                component = this;
+            }
+            //If the current value does not match the initial value set the font color blue
+            if(!this.compareValues(this.getValue(), this.getInitialValue())) {
+                component.style.color = DIFF_INIT_CHANGED_COLOR;
+            }
+            else {
+                component.style.color = STANDARD_FCOLOR;
+            }
+
+            var newBackgroundColor = STANDARD_BCOLOR;
+            if ((!this.isUserAllowedToWrite()) || (this.isReadOnly())) {
+                newBackgroundColor = DISABLED_COLOR;
+            }
+            if (!this.compareWithReference(this.getValue(), this.getPlantValue(), this.getReferenceValue())) {
+                newBackgroundColor = PLANT_OR_REF_CHANGED_COLOR;
+            }
+
+            var error = false;
+            var fun;
+            var validation;
+            if (this.validations !== undefined) {
+                for (var i=0; (i<this.validations.length) && (!error); i++) {
+                    validation = this.validations[i];
+                    fun = eval(validation.fun);
+                    if (fun !== undefined) {
+                        if (validation.parameters === undefined) {
+                            validation.parameters = [];
+                        }
+                        error = !fun(this, validation.parameters);
+                    }
+                }
+            }
+            var titleString = this.toString();
+            if (error) {
+                newBackgroundColor = ERROR_BCOLOR;
+                titleString = "Failed @ " + fun.name + " (" + validation.parameters + ")" + " [ " + validation.description + " ] ";
+            }
+            component.style.backgroundColor = newBackgroundColor;
+            component.title = titleString;
+        }
+    }
+
+</script>
+

@@ -108,30 +108,46 @@
                             this.title = "Failed @ " + fun.name + " (" + validation.parameters + ")" + " [ " + validation.description + " ] ";
                         }
                         else {
-                            this.title = this.currentValuesToString();
+                            this.title = this.toString();
                         }
                     }
 
-                    setValue (elementsToSet, updateRemote=true) {
-                        this.setNumberOfElements(elementsToSet.length);
-                        this.tbl.deleteRow(0);
-                        var row = this.tbl.insertRow(0);
-                        for (var i=0; i<elementsToSet.length; i++) {
-                            var col = row.insertCell(i);
-                            col.innerHTML = elementsToSet[i];
-                            col.setAttribute("contenteditable", "true");
-                            col.style.width = "20px";
-                            col.style.textAlign = "right";
-                            col.addEventListener("input", function (e) {
-                                this.checkValues(true);
-                            }.bind(this));
+                    refresh() {
+                        if (this.value !== undefined) {
+                            var elementsToSet = this.value;
+                            var row = this.tbl.rows[0];
+                            var createRow = false;
+                            if ((row.cells.length !== elementsToSet.length)) {
+                                createRow = true;
+                            }
+                            if (createRow) {
+                                this.tbl.deleteRow(0);
+                                this.setNumberOfElements(elementsToSet.length);
+                                row = this.tbl.insertRow(0);
+                                for (var i=0; i<elementsToSet.length; i++) {
+                                    var col = row.insertCell(i);
+                                    col.innerHTML = elementsToSet[i];
+                                    col.setAttribute("contenteditable", "true");
+                                    col.style.width = "20px";
+                                    col.style.textAlign = "right";
+                                    col.addEventListener("input", function (e) {
+                                        this.checkValues(true);
+                                    }.bind(this));
+                                }
+                            }
+                            else {
+                                for (var i=0; i<elementsToSet.length; i++) {
+                                    var col = row.cells[i];
+                                    col.innerHTML = elementsToSet[i];
+                                }
+                            }
+                            this.checkValues(false);
                         }
+                    }
+                    
+                    setValue (elementsToSet, updateRemote=true) {
                         //Make a shallow copy!
                         super.setValue(elementsToSet.slice(0), updateRemote);
-                    }
-
-                    valueChanged(source, typeOfChange) {
-                        this.checkValues(false);
                     }
 
                     getTemplate() {

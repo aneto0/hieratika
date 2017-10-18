@@ -28,7 +28,6 @@
                     <td>Plant</td><td id="plantTransferFunction"></td>
                 </tr>
             </table>
-            <button id="refreshButton">Refresh</button>
             </div>
         </template>
         <script>
@@ -126,7 +125,7 @@
                     return amplitude;
                 }
 
-                currentValuesToString () {
+                toString () {
                     var currentValueTxt = undefined;
                     var currentValue = this.getValue();
                     if (currentValue !== undefined) {
@@ -141,10 +140,10 @@
 
                     var reference = this.getReference();
                     var referenceValue = undefined;
-                    if (reference === "plant") {
+                    if (reference === PLANT_NAME) {
                         referenceValue = plantValue;
                     }
-                    else if (reference !== "none") {
+                    else if (reference !== NONE_NAME) {
                         referenceValue = this.getReferenceValue();
                     }
                     var referenceValueTxt = undefined;
@@ -181,14 +180,15 @@
                             this.currentTransferFunction.innerHTML = this.generateTransferFunctionMathML(num, den);
                             jqMath.parseMath(this.currentTransferFunction);
                             var changed = false;
-                            if(!this.compareValues(this.numeratorInput.value, this.initvalue[0])) {
+                            var initValue = this.getInitialValue();
+                            if(!this.compareValues(this.numeratorInput.value, initValue[0])) {
                                 this.numeratorInput.style.color = DIFF_INIT_CHANGED_COLOR;
                                 changed = true;
                             }
                             else {
                                 this.numeratorInput.style.color = STANDARD_FCOLOR;
                             }
-                            if(!this.compareValues(this.denominatorInput.value, this.initvalue[1])) {
+                            if(!this.compareValues(this.denominatorInput.value,initValue[1])) {
                                 this.denominatorInput.style.color = DIFF_INIT_CHANGED_COLOR;
                                 changed = true;
                             }
@@ -210,7 +210,7 @@
                         if (!this.userAllowedToWrite) {
                             newBackgroundColor = DISABLED_COLOR;
                         }
-                        if (ref !== "none") {
+                        if (ref !== NONE_NAME) {
                             if (refValue !== undefined) {
                                 var numRef = refValue[0];
                                 var denRef = refValue[1];
@@ -255,16 +255,14 @@
                     }
                     
 
-                    this.title = this.currentValuesToString();
+                    this.title = this.toString();
                 }
 
                 setValue (elementsToSet, updateRemote=true) {
-                    this.value = elementsToSet.slice(0);
-                    this.checkValues(false);
-                    super.setValue(this.value, updateRemote);
+                    super.setValue(elementsToSet.slice(0), updateRemote);
                 }
 
-                valueChanged(source, typeOfChange) {
+                refresh() {
                     this.checkValues(false);
                 }
 
@@ -275,7 +273,6 @@
 
                 createdCallback () {
                     super.createdCallback();
-                    var button = this.shadowRoot.querySelector("#refreshButton");
                     this.numeratorInput = this.shadowRoot.querySelector("#numeratorInput");
                     this.denominatorInput = this.shadowRoot.querySelector("#denominatorInput");
                     this.frequencyStepInput = this.shadowRoot.querySelector("#frequencyStepInput");
@@ -287,13 +284,6 @@
                     this.maxFrequency = 10;
                     this.frequencyStepInput.value = this.frequencyStep;
                     this.maxFrequencyInput.value = this.maxFrequency;
-                    /*button.addEventListener("click", function (e) {
-                        this.frequencyStep = parseFloat(this.shadowRoot.querySelector("#frequencyStepInput").value);
-                        this.maxFrequency = parseFloat(this.shadowRoot.querySelector("#maxFrequencyInput").value);
-                        this.value[0] = this.numeratorInput.value.split(",");
-                        this.value[1] = this.denominatorInput.value.split(",");
-                        this.checkValues(); 
-                    }.bind(this));*/
                     var allInputs = [this.numeratorInput, this.denominatorInput, this.frequencyStepInput, this.maxFrequencyInput];
                     var i;
                     for (i in allInputs) {

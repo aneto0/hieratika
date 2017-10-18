@@ -48,11 +48,18 @@ def threadCleaner():
         db.query("DELETE FROM logins WHERE '(" + str(currentTime) + " - last_interaction_time) > " + str(LOGIN_TIMEOUT) + "'");
        
 def isTokenValid(request):
-    ok = ("token" in request.form)
+    if (request.method == "POST"):
+        ok = ("token" in request.form)
+        if (ok):
+            tokenId = request.form["token"]
+    else:
+        ok = ("token" in request.args)
+        if (ok):
+            tokenId = request.args["token"]
     if (ok): 
         db = getDB()
         loginsTable = db["logins"]
-        row = loginsTable.find_one(token_id=request.form["token"])
+        row = loginsTable.find_one(token_id=tokenId)
         ok = (row is not None)
     return ok
 
@@ -136,19 +143,21 @@ def streamScheduleData():
             tid = str(ct)
             scheduleVariables = db["schedule_variables"]
             if tid not in threadScheduleQueues:
-                # The first time just register the Queue 
+                # The first time just register the Queue and send back the TID so that updates from this client are not sent back to itself (see updateschedule)
                 threadScheduleQueues[tid] = Queue.Queue()
                 if (ct not in allThreads):
                     allThreads.append(ct)
-            # Monitor on change 
-            monitorQueue = threadScheduleQueues[tid]
-            updatedPV = monitorQueue.get(True)
-            variableId = updatedPV[0]
-            scheduleId = updatedPV[1]
-            value = updatedPV[2]
-            encodedPy = {"scheduleVariables": [ {"variableId" : variableId, "scheduleId": scheduleId, "value" : value}] }
+                encodedPy = {"tid": tid}
+            else:
+                # Monitor on change 
+                monitorQueue = threadScheduleQueues[tid]
+                updatedPV = monitorQueue.get(True)
+                variableId = updatedPV[0]
+                scheduleId = updatedPV[1]
+                value = updatedPV[2]
+                encodedPy = {"scheduleVariables": [ {"variableId" : variableId, "scheduleId": scheduleId, "value" : value}] }
+                monitorQueue.task_done()
             encodedJson = json.dumps(encodedPy)
-            monitorQueue.task_done()
             yield "data: {0}\n\n".format(encodedJson)
     except Exception as e:
         print "Exception ignored"
@@ -436,6 +445,7 @@ def updateschedule():
     if (not isTokenValid(request)):
         toReturn = "InvalidToken"
     else:
+        requesterTid = request.form["tid"]
         updateJSon = request.form["update"]
         jSonUpdateSchedule = json.loads(updateJSon)
         scheduleId = jSonUpdateSchedule["scheduleId"]
@@ -446,8 +456,8 @@ def updateschedule():
             updateScheduleVariablesDB(variableId, scheduleId, value)
             #Warn (only the!) others that the scheduler values have changed!
             for k, q in threadScheduleQueues.iteritems():
-                tid = str(threading.current_thread())
-                if (k != tid):
+                if (k != requesterTid):
+                    print k
                     q.put((variableId, scheduleId, value), True)
         toReturn = "ok"
     return toReturn
@@ -483,14 +493,17 @@ def createschedule():
     return toReturn
 
 
-@app.route("/streamplant")
-def streamplant():
+@app.route("/plantstream", methods=["POST", "GET"])
+def plantstream():
+    if (not isTokenValid(request)):
+        return "InvalidToken"
     return Response(streamPlantData(), mimetype="text/event-stream")
 
-@app.route("/streamschedule")
-def streamschedule():
+@app.route("/schedulestream", methods=["POST", "GET"])
+def schedulestream():
+    if (not isTokenValid(request)):
+        return "InvalidToken"
     return Response(streamScheduleData(), mimetype="text/event-stream")
-
 
 @app.route("/")
 def index():

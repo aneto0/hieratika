@@ -1,12 +1,12 @@
 <html>
     <head>
         <link rel="import" href="libraries.html">
-        <link rel="import" href="pmc-component.html">
+        <link rel="import" href="pmc-abstract-input.html">
         <link rel="import" href="pmc-library-editor.html">
     </head>
     <body>
         <script>
-            class PMCLibrary extends PMCComponent {
+            class PMCLibrary extends PMCAbstractInput {
                 constructor() {
                     super();
                     this.availableLibraries = [];
@@ -32,6 +32,16 @@
                 showLibraryEditor () {
                     document.body.appendChild(this.libraryEditor);
                     this.libraryEditor.showSelector(this.availableLibraries, this.getValue());
+                }
+
+                setReadOnly (isReadOnly) {
+                    super.setReadOnly(isReadOnly);
+                    this.libraryEditor.setReadOnly(isReadOnly);
+                }
+
+                setUserAllowedToWrite (isUserAllowedToWrite) {
+                    super.setUserAllowedToWrite(isUserAllowedToWrite);
+                    this.libraryEditor.editor.setUserAllowedToWrite(isUserAllowedToWrite);
                 }
 
                 libraryChanged (newLibraryName) {

@@ -34,23 +34,108 @@
                         var root = this.createShadowRoot();
                         root.appendChild(clone);
 
+                        this.plantInfoLoadedListeners = [this];
+                    }
+
+                    attachedCallback() {
                         var topNav = document.getElementById("top-nav");
                         topNav.addPageListener(this); 
                         topNav.addUserLogoutListener(this);
+                        //Cannot be done from the topNav since the topNav createdCallback and attachedCallback are called before the mainEditor created and attached callbacks
+                        this.addPlantInfoLoadedListener(topNav);
+                    }
+
+                    addPlantInfoLoadedListener(listener) {
+                        this.plantInfoLoadedListeners.push(listener);
+                    }
+
+                    firePlantInfoLoaded() {
+                        for(var l in this.plantInfoLoadedListeners) {
+                            this.plantInfoLoadedListeners[l].plantInfoLoaded();
+                        }
+                    }
+
+                    loadPlantInfo() {
+                        var allVariableIds = [];
+                        for (var k in allPMCComponents) {
+                            allVariableIds.push(k)
+                        }
+                        $.ajax({
+                            type: "post",
+                            url: "/getplantinfo",
+                            data: {
+                                token: currentToken,
+                                variables: JSON.stringify(allVariableIds)
+                            },
+                            success: function (response) {
+                                var pvInfosJson = $.parseJSON(response);
+                                var pvInfos = pvInfosJson["variables"];
+                                var user = JSON.parse(localStorage.user);
+                                $.each(pvInfos, function(i, pvInfo) {
+                                    var targetElement = allPMCComponents[pvInfo.variableId];
+                                    if (targetElement != null) {
+                                        targetElement.setTypeValue(pvInfo.type);
+                                        targetElement.setLibrary(pvInfo.library === true);
+                                        targetElement.setNumberOfElements(pvInfo.numberOfElements);
+                                        targetElement.setReference("none");
+                                        targetElement.setInitialValue(pvInfo.value);
+                                        targetElement.setPlantValue(pvInfo.value);
+                                        targetElement.setValidations(pvInfo.validation);
+                                        targetElement.setPermissionGroups(pvInfo.permissions);
+                                        var userAllowed = false;
+                                        for (var g in user.groups) {
+                                            userAllowed = pvInfo.permissions.includes(user.groups[g]); 
+                                            if (userAllowed) {
+                                                break;
+                                            }
+                                        }
+                                        targetElement.setUserAllowedToWrite(userAllowed);
+                                    }
+                                });
+                                getAvailableLibraries();
+
+                                this.firePlantInfoLoaded();
+                            }.bind(this),
+                            error: function (response) {
+                                console.log(response);
+                                alert(response);
+                            }
+                        });
                     }
 
                     pageChanged (page) {
                         var pageUrl = page.id + ".html?" + new Date().getTime(); //new Date... to force reloading with no caching
                         var templateDiv = this.shadowRoot.querySelector("#dmaineditor");
                         if (pageUrl !== undefined) {
-                            var httpRequest = new XMLHttpRequest();
+                            $.ajax({
+                                type: "GET",
+                                url: pageUrl,
+                                success: function (response) {
+                                    allPMCComponents = {};
+
+                                    templateDiv.innerHTML = response;
+
+                                    this.loadPlantInfo(); 
+
+                                    $.each(allPMCComponents, function (i, pmcComp) {
+                                        pmcComp.domLoaded();
+                                    });
+
+                                }.bind(this),
+                                error: function (response) {
+                                    console.log(response);
+                                    alert(response);
+                                }
+                            });
+
+                            /*var httpRequest = new XMLHttpRequest();
                             httpRequest.onreadystatechange = function() {
                                 if (this.readyState == 4 && this.status == 200) {
                                     allPMCComponents = {};
 
                                     templateDiv.innerHTML = this.responseText;
 
-                                    getPlantInfo(); 
+                                    this.loadPlantInfo().bind(this); 
 
                                     $.each(allPMCComponents, function (i, pmcComp) {
                                         pmcComp.domLoaded();
@@ -58,10 +143,14 @@
                                 }
                             };
                             httpRequest.open("GET", pageUrl , true);
-                            httpRequest.send();
+                            httpRequest.send();*/
                         }
                     }
-    
+   
+                    plantInfoLoaded() {
+                        displayPlant();
+                    } 
+
                     userLogout () {
                         var templateDiv = this.shadowRoot.querySelector("#dmaineditor");
                         templateDiv.innerHTML = "";

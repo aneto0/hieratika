@@ -7,27 +7,27 @@
             super();
         }
 
-        currentValuesToString () {
-            var refToDisplay = this.refvalue;
-            if (this.reference === "plant") {
-                refToDisplay = this.pltvalue;
+        toString () {
+            var refToDisplay = this.referenceValue;
+            if (this.reference === PLANT_NAME) {
+                refToDisplay = this.plantValue;
             }
             return "[" + this.id + "] Current: " + this.getValue() + " Plant: " + this.getPlantValue() + " Reference: " + this.getReferenceValue() + " Initial: " + this.getInitialValue();
         }
 
         showValues () {
-            alert(this.currentValuesToString());
+            alert(this.toString());
         }
 
         compareValues (value1, value2) {
             var val1 = String(value1);
             var val2 = String(value2);
             if (this.typeValue !== undefined) {
-                if ((!this.library) && (this.typevalue === "float32") || (this.typevalue === "float64")) {
+                if ((!this.library) && (this.typeValue === "float32") || (this.typeValue === "float64")) {
                         val1 = parseFloat(value1);
                         val2 = parseFloat(value2);
                 }
-                else if ((!this.library) && (this.typevalue.startsWith("int") || (this.typevalue.startsWith("uint")))) {
+                else if ((!this.library) && (this.typeValue.startsWith("int") || (this.typeValue.startsWith("uint")))) {
                         val1 = parseInt(value1);
                         val2 = parseInt(value2);
                 }
@@ -39,63 +39,20 @@
             var val1 = String(value);
             var val2 = String(value);
             //If the reference value does not match the current value, change the background
-            if (this.reference === "plant") {
+            if (this.reference === PLANT_NAME) {
                 val1 = pltValue;
             }
             //must be from a schedule
-            else if (this.reference !== "none") {
+            else if (this.reference !== NONE_NAME) {
                 val1 = refValue;
             }
             return this.compareValues(val1, val2);
         }
 
-        checkValues (component) {
-            if (component === undefined) {
-                component = this;
-            }
-            //If the current value does not match the initial value set the font color blue
-            if(!this.compareValues(this.getValue(), this.getInitialValue())) {
-                component.style.color = DIFF_INIT_CHANGED_COLOR;
-            }
-            else {
-                component.style.color = STANDARD_FCOLOR;
-            }
-
-            var newBackgroundColor = STANDARD_BCOLOR;
-            if (!this.userAllowedToWrite) {
-                newBackgroundColor = DISABLED_COLOR;
-            }
-            if (!this.compareWithReference(this.getValue(), this.getPlantValue(), this.getReferenceValue())) {
-                newBackgroundColor = PLANT_OR_REF_CHANGED_COLOR;
-            }
-
-            var error = false;
-            var fun;
-            var validation;
-            if (this.validations !== undefined) {
-                for (var i=0; (i<this.validations.length) && (!error); i++) {
-                    validation = this.validations[i];
-                    fun = eval(validation.fun);
-                    if (fun !== undefined) {
-                        if (validation.parameters === undefined) {
-                            validation.parameters = [];
-                        }
-                        error = !fun(this, validation.parameters);
-                    }
-                }
-            }
-            var titleString = this.currentValuesToString();
-            if (error) {
-                newBackgroundColor = ERROR_BCOLOR;
-                titleString = "Failed @ " + fun.name + " (" + validation.parameters + ")" + " [ " + validation.description + " ] ";
-            }
-            component.style.backgroundColor = newBackgroundColor;
-            component.title = titleString;
-        }
-
+        
         /**
-         * virtual 
-         * To be specialised by other components that want to be warned when a browser refresh has happened.
+         * @brief Function called when the component is expected to refresh its contents
+         * @details To be specialised by other components that want to be warned when a browser refresh has happened.
          */
         refresh () {
         }
@@ -109,13 +66,13 @@
         }
 
         getReferenceValue () {
-            return this.refvalue;
+            return this.referenceValue;
         }
 
         setReferenceValue (referenceValueToSet) {
             if (referenceValueToSet !== undefined) {
-                this.refvalue = referenceValueToSet.slice(0);
-                this.checkValues();
+                this.referenceValue = referenceValueToSet.slice(0);
+                this.refresh();
             }
         }
 
@@ -126,33 +83,44 @@
         setLibrary (isLibrary) {
             this.library = isLibrary;
         }
+    
+        isReadOnly() {
+            return this.readOnly;
+        }
+
+        setReadOnly (isReadOnly) {
+            this.readOnly = isReadOnly;
+            this.refresh();
+        }
 
         getTypeValue () {
-            return this.typevalue;
+            return this.typeValue;
         }
 
         setTypeValue (typeValueToSet) {
-            this.typevalue = typeValueToSet;
+            this.typeValue = typeValueToSet;
         }
 
         getPlantValue () {
-            return this.pltvalue;
+            return this.plantValue;
         }
 
         setPlantValue (plantValueToSet) {
             if (plantValueToSet !==  undefined) {
-                this.pltvalue = plantValueToSet.slice(0);
+                this.plantValue = plantValueToSet.slice(0);
                 this.fireValueChanged("plantValue");
+                this.refresh();
             }
         }
 
         getInitialValue () {
-            return this.initvalue;
+            return this.initValue;
         }
 
         setInitialValue (initialValueToSet) {
-            this.initvalue = initialValueToSet.slice(0);
+            this.initValue = initialValueToSet.slice(0);
             this.fireValueChanged("initialValue");
+            this.refresh();
         }
 
         getReference () {
@@ -162,6 +130,7 @@
         setReference (referenceToSet) {
             this.reference = referenceToSet;
             this.fireValueChanged("reference");
+            this.refresh();
         }
 
         getValue () {
@@ -174,6 +143,7 @@
             if (updateRemote) {
                 this.updateRemote(valueToSet); 
             }
+            this.refresh();
         }
 
         updateRemote (valueToUpdate) {
@@ -224,9 +194,19 @@
                     }
                 }
             }
-            this.valueChangedListeners = [this];
+            this.valueChangedListeners = [];
             this.permissionGroups = [];
             this.userAllowedToWrite = false;
+
+            this.typeValue = "string";
+            this.initValue = undefined;
+            this.plantValue = undefined;
+            this.referenceValue = undefined;
+            this.reference = NONE_NAME;
+            this.numberOfElements = 0;
+            this.library = undefined;
+            this.validations = undefined;
+            this.readOnly = false;
         }
 
         setPermissionGroups (groups) {
@@ -239,7 +219,7 @@
 
         setUserAllowedToWrite(allowed) {
             this.userAllowedToWrite = allowed;
-            this.checkValues();
+            this.refresh();
         }
 
         attachedCallback () {
@@ -248,53 +228,5 @@
         detachedCallback () {
         }
     }
-    //The reference in use
-    Object.defineProperty(PMCComponent, "reference", {
-        value: "none",
-        writable: true
-    });
-
-
-    //The type of value
-    Object.defineProperty(PMCComponent, "typevalue", {
-        value: "string",
-        writable: true
-    });
-
-    //Initial value
-    Object.defineProperty(PMCComponent, "initvalue", {
-        value: "N/A",
-        writable: true
-    });
-
-    //Plant value
-    Object.defineProperty(PMCComponent, "pltvalue", {
-        value: "N/A",
-        writable: true
-    });
-
-    //Reference value
-    Object.defineProperty(PMCComponent, "refvalue", {
-        value: "N/A",
-        writable: true
-    });
-
-    //Number of elements
-    Object.defineProperty(PMCComponent, "numberOfElements", {
-        value: "N/A",
-        writable: true
-    });
-
-    //If true the value is a pointer to a library (e.g. a waveform name) which actually stores the values
-    Object.defineProperty(PMCComponent, "library", {
-        value: "N/A",
-        writable: true
-    });
-
-    Object.defineProperty(PMCComponent, "validations", {
-        value: "",
-        writable: true
-    });
-
 </script>
 
