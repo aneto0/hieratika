@@ -1,6 +1,8 @@
 import argparse
-import Queue
+#import Queue
 import threading
+from multiprocessing import Process, Queue
+import os
 import epics
 from epics import caget, caput, camonitor
 import time
@@ -106,12 +108,12 @@ def streamPlantData():
     try:
         while True:
             db = getDB()
-            ct = threading.current_thread()
+            ct = os.getpid()
             tid = str(ct)
             variables = db["variables"]
             if tid not in threadPlantQueues:
                 # The first time send all the variables
-                threadPlantQueues[tid] = Queue.Queue()
+                threadPlantQueues[tid] = Queue()
                 if (ct not in allThreads):
                     allThreads.append(ct)
                 encodedPy = {"variables": [ ] }
@@ -139,12 +141,12 @@ def streamScheduleData():
     try:
         while True:
             db = getDB()
-            ct = threading.current_thread()
+            ct = os.getpid()
             tid = str(ct)
             scheduleVariables = db["schedule_variables"]
             if tid not in threadScheduleQueues:
                 # The first time just register the Queue and send back the TID so that updates from this client are not sent back to itself (see updateschedule)
-                threadScheduleQueues[tid] = Queue.Queue()
+                threadScheduleQueues[tid] = Queue()
                 if (ct not in allThreads):
                     allThreads.append(ct)
                 encodedPy = {"tid": tid}
@@ -536,14 +538,15 @@ if __name__ == "__main__":
             camonitor(pvName, None, pvValueChanged)
 
     #Clean dead threads
-    t = threading.Thread(target=threadCleaner)
+    #t = threading.Thread(target=threadCleaner)
+    t = Process(target=threadCleaner)
     #To force the killing of the threadCleaner thread with Ctrl+C
-    t.daemon = True
+    #t.daemon = True
     t.start()
 
 
     app.debug = True
     #Running a threaded Flask is ok only for debugging
-    app.run(threaded=True, host=args.host, port=args.port)
+    app.run(threaded=False, host=args.host, port=args.port)
 
     alive = False
