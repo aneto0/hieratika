@@ -8,13 +8,15 @@
             this.evtSrc = new EventSource("/plantstream?token=" + currentToken);
             //Changed values are received in json format
             this.evtSrc.onmessage = function(e) {
-                var jsonVariables = $.parseJSON(e.data);
-                var variables = jsonVariables["variables"];
-                for (var i in variables) {
-                    var pv = variables[i];
-                    var targetElement = allPMCComponents[pv.variableId];
-                    if (targetElement !== undefined) {
-                        targetElement.setPlantValue(pv.value);
+                if (e.data.length > 0) {
+                    var jsonVariables = $.parseJSON(e.data);
+                    var variables = jsonVariables["variables"];
+                    for (var i in variables) {
+                        var pv = variables[i];
+                        var targetElement = allPMCComponents[pv.variableId];
+                        if (targetElement !== undefined) {
+                            targetElement.setPlantValue(pv.value);
+                        }
                     }
                 }
             };
