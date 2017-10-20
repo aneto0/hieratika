@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import argparse
 import threading
 from multiprocessing import Process
@@ -8,6 +10,7 @@ import time
 import json
 import uuid
 from flask import Flask, Response, request, send_from_directory
+from broadcastqueue import *
 from socket import *
 
 #Only log errors
@@ -40,12 +43,8 @@ class Server:
     threadScheduleQueues = {}
 
     #IPC using UDP sockets
-    udpPlantBroadcastClient = socket(AF_INET, SOCK_DGRAM)
-    udpScheduleBroadcastClient = socket(AF_INET, SOCK_DGRAM)
-    udpPlantBroadcastServer = socket(AF_INET, SOCK_DGRAM)
-    udpPlantBroadcastServer.settimeout(10)
-    udpScheduleBroadcastServer = socket(AF_INET, SOCK_DGRAM)
-    udpScheduleBroadcastServer.settimeout(10)
+    udpPlantQueue = BroacastQueue(UDP_BROADCAST_PLANT_PORT) 
+    udpScheduleQueue = BroacastQueue(UDP_BROADCAST_SCHEDULE_PORT) 
 
     def __init__(self):
         epics.ca.find_libca()
@@ -61,18 +60,6 @@ class Server:
         if variable["epicsPV"] == 1:
             pvName = variable["id"]
             camonitor(pvName, None, pvValueChanged)
-
-        self.udpPlantBroadcastClient.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-        self.udpPlantBroadcastClient.setsockopt(SOL_SOCKET, SO_BROADCAST, 1)
-        self.udpScheduleBroadcastClient.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-        self.udpScheduleBroadcastClient.setsockopt(SOL_SOCKET, SO_BROADCAST, 1)
-        self.udpPlantBroadcastServer.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-        self.udpPlantBroadcastServer.setsockopt(SOL_SOCKET, SO_BROADCAST, 1)
-        self.udpScheduleBroadcastServer.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-        self.udpScheduleBroadcastServer.setsockopt(SOL_SOCKET, SO_BROADCAST, 1)
-
-        self.udpPlantBroadcastServer.bind(("127.255.255.0", UDP_BROADCAST_PLANT_PORT))
-        self.udpScheduleBroadcastServer.bind(("127.255.255.0", UDP_BROADCAST_SCHEDULE_PORT))
 
         #Clean dead threads
         self.monitorThread = threading.Thread(target=self.threadCleaner)
@@ -90,12 +77,18 @@ class Server:
 
     def getDB(self):
         ct = threading.current_thread()
-        tid = str(ct)
+        tid = self.getTid()
         if tid not in self.threadDBs:
             self.threadDBs[tid] = dataset.connect('sqlite:////tmp/pmc-server.db')
             if (ct not in self.allThreads):
-                self.allThreads.append(ct)
+                self.allThreads.append(threading.current_thread())
+
         return self.threadDBs[tid]
+
+    def getTid(self):
+        tid = str(os.getpid())
+        tid += "_"
+        tid += str(threading.current_thread().ident) 
 
     #Cleans the threadDBs, threadPlantQueues and threadScheduleQueues 
     def threadCleaner(self):
@@ -160,14 +153,8 @@ class Server:
         firstTime = True
         try:
             while True:
-                ct = threading.current_thread() 
-                tid = str(os.getpid()) + "-" + str(ct)
-                #if tid not in self.threadPlantQueues:
                 if (firstTime):
                     # The first time send all the variables
-                    #self.threadPlantQueues[tid] = Queue()
-                    if (ct not in self.allThreads):
-                        self.allThreads.append(ct)
                     encodedPy = {"variables": [ ] }
                     db = self.getDB()
                     variables = db["variables"]
@@ -178,22 +165,10 @@ class Server:
                     encodedJson = json.dumps(encodedPy)
                     firstTime = False
                 else:
-                    # Just monitor on change 
-                    #monitorQueue = self.threadPlantQueues[tid]
-                    try:
-                    #    updatedPV = monitorQueue.get(True, 1)
-                    #    variableId = updatedPV[0]
-                    #    value = updatedPV[1]
-                    #    encodedPy = {"variables": [ {"variableId" : variableId, "value" : value}] }
-                    #    encodedJson = json.dumps(encodedPy)
-                    #    monitorQueue.task_done()
-                        print "GO"
-                        encodedJson = self.udpPlantBroadcastServer.recvfrom(4096)
-                    except timeout:
-                    #except Empty:
+                    encodedJson = self.udpPlantQueue.get()
+                    if (encodedJson == None):
+                        encodedJson = ""
                         time.sleep(0.01)
-                        encodedJson = "" 
-                    print encodedJson
                 yield "data: {0}\n\n".format(encodedJson)
         except Exception as e:
             print "Exception ignored"
@@ -204,35 +179,18 @@ class Server:
         firstTime = True
         try:
             while True:
-                ct = threading.current_thread()
-                tid = str(os.getpid()) + "-" + str(ct)
-                #if tid not in self.threadScheduleQueues:
                 if (firstTime):
                     # The first time just register the Queue and send back the TID so that updates from this client are not sent back to itself (see updateschedule)
-                    #self.threadScheduleQueues[tid] = Queue()
-                    if (ct not in self.allThreads):
-                        self.allThreads.append(ct)
-                    encodedPy = {"tid": tid}
+                    encodedPy = {"tid": self.getTid()}
                     encodedJson = json.dumps(encodedPy)
                     firstTime = False
                 else:
                     # Monitor on change 
-                    #monitorQueue = self.threadScheduleQueues[tid]
-                    try:
-                    #    updatedPV = monitorQueue.get(True, 1)
-                    #    variableId = updatedPV[0]
-                    #    scheduleId = updatedPV[1]
-                    #    value = updatedPV[2]
-                    #    encodedPy = {"scheduleVariables": [ {"variableId" : variableId, "scheduleId": scheduleId, "value" : value}] }
-                    #    encodedJson = json.dumps(encodedPy)
-                    #    monitorQueue.task_done()
-                    #except Empty:
-                        print "GO"
-                        encodedJson = self.udpScheduleBroadcastServer.recvfrom(4096)
-                    except timeout:
-                        time.sleep(0.01)
-                        encodedJson = "" 
+                    encodedJson = self.udpScheduleQueue.get()
                     print encodedJson
+                    if (encodedJson == None):
+                        encodedJson = ""
+                        time.sleep(0.01)
                 yield "data: {0}\n\n".format(encodedJson)
         except Exception as e:
             print "Exception ignored"
@@ -293,11 +251,11 @@ class Server:
             jSonUpdateVariables = json.loads(updateJSon)
             for variableId in jSonUpdateVariables.keys():
                 newValue = jSonUpdateVariables[variableId]
-                updatePlantVariablesDB(variableId, newValue)
+                self.updatePlantVariablesDB(variableId, newValue)
                 #Warn others that the plant values have changed!
                 #for k, q in threadPlantQueues.iteritems():
                 #    jsonToSend = json.dumps("variables": [ {"variableId" : variableId, "value" : newValue}]) 
-            self.udpPlantBroadcastClient.sendto(jSonUpdateVariables, ('127.255.255.255', UDP_BROADCAST_PLANT_PORT))
+            self.udpPlantQueue.put(jSonUpdateVariables)
 
                 #caput(k, request.args[k])
         return toReturn
@@ -500,12 +458,13 @@ class Server:
             for v in values:
                 variableId = v["id"]
                 value = v["value"]
-                updateScheduleVariablesDB(variableId, scheduleId, value)
+                self.updateScheduleVariablesDB(variableId, scheduleId, value)
                 #Warn (only the!) others that the scheduler values have changed!
                 #for k, q in threadScheduleQueues.iteritems():
                 #    if (k != requesterTid):
                 #        q.put((variableId, scheduleId, value), True)
-            self.udpScheduleBroadcastClient.sendto(jSonUpdateSchedule, ('127.255.255.255', UDP_BROADCAST_SCHEDULE_PORT))
+            print jSonUpdateSchedule 
+            self.udpScheduleQueue.put(json.dumps(jSonUpdateSchedule))
             
             toReturn = "ok"
         return toReturn
@@ -607,12 +566,13 @@ def login():
 #Updates a schedule variable
 @application.route("/updateschedule", methods=["POST", "GET"])
 def updateschedule():
-    return server.updateSchedule()    
+    print "updateschedule"
+    return server.updateSchedule(request)    
 
 #Creates a new schedule
 @application.route("/createschedule", methods=["POST", "GET"])
 def createschedule():
-    return server.createSchedule()
+    return server.createSchedule(request)
     
 @application.route("/plantstream", methods=["POST", "GET"])
 def plantstream():

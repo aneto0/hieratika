@@ -148,9 +148,10 @@
 
                         this.viewPlantButton = this.shadowRoot.querySelector("#viewplantbtn");
                         this.viewPlantButton.onclick = function() {
+                            currentScheduleId = undefined;
                             this.currentDisplay.innerHTML = PLANT_NAME;
                             this.currentDisplay.style.color = PLANT_COLOR;
-                            displayPlant();                            
+                            displayPlant();
                         }.bind(this);
 
 
@@ -344,6 +345,7 @@
                     this.currentDisplay.innerHTML = schedule.name; 
                     this.currentDisplay.style.color = REFERENCE_COLOR; 
                     copyFromSchedule(schedule.id, true, false, false);
+                    currentScheduleId = schedule.id;
                     this.loadPlantButton.disabled = false;
                     this.copyFromReferenceScheduleButton.disabled = false;
                     this.copyFromReferencePlantButton.disabled = false;
@@ -355,6 +357,7 @@
                     this.currentDisplay.innerHTML = schedule.name; 
                     this.currentDisplay.style.color = REFERENCE_COLOR; 
                     copyFromSchedule(schedule.id, true, false, true);
+                    currentScheduleId = schedule.id;
                     this.loadPlantButton.disabled = true;
                 }
             
