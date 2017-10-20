@@ -179,26 +179,21 @@
                              
                             this.currentTransferFunction.innerHTML = this.generateTransferFunctionMathML(num, den);
                             jqMath.parseMath(this.currentTransferFunction);
-                            var changed = false;
                             var initValue = this.getInitialValue();
                             if(!this.compareValues(this.numeratorInput.value, initValue[0])) {
                                 this.numeratorInput.style.color = DIFF_INIT_CHANGED_COLOR;
-                                changed = true;
                             }
                             else {
                                 this.numeratorInput.style.color = STANDARD_FCOLOR;
                             }
                             if(!this.compareValues(this.denominatorInput.value,initValue[1])) {
                                 this.denominatorInput.style.color = DIFF_INIT_CHANGED_COLOR;
-                                changed = true;
                             }
                             else {
                                 this.denominatorInput.style.color = STANDARD_FCOLOR;
                             }
-                            if (changed) {
-                                if (userChanged) {
-                                    this.updateRemote(this.value);
-                                }
+                            if (userChanged) {
+                                this.updateRemote(this.value);
                             }
                         }
 
@@ -207,7 +202,7 @@
                         var plantValue = this.getPlantValue();
                         this.referenceTransferFunction.innerHTML = "";
                         var newBackgroundColor = STANDARD_BCOLOR;
-                        if (!this.userAllowedToWrite) {
+                        if ((!this.isUserAllowedToWrite()) || (this.isReadOnly())) {
                             newBackgroundColor = DISABLED_COLOR;
                         }
                         if (ref !== NONE_NAME) {
@@ -299,6 +294,12 @@
                             this.checkValues(true); 
                         }.bind(this));
                     }
+                }
+
+                setReadOnly (isReadOnly) {
+                    super.setReadOnly(isReadOnly);
+                    this.numeratorInput.disabled = isReadOnly;
+                    this.denominatorInput.disabled = isReadOnly;
                 }
 
                 attachedCallback () {

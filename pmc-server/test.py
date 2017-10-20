@@ -70,8 +70,8 @@ class Server:
         self.app.debug = True
         #Running a threaded Flask is ok only for debugging
         #app.run(threaded=False, host=args.host, port=args.port)
-        self.app.run(host='0.0.0.0')
-        self.alive = False
+        #self.app.run(host='0.0.0.0')
+        #self.alive = False
 
     def getDB(self):
         ct = threading.current_thread()
@@ -92,6 +92,7 @@ class Server:
     #Cleans the threadDBs, threadPlantQueues and threadScheduleQueues 
     def threadCleaner(self):
         db = self.getDB()
+        print self.alive
         while self.alive:
             time.sleep(5)
             for t in self.allThreads:
@@ -105,7 +106,7 @@ class Server:
                         self.threadScheduleQueues.pop(tid, None)
             #Clean all the users that have not interacted with the server for a while
             currentTime = int(time.time())
-            db.query("DELETE FROM logins WHERE '(" + str(currentTime) + " - last_interaction_time) > " + str(LOGIN_TIMEOUT) + "'");
+            #db.query("DELETE FROM logins WHERE (" + str(currentTime) + " - last_interaction_time) > " + str(LOGIN_TIMEOUT));
        
     def isTokenValid(self, request):
         if (request.method == "POST"):
@@ -165,10 +166,12 @@ class Server:
                         encodedJson = ""
                         time.sleep(0.01)
                     else:
-                        # Only trigger if the source was not from this tid
                         encodedPy = json.loads(encodedJson)
-                        if (encodedPy["tid"] == tid):
-                            encodedJson = ""
+                        # Only trigger if the source was not from this tid. If it an update from 
+                        # the plant, always trigger as some of the parameters might have failed to load
+                        if ("scheduleId" in encodedPy):
+                            if (encodedPy["tid"] == tid):
+                                encodedJson = ""
                 yield "data: {0}\n\n".format(encodedJson)
         except Exception as e:
             print "Exception ignored"
@@ -493,6 +496,7 @@ class Server:
         print "TODO ADD info (console and http)"
 
 server = Server()
+server.start()
 application = server.app
 
 #Gets all the pv information
@@ -581,8 +585,9 @@ def tmp(filename):
 
 
 if __name__ == "__main__":
+    #print "WJASDAS"
     #Start with gunicorn -k gevent -w 16 -b 192.168.130.46:80 test
-    server.start()
+    #server.start()
     #parser = argparse.ArgumentParser(description = "Flask http server to prototype ideas for ITER level-1")
     #parser.add_argument("-H", "--host", default="127.0.0.1", help="Server port")
     #parser.add_argument("-p", "--port", type=int, default=5000, help="Server IP")
