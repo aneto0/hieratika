@@ -5,8 +5,7 @@
     <link rel="import" href="pmc-login.html">
     <link rel="import" href="pmc-main-editor.html">
     <link rel="import" href="pmc-schedule-selector.html">
-    <link rel="import" href="pmc-schedule-stream.html">
-    <link rel="import" href="pmc-plant-stream.html">
+    <link rel="import" href="pmc-stream.html">
 </head>
 <body>
     <style>
@@ -109,8 +108,7 @@
                         var root = this.createShadowRoot();
                         root.appendChild(clone);
 
-                        this.scheduleStream = new ScheduleStream();
-                        this.plantStream = new PlantStream();
+                        this.streamer = new Stream();
 
                         this.loadPlantButton = this.shadowRoot.querySelector("#loadplantbtn");
                         this.loadPlantButton.onclick = function() {
@@ -151,6 +149,11 @@
                             currentScheduleId = undefined;
                             this.currentDisplay.innerHTML = PLANT_NAME;
                             this.currentDisplay.style.color = PLANT_COLOR;
+                            this.loadPlantButton.disabled = true;
+                            this.copyFromReferenceScheduleButton.disabled = true;
+                            this.copyFromReferencePlantButton.disabled = true;
+                            this.commitButton.disabled = true;
+                            this.undoButton.disabled = true;
                             displayPlant();
                         }.bind(this);
 
@@ -275,8 +278,7 @@
 
                 loginSuccessful(user) {
                     this.user = user;
-                    this.scheduleStream.start();
-                    this.plantStream.start();
+                    this.streamer.start();
                     this.usernameTd.innerHTML = this.user.name; 
                     this.usernameTd.title = "username: " + this.user.id;
 
@@ -318,8 +320,7 @@
                     this.copyFromReferencePlantButton.disabled = true;
                     this.commitButton.disabled = true;
                     this.undoButton.disabled = true;
-                    this.scheduleStream.stop();
-                    this.plantStream.stop();
+                    this.streamer.stop();
                 }
 
                 pageChanged(page) {
@@ -358,7 +359,11 @@
                     this.currentDisplay.style.color = REFERENCE_COLOR; 
                     copyFromSchedule(schedule.id, true, false, true);
                     currentScheduleId = schedule.id;
-                    this.loadPlantButton.disabled = true;
+                    this.loadPlantButton.disabled = false;
+                    this.copyFromReferenceScheduleButton.disabled = true;
+                    this.copyFromReferencePlantButton.disabled = true;
+                    this.commitButton.disabled = true;
+                    this.undoButton.disabled = true;
                 }
             
                 addPageListener(listener) {

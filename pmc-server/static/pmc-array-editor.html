@@ -49,15 +49,12 @@
                                 }
                                 if(!this.compareValues(cellValue, cellInitValue)) {
                                     cell.style.color = DIFF_INIT_CHANGED_COLOR;
-                                    if (userChanged) {
-                                        this.fireValueChanged("value");
-                                        this.updateRemote(this.getValue());
-                                    }
                                 }
                                 else {
                                     cell.style.color = STANDARD_FCOLOR;
                                 }
-                               
+                                
+                                cell.setAttribute("contenteditable", this.isReadOnly() ? "false" : "true");
                                 var cellRefValue = "";
                                 if (refValue !== undefined) { 
                                     cellRefValue = refValue[i];
@@ -68,7 +65,7 @@
                                 }
 
                                 var newBackgroundColor = STANDARD_BCOLOR;
-                                if (!this.userAllowedToWrite) {
+                                if ((!this.isUserAllowedToWrite()) || (this.isReadOnly())) {
                                     newBackgroundColor = DISABLED_COLOR;
                                 }
                                 if (!this.compareWithReference(cellValue, cellPlantValue, cellRefValue)) {
@@ -76,6 +73,10 @@
                                 }
                                 cell.style.backgroundColor = newBackgroundColor;
                             }
+                        }
+                        if (userChanged) {
+                            this.fireValueChanged("value");
+                            this.updateRemote(this.getValue());
                         }
                         var error = false; 
                         var validations = this.getValidations();
@@ -127,7 +128,6 @@
                                 for (var i=0; i<elementsToSet.length; i++) {
                                     var col = row.insertCell(i);
                                     col.innerHTML = elementsToSet[i];
-                                    col.setAttribute("contenteditable", "true");
                                     col.style.width = "20px";
                                     col.style.textAlign = "right";
                                     col.addEventListener("input", function (e) {
@@ -154,7 +154,7 @@
                         var template = importDoc.querySelector("#ttarray");
                         return template;
                     }
-            
+
                     createdCallback () {
                         super.createdCallback();
                         var addButton = this.shadowRoot.querySelector("#addButton");

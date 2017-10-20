@@ -25,8 +25,7 @@ import pickle
 
 #Maximum time that a user is allowed to be logged in without interacting with the database
 LOGIN_TIMEOUT = 3600
-UDP_BROADCAST_PLANT_PORT = 23450
-UDP_BROADCAST_SCHEDULE_PORT = 23451
+UDP_BROADCAST_PORT = 23450
 
 class Server:
     #A DB access cannot be shared between different threads.
@@ -43,8 +42,7 @@ class Server:
     threadScheduleQueues = {}
 
     #IPC using UDP sockets
-    udpPlantQueue = BroacastQueue(UDP_BROADCAST_PLANT_PORT) 
-    udpScheduleQueue = BroacastQueue(UDP_BROADCAST_SCHEDULE_PORT) 
+    udpQueue = BroacastQueue(UDP_BROADCAST_PORT) 
 
     def __init__(self):
         epics.ca.find_libca()
@@ -89,6 +87,7 @@ class Server:
         tid = str(os.getpid())
         tid += "_"
         tid += str(threading.current_thread().ident) 
+        return tid
 
     #Cleans the threadDBs, threadPlantQueues and threadScheduleQueues 
     def threadCleaner(self):
@@ -136,6 +135,7 @@ class Server:
         if (row is not None):
             row["value"] = pickle.dumps(variableValue);
             variables.upsert(row, ["id"])
+        return True
 
     def updateScheduleVariablesDB(self, variableId, scheduleId, variableValue):
         db = self.getDB()
@@ -146,56 +146,35 @@ class Server:
             "value": pickle.dumps(variableValue)
         }
         scheduleVariables.upsert(row, ["variable_id", "schedule_id"])
+        return True
 
-    #Streams plant data changes
-    #Call back for the Server Side Event. One per connection will loop on the while and consume from its own queue
-    def streamPlantData(self):
-        firstTime = True
+
+    def streamData(self):
+        tid = None
         try:
             while True:
-                if (firstTime):
-                    # The first time send all the variables
-                    encodedPy = {"variables": [ ] }
-                    db = self.getDB()
-                    variables = db["variables"]
-                    for variable in variables:
-                        variableId = variable["id"]
-                        value = pickle.loads(variable["value"])
-                        encodedPy["variables"].append({"variableId" : variableId, "value" : value})
-                    encodedJson = json.dumps(encodedPy)
-                    firstTime = False
-                else:
-                    encodedJson = self.udpPlantQueue.get()
-                    if (encodedJson == None):
-                        encodedJson = ""
-                        time.sleep(0.01)
-                yield "data: {0}\n\n".format(encodedJson)
-        except Exception as e:
-            print "Exception ignored"
-            print e
-            #ignore
-
-    def streamScheduleData(self):
-        firstTime = True
-        try:
-            while True:
-                if (firstTime):
+                if (tid == None):
                     # The first time just register the Queue and send back the TID so that updates from this client are not sent back to itself (see updateschedule)
-                    encodedPy = {"tid": self.getTid()}
+                    tid = self.getTid()
+                    encodedPy = {"reset": True, "tid": tid}
                     encodedJson = json.dumps(encodedPy)
-                    firstTime = False
                 else:
-                    # Monitor on change 
-                    encodedJson = self.udpScheduleQueue.get()
-                    print encodedJson
+                    # Monitor on change
+                    encodedJson = self.udpQueue.get()
                     if (encodedJson == None):
                         encodedJson = ""
                         time.sleep(0.01)
+                    else:
+                        # Only trigger if the source was not from this tid
+                        encodedPy = json.loads(encodedJson)
+                        if (encodedPy["tid"] == tid):
+                            encodedJson = ""
                 yield "data: {0}\n\n".format(encodedJson)
         except Exception as e:
             print "Exception ignored"
             print e
             #ignore
+        print "BYE!!"
 
     def getPlantInfo(self, request):
         db = self.getDB()
@@ -249,15 +228,22 @@ class Server:
         else: 
             updateJSon = request.form["update"]
             jSonUpdateVariables = json.loads(updateJSon)
+            toStream = {
+                "tid": request.form["tid"],
+                "variables": []
+            }
+
             for variableId in jSonUpdateVariables.keys():
                 newValue = jSonUpdateVariables[variableId]
-                self.updatePlantVariablesDB(variableId, newValue)
+                if(self.updatePlantVariablesDB(variableId, newValue)):
+                    toStream["variables"].append({"variableId" : variableId, "value" : newValue})
                 #Warn others that the plant values have changed!
                 #for k, q in threadPlantQueues.iteritems():
                 #    jsonToSend = json.dumps("variables": [ {"variableId" : variableId, "value" : newValue}]) 
-            self.udpPlantQueue.put(jSonUpdateVariables)
-
-                #caput(k, request.args[k])
+            #TODO must check what values were actually updated
+            #TODO take care of security
+            self.udpQueue.put(json.dumps(toStream))
+            #caput(k, request.args[k])
         return toReturn
 
     def getSchedules(self, request):
@@ -450,21 +436,27 @@ class Server:
         if (not server.isTokenValid(request)):
             toReturn = "InvalidToken"
         else:
-            requesterTid = request.form["tid"]
             updateJSon = request.form["update"]
             jSonUpdateSchedule = json.loads(updateJSon)
             scheduleId = jSonUpdateSchedule["scheduleId"]
             values = jSonUpdateSchedule["values"]
+
+            toStream = {
+                "tid": jSonUpdateSchedule["tid"],
+                "scheduleId": jSonUpdateSchedule["scheduleId"],
+                "variables": []
+            }
             for v in values:
                 variableId = v["id"]
                 value = v["value"]
-                self.updateScheduleVariablesDB(variableId, scheduleId, value)
+                if(self.updateScheduleVariablesDB(variableId, scheduleId, value)):
+                    toStream["variables"].append({"variableId" : variableId, "value" : value})
+                    
                 #Warn (only the!) others that the scheduler values have changed!
                 #for k, q in threadScheduleQueues.iteritems():
                 #    if (k != requesterTid):
                 #        q.put((variableId, scheduleId, value), True)
-            print jSonUpdateSchedule 
-            self.udpScheduleQueue.put(json.dumps(jSonUpdateSchedule))
+            self.udpQueue.put(json.dumps(toStream))
             
             toReturn = "ok"
         return toReturn
@@ -566,7 +558,6 @@ def login():
 #Updates a schedule variable
 @application.route("/updateschedule", methods=["POST", "GET"])
 def updateschedule():
-    print "updateschedule"
     return server.updateSchedule(request)    
 
 #Creates a new schedule
@@ -574,19 +565,11 @@ def updateschedule():
 def createschedule():
     return server.createSchedule(request)
     
-@application.route("/plantstream", methods=["POST", "GET"])
-def plantstream():
+@application.route("/stream", methods=["POST", "GET"])
+def stream():
     if (not server.isTokenValid(request)):
         return "InvalidToken"
-    print os.getpid()
-    return Response(server.streamPlantData(), mimetype="text/event-stream")
-
-@application.route("/schedulestream", methods=["POST", "GET"])
-def schedulestream():
-    if (not server.isTokenValid(request)):
-        return "InvalidToken"
-    print os.getpid()
-    return Response(server.streamScheduleData(), mimetype="text/event-stream")
+    return Response(server.streamData(), mimetype="text/event-stream")
 
 @application.route("/")
 def index():

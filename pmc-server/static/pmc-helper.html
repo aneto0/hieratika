@@ -21,6 +21,7 @@
                 url: "/submit",
                 data: {
                     token: currentToken,
+                    tid: remoteServerTid,
                     update: JSON.stringify(allPMCDataJSon)
                 },
                 success: function (response) {
@@ -171,12 +172,12 @@
                 var toPop = valuesToSynchroniseRemote.length;
                 if (toPop > 0) {
                     var scheduleToUpdate = {
+                        tid: remoteServerTid,
                         scheduleId:currentScheduleId,
                         values:valuesToSynchroniseRemote
                     }
                     var jSonData = {
                         token: currentToken,
-                        tid: remoteServerTid,
                         update: JSON.stringify(scheduleToUpdate)
                     }
                     var i = 0;
