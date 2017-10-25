@@ -199,8 +199,10 @@
 
                         this.copyFromReferencePlantButton = this.shadowRoot.querySelector("#cpyreferenceplantbtn");
                         this.copyFromReferencePlantButton.onclick = function () {
-                            $.each(allPMCComponents, function (i, pmcComp) {
-                                pmcComp.setValue(pmcComp.getPlantValue());
+                            $.each(allPMCComponents, function (i, pmcCompArray) {
+                                $.each(pmcCompArray, function (j, pmcComp) {
+                                    pmcComp.setValue(pmcComp.getPlantValue());
+                                });
                             });
                         }.bind(this);
 

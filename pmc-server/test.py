@@ -11,7 +11,6 @@ import json
 import uuid
 from flask import Flask, Response, request, send_from_directory
 from broadcastqueue import *
-from socket import *
 
 #Only log errors
 import logging
@@ -92,7 +91,6 @@ class Server:
     #Cleans the threadDBs, threadPlantQueues and threadScheduleQueues 
     def threadCleaner(self):
         db = self.getDB()
-        print self.alive
         while self.alive:
             time.sleep(5)
             for t in self.allThreads:
@@ -134,6 +132,7 @@ class Server:
         variables = db["variables"]
         row = variables.find_one(id=variableId)
         if (row is not None):
+            print variableId
             row["value"] = pickle.dumps(variableValue);
             variables.upsert(row, ["id"])
         return True
@@ -148,7 +147,6 @@ class Server:
         }
         scheduleVariables.upsert(row, ["variable_id", "schedule_id"])
         return True
-
 
     def streamData(self):
         tid = None
@@ -235,7 +233,6 @@ class Server:
                 "tid": request.form["tid"],
                 "variables": []
             }
-
             for variableId in jSonUpdateVariables.keys():
                 newValue = jSonUpdateVariables[variableId]
                 if(self.updatePlantVariablesDB(variableId, newValue)):

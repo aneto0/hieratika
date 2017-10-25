@@ -1,3 +1,4 @@
+import random
 import json
 #Manage an easier integration with SQLAlchemy
 import dataset
@@ -57,6 +58,7 @@ with open("plant-variables.json") as jsonFile:
                 "numberOfElements": pickle.dumps(variableJSon["numberOfElements"]),
                 "library": isLibrary,
                 "liveVariable": isLivePV 
+                "isStruct": False
             }
             variables.upsert(variable, ["id"])
             if "validation" in variableJSon:
@@ -221,4 +223,107 @@ with open("static/ps-example-2.html", "w") as f:
         f.write("<td><pmc-input id=\"" + varName + "\" name=\"" + varName + "\"></pmc-input></td>")
         idx = idx + 1
     f.write("</table>\n") 
+
+destPlantId = "PLANT3"
+newScheduleName = "schedule-4"
+newSchedulePage = "ps-example-3"
+newScheduleOwner = "codac-dev-1"
+
+db.begin()
+schedule = {
+    "user_id": newScheduleOwner,
+    "name": newScheduleName,
+    "description": "...",
+    "page_id": "ps-example-3"
+}
+schedules.insert(schedule)
+createdSchedule = schedules.find_one(user_id=schedule["user_id"], name=schedule["name"], page_id=schedule["page_id"])
+
+varId = "VAR1"
+structVarName = destPlantId + "::" + varId
+db.query("INSERT INTO variables(id, type, description, initialValue, numberOfElements, library, epicsPV, isStruct, value) VALUES ('" + structVarName + "', 'shape', 'A plasma shape', '', 1, 0, 0, 1, '')")
+    
+db.query("INSERT INTO permissions(variable_id, group_id) VALUES('" + structVarName + "','experts-1')")
+
+variable = {
+    "variable_id": structVarName,
+    "schedule_id": createdSchedule["id"],
+    "user_id": newScheduleOwner,
+    "value": ""
+}
+scheduleVariables.upsert(variable, ["variable_id", "schedule_id", "user_id"])
+
+varName = structVarName + "@gaps"
+db.query("INSERT INTO variables(id, type, description, initialValue, numberOfElements, library, epicsPV, isStruct, value) VALUES ('" + varName + "', 'gap', 'Plasma gaps', '', 8, 0, 0, 1, '')")
+    
+db.query("INSERT INTO permissions(variable_id, group_id) VALUES('" + varName + "','experts-1')")
+
+variable = {
+    "variable_id": varName,
+    "schedule_id": createdSchedule["id"],
+    "user_id": newScheduleOwner,
+    "value": ""
+}
+scheduleVariables.upsert(variable, ["variable_id", "schedule_id", "user_id"])
+
+idx = 0
+nGaps = 8
+gapCoords = ["x1", "y1", "x2", "y2"]
+while (idx < nGaps):
+    varNameGap = varName + "@" + str(idx)
+    db.query("INSERT INTO variables(id, type, description, initialValue, numberOfElements, library, epicsPV, isStruct, value) VALUES ('" + varNameGap + "', 'gap', 'Plasma gaps', '', 1, 0, 0, 1, '')")
+    
+    db.query("INSERT INTO permissions(variable_id, group_id) VALUES('" + varNameGap + "','experts-1')")
+
+    variable = {
+        "variable_id": varNameGap,
+        "schedule_id": createdSchedule["id"],
+        "user_id": newScheduleOwner,
+        "value": ""
+    }
+    scheduleVariables.upsert(variable, ["variable_id", "schedule_id", "user_id"])
+    for coord in gapCoords:
+        varNameGapF = varNameGap + "@" + coord
+        db.query("INSERT INTO variables(id, type, description, initialValue, numberOfElements, library, epicsPV, isStruct, value) VALUES ('" + varNameGapF + "', 'float32', '" + coord + "', '0', 1, 0, 0, 0, '" + pickle.dumps(random.uniform(0, 5)) + "')")
+        
+        db.query("INSERT INTO permissions(variable_id, group_id) VALUES('" + varNameGapF + "','experts-1')")
+
+        variable = {
+            "variable_id": varNameGapF,
+            "schedule_id": createdSchedule["id"],
+            "user_id": newScheduleOwner,
+            "value": "" + pickle.dumps(random.uniform(0, 5))
+        }
+        scheduleVariables.upsert(variable, ["variable_id", "schedule_id", "user_id"])
+    idx = idx + 1
+
+varName = structVarName + "@limiter"
+db.query("INSERT INTO variables(id, type, description, initialValue, numberOfElements, library, epicsPV, isStruct, value) VALUES ('" + varName + "', 'limiter', 'Plasma limiter', '', 1, 0, 0, 1, '')")
+    
+db.query("INSERT INTO permissions(variable_id, group_id) VALUES('" + varName + "','experts-1')")
+
+variable = {
+    "variable_id": varName,
+    "schedule_id": createdSchedule["id"],
+    "user_id": newScheduleOwner,
+    "value": ""
+}
+scheduleVariables.upsert(variable, ["variable_id", "schedule_id", "user_id"])
+
+varNameGap = varName
+for coord in gapCoords:
+    varNameGapF = varNameGap + "@" + coord
+    db.query("INSERT INTO variables(id, type, description, initialValue, numberOfElements, library, epicsPV, isStruct, value) VALUES ('" + varNameGapF + "', 'float32', '" + coord + "', '0', 1, 0, 0, 0, '" + pickle.dumps(random.uniform(0, 5)) + "')")
+        
+    db.query("INSERT INTO permissions(variable_id, group_id) VALUES('" + varNameGapF + "','experts-1')")
+
+    variable = {
+        "variable_id": varNameGapF,
+        "schedule_id": createdSchedule["id"],
+        "user_id": newScheduleOwner,
+        "value": "" + pickle.dumps(random.uniform(0, 5))
+    }
+    scheduleVariables.upsert(variable, ["variable_id", "schedule_id", "user_id"])
+
+db.commit()
 

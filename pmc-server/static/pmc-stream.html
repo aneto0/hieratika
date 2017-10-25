@@ -25,14 +25,16 @@
                         if ((!updateSchedule) || (scheduleId === currentScheduleId)) {
                             for (var i in variables) {
                                 var pv = variables[i];
-                                var targetElement = allPMCComponents[pv.variableId];
-                                if (targetElement !== undefined) {
-                                    if (updateSchedule) {
-                                        targetElement.setValue(pv.value, false);
-                                    }
-                                    else {
-                                        targetElement.setPlantValue(pv.value);
-                                    }
+                                var targetElements = allPMCComponents[pv.variableId];
+                                if (targetElements  !== undefined) {
+                                    $.each(targetElements, function (i, targetElement) {
+                                        if (updateSchedule) {
+                                            targetElement.setValue(pv.value, false);
+                                        }
+                                        else {
+                                            targetElement.setPlantValue(pv.value);
+                                        }
+                                    });
                                 }
                             }
                         }
