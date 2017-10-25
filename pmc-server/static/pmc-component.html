@@ -151,6 +151,13 @@
                 id:this.id,
                 value:valueToUpdate
             }
+            var othersSameId = allPMCComponents[this.id];
+            var otherPMCComp;
+            $.each(othersSameId, function (j, otherPMCComp) {
+                if(otherPMCComp !== this) {
+                    otherPMCComp.setValue(valueToUpdate, false);
+                } 
+            });
             valuesToSynchroniseRemote.push(valueToUpdate);
         }
 
@@ -190,7 +197,12 @@
                 root.appendChild(clone);
                 if (this.id !== undefined) {
                     if (this.id.length > 0) {
-                        allPMCComponents[this.id] = this;
+                        if(allPMCComponents[this.id] === undefined) {
+                            allPMCComponents[this.id] = [this];
+                        }
+                        else {
+                            allPMCComponents[this.id].push(this);
+                        }
                     }
                 }
             }

@@ -72,24 +72,26 @@
                                 var pvInfos = pvInfosJson["variables"];
                                 var user = JSON.parse(localStorage.user);
                                 $.each(pvInfos, function(i, pvInfo) {
-                                    var targetElement = allPMCComponents[pvInfo.variableId];
-                                    if (targetElement != null) {
-                                        targetElement.setTypeValue(pvInfo.type);
-                                        targetElement.setLibrary(pvInfo.library === true);
-                                        targetElement.setNumberOfElements(pvInfo.numberOfElements);
-                                        targetElement.setReference("none");
-                                        targetElement.setInitialValue(pvInfo.value);
-                                        targetElement.setPlantValue(pvInfo.value);
-                                        targetElement.setValidations(pvInfo.validation);
-                                        targetElement.setPermissionGroups(pvInfo.permissions);
-                                        var userAllowed = false;
-                                        for (var g in user.groups) {
-                                            userAllowed = pvInfo.permissions.includes(user.groups[g]); 
-                                            if (userAllowed) {
-                                                break;
+                                    var targetElements = allPMCComponents[pvInfo.variableId];
+                                    if (targetElements != null) {
+                                        $.each(targetElements, function (i, targetElement) {
+                                            targetElement.setTypeValue(pvInfo.type);
+                                            targetElement.setLibrary(pvInfo.library === true);
+                                            targetElement.setNumberOfElements(pvInfo.numberOfElements);
+                                            targetElement.setReference("none");
+                                            targetElement.setInitialValue(pvInfo.value);
+                                            targetElement.setPlantValue(pvInfo.value);
+                                            targetElement.setValidations(pvInfo.validation);
+                                            targetElement.setPermissionGroups(pvInfo.permissions);
+                                            var userAllowed = false;
+                                            for (var g in user.groups) {
+                                                userAllowed = pvInfo.permissions.includes(user.groups[g]); 
+                                                if (userAllowed) {
+                                                    break;
+                                                }
                                             }
-                                        }
-                                        targetElement.setUserAllowedToWrite(userAllowed);
+                                            targetElement.setUserAllowedToWrite(userAllowed);
+                                        });
                                     }
                                 });
                                 getAvailableLibraries();
@@ -117,8 +119,10 @@
 
                                     this.loadPlantInfo(); 
 
-                                    $.each(allPMCComponents, function (i, pmcComp) {
-                                        pmcComp.domLoaded();
+                                    $.each(allPMCComponents, function (i, pmcCompArray) {
+                                        $.each(pmcCompArray, function (j, pmcComp) {
+                                            pmcComp.domLoaded();
+                                        });
                                     });
 
                                 }.bind(this),
@@ -127,23 +131,6 @@
                                     alert(response);
                                 }
                             });
-
-                            /*var httpRequest = new XMLHttpRequest();
-                            httpRequest.onreadystatechange = function() {
-                                if (this.readyState == 4 && this.status == 200) {
-                                    allPMCComponents = {};
-
-                                    templateDiv.innerHTML = this.responseText;
-
-                                    this.loadPlantInfo().bind(this); 
-
-                                    $.each(allPMCComponents, function (i, pmcComp) {
-                                        pmcComp.domLoaded();
-                                    });
-                                }
-                            };
-                            httpRequest.open("GET", pageUrl , true);
-                            httpRequest.send();*/
                         }
                     }
    

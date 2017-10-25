@@ -14,7 +14,7 @@
         function loadIntoPlant() {
             var allPMCDataJSon = {};
             $.each(allPMCComponents, function (i, pmcComp) {
-                allPMCDataJSon[pmcComp.id] = pmcComp.getValue();
+                allPMCDataJSon[pmcComp[0].id] = pmcComp[0].getValue();
             });
             $.ajax({
                 type: "post",
@@ -28,8 +28,11 @@
                     if (response == "done") {
                         alert("Values updated successfully!");
                         var pmcComp;
-                        $.each(allPMCComponents, function (i, pmcComp) {
-                            pmcComp.setInitialValue(pmcComp.getValue());
+                        //The same id can be used to store multiple instances
+                        $.each(allPMCComponents, function (i, pmcCompArray) {
+                            $.each(pmcCompArray, function (j, pmcComp) {
+                                pmcComp.setInitialValue(pmcComp.getValue());
+                            });
                         });
                     } 
                     else {
@@ -45,18 +48,22 @@
 
         
         function displayPlant() {
-            $.each(allPMCComponents, function (i, pmcComp) {
-                pmcComp.setReadOnly(true);
-                pmcComp.setValue(pmcComp.getPlantValue(), false);
+            $.each(allPMCComponents, function (i, pmcCompArray) {
+                $.each(pmcCompArray, function (j, pmcComp) {
+                    pmcComp.setReadOnly(true);
+                    pmcComp.setValue(pmcComp.getPlantValue(), false);
+                });
             });
         }
 
         function getAvailableLibraries() {
             var allPMCLibVariablesJSon = [];
-            $.each(allPMCComponents, function (i, pmcComp) {
-                if (pmcComp.isLibrary()) {
-                    allPMCLibVariablesJSon.push(pmcComp.id);
-                }
+            $.each(allPMCComponents, function (i, pmcCompArray) {
+                $.each(pmcCompArray, function (j, pmcComp) {
+                    if (pmcComp.isLibrary()) {
+                        allPMCLibVariablesJSon.push(pmcComp.id);
+                    }
+                });
             });
 
             $.ajax({
@@ -70,9 +77,11 @@
                     var librariesJson = $.parseJSON(response);
                     var allLibraries = librariesJson["libraries"];
                     $.each(allLibraries, function(i, librariesJson) {
-                        var targetElement = allPMCComponents[librariesJson.variable];
-                        if (targetElement != null) {
-                            targetElement.availableLibraries = librariesJson.ids;
+                        var targetElements = allPMCComponents[librariesJson.variable];
+                        if (targetElements != null) {
+                            $.each(targetElements, function (i, pmcLibrary) {
+                                pmcLibrary.availableLibraries = librariesJson.ids;
+                            });
                         }
                     });
                 },
@@ -87,17 +96,21 @@
             if (currentReference === NONE_NAME) {
                 //Reset all the values to N/A
                 var pmcComp;
-                $.each(allPMCComponents, function (i, pmcComp) {
-                    pmcComp.setReferenceValue("N/A");
-                    pmcComp.setReference(currentReference);
+                $.each(allPMCComponents, function (i, pmcCompArray) {
+                    $.each(pmcCompArray, function (j, pmcComp) {
+                        pmcComp.setReferenceValue("N/A");
+                        pmcComp.setReference(currentReference);
+                    });
                 });
             }
             else if (currentReference === PLANT_NAME) {
                 //Reset all the values to N/A
                 var pmcComp;
                 $.each(allPMCComponents, function (i, pmcComp) {
-                    pmcComp.setReferenceValue(pmcComp.getPlantValue());
-                    pmcComp.setReference(currentReference);
+                    $.each(pmcCompArray, function (j, pmcComp) {
+                        pmcComp.setReferenceValue(pmcComp.getPlantValue());
+                        pmcComp.setReference(currentReference);
+                    });
                 });
             }
             else {
@@ -112,10 +125,12 @@
                         var variables = $.parseJSON(response);
                         var variable;
                         $.each(variables, function(i, variable) {
-                            var targetElement = allPMCComponents[variable.variableId];
-                            if (targetElement != null) {
-                                targetElement.setReferenceValue(variable.value);
-                                targetElement.setReference(currentReference);
+                            var targetElements = allPMCComponents[variable.variableId];
+                            if (targetElements != null) {
+                                $.each(targetElements, function (i, targetElement) {
+                                    targetElement.setReferenceValue(variable.value);
+                                    targetElement.setReference(currentReference);
+                                });
                             }
                         });
                     },
@@ -138,13 +153,15 @@
                 success: function (response) {
                     variables = $.parseJSON(response);
                     $.each(variables, function(i, variable) {
-                        var targetElement = allPMCComponents[variable.variableId];
-                        if (targetElement != null) {
-                            if (resetValue) {
-                                targetElement.setInitialValue(variable.value);
-                            }
-                            targetElement.setValue(variable.value, updateRemote);
-                            targetElement.setReadOnly(setReadOnly);
+                        var targetElements = allPMCComponents[variable.variableId];
+                        if (targetElements != null) {
+                            $.each(targetElements, function (i, targetElement) {
+                                if (resetValue) {
+                                    targetElement.setInitialValue(variable.value);
+                                }
+                                targetElement.setValue(variable.value, updateRemote);
+                                targetElement.setReadOnly(setReadOnly);
+                            });
                         }
                     });
                 },
@@ -156,14 +173,18 @@
         }
 
         function commitAllChangesToSchedule() {
-            $.each(allPMCComponents, function (i, pmcComp) {
-                pmcComp.setInitialValue(pmcComp.getValue());
+            $.each(allPMCComponents, function (i, pmcCompArray) {
+                $.each(pmcCompArray, function (j, pmcComp) {
+                    pmcComp.setInitialValue(pmcComp.getValue());
+                });
             });
         }
 
         function undoAllChangesToSchedule() {
-            $.each(allPMCComponents, function (i, pmcComp) {
-                pmcComp.setValue(pmcComp.getInitialValue());
+            $.each(allPMCComponents, function (i, pmcCompArray) {
+                $.each(pmcCompArray, function (j, pmcComp) {
+                    pmcComp.setValue(pmcComp.getInitialValue());
+                });
             });
         }
 
@@ -208,6 +229,7 @@
         //The thread identifier on the remote server which is sending events through the SSE. This is to avoid receiving updates from ourselves.
         var remoteServerTid = "";
         var valuesToSynchroniseRemote = [];
+        //The same component id in the dictionary can be used to store multiple instances, i.e. id : []
         var allPMCComponents = {};
         var currentScheduleId = undefined;
         var currentToken = undefined;
