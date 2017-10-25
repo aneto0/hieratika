@@ -1,156 +1,231 @@
 {
-    "plants" : [
+    "variables": [
         {
-            "variables": [
+            "name" : "PLANT1::VAR1",
+            "initialValue" : "1",
+            "type" : "int32",
+            "description" : "A variable",
+            "numberOfElements" : ["1"],
+            "library" : "false",
+            "liveVariable" : "true",
+            "validation" : [
                 {
-                    "name" : "PLANT1::VAR1",
-                    "initialValue" : "1",
-                    "type" : "int32",
-                    "numberOfElements" : "1",
-                    "library" : "false",
-                    "epicsPV" : "true",
-                    "validation" : [
-                        {
-                            "description": "Check the maximum value",
-                            "fun": "checkMax",
-                            "parameters": ["10"]
-                        },
-                        {
-                            "description": "Check the minimum value",
-                            "fun": "checkMin",
-                            "parameters": ["0"]
-                        },
-                        {
-                            "description": "Check the type",
-                            "fun": "checkType",
-                            "parameters": []
-                        }
-                    ]
+                    "description": "Check the maximum value",
+                    "fun": "checkMax",
+                    "parameters": ["10"]
                 },
                 {
-                    "name" : "PLANT1::VAR2",
-                    "initialValue" : "2",
-                    "type" : "float32",
-                    "numberOfElements" : "1",
-                    "library" : "false",
-                    "epicsPV" : "true",
-                    "validation" : [
-                        {
-                            "description": "Check the maximum value",
-                            "fun": "checkMax",
-                            "parameters": ["10"]
-                        },
-                        {
-                            "description": "Check the minimum value",
-                            "fun": "checkMin",
-                            "parameters": ["0"]
-                        },
-                        {
-                            "description": "Check the type",
-                            "fun": "checkType",
-                            "parameters": []
-                        }
-                    ]
+                    "description": "Check the minimum value",
+                    "fun": "checkMin",
+                    "parameters": ["0"]
                 },
                 {
-                    "name" : "PLANT1::VAR3",
-                    "initialValue" : "Example 1",
-                    "type" : "int32",
-                    "numberOfElements" : "5",
-                    "library" : "true",
-                    "epicsPV" : "true",
-                    "validation" : [
-                        {
-                            "description": "Check the maximum value",
-                            "fun": "checkMax",
-                            "parameters": ["10"]
-                        },
-                        {
-                            "description": "Check the minimum value",
-                            "fun": "checkMin",
-                            "parameters": ["-1"]
-                        },
-                        {
-                            "description": "Check the type",
-                            "fun": "checkType",
-                            "parameters": []
-                        }
-                    ]
+                    "description": "Check the type",
+                    "fun": "checkType",
+                    "parameters": []
+                }
+            ]
+        },
+        {
+            "name" : "PLANT1::VAR2",
+            "initialValue" : "2",
+            "type" : "float32",
+            "description" : "A variable",
+            "numberOfElements" : ["1"],
+            "library" : "false",
+            "liveVariable" : "true",
+            "validation" : [
+                {
+                    "description": "Check the maximum value",
+                    "fun": "checkMax",
+                    "parameters": ["10"]
                 },
                 {
-                    "name" : "PLANT1::VAR4",
-                    "initialValue" : "Example 3",
-                    "type" : "float32",
-                    "numberOfElements" : "3",
-                    "library" : "true",
-                    "epicsPV" : "true"
+                    "description": "Check the minimum value",
+                    "fun": "checkMin",
+                    "parameters": ["0"]
                 },
                 {
-                    "name" : "PLANT1::VAR5",
-                    "initialValue" : ["7", "8", "9", "0"],
-                    "type" : "float32",
-                    "numberOfElements" : "4",
-                    "library" : "false",
-                    "epicsPV" : "false",
-                    "validation" : [
-                        {
-                            "description": "Check the maximum value",
-                            "fun": "checkMax",
-                            "parameters": [["10", "11", "12", "13"]]
-                        },
-                        {
-                            "description": "Check the minimum value",
-                            "fun": "checkMin",
-                            "parameters": [["-1", "-2", "-3", "-4"]]
-                        },
-                        {
-                            "description": "Check the type",
-                            "fun": "checkType",
-                            "parameters": []
-                        }
-                    ]
+                    "description": "Check the type",
+                    "fun": "checkType",
+                    "parameters": []
+                }
+            ]
+        },
+        {
+            "name" : "PLANT1::VAR3",
+            "initialValue" : "Example 1",
+            "type" : "int32",
+            "description" : "A variable",
+            "numberOfElements" : ["5"],
+            "library" : "true",
+            "liveVariable" : "true",
+            "validation" : [
+                {
+                    "description": "Check the maximum value",
+                    "fun": "checkMax",
+                    "parameters": ["10"]
+                },
+                {
+                    "description": "Check the minimum value",
+                    "fun": "checkMin",
+                    "parameters": ["-1"]
+                },
+                {
+                    "description": "Check the type",
+                    "fun": "checkType",
+                    "parameters": []
+                }
+            ]
+        },
+        {
+            "name" : "PLANT1::VAR4",
+            "initialValue" : "Example 3",
+            "type" : "float32",
+            "description" : "A variable",
+            "numberOfElements" : ["3"],
+            "library" : "true",
+            "liveVariable" : "true"
+        },
+        {
+            "name" : "PLANT1::VAR5",
+            "initialValue" : ["7", "8", "9", "0"],
+            "type" : "float32",
+            "description" : "A variable",
+            "numberOfElements" : ["4"],
+            "library" : "false",
+            "liveVariable" : "false",
+            "validation" : [
+                {
+                    "description": "Check the maximum value",
+                    "fun": "checkMax",
+                    "parameters": [["10", "11", "12", "13"]]
+                },
+                {
+                    "description": "Check the minimum value",
+                    "fun": "checkMin",
+                    "parameters": [["-1", "-2", "-3", "-4"]]
+                },
+                {
+                    "description": "Check the type",
+                    "fun": "checkType",
+                    "parameters": []
+                }
+            ]
 
-                },
-                {
-                    "name" : "PLANT1::VAR6",
-                    "initialValue" : [["1"], ["1", "1"]],
-                    "type" : "float32",
-                    "numberOfElements" : ["1", "2"],
-                    "library" : "false",
-                    "epicsPV" : "false"
+        },
+        {
+            "name" : "PLANT1::VAR6",
+            "initialValue" : [["1"], ["1", "1"]],
+            "type" : "float32",
+            "description" : "A variable",
+            "numberOfElements" : ["1", "2"],
+            "library" : "false",
+            "liveVariable" : "false"
 
-                },
+        },
+        {
+            "name" : "PLANT1::VAR7",
+            "initialValue" : "Example 1",
+            "type" : "float32",
+            "description" : "A variable",
+            "numberOfElements" : ["1", "2"],
+            "library" : "true",
+            "liveVariable" : "false"
+        },
+        {
+            "name" : "PLANT1::VAR8",
+            "initialValue" : "Example 1",
+            "type" : "string",
+            "description" : "A variable",
+            "numberOfElements" : ["1"],
+            "library" : "true",
+            "liveVariable" : "false"
+        },
+        {
+            "name" : "PLANT1::VAR9",
+            "initialValue" : "Example 2",
+            "type" : "string",
+            "description" : "A variable",
+            "numberOfElements" : ["1"],
+            "library" : "true",
+            "liveVariable" : "false"
+        },
+        {
+            "name" : "PLANT1::VAR10",
+            "initialValue" : "Example 4",
+            "type" : "string",
+            "description" : "A variable",
+            "numberOfElements" : ["1"],
+            "library" : "true",
+            "liveVariable" : "false"
+        },
+        {
+            "name" : "PLANT1::VAR11",
+            "type" : "shape",
+            "isStruct" : "true",
+            "description" : "A variable",
+            "numberOfElements" : ["1"],
+            "library" : "false",
+            "liveVariable" : "false",
+            "members" : [
                 {
-                    "name" : "PLANT1::VAR7",
-                    "initialValue" : "Example 1",
-                    "type" : "float32",
-                    "numberOfElements" : ["1", "2"],
-                    "library" : "true",
-                    "epicsPV" : "false"
-                },
-                {
-                    "name" : "PLANT1::VAR8",
-                    "initialValue" : "Example 1",
-                    "type" : "string",
-                    "numberOfElements" : "1",
-                    "library" : "true",
-                    "epicsPV" : "false"
-                },
-                {
-                    "name" : "PLANT1::VAR9",
-                    "initialValue" : "Example 2",
-                    "type" : "string",
-                    "numberOfElements" : "1",
-                    "library" : "true",
-                    "epicsPV" : "false"
-                },
-                {
-                    "name" : "PLANT1::VAR10",
-                    "initialValue" : "Example 4",
-                    "type" : "string",
-                    "numberOfElements" : "1",
-                    "library" : "true",
-                    "epicsPV" : "false"
+                    "name": "gaps",
+                    "type" : "gap",
+                    "isStruct" : "true",
+                    "description" : "The gaps",
+                    "numberOfElements" : ["2"],
+                    "library" : "false",
+                    "liveVariable" : "false",
+                    "members" : [
+                        {
+                            "name" : "GAP1",
+                            "type" : "gap",
+                            "isStruct" : "true",
+                            "description" : "A variable",
+                            "numberOfElements" : ["1"],
+                            "library" : "false",
+                            "liveVariable" : "false",
+                            "members" : [
+                                {
+                                    "name" : "x0",
+                                    "type" : "float32",
+                                    "isStruct" : "false",
+                                    "description" : "The x0 coordinate",
+                                    "numberOfElements" : ["1"],
+                                    "library" : "false",
+                                    "liveVariable" : "false"
+                                },
+                                {
+                                    "name" : "y0",
+                                    "type" : "float32",
+                                    "isStruct" : "false",
+                                    "description" : "The y0 coordinate",
+                                    "numberOfElements" : ["1"],
+                                    "library" : "false",
+                                    "liveVariable" : "false"
+                                },
+                                {
+                                    "name" : "x1",
+                                    "type" : "float32",
+                                    "isStruct" : "false",
+                                    "description" : "The x1 coordinate",
+                                    "numberOfElements" : ["1"],
+                                    "library" : "false",
+                                    "liveVariable" : "false"
+                                },
+                                {
+                                    "name" : "y1",
+                                    "type" : "float32",
+                                    "isStruct" : "false",
+                                    "description" : "The y1 coordinate",
+                                    "numberOfElements" : ["1"],
+                                    "library" : "false",
+                                    "liveVariable" : "false"
+                                }
+                            ]
+                        }
+                    ]
                 }
             ]
         }

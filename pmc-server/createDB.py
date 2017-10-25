@@ -15,7 +15,7 @@ if not users.exists:
     
     db.query("CREATE TABLE pages (id TEXT, name TEXT, description TEXT, PRIMARY KEY (id))")
 
-    db.query("CREATE TABLE variables(id TEXT, type TEXT, description TEXT, initialValue TEXT, numberOfElements TEXT, library BOOLEAN, epicsPV BOOLEAN, value TEXT, PRIMARY KEY(id))")
+    db.query("CREATE TABLE variables(id TEXT, type TEXT, description TEXT, initialValue TEXT, numberOfElements TEXT, library BOOLEAN, liveVariable BOOLEAN, value TEXT, PRIMARY KEY(id))")
 
     db.query("CREATE TABLE permissions(variable_id TEXT, group_id TEXT NOT NULL, PRIMARY KEY(variable_id, group_id), FOREIGN KEY (variable_id) REFERENCES variables(id), FOREIGN KEY(group_id) REFERENCES groups(id))")
 
@@ -48,7 +48,7 @@ with open("plant-variables.json") as jsonFile:
         variablesJSon = plantJSon["variables"]
         for variableJSon in variablesJSon:
             isLibrary = (variableJSon["library"] == "true")
-            isEpicsPV = (variableJSon["epicsPV"] == "true")
+            isLivePV = (variableJSon["liveVariable"] == "true")
             variable = {
                 "id": variableJSon["name"],
                 "type": variableJSon["type"],
@@ -56,7 +56,7 @@ with open("plant-variables.json") as jsonFile:
                 "initialValue": pickle.dumps(variableJSon["initialValue"]),
                 "numberOfElements": pickle.dumps(variableJSon["numberOfElements"]),
                 "library": isLibrary,
-                "epicsPV": isEpicsPV 
+                "liveVariable": isLivePV 
             }
             variables.upsert(variable, ["id"])
             if "validation" in variableJSon:
@@ -187,7 +187,7 @@ createdSchedule = schedules.find_one(user_id=schedule["user_id"], name=schedule[
 while (idx < maxIdx):
     varId = "VAR" + str(idx)
     varName = destPlantId + "::" + varId
-    db.query("INSERT INTO variables(id, type, description, initialValue, numberOfElements, library, epicsPV, value) SELECT '" + varName + "', variables.type, variables.description, variables.initialValue, variables.numberOfElements, variables.library, 0, variables.value FROM variables WHERE variables.id='" + sourceVarId + "'")
+    db.query("INSERT INTO variables(id, type, description, initialValue, numberOfElements, library, liveVariable, value) SELECT '" + varName + "', variables.type, variables.description, variables.initialValue, variables.numberOfElements, variables.library, 0, variables.value FROM variables WHERE variables.id='" + sourceVarId + "'")
     db.query("INSERT INTO validations(fun, variable_id, description, parameters) SELECT validations.fun, '" + varName + "', validations.description, validations.parameters FROM validations WHERE validations.variable_id='" + sourceVarId + "'")
     
     db.query("INSERT INTO permissions(variable_id, group_id) VALUES('" + varName + "','experts-2')")

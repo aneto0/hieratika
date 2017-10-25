@@ -1,0 +1,22 @@
+CLASSPATH=.:gson-2.6.2.jar
+JFLAGS = 
+JC = javac
+JAVA = java
+BUILD_DIR = build
+
+.SUFFIXES: .java .class
+.java.class:
+	$(JC) $(JFLAGS) -cp $(CLASSPATH) -d $(BUILD_DIR) $*.java
+
+CLASSES = \
+	JavaToJson.java  \
+	PMCComponent.java  \
+	PMCGap.java  \
+	PMCShape.java 
+
+default: classes
+
+classes: $(CLASSES:.java=.class)
+
+clean:
+	$(RM) $(BUILD_DIR)/*.class
