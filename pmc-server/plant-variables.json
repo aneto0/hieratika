@@ -2,7 +2,7 @@
     "variables": [
         {
             "name" : "PLANT1::VAR1",
-            "initialValue" : "1",
+            "value" : "1",
             "type" : "int32",
             "description" : "A variable",
             "numberOfElements" : ["1"],
@@ -28,7 +28,7 @@
         },
         {
             "name" : "PLANT1::VAR2",
-            "initialValue" : "2",
+            "value" : "2",
             "type" : "float32",
             "description" : "A variable",
             "numberOfElements" : ["1"],
@@ -54,7 +54,7 @@
         },
         {
             "name" : "PLANT1::VAR3",
-            "initialValue" : "Example 1",
+            "value" : "Example 1",
             "type" : "int32",
             "description" : "A variable",
             "numberOfElements" : ["5"],
@@ -80,7 +80,7 @@
         },
         {
             "name" : "PLANT1::VAR4",
-            "initialValue" : "Example 3",
+            "value" : "Example 3",
             "type" : "float32",
             "description" : "A variable",
             "numberOfElements" : ["3"],
@@ -89,7 +89,7 @@
         },
         {
             "name" : "PLANT1::VAR5",
-            "initialValue" : ["7", "8", "9", "0"],
+            "value" : ["7", "8", "9", "0"],
             "type" : "float32",
             "description" : "A variable",
             "numberOfElements" : ["4"],
@@ -116,7 +116,7 @@
         },
         {
             "name" : "PLANT1::VAR6",
-            "initialValue" : [["1"], ["1", "1"]],
+            "value" : [["1"], ["1", "1"]],
             "type" : "float32",
             "description" : "A variable",
             "numberOfElements" : ["1", "2"],
@@ -126,7 +126,7 @@
         },
         {
             "name" : "PLANT1::VAR7",
-            "initialValue" : "Example 1",
+            "value" : "Example 1",
             "type" : "float32",
             "description" : "A variable",
             "numberOfElements" : ["1", "2"],
@@ -135,7 +135,7 @@
         },
         {
             "name" : "PLANT1::VAR8",
-            "initialValue" : "Example 1",
+            "value" : "Example 1",
             "type" : "string",
             "description" : "A variable",
             "numberOfElements" : ["1"],
@@ -144,7 +144,7 @@
         },
         {
             "name" : "PLANT1::VAR9",
-            "initialValue" : "Example 2",
+            "value" : "Example 2",
             "type" : "string",
             "description" : "A variable",
             "numberOfElements" : ["1"],
@@ -153,7 +153,7 @@
         },
         {
             "name" : "PLANT1::VAR10",
-            "initialValue" : "Example 4",
+            "value" : "Example 4",
             "type" : "string",
             "description" : "A variable",
             "numberOfElements" : ["1"],

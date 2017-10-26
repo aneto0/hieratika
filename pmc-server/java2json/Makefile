@@ -10,9 +10,10 @@ BUILD_DIR = build
 
 CLASSES = \
 	JavaToJson.java  \
-	PMCComponent.java  \
+	PMCVariable.java  \
 	PMCGap.java  \
-	PMCShape.java 
+	PMCShape.java \
+	Plant55A0.java
 
 default: classes
 
