@@ -38,10 +38,14 @@ def printVariable(variableJSon, fullVariableName = "", idx = ""):
                 if (memberId not in variableStandardKeys):
                     member = variableJSon[memberId]
                     memberIsArray = isinstance(member, list)
+                    memberIsArrayAnonymous = False
                     if (memberIsArray):
-                        variable["id"] = oVariableId + "@" + memberId
+                        memberIsArrayAnonymous = (memberId == "privateVec")
+                        if (memberIsArrayAnonymous):
+                            variable["id"] = oVariableId 
+                        else:
+                            variable["id"] = oVariableId + "@" + memberId
                         numberOfDimensions = list(numpy.shape(member))
-                        print numberOfDimensions
                     printVariable(member, variable["id"])
         print variable
 
@@ -51,5 +55,6 @@ jsonFileName = "/home/aneto/Projects/pmc-proto/pmc-server/java2json/Plant55A0.js
 with open(jsonFileName) as jsonFile:
     plantVariablesDBJSon = json.load(jsonFile)
     variablesJSon = plantVariablesDBJSon["variables"]
-    printVariable(variablesJSon[1])
+    for var in variablesJSon:
+        printVariable(var)
 

@@ -1,3 +1,5 @@
+import java.util.Vector;
+
 
 class PMCVariable {
 
@@ -13,6 +15,15 @@ class PMCVariable {
         this.validation = validation;
     }
 
+    /**
+     * @brief 
+     * @param[in] privateVec allows to register variables that are (multi-dimensional) arrays of structs.
+     */ 
+    public PMCVariable(String name, String description, String value, String type, int[] numberOfElements, boolean isStruct, boolean isLiveVariable, boolean isLibrary, PMCValidation[] validation, Vector privateVec) {
+        this(name, description, value, type, numberOfElements, isStruct, isLiveVariable, isLibrary, validation);
+        this.privateVec = privateVec;
+    }
+
     public String name;
     public String description;
     public String value;
@@ -22,5 +33,6 @@ class PMCVariable {
     public boolean isLibrary;
     public int[] numberOfElements;
     public PMCValidation[] validation;            
+    public Vector privateVec;
 }
 

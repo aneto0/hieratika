@@ -43,6 +43,7 @@ groups = db["groups"]
 groupMembers = db["group_members"]
 libraries = db["libraries"]
 
+'''
 with open("plant-variables.json") as jsonFile:
     plantVariablesDBJSon = json.load(jsonFile)
     for plantJSon in plantVariablesDBJSon["plants"]:
@@ -76,7 +77,7 @@ with open("plant-variables.json") as jsonFile:
                 "group_id": "experts-1"
             }
             permissions.upsert(permission, ["variable_id", "group_id"])
-
+'''
 
 user = {
     "id": "codac-dev-1",
@@ -127,7 +128,7 @@ page = {
 }
 pages.upsert(page, ["id"])
 
-
+'''
 with open("schedules.json") as jsonFile:
     schedulesDBJSon = json.load(jsonFile)
     schedulesJSon = schedulesDBJSon["schedules"]
@@ -150,7 +151,7 @@ with open("schedules.json") as jsonFile:
                 "value": pickle.dumps(variableJSon["value"])
             }
             scheduleVariables.upsert(variable, ["variable_id", "schedule_id"])
-
+'''
 with open("libraries.json") as jsonFile:
     librariesDBJSon = json.load(jsonFile)
     librariesJSon = librariesDBJSon["libraries"]
@@ -165,7 +166,7 @@ with open("libraries.json") as jsonFile:
                 "value": pickle.dumps(variableLibJSon["values"])
             }
             libraries.upsert(library, ["id", "variable_id", "user_id"])
-
+'''
 nCols = 10
 idx = 1
 maxIdx = 1000
@@ -326,4 +327,5 @@ for coord in gapCoords:
     scheduleVariables.upsert(variable, ["variable_id", "schedule_id", "user_id"])
 
 db.commit()
+'''
 

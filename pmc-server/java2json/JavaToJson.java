@@ -1,6 +1,7 @@
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
+import com.google.gson.GsonBuilder;
 import java.util.Vector;
 
 class Java2JSon {
@@ -8,7 +9,7 @@ class Java2JSon {
     Vector variables = new Vector();
 
     Java2JSon() {
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
         //variables.add(new PMCVariable("PLANT1::VAR1", "A variable", "1", "int32", new int[]{1}));
         

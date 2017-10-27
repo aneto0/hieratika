@@ -582,8 +582,8 @@ def tmp(filename):
 
 
 if __name__ == "__main__":
-    #print "WJASDAS"
     #Start with gunicorn -k gevent -w 16 -b 192.168.130.46:80 test
+    
     #server.start()
     #parser = argparse.ArgumentParser(description = "Flask http server to prototype ideas for ITER level-1")
     #parser.add_argument("-H", "--host", default="127.0.0.1", help="Server port")

@@ -8,7 +8,7 @@ class PMCGap extends PMCVariable {
             new PMCValidation("checkType", new String[]{}, "Check the type")});
         this.z0 = new PMCVariable("z0", "z location 0", "" + z0, "float32", new int[]{1}, false, false, false, new PMCValidation[]{
             new PMCValidation("checkType", new String[]{}, "Check the type")});
-        this.z1 = new PMCVariable("z0", "z location 1", "" + z1, "float32", new int[]{1}, false, false, false, new PMCValidation[]{
+        this.z1 = new PMCVariable("z1", "z location 1", "" + z1, "float32", new int[]{1}, false, false, false, new PMCValidation[]{
             new PMCValidation("checkType", new String[]{}, "Check the type")});
     }
 

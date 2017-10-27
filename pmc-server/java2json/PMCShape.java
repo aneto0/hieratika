@@ -9,7 +9,6 @@ class PMCShape extends PMCVariable {
             for(int j=0; j<this.testCube[i].length; j++) {
                 for(int k=0; k<this.testCube[i][j].length; k++) {
                     this.testCube[i][j][k] = new PMCGap("cube" + (i * this.testCube[i].length * this.testCube[i][j].length + j * this.testCube[i][j].length + k), "Test gap", false, false, i, j, k, 0);
-                    System.out.println(this.testCube[i][j][k].name);
                 }
             }
         }
