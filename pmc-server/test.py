@@ -48,15 +48,9 @@ class Server:
         db = self.getDB()
         variables = db["variables"]
         for variable in variables:
-            db.begin()
-            if ("value" not in variable) or (variable["value"] == None):
-                variable["value"] = variable["initialValue"]
-                variables.upsert(variable, ["id"])
-            db.commit()
-
-        if variable["epicsPV"] == 1:
-            pvName = variable["id"]
-            camonitor(pvName, None, pvValueChanged)
+            if variable["isLiveVariable"] == 1:
+                pvName = variable["id"]
+                camonitor(pvName, None, pvValueChanged)
 
         #Clean dead threads
         self.monitorThread = threading.Thread(target=self.threadCleaner)
@@ -177,6 +171,150 @@ class Server:
             #ignore
         print "BYE!!"
 
+    def rowToVariable(self, row, validations, permissions):
+        """Parses an sql row result into a proper variable structure (mostly needed to handle the pickle of value)
+        """
+        variable = row
+        variable["variableId"] = variable["id"]  
+        variable["isLibrary"] = (variable["isLibrary"] == 1)
+        if (variable["value"] != ""):
+            variable["value"] = pickle.loads(variable["value"])  
+        variable["numberOfElements"] = pickle.loads(variable["numberOfElements"])  
+        variable["validation"] = []  
+        validation = validations.find(variable_id=variable["id"])
+        for v in validation:
+            variable["validation"].append({
+                "description": v["description"],
+                "fun": v["fun"],
+                "parameters": pickle.loads(v["parameters"])
+            })
+
+        variable["permissions"] = []
+        permission = permissions.find(variable_id=variable["id"])
+        for p in permission:
+            variable["permissions"].append(p["group_id"])
+        
+        return variable
+
+    def isArray(self, numberOfElements):
+        """Helper function to check if a given variable is an array
+        """
+        variableIsArray = (len(numberOfElements) > 1)
+        if (not variableIsArray):
+            variableIsArray = (numberOfElements[0] > 1)
+        return variableIsArray
+
+
+    def getMaxLinearIndex(self, numberOfElements):
+        """Computes the maximum index in a multi-dimensional array
+           by multiplying all the dimensions
+        """
+        maxIdx = 1
+        for i,val in enumerate(numberOfElements):
+            maxIdx = maxIdx * numberOfElements[i]
+        return maxIdx
+
+    def getDividers(self, numberOfElements):
+        """Helper function for the transformation of a multi-dimensional
+           array into a linear one dimensional array
+        """
+        numberOfDimensions = len(numberOfElements)
+        dividers = []
+        for i, val in enumerate(numberOfElements):
+            j = i
+            divider = 1
+            while(j < numberOfDimensions):
+                divider = divider * numberOfElements[j]
+                j = j + 1
+            dividers.append(divider)
+        dividers = dividers[1:numberOfDimensions]
+        return dividers
+
+    def setAtArrayIndex(ret, variableId, value):
+        """Updates the ret multi-dimensional array with the input value.
+           The index in the multi-dimensional array is retrieved by parsing the variable id
+           e.g. VAR@3,4,2,3 => [3][4][2][3] in a 4-dim array
+        """
+        idxs = variableId.split("@")[-1].split(",")
+        for k, idx in enumerate(idxs):
+            if (k < (len(idxs) - 1)):
+                ret = ret[int(idx)]
+            else:
+                ret[int(idx)] = value
+
+    def getVariableInfo(self, variableId, variables, validations, permissions):
+        """Recursive function which retrieves the information of any multi-dimensional variable structure
+        """
+        #statement = "SELECT DISTINCT(id), numberOfElements, value, isStruct FROM variables WHERE id'" + variableId + "'"
+        statement = "SELECT * FROM variables WHERE id='" + variableId + "'"
+        row = variables.find_one(id=variableId)
+        variableNumberOfElements = pickle.loads(row["numberOfElements"])
+        variableIsArray = self.isArray(variableNumberOfElements) 
+        variableIsStruct = row["isStruct"]
+        ret = self.rowToVariable(row, validations, permissions)
+        if (variableIsStruct): 
+            if (variableIsArray):
+                ret = numpy.empty(variableNumberOfElements).tolist()
+            #statement = "SELECT DISTINCT(id), numberOfElements, value, isStruct FROM variables WHERE id LIKE '" + variableId + "@%' AND id NOT LIKE '" + variableId + "@%@%'"
+            statement = "SELECT * FROM variables WHERE id LIKE '" + variableId + "@%' AND id NOT LIKE '" + variableId + "@%@%'"
+            for row in db.query(statement):
+                memberNumberOfElements = pickle.loads(row["numberOfElements"])
+                variableId = row["id"]
+                memberId = variableId.split("@")[-1]
+                memberIsStruct = row["isStruct"]
+                memberIsArray = self.isArray(memberNumberOfElements)
+                if (memberIsStruct):
+                    if (memberIsArray):
+                        appendTo = numpy.empty(memberNumberOfElements).tolist()
+                        if (variableIsArray):
+                            self.setAtArrayIndex(ret, variableId, appendTo)
+                        else:
+                            ret[memberId] = appendTo
+                        idxStr = ""
+                        maxIdx = self.getMaxLinearIndex(memberNumberOfElements)
+                        dividers = self.getDividers(memberNumberOfElements)
+                        numberOfDimensions = len(memberNumberOfElements)
+                        idx = 0
+                        i = 0
+                        while i < maxIdx:
+                            j = 0
+                            while j < numberOfDimensions:
+                                dividerIdx = j % numberOfDimensions
+                                if (dividerIdx != (numberOfDimensions - 1)):
+                                    idx = i / dividers[dividerIdx]
+                                    idx = idx % memberNumberOfElements[j]
+                                else:
+                                    idx = i % memberNumberOfElements[dividerIdx]
+
+                                if (dividerIdx == 0):
+                                    idxStr = str(idx)
+                                else:
+                                    idxStr = idxStr + "," + str(idx)
+        
+                                if (dividerIdx == (numberOfDimensions - 1)):
+                                    variableIdIdx = variableId + "@" + idxStr
+                                    self.setAtArrayIndex(appendTo, variableIdIdx, getVariableInfo(variableIdIdx, variables, validations, permissions))
+                                    idxStr = ""
+                                j = j + 1
+                            i = i + 1
+                    else:
+                        if (variableIsArray):
+                            self.setAtArrayIndex(ret, variableId, getVariableInfo(variableId, variables, validations, permissions))
+                        else:
+                            ret[memberId] = self.getVariableInfo(variableId, variables, validations, permissions)
+                else:
+                    if (variableIsArray):
+                        #setAtArrayIndex(ret, variableId, pickle.loads(row["value"]))
+                        self.setAtArrayIndex(ret, variableId, self.rowToVariable(row, validations, permissions))
+                    else:
+                        #ret[memberId] = pickle.loads(row["value"])
+                        ret[memberId] = self.rowToVariable(row, validations, permissions)       
+            else:
+                #return pickle.loads(row["value"]) 
+                return self.rowToVariable(row, validations, permissions) 
+        return ret
+
+
     def getPlantInfo(self, request):
         db = self.getDB()
         variables = db["variables"]
@@ -193,28 +331,28 @@ class Server:
             jSonRequestedVariables = json.loads(requestedVariables)
             encodedPy = {"variables": [] }
             for variableId in jSonRequestedVariables:
-                variable = variables.find_one(id=variableId)
-                if (variable is not None):
-                    variable["variableId"] = variable["id"]  
-                    variable["library"] = (variable["library"] == 1)
-                    variable["initialValue"] = pickle.loads(variable["initialValue"])  
-                    variable["value"] = pickle.loads(variable["value"])  
-                    variable["numberOfElements"] = pickle.loads(variable["numberOfElements"])  
-                    variable["validation"] = []  
-                    validation = validations.find(variable_id=variable["id"])
-                    for v in validation:
-                        variable["validation"].append({
-                            "description": v["description"],
-                            "fun": v["fun"],
-                            "parameters": pickle.loads(v["parameters"])
-                        })
-
-                    variable["permissions"] = []
-                    permission = permissions.find(variable_id=variable["id"])
-                    for p in permission:
-                        variable["permissions"].append(p["group_id"])
-                    
-                    encodedPy["variables"].append(variable) 
+                variable = self.getVariableInfo(variableId, variables, validations, permissions)
+#                 variable = variables.find_one(id=variableId)
+#                 if (variable is not None):
+#                     variable["variableId"] = variable["id"]  
+#                     variable["library"] = (variable["library"] == 1)
+#                     variable["initialValue"] = pickle.loads(variable["initialValue"])  
+#                     variable["value"] = pickle.loads(variable["value"])  
+#                     variable["numberOfElements"] = pickle.loads(variable["numberOfElements"])  
+#                     variable["validation"] = []  
+#                     validation = validations.find(variable_id=variable["id"])
+#                     for v in validation:
+#                         variable["validation"].append({
+#                             "description": v["description"],
+#                             "fun": v["fun"],
+#                             "parameters": pickle.loads(v["parameters"])
+#                         })
+# 
+#                     variable["permissions"] = []
+#                     permission = permissions.find(variable_id=variable["id"])
+#                     for p in permission:
+#                         variable["permissions"].append(p["group_id"])
+                encodedPy["variables"].append(variable) 
             
 
             toReturn = json.dumps(encodedPy)

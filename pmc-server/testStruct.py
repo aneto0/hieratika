@@ -71,7 +71,8 @@ def getVariable(row):
     variable = row
     variable["variableId"] = variable["id"]  
     variable["isLibrary"] = (variable["isLibrary"] == 1)
-    variable["value"] = pickle.loads(variable["value"])  
+    if (variable["value"] != ""):
+        variable["value"] = pickle.loads(variable["value"])  
     variable["numberOfElements"] = pickle.loads(variable["numberOfElements"])  
     variable["validation"] = []  
     validation = validations.find(variable_id=variable["id"])
@@ -98,7 +99,7 @@ def getValue(variableId):
     variableIsArray = isArray(variableNumberOfElements) 
     variableIsStruct = row["isStruct"]
     if (variableIsStruct): 
-        ret = {}
+        ret = getVariable(row)
         if (variableIsArray):
             ret = numpy.empty(variableNumberOfElements).tolist()
         #statement = "SELECT DISTINCT(id), numberOfElements, value, isStruct FROM variables WHERE id LIKE '" + variableId + "@%' AND id NOT LIKE '" + variableId + "@%@%'"
@@ -164,7 +165,7 @@ if __name__ == "__main__":
     #NUMBER OF ELEMENTS = [DIM1 DIM2 DIM3...]
 #    v = getValue("55A0::VAR1")
 #    print v
-    v = getValue("55A0::VAR4@gaps@0")
+    v = getValue("55A0::VAR4")
 #    print v
 #    v = json.dumps(getValue("55A0::VAR5"))
     print json.dumps(v)
