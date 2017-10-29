@@ -95,13 +95,14 @@ def getValue(variableId):
     #statement = "SELECT DISTINCT(id), numberOfElements, value, isStruct FROM variables WHERE id'" + variableId + "'"
     statement = "SELECT * FROM variables WHERE id='" + variableId + "'"
     row = variables.find_one(id=variableId)
+    print row
     variableNumberOfElements = pickle.loads(row["numberOfElements"])
     variableIsArray = isArray(variableNumberOfElements) 
     variableIsStruct = row["isStruct"]
+    ret = getVariable(row)
     if (variableIsStruct): 
-        ret = getVariable(row)
-        if (variableIsArray):
-            ret = numpy.empty(variableNumberOfElements).tolist()
+        #if (variableIsArray):
+        #    ret = numpy.empty(variableNumberOfElements).tolist()
         #statement = "SELECT DISTINCT(id), numberOfElements, value, isStruct FROM variables WHERE id LIKE '" + variableId + "@%' AND id NOT LIKE '" + variableId + "@%@%'"
         statement = "SELECT * FROM variables WHERE id LIKE '" + variableId + "@%' AND id NOT LIKE '" + variableId + "@%@%'"
         for row in db.query(statement):
@@ -113,10 +114,10 @@ def getValue(variableId):
             if (memberIsStruct):
                 if (memberIsArray):
                     appendTo = numpy.empty(memberNumberOfElements).tolist()
-                    if (variableIsArray):
-                        setAtArrayIndex(ret, variableId, appendTo)
-                    else:
-                        ret[memberId] = appendTo
+                    #if (variableIsArray):
+                    #    setAtArrayIndex(ret, variableId, appendTo)
+                    #else:
+                    ret[memberId] = appendTo
                     idxStr = ""
                     maxIdx = getMaxLinearIndex(memberNumberOfElements)
                     dividers = getDividers(memberNumberOfElements)
@@ -165,7 +166,7 @@ if __name__ == "__main__":
     #NUMBER OF ELEMENTS = [DIM1 DIM2 DIM3...]
 #    v = getValue("55A0::VAR1")
 #    print v
-    v = getValue("55A0::VAR4")
+    v = getValue("55A0::VAR5")
 #    print v
 #    v = json.dumps(getValue("55A0::VAR5"))
     print json.dumps(v)

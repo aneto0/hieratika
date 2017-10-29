@@ -9,6 +9,7 @@ from epics import caget, caput, camonitor
 import time
 import json
 import uuid
+import numpy
 from flask import Flask, Response, request, send_from_directory
 from broadcastqueue import *
 
@@ -126,7 +127,6 @@ class Server:
         variables = db["variables"]
         row = variables.find_one(id=variableId)
         if (row is not None):
-            print variableId
             row["value"] = pickle.dumps(variableValue);
             variables.upsert(row, ["id"])
         return True
@@ -230,7 +230,7 @@ class Server:
         dividers = dividers[1:numberOfDimensions]
         return dividers
 
-    def setAtArrayIndex(ret, variableId, value):
+    def setAtArrayIndex(self, ret, variableId, value):
         """Updates the ret multi-dimensional array with the input value.
            The index in the multi-dimensional array is retrieved by parsing the variable id
            e.g. VAR@3,4,2,3 => [3][4][2][3] in a 4-dim array
@@ -245,16 +245,19 @@ class Server:
     def getVariableInfo(self, variableId, variables, validations, permissions):
         """Recursive function which retrieves the information of any multi-dimensional variable structure
         """
+        db = self.getDB()
         #statement = "SELECT DISTINCT(id), numberOfElements, value, isStruct FROM variables WHERE id'" + variableId + "'"
-        statement = "SELECT * FROM variables WHERE id='" + variableId + "'"
         row = variables.find_one(id=variableId)
-        variableNumberOfElements = pickle.loads(row["numberOfElements"])
-        variableIsArray = self.isArray(variableNumberOfElements) 
+        if (row["numberOfElements"] != ""):
+            variableNumberOfElements = pickle.loads(row["numberOfElements"])
+        else:
+            variableNumberOfElements = []
+        #variableIsArray = self.isArray(variableNumberOfElements) 
         variableIsStruct = row["isStruct"]
         ret = self.rowToVariable(row, validations, permissions)
         if (variableIsStruct): 
-            if (variableIsArray):
-                ret = numpy.empty(variableNumberOfElements).tolist()
+            #if (variableIsArray):
+            #    ret = numpy.empty(variableNumberOfElements).tolist()
             #statement = "SELECT DISTINCT(id), numberOfElements, value, isStruct FROM variables WHERE id LIKE '" + variableId + "@%' AND id NOT LIKE '" + variableId + "@%@%'"
             statement = "SELECT * FROM variables WHERE id LIKE '" + variableId + "@%' AND id NOT LIKE '" + variableId + "@%@%'"
             for row in db.query(statement):
@@ -266,10 +269,10 @@ class Server:
                 if (memberIsStruct):
                     if (memberIsArray):
                         appendTo = numpy.empty(memberNumberOfElements).tolist()
-                        if (variableIsArray):
-                            self.setAtArrayIndex(ret, variableId, appendTo)
-                        else:
-                            ret[memberId] = appendTo
+                        #if (variableIsArray):
+                        #    self.setAtArrayIndex(ret, variableId, appendTo)
+                        #else:
+                        ret[memberId] = appendTo
                         idxStr = ""
                         maxIdx = self.getMaxLinearIndex(memberNumberOfElements)
                         dividers = self.getDividers(memberNumberOfElements)
@@ -293,25 +296,25 @@ class Server:
         
                                 if (dividerIdx == (numberOfDimensions - 1)):
                                     variableIdIdx = variableId + "@" + idxStr
-                                    self.setAtArrayIndex(appendTo, variableIdIdx, getVariableInfo(variableIdIdx, variables, validations, permissions))
+                                    self.setAtArrayIndex(appendTo, variableIdIdx, self.getVariableInfo(variableIdIdx, variables, validations, permissions))
                                     idxStr = ""
                                 j = j + 1
                             i = i + 1
                     else:
-                        if (variableIsArray):
-                            self.setAtArrayIndex(ret, variableId, getVariableInfo(variableId, variables, validations, permissions))
-                        else:
-                            ret[memberId] = self.getVariableInfo(variableId, variables, validations, permissions)
+                        #if (variableIsArray):
+                        #    self.setAtArrayIndex(ret, variableId, self.getVariableInfo(variableId, variables, validations, permissions))
+                        #else:
+                        ret[memberId] = self.getVariableInfo(variableId, variables, validations, permissions)
                 else:
-                    if (variableIsArray):
+                    #if (variableIsArray):
                         #setAtArrayIndex(ret, variableId, pickle.loads(row["value"]))
-                        self.setAtArrayIndex(ret, variableId, self.rowToVariable(row, validations, permissions))
-                    else:
+                    #    self.setAtArrayIndex(ret, variableId, self.rowToVariable(row, validations, permissions))
+                    #else:
                         #ret[memberId] = pickle.loads(row["value"])
-                        ret[memberId] = self.rowToVariable(row, validations, permissions)       
-            else:
-                #return pickle.loads(row["value"]) 
-                return self.rowToVariable(row, validations, permissions) 
+                    ret[memberId] = self.rowToVariable(row, validations, permissions)       
+        #else:
+            #return pickle.loads(row["value"]) 
+            #return self.rowToVariable(row, validations, permissions) 
         return ret
 
 

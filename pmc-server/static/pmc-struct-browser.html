@@ -1,0 +1,41 @@
+<html>
+    <head>
+        <link rel="import" href="libraries.html">
+        <link rel="import" href="pmc-component.html">
+        <link rel="import" href="pmc-input.html">
+    </head>
+    <body>
+        <template id="tstructbrowser">
+            <div id="dstructbrowser"></div>
+        </template>
+
+        <script>
+            //This is enclosure is required to protect the importDoc
+            (function () {
+                var importDoc = document.currentScript.ownerDocument; // importee
+                //Constructor
+                class PMCStructBrowser extends PMCComponent {
+                    constructor() {
+                        super();
+                    }
+
+                    createdCallback () {
+                        super.createdCallback();
+                        this.mainDiv = this.shadowRoot.querySelector("#dstructbrowser");
+                    }
+                    
+                    getTemplate() {
+                        var template = importDoc.querySelector("#tstructbrowser");
+                        return template;
+                    }
+
+                    infoLoaded () {
+                    }
+                }
+                document.registerElement("pmc-struct-browser", {
+                    prototype: PMCStructBrowser.prototype,
+                });
+            })(); 
+        </script>
+    </body>
+</html>

@@ -55,6 +55,41 @@
                         }
                     }
 
+                    populateComponentInfo(component, pvInfo, user) {
+                        component.setTypeValue(pvInfo.type);
+                        component.setLibrary(pvInfo.library === true);
+                        component.setNumberOfElements(pvInfo.numberOfElements);
+                        component.setReference("none");
+                        component.setInitialValue(pvInfo.value);
+                        component.setPlantValue(pvInfo.value);
+                        component.setValidations(pvInfo.validation);
+                        component.setPermissionGroups(pvInfo.permissions);
+                        var userAllowed = false;
+                        for (var g in user.groups) {
+                            userAllowed = pvInfo.permissions.includes(user.groups[g]); 
+                            if (userAllowed) {
+                                break;
+                            }
+                        }
+                        component.setUserAllowedToWrite(userAllowed);
+                        //Loop through all the elements
+                        var keys = Object.keys(pvInfo); 
+                        for (var keyIdx in keys) { 
+                            var memberId = keys[keyIdx];
+                            var memberPVInfo = pvInfo[memberId];
+                            var memberVariableId = memberPVInfo["variableId"];
+                            if (memberVariableId === undefined) {
+                                if (Array.isArray(memberPVInfo)) {
+                                    component[memberId] = memberPVInfo;
+                                }
+                            }
+                            else {
+                                component[memberVariableId] = memberPVInfo;
+                            }
+                        }
+                        component.infoLoaded();
+                    }
+
                     loadPlantInfo() {
                         var allVariableIds = [];
                         for (var k in allPMCComponents) {
@@ -71,29 +106,15 @@
                                 var pvInfosJson = $.parseJSON(response);
                                 var pvInfos = pvInfosJson["variables"];
                                 var user = JSON.parse(localStorage.user);
-                                $.each(pvInfos, function(i, pvInfo) {
+                                for (var i in pvInfos) {
+                                    var pvInfo = pvInfos[i];
                                     var targetElements = allPMCComponents[pvInfo.variableId];
                                     if (targetElements != null) {
-                                        $.each(targetElements, function (i, targetElement) {
-                                            targetElement.setTypeValue(pvInfo.type);
-                                            targetElement.setLibrary(pvInfo.library === true);
-                                            targetElement.setNumberOfElements(pvInfo.numberOfElements);
-                                            targetElement.setReference("none");
-                                            targetElement.setInitialValue(pvInfo.value);
-                                            targetElement.setPlantValue(pvInfo.value);
-                                            targetElement.setValidations(pvInfo.validation);
-                                            targetElement.setPermissionGroups(pvInfo.permissions);
-                                            var userAllowed = false;
-                                            for (var g in user.groups) {
-                                                userAllowed = pvInfo.permissions.includes(user.groups[g]); 
-                                                if (userAllowed) {
-                                                    break;
-                                                }
-                                            }
-                                            targetElement.setUserAllowedToWrite(userAllowed);
-                                        });
+                                        for (var j in targetElements) {
+                                            this.populateComponentInfo(targetElements[j], pvInfo, user);                    
+                                        }
                                     }
-                                });
+                                }
                                 getAvailableLibraries();
 
                                 this.firePlantInfoLoaded();
