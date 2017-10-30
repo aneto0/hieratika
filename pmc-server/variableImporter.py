@@ -85,12 +85,7 @@ def importVariable(variableJSon, variablesDB, validationsDB, permissionsDB, grou
                     dimensions = []
                     member = variableJSon[memberId]
                     memberIsArray = isinstance(member, list)
-                    memberIsArrayAnonymous = False
                     if (memberIsArray):
-                        #memberIsArrayAnonymous = (memberId == "privateVec")
-                        #if (memberIsArrayAnonymous):
-                        #    variableId = oVariableId 
-                        #else:
                         variableId = oVariableId + "@" + memberId
                         dimensions = list(numpy.shape(member))
                         #Declare the array (the type will be discovered later (it will be the type of the first element), see above)

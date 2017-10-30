@@ -625,6 +625,7 @@ class Server:
                 jSonRequestedVariables = json.loads(request.form["variables"])
                 for variableId in jSonRequestedVariables:
                     db.query("INSERT INTO schedule_variables(variable_id, schedule_id, value) SELECT '" + variableId + "','" + str(createdSchedule["id"]) + "', variables.value FROM variables WHERE id='" + variableId + "'")
+                db.query("DELETE FROM schedule_variables WHERE schedule_id='" + str(createdSchedule["id"]) + "' AND value=''")
                 db.commit()
                 
             toReturn = "ok"

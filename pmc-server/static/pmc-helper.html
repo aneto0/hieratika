@@ -106,7 +106,7 @@
             else if (currentReference === PLANT_NAME) {
                 //Reset all the values to N/A
                 var pmcComp;
-                $.each(allPMCComponents, function (i, pmcComp) {
+                $.each(allPMCComponents, function (i, pmcCompArray) {
                     $.each(pmcCompArray, function (j, pmcComp) {
                         pmcComp.setReferenceValue(pmcComp.getPlantValue());
                         pmcComp.setReference(currentReference);

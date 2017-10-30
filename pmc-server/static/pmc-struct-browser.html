@@ -6,6 +6,22 @@
     </head>
     <body>
         <template id="tstructbrowser">
+            <style>
+                .collapsibleList li{
+                  list-style-image : url('icons/tree-item-8.png');
+                  cursor           : auto;
+                }
+
+                li.collapsibleListOpen{
+                  list-style-image : url('icons/tree-close-8.png');
+                  cursor           : pointer;
+                }
+
+                li.collapsibleListClosed{
+                  list-style-image : url('icons/tree-open-8.png');
+                  cursor           : pointer;
+                }
+            </style>
             <div id="dstructbrowser"></div>
         </template>
 
@@ -22,8 +38,8 @@
                     createdCallback () {
                         super.createdCallback();
                         this.mainDiv = this.shadowRoot.querySelector("#dstructbrowser");
-
-                        this.privateStructIds = ["numberOfElements", "validation", "permissions"];
+                        this.treeHTML = "";
+                        this.privateStructIds = ["numberOfElements", "validations", "validation", "permissions", "valueChangedListeners", "permissionGroups", "privateStructIds"];
                     }
                     
                     getTemplate() {
@@ -31,47 +47,115 @@
                         return template;
                     }
 
-                    addMember(member) {
-                        if (Array.isArray(member)) {
-                            if (!this.privateStructIds.includes(memberId)) {
-                                this.mainDiv.innerHTML += "<ul>\n";
-                                for (var i in member) {
-                                    this.mainDiv.innerHTML += "<li>\n";
-                                    this.mainDiv.innerHTML += i + " ";
-                                    this.addMember(member[i]);
-                                    this.mainDiv.innerHTML += "</li>\n";
+                    addMember(member, callerMemberId = undefined) {
+                        if (member !== undefined) {
+                            if (Array.isArray(member)) {
+                                if (callerMemberId !== undefined) {
+                                    this.treeHTML += "<li>\n";
+                                    this.treeHTML += callerMemberId;
+                                    this.treeHTML += "</li>\n";
                                 }
-                                this.mainDiv.innerHTML += "</ul>\n";
+                                this.treeHTML += "<ul>\n";
+                                for (var i in member) {
+                                    this.treeHTML += "<li>\n";
+                                    this.treeHTML += i + " ";
+                                    this.addMember(member[i]);
+                                    this.treeHTML += "</li>\n";
+                                }
+                                this.treeHTML += "</ul>\n";
+                            }
+                            else {
+                                var memberId = member["variableId"];
+                                if (memberId !== undefined) {
+                                    var isStruct = member["isStruct"];
+                                    if (isStruct === true) {
+                                        var membersIds = Object.keys(member);
+                                        if (memberId !== this.id) {
+                                            this.treeHTML += "<ul>\n";
+                                            this.treeHTML += "<li>\n";
+                                            this.treeHTML += memberId;
+                                            this.treeHTML += "<ul>\n";
+                                        }
+                                        for (var i in membersIds) {
+                                            var subMemberId = membersIds[i];
+                                            if (!this.privateStructIds.includes(subMemberId)) {
+                                                this.addMember(member[subMemberId], subMemberId);
+                                            }
+                                        } 
+                                        if (memberId !== this.id) {
+                                            this.treeHTML += "</ul>\n";
+                                            this.treeHTML += "</li>\n";
+                                            this.treeHTML += "</ul>\n";
+                                        }
+                                    }
+                                    else {
+                                        this.treeHTML += "<li>\n";
+                                        var memberIdValidCSS = "P" + memberId.replace(/[|&;$%@"<>()+,]/g, "");
+                                        memberIdValidCSS = memberIdValidCSS.replace(/:/g, "");
+                                        this.treeHTML += memberId + ": <pmc-input id=\"" + memberId + "\" name=\"" + memberId + "\" class=\"" + memberIdValidCSS + "\">\n";
+                                        this.treeHTML += "</li>\n";
+                                    }
+                                }
                             }
                         }
-                        else {
-                            var memberId = member["variableId"];
-                            if (memberId !== undefined) {
-                                var isStruct = member["isStruct"];
-                                if (isStruct === true) {
-                                    var membersIds = Object.keys(member);
-                                    this.mainDiv.innerHTML += "<ul>\n";
-                                    this.mainDiv.innerHTML += "<li>\n";
-                                    this.mainDiv.innerHTML += memberId + ": ";
-                                    for (var i in membersIds) {
-                                        this.addMember(member[membersIds[i]]);
-                                    } 
-                                    this.mainDiv.innerHTML += "</li>\n";
-                                    this.mainDiv.innerHTML += "</ul>\n";
+                    }
+        
+                    populateComponentInfo(member, user) {
+                        if (member !== undefined) {
+                            if (Array.isArray(member)) {
+                                for (var i in member) {
+                                    this.populateComponentInfo(member[i], user);
                                 }
-                                else {
-                                    this.mainDiv.innerHTML += "<li>\n";
-                                    this.mainDiv.innerHTML += memberId + ": <pmc-input id=\"" + memberId + "\" name=\"" + memberId + "\">\n";
-                                    this.mainDiv.innerHTML += "</li>\n";
+                            }
+                            else {
+                                var memberId = member["variableId"];
+                                if (memberId !== undefined) {
+                                    var isStruct = member["isStruct"];
+                                    if (isStruct === true) {
+                                        var membersIds = Object.keys(member);
+                                        for (var i in membersIds) {
+                                            var subMemberId = membersIds[i];
+                                            if (!this.privateStructIds.includes(subMemberId)) {
+                                                this.populateComponentInfo(member[subMemberId], user);
+                                            }
+                                        } 
+                                    }
+                                    else {
+                                        var memberIdValidCSS = ".P" + memberId.replace(/[|&;$%@"<>()+,]/g, "");
+                                        memberIdValidCSS = memberIdValidCSS.replace(/:/g, "");
+                                        var compMember = this.shadowRoot.querySelector(memberIdValidCSS);
+                                        compMember.setTypeValue(member.type);
+                                        compMember.setLibrary(member.library === true);
+                                        compMember.setNumberOfElements(member.numberOfElements);
+                                        compMember.setReference("none");
+                                        compMember.setInitialValue(member.value);
+                                        compMember.setPlantValue(member.value);
+                                        compMember.setValidations(member.validation);
+                                        compMember.setPermissionGroups(member.permissions);
+                                        var userAllowed = false;
+                                        for (var g in user.groups) {
+                                            userAllowed = member.permissions.includes(user.groups[g]); 
+                                            if (userAllowed) {
+                                                break;
+                                            }
+                                        }
+                                        compMember.setUserAllowedToWrite(userAllowed);
+                                    }
                                 }
                             }
                         }
                     }
 
                     infoLoaded () {
-                        this.mainDiv.innerHTML = "";
                         this.variableId = this.id;
+                        this.treeHTML = "<ul class=\"collapsibleList\" id=\"struct-tree\">";
                         this.addMember(this);
+                        this.treeHTML += "</ul>";
+                        this.mainDiv.innerHTML = this.treeHTML;
+                        var user = JSON.parse(localStorage.user);
+                        this.populateComponentInfo(this, user);
+                        var tree = this.shadowRoot.querySelector("#struct-tree");
+                        CollapsibleLists.applyTo(tree);
                     }
                 }
                 document.registerElement("pmc-struct-browser", {
