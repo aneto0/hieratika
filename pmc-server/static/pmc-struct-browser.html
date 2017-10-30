@@ -22,6 +22,8 @@
                     createdCallback () {
                         super.createdCallback();
                         this.mainDiv = this.shadowRoot.querySelector("#dstructbrowser");
+
+                        this.privateStructIds = ["numberOfElements", "validation", "permissions"];
                     }
                     
                     getTemplate() {
@@ -29,7 +31,43 @@
                         return template;
                     }
 
+                    addMember(member) {
+                        if (Array.isArray(member)) {
+                            if (!privateStructIds.includes(memberId)) {
+                                this.mainDiv.innerHTML += "<ul>\n";
+                                for (var i in member) {
+                                    this.mainDiv.innerHTML += "<li>\n";
+                                    this.mainDiv.innerHTML += i + " ";
+                                    addMember(member[i]);
+                                    this.mainDiv.innerHTML += "</li>\n";
+                                }
+                                this.mainDiv.innerHTML += "</ul>\n";
+                            }
+                        }
+                        else {
+                            if (memberId !== undefined) {
+                                var memberId = member["variableId"];
+                                var isStruct = member["isStruct"];
+                                if (isStruct === true) {
+                                    var members = member.keys();
+                                    this.mainDiv.innerHTML += "<ul>\n";
+                                    for (var i in members) {
+                                        addMember(members[i]);
+                                    } 
+                                    this.mainDiv.innerHTML += "</ul>\n";
+                                }
+                                else {
+                                    this.mainDiv.innerHTML += "<li>\n";
+                                    this.mainDiv.innerHTML += memberId + ": <pmc-input id=\"" + memberId + "\" name=\"" + memberId + "\">\n";
+                                    this.mainDiv.innerHTML += "</li>\n";
+                                }
+                            }
+                        }
+                    }
+
                     infoLoaded () {
+                        this.mainDiv.innerHTML = "";
+                        addMember(this);
                     }
                 }
                 document.registerElement("pmc-struct-browser", {
