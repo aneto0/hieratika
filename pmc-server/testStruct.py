@@ -1,4 +1,5 @@
 #!/usr/bin/python
+
 import argparse
 import os
 import pickle
@@ -166,7 +167,7 @@ if __name__ == "__main__":
     #NUMBER OF ELEMENTS = [DIM1 DIM2 DIM3...]
 #    v = getValue("55A0::VAR1")
 #    print v
-    v = getValue("55A0::VAR5")
+    v = getValue("55A0::VAR4")
 #    print v
 #    v = json.dumps(getValue("55A0::VAR5"))
     print json.dumps(v)

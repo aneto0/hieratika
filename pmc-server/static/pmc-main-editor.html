@@ -86,10 +86,10 @@
                                 component.isStruct = true;
                             }
                             else {
-                                component[memberVariableId] = memberPVInfo;
-                                component.isStruct = true;
+                                component[memberId] = memberPVInfo;
                             }
                         }
+                        component.setValue(component.value);
                         component.infoLoaded();
                     }
 

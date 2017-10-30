@@ -16,7 +16,8 @@ class Java2JSon {
         //variables.add(new PMCShape("PLANT1::VAR11", "A Shape", gaps));
        
         //variables.add(new Plant55A0()); 
-        Plant55A0 plant = new Plant55A0(variables);
+        //Plant55A0 plant = new Plant55A0(variables);
+        PlantDEMO0 plant = new PlantDEMO0(variables);
         String json = gson.toJson(this);
         System.out.println(json);
     }

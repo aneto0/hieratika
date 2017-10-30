@@ -39,7 +39,7 @@
                         super.createdCallback();
                         this.mainDiv = this.shadowRoot.querySelector("#dstructbrowser");
                         this.treeHTML = "";
-                        this.privateStructIds = ["numberOfElements", "validations", "validation", "permissions", "valueChangedListeners", "permissionGroups", "privateStructIds"];
+                        this.privateStructIds = ["numberOfElements", "validations", "validation", "permissions", "valueChangedListeners", "permissionGroups", "privateStructIds", "initValue", "plantValue", "value"];
                     }
                     
                     getTemplate() {
@@ -50,10 +50,10 @@
                     addMember(member, callerMemberId = undefined) {
                         if (member !== undefined) {
                             if (Array.isArray(member)) {
-                                if (callerMemberId !== undefined) {
+                                if ((callerMemberId !== undefined) && (callerMemberId !== "_private_vec_")) {
+                                    this.treeHTML += "<ul>\n";
                                     this.treeHTML += "<li>\n";
                                     this.treeHTML += callerMemberId;
-                                    this.treeHTML += "</li>\n";
                                 }
                                 this.treeHTML += "<ul>\n";
                                 for (var i in member) {
@@ -63,6 +63,10 @@
                                     this.treeHTML += "</li>\n";
                                 }
                                 this.treeHTML += "</ul>\n";
+                                if ((callerMemberId !== undefined) && (callerMemberId !== "_private_vec_")) {
+                                    this.treeHTML += "</li>\n";
+                                    this.treeHTML += "</ul>\n";
+                                }
                             }
                             else {
                                 var memberId = member["variableId"];
@@ -73,7 +77,12 @@
                                         if (memberId !== this.id) {
                                             this.treeHTML += "<ul>\n";
                                             this.treeHTML += "<li>\n";
-                                            this.treeHTML += memberId;
+                                            if (callerMemberId !== undefined) {
+                                                this.treeHTML += callerMemberId;
+                                            }
+                                            else {
+                                                this.treeHTML += memberId;
+                                            }
                                             this.treeHTML += "<ul>\n";
                                         }
                                         for (var i in membersIds) {

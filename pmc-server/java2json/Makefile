@@ -13,6 +13,7 @@ CLASSES = \
 	PMCVariable.java  \
 	PMCGap.java  \
 	PMCShape.java \
+	PlantDEMO0.java \
 	Plant55A0.java
 
 default: classes

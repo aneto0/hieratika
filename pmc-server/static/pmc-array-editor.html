@@ -114,8 +114,8 @@
                     }
 
                     refresh() {
-                        if (this.value !== undefined) {
-                            var elementsToSet = this.value;
+                        if (this.getValue() !== undefined) {
+                            var elementsToSet = this.getValue();
                             var row = this.tbl.rows[0];
                             var createRow = false;
                             if ((row.cells.length !== elementsToSet.length)) {
@@ -147,7 +147,47 @@
                     
                     setValue (elementsToSet, updateRemote=true) {
                         //Make a shallow copy!
-                        super.setValue(elementsToSet.slice(0), updateRemote);
+                        if (elementsToSet.length > 0) {
+                            if (elementsToSet[0].length !== undefined) {
+                                super.setValue(elementsToSet[0].slice(0), updateRemote);
+                            }
+                            else {
+                                super.setValue(elementsToSet.slice(0), updateRemote);
+                            }
+                        }
+                    }
+
+                    setInitialValue (initialValueToSet) {
+                        if (initialValueToSet.length > 0) {
+                            if (initialValueToSet[0].length !== undefined) {
+                                super.setInitialValue(initialValueToSet[0].slice(0));
+                            }
+                            else {
+                                super.setInitialValue(initialValueToSet.slice(0));
+                            }
+                        }
+                    }
+
+                    setPlantValue (plantValueToSet) {
+                        if (plantValueToSet.length > 0) {
+                            if (plantValueToSet[0].length !== undefined) {
+                                super.setPlantValue(plantValueToSet[0].slice(0));
+                            }
+                            else {
+                                super.setPlantValue(plantValueToSet.slice(0));
+                            }
+                        }
+                    }
+        
+                    setReferenceValue (referenceValueToSet) {
+                        if (referenceValueToSet.length > 0) {
+                            if (referenceValueToSet[0].length !== undefined) {
+                                super.setReferenceValue(referenceValueToSet[0].slice(0));
+                            }
+                            else {
+                                super.setReferenceValue(referenceValueToSet.slice(0));
+                            }
+                        }
                     }
 
                     getTemplate() {
@@ -179,7 +219,7 @@
                                 row.deleteCell(row.cells.length - 1);
                             }
                             this.numberOfElements--;
-                            this.value = this.value.slice(0, this.numberOfElements);
+                            setValue(this.value.slice(0, this.numberOfElements));
                             this.checkValues(true);
                         }.bind(this);
                     }

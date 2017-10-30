@@ -2,7 +2,7 @@ import java.util.Vector;
 class PMCShape extends PMCVariable {
 
     public PMCShape(String name, String description, boolean isLiveVariable, boolean isLibrary, PMCGap[] gaps) {
-        super(name, description, "", "shape", new int[]{1}, true, false, false, null);
+        super(name, description, new Vector(), "shape", new int[]{1}, true, false, false, null);
         this.gaps = gaps;
         this.testCube = new PMCGap[3][2][4];
         for(int i=0; i<this.testCube.length; i++) {
@@ -12,8 +12,10 @@ class PMCShape extends PMCVariable {
                 }
             }
         }
+        this.goldGap = new PMCGap("goldgap", "A gold gap", false, false, 1, 2, 3, 4);
     }
 
+    private PMCGap goldGap;
     private PMCGap []gaps;
     private PMCGap testCube[][][];
 }

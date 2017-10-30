@@ -2,11 +2,11 @@ import java.lang.reflect.*;
 import java.util.Arrays;
 import java.util.Vector;
 
-class Plant55A0 {
+class PlantDEMO0 {
 
-    public Plant55A0(Vector variables) {
+    public PlantDEMO0(Vector variables) {
         try {
-            Field[] fields = Plant55A0.class.getFields();
+            Field[] fields = PlantDEMO0.class.getFields();
             for (int i=0; i<fields.length; i++) {
                 variables.add(fields[i].get(this)); 
             }
@@ -22,6 +22,15 @@ class Plant55A0 {
             new PMCValidation("checkMin", new Vector(Arrays.asList(new String[]{"-1"})), "Check the minimum value"),
             new PMCValidation("checkType", new Vector(Arrays.asList(new String[]{})), "Check the type")
         });
+
+
+    public PMCVariable var2 = new PMCVariable("VAR2", "An array", new Vector(Arrays.asList(new float[]{7, 8, 9, 0})), "float32", new int[]{4}, false, false, false,
+        new PMCValidation[]{
+            new PMCValidation("checkMax", new Vector(Arrays.asList(new String[][]{{"10", "11", "12", "13"}})), "Check the maximum value"),
+            new PMCValidation("checkMin", new Vector(Arrays.asList(new String[][]{{"-1", "-2", "-3", "-4"}})), "Check the minimum value"),
+            new PMCValidation("checkType", new Vector(Arrays.asList(new String[]{})), "Check the type")
+        });
+
 
     public PMCShape shape = new PMCShape("VAR4", "A shape", false, false, new PMCGap[]{
         new PMCGap("gap1", "A gap", false, false, 0, 0, 1, 1), 
