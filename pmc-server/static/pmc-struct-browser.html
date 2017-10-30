@@ -33,27 +33,30 @@
 
                     addMember(member) {
                         if (Array.isArray(member)) {
-                            if (!privateStructIds.includes(memberId)) {
+                            if (!this.privateStructIds.includes(memberId)) {
                                 this.mainDiv.innerHTML += "<ul>\n";
                                 for (var i in member) {
                                     this.mainDiv.innerHTML += "<li>\n";
                                     this.mainDiv.innerHTML += i + " ";
-                                    addMember(member[i]);
+                                    this.addMember(member[i]);
                                     this.mainDiv.innerHTML += "</li>\n";
                                 }
                                 this.mainDiv.innerHTML += "</ul>\n";
                             }
                         }
                         else {
+                            var memberId = member["variableId"];
                             if (memberId !== undefined) {
-                                var memberId = member["variableId"];
                                 var isStruct = member["isStruct"];
                                 if (isStruct === true) {
-                                    var members = member.keys();
+                                    var membersIds = Object.keys(member);
                                     this.mainDiv.innerHTML += "<ul>\n";
-                                    for (var i in members) {
-                                        addMember(members[i]);
+                                    this.mainDiv.innerHTML += "<li>\n";
+                                    this.mainDiv.innerHTML += memberId + ": ";
+                                    for (var i in membersIds) {
+                                        this.addMember(member[membersIds[i]]);
                                     } 
+                                    this.mainDiv.innerHTML += "</li>\n";
                                     this.mainDiv.innerHTML += "</ul>\n";
                                 }
                                 else {
@@ -67,7 +70,8 @@
 
                     infoLoaded () {
                         this.mainDiv.innerHTML = "";
-                        addMember(this);
+                        this.variableId = this.id;
+                        this.addMember(this);
                     }
                 }
                 document.registerElement("pmc-struct-browser", {

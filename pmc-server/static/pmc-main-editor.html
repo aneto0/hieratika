@@ -3,14 +3,14 @@
         <link rel="import" href="libraries.html">
         <link rel="import" href="pmc-component.html">
         <link rel="import" href="libraries.html">
-        <link rel="import" href="pmc-input.html">
         <link rel="import" href="pmc-array-editor.html">
-        <link rel="import" href="pmc-filter-editor.html">
-        <link rel="import" href="pmc-library-button.html">
         <link rel="import" href="pmc-cubicle-editor.html">
+        <link rel="import" href="pmc-filter-editor.html">
+        <link rel="import" href="pmc-input.html">
+        <link rel="import" href="pmc-library-button.html">
+        <link rel="import" href="pmc-struct-browser.html">
         <link rel="import" href="pmc-switch.html">
         <link rel="import" href="pmc-switch-editor.html">
-
     </head>
     <body>
         <template id="tmaineditor">
@@ -73,6 +73,7 @@
                         }
                         component.setUserAllowedToWrite(userAllowed);
                         //Loop through all the elements
+                        component.isStruct = false;
                         var keys = Object.keys(pvInfo); 
                         for (var keyIdx in keys) { 
                             var memberId = keys[keyIdx];
@@ -82,9 +83,11 @@
                                 if (Array.isArray(memberPVInfo)) {
                                     component[memberId] = memberPVInfo;
                                 }
+                                component.isStruct = true;
                             }
                             else {
                                 component[memberVariableId] = memberPVInfo;
+                                component.isStruct = true;
                             }
                         }
                         component.infoLoaded();
