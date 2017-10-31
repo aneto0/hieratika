@@ -49,4 +49,21 @@ class PMCTest0 {
         )
     ));
 
+    public PMCLibrary var5 = new PMCLibrary("VAR5", "A library");
+
+    public PMCVariable var6 = new PMCVariable("VAR6", "A variable", new Vector(Arrays.asList(new int[]{5})), "int32", new int[]{1}, false, false, false,
+        new PMCValidation[]{
+            new PMCValidation("checkMax", new Vector(Arrays.asList(new float[]{50})), "Check the maximum value"),
+            new PMCValidation("checkMin", new Vector(Arrays.asList(new float[]{-50})), "Check the minimum value"),
+            new PMCValidation("checkType", new Vector(Arrays.asList(new float[]{})), "Check the type")
+        });
+
+
+    public PMCVariable var7 = new PMCVariable("VAR7", "An array", new Vector(Arrays.asList(new float[]{5, 5, 5, 3})), "float32", new int[]{4}, false, false, false,
+        new PMCValidation[]{
+            new PMCValidation("checkMax", new Vector(Arrays.asList(new float[][]{{10, 11, 12, 13}})), "Check the maximum value"),
+            new PMCValidation("checkMin", new Vector(Arrays.asList(new float[][]{{-1, -2, -3, -4}})), "Check the minimum value"),
+            new PMCValidation("checkType", new Vector(Arrays.asList(new float[]{})), "Check the type")
+        });
+
 }

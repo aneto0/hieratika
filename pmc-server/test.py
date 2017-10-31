@@ -325,7 +325,7 @@ class Server:
         permissions = db["permissions"]
         toReturn = ""
        
-        if (not server.isTokenValid(request)):
+        if (not self.isTokenValid(request)):
             toReturn = "InvalidToken"
         elif ("variables" not in request.form):
             toReturn = "InvalidParameters"
@@ -363,7 +363,7 @@ class Server:
 
     def submit(self, request):
         toReturn = "done"
-        if (not server.isTokenValid(request)):
+        if (not self.isTokenValid(request)):
             toReturn = "InvalidToken"
         elif ("update" not in request.form):
             toReturn = "InvalidParameters"
@@ -392,7 +392,7 @@ class Server:
         userId = ""
         schedules = []
         toReturn = ""
-        if (not server.isTokenValid(request)):
+        if (not self.isTokenValid(request)):
             toReturn = "InvalidToken"
         else:
             pageId = request.form["pageId"]
@@ -416,7 +416,7 @@ class Server:
         userId = ""
         users = []
         toReturn = ""
-        if (not server.isTokenValid(request)):
+        if (not self.isTokenValid(request)):
             toReturn = "InvalidToken"
         else:
             allUsers = db["users"]
@@ -431,7 +431,7 @@ class Server:
         userId = ""
         pages = []
         toReturn = ""
-        if (not server.isTokenValid(request)):
+        if (not self.isTokenValid(request)):
             toReturn = "InvalidToken"
         else:
             tablePages = db["pages"]
@@ -444,7 +444,7 @@ class Server:
         toReturn = ""
         variables = []
         db = self.getDB()
-        if (not server.isTokenValid(request)):
+        if (not self.isTokenValid(request)):
             toReturn = "InvalidToken"
         else: 
             pageId = request.form["pageId"]
@@ -456,7 +456,7 @@ class Server:
     def getSchedule(self, request):
         toReturn = ""
         db = self.getDB()
-        if (not server.isTokenValid(request)):
+        if (not self.isTokenValid(request)):
             toReturn = "InvalidToken"
         else: 
             scheduleId = request.form["scheduleId"]
@@ -469,7 +469,7 @@ class Server:
         toReturn = ""
         variables = []
         db = self.getDB()
-        if (not server.isTokenValid(request)):
+        if (not self.isTokenValid(request)):
             toReturn = "InvalidToken"
         else: 
             scheduleVariablesTable = db["schedule_variables"]
@@ -489,7 +489,7 @@ class Server:
         tableLibraries = db["libraries"]
         librariesNames = {}
         toReturn = ""
-        if (not server.isTokenValid(request)):
+        if (not self.isTokenValid(request)):
             toReturn = "InvalidToken"
         else: 
             pmcLibVariables = json.loads(request.form["variables"])
@@ -497,50 +497,77 @@ class Server:
                 libraries = tableLibraries.find(variable_id=variable)
                 for library in libraries:
                     if variable in librariesNames:
-                        librariesNames[variable]["ids"].append(library["id"])
+                        librariesNames[variable]["ids"].append(
+                            {
+                                "id": library["id"],
+                                "name": library["name"]
+                            }
+                        )
                     else:
-                        librariesNames[variable] = {"variable":variable, "ids": [library["id"]]}
+                        librariesNames[variable] = {"variable":variable, "ids": [
+                            {
+                                "id": library["id"],
+                                "name": library["name"]
+                            }
+                        ]}
             toReturn = json.dumps({"libraries": librariesNames.values()}) 
         return toReturn
 
     def getLibrary(self, request):
         db = self.getDB()
         tableLibraries = db["libraries"]
-        libJson = {}
+        librariesNames = {}
+        tableLibraryVariables = db["libraryVariables"]
+        variables = []
         toReturn = ""
-        if (not server.isTokenValid(request)):
+        if (not self.isTokenValid(request)):
             toReturn = "InvalidToken"
         else:
-            variableId = request.form["variable"]
-            requestedLibraryName = request.form["libraryName"]
-            libraryDB = tableLibraries.find_one(variable_id=variableId, id=requestedLibraryName)
-            libJson["value"] = pickle.loads(libraryDB["value"]),
-            libJson["owner"] = libraryDB["user_id"],
-            libJson["description"] = libraryDB["description"] 
-            toReturn = json.dumps(libJson)
+            variableId = request.form["variableId"]
+            if("libraryId" in request.form):
+                requestedLibraryId = request.form["libraryId"]
+            else:
+                requestedLibraryName = request.form["libraryName"]
+                requestedLibraryUser = request.form["userId"]
+                libraries = tableLibraries.find_one(name=requestedLibraryName, user_id=requestedLibraryUser, variable_id=variableId)
+                requestedLibraryId = libraries["id"]
+
+            libraryVariables = tableLibraryVariables.find(library_id=requestedLibraryId)
+            for l in libraryVariables:
+                lv = {
+                    "variableId": l["variable_id"],
+                    "value": pickle.loads(l["value"])
+                } 
+                variables.append(lv)
+            toReturn = json.dumps(variables)
         return toReturn
 
     def saveLibrary(self, request):
         db = self.getDB()
         tableLibraries = db["libraries"]
+        tableLibraryVariables = db["libraryVariables"]
         toReturn = ""
-        if (not server.isTokenValid(request)):
+        #TODO Check if the library already exists (and in the future prevent it from being overwritten if was ever used)
+        if (not self.isTokenValid(request)):
             toReturn = "InvalidToken"
         else:
-            variableId = request.form["variable"]
-            requestedLibraryName = request.form["libraryName"]
-            requestedLibraryDescription = request.form["libraryDescription"]
-            requestedLibraryValues = request.form["libraryValues"]
-            lib = {
-                "variable_id": variableId, 
-                "id": requestedLibraryName,
-                "description": requestedLibraryDescription,
-                "user_id": "codac-dev-1",
-                "value": pickle.dumps(json.loads(requestedLibraryValues))
+            library = {
+                "name": request.form["libraryName"],
+                "description": request.form["libraryDescription"],
+                "user_id": request.form["userId"],
+                "variable_id": request.form["variableId"]
             }
+            tableLibraries.upsert(library, ["name", "variable_id", "user_id"])
+            createdLibrary = tableLibraries.find_one(user_id=library["user_id"], name=library["name"], variable_id=library["variable_id"])
 
-            #Check if the library already exists (and in the future prevent it from being overwritten if was ever used)
-            tableLibraries.upsert(lib, ["id", "variable_id"]);    
+            requestedVariables = json.loads(request.form["variables"])
+            for lv in requestedVariables: 
+                value = {
+                    "variable_id": lv["variableId"], 
+                    "library_id": str(createdLibrary["id"]),
+                    "value": pickle.dumps(json.loads(lv["value"]))
+                }
+                tableLibraryVariables.upsert(value, ["variable_id", "library_id"])
             toReturn = "ok"
         return toReturn
 
@@ -574,7 +601,7 @@ class Server:
 
     def updateSchedule(self, request):
         toReturn = ""
-        if (not server.isTokenValid(request)):
+        if (not self.isTokenValid(request)):
             toReturn = "InvalidToken"
         else:
             updateJSon = request.form["update"]
@@ -606,7 +633,7 @@ class Server:
         db = self.getDB()
         schedulesTable = db["schedules"]
         toReturn = ""
-        if (not server.isTokenValid(request)):
+        if (not self.isTokenValid(request)):
             toReturn = "InvalidToken"
         else:
             schedule = {

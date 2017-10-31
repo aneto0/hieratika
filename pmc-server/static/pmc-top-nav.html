@@ -129,6 +129,7 @@
                         }.bind(this);
 
                         this.pageSelectButton.onclick = function() {
+                            currentScheduleId = undefined;
                             this.pageSelectButton.disabled = true;
                             this.getSelectedPage();     
                         }.bind(this);

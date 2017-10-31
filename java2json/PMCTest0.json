@@ -293,9 +293,9 @@
               "parameters": [
                 [
                   100.0,
-                  50.0,
+                  150.0,
                   200.0,
-                  200.0
+                  250.0
                 ]
               ],
               "description": "Check the maximum value"
@@ -530,9 +530,9 @@
                 "parameters": [
                   [
                     100.0,
-                    50.0,
+                    150.0,
                     200.0,
-                    200.0
+                    250.0
                   ]
                 ],
                 "description": "Check the maximum value"
@@ -767,9 +767,9 @@
                   "parameters": [
                     [
                       50.0,
-                      0.0,
+                      100.0,
                       150.0,
-                      150.0
+                      200.0
                     ]
                   ],
                   "description": "Check the maximum value"
@@ -1003,9 +1003,9 @@
                   "parameters": [
                     [
                       100.0,
-                      50.0,
+                      150.0,
                       200.0,
-                      200.0
+                      250.0
                     ]
                   ],
                   "description": "Check the maximum value"
@@ -1239,9 +1239,9 @@
                   "parameters": [
                     [
                       150.0,
-                      100.0,
+                      200.0,
                       250.0,
-                      250.0
+                      300.0
                     ]
                   ],
                   "description": "Check the maximum value"
@@ -1479,9 +1479,9 @@
                       "parameters": [
                         [
                           50.0,
-                          -50.0,
                           50.0,
-                          0.0
+                          50.0,
+                          50.0
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -1715,9 +1715,9 @@
                       "parameters": [
                         [
                           50.0,
-                          -50.0,
+                          50.0,
                           100.0,
-                          0.0
+                          50.0
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -1951,9 +1951,9 @@
                       "parameters": [
                         [
                           50.0,
-                          -50.0,
+                          50.0,
                           150.0,
-                          0.0
+                          50.0
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -2187,9 +2187,9 @@
                       "parameters": [
                         [
                           50.0,
-                          -50.0,
+                          50.0,
                           200.0,
-                          0.0
+                          50.0
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -2425,9 +2425,9 @@
                       "parameters": [
                         [
                           50.0,
-                          0.0,
+                          100.0,
                           50.0,
-                          0.0
+                          50.0
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -2661,9 +2661,9 @@
                       "parameters": [
                         [
                           50.0,
-                          0.0,
                           100.0,
-                          0.0
+                          100.0,
+                          50.0
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -2897,9 +2897,9 @@
                       "parameters": [
                         [
                           50.0,
-                          0.0,
+                          100.0,
                           150.0,
-                          0.0
+                          50.0
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -3133,9 +3133,9 @@
                       "parameters": [
                         [
                           50.0,
-                          0.0,
+                          100.0,
                           200.0,
-                          0.0
+                          50.0
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -3373,9 +3373,9 @@
                       "parameters": [
                         [
                           100.0,
-                          -50.0,
                           50.0,
-                          0.0
+                          50.0,
+                          50.0
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -3609,9 +3609,9 @@
                       "parameters": [
                         [
                           100.0,
-                          -50.0,
+                          50.0,
                           100.0,
-                          0.0
+                          50.0
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -3845,9 +3845,9 @@
                       "parameters": [
                         [
                           100.0,
-                          -50.0,
+                          50.0,
                           150.0,
-                          0.0
+                          50.0
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -4081,9 +4081,9 @@
                       "parameters": [
                         [
                           100.0,
-                          -50.0,
+                          50.0,
                           200.0,
-                          0.0
+                          50.0
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -4319,9 +4319,9 @@
                       "parameters": [
                         [
                           100.0,
-                          0.0,
+                          100.0,
                           50.0,
-                          0.0
+                          50.0
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -4555,9 +4555,9 @@
                       "parameters": [
                         [
                           100.0,
-                          0.0,
                           100.0,
-                          0.0
+                          100.0,
+                          50.0
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -4791,9 +4791,9 @@
                       "parameters": [
                         [
                           100.0,
-                          0.0,
+                          100.0,
                           150.0,
-                          0.0
+                          50.0
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -5027,9 +5027,9 @@
                       "parameters": [
                         [
                           100.0,
-                          0.0,
+                          100.0,
                           200.0,
-                          0.0
+                          50.0
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -5267,9 +5267,9 @@
                       "parameters": [
                         [
                           150.0,
-                          -50.0,
                           50.0,
-                          0.0
+                          50.0,
+                          50.0
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -5503,9 +5503,9 @@
                       "parameters": [
                         [
                           150.0,
-                          -50.0,
+                          50.0,
                           100.0,
-                          0.0
+                          50.0
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -5739,9 +5739,9 @@
                       "parameters": [
                         [
                           150.0,
-                          -50.0,
+                          50.0,
                           150.0,
-                          0.0
+                          50.0
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -5975,9 +5975,9 @@
                       "parameters": [
                         [
                           150.0,
-                          -50.0,
+                          50.0,
                           200.0,
-                          0.0
+                          50.0
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -6213,9 +6213,9 @@
                       "parameters": [
                         [
                           150.0,
-                          0.0,
+                          100.0,
                           50.0,
-                          0.0
+                          50.0
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -6449,9 +6449,9 @@
                       "parameters": [
                         [
                           150.0,
-                          0.0,
                           100.0,
-                          0.0
+                          100.0,
+                          50.0
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -6685,9 +6685,9 @@
                       "parameters": [
                         [
                           150.0,
-                          0.0,
+                          100.0,
                           150.0,
-                          0.0
+                          50.0
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -6921,9 +6921,9 @@
                       "parameters": [
                         [
                           150.0,
-                          0.0,
+                          100.0,
                           200.0,
-                          0.0
+                          50.0
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -7283,9 +7283,9 @@
                   "parameters": [
                     [
                       50.0,
-                      -50.0,
+                      50.0,
                       100.0,
-                      50.0
+                      100.0
                     ]
                   ],
                   "description": "Check the maximum value"
@@ -7519,9 +7519,9 @@
                   "parameters": [
                     [
                       50.0,
-                      -50.0,
+                      50.0,
                       150.0,
-                      150.0
+                      200.0
                     ]
                   ],
                   "description": "Check the maximum value"
@@ -7757,9 +7757,9 @@
                   "parameters": [
                     [
                       50.0,
-                      -50.0,
+                      50.0,
                       100.0,
-                      50.0
+                      100.0
                     ]
                   ],
                   "description": "Check the maximum value"
@@ -7993,9 +7993,9 @@
                   "parameters": [
                     [
                       50.0,
-                      -50.0,
+                      50.0,
                       150.0,
-                      150.0
+                      200.0
                     ]
                   ],
                   "description": "Check the maximum value"
@@ -8033,6 +8033,114 @@
             ]
           }
         ]
+      ]
+    },
+    {
+      "name": "VAR5",
+      "description": "A library",
+      "value": [],
+      "type": "string",
+      "isStruct": false,
+      "isLiveVariable": false,
+      "isLibrary": true,
+      "numberOfElements": [
+        1
+      ],
+      "_private_vec_": []
+    },
+    {
+      "name": "VAR6",
+      "description": "A variable",
+      "value": [
+        [
+          5
+        ]
+      ],
+      "type": "int32",
+      "isStruct": false,
+      "isLiveVariable": false,
+      "isLibrary": false,
+      "numberOfElements": [
+        1
+      ],
+      "validation": [
+        {
+          "fun": "checkMax",
+          "parameters": [
+            [
+              50.0
+            ]
+          ],
+          "description": "Check the maximum value"
+        },
+        {
+          "fun": "checkMin",
+          "parameters": [
+            [
+              -50.0
+            ]
+          ],
+          "description": "Check the minimum value"
+        },
+        {
+          "fun": "checkType",
+          "parameters": [
+            []
+          ],
+          "description": "Check the type"
+        }
+      ]
+    },
+    {
+      "name": "VAR7",
+      "description": "An array",
+      "value": [
+        [
+          5.0,
+          5.0,
+          5.0,
+          3.0
+        ]
+      ],
+      "type": "float32",
+      "isStruct": false,
+      "isLiveVariable": false,
+      "isLibrary": false,
+      "numberOfElements": [
+        4
+      ],
+      "validation": [
+        {
+          "fun": "checkMax",
+          "parameters": [
+            [
+              10.0,
+              11.0,
+              12.0,
+              13.0
+            ]
+          ],
+          "description": "Check the maximum value"
+        },
+        {
+          "fun": "checkMin",
+          "parameters": [
+            [
+              -1.0,
+              -2.0,
+              -3.0,
+              -4.0
+            ]
+          ],
+          "description": "Check the minimum value"
+        },
+        {
+          "fun": "checkType",
+          "parameters": [
+            []
+          ],
+          "description": "Check the type"
+        }
       ]
     }
   ]

@@ -28,7 +28,9 @@ if not users.exists:
 
     db.query("CREATE TABLE schedule_variables (variable_id TEXT, schedule_id INTEGER, value TEXT, PRIMARY KEY (variable_id, schedule_id), FOREIGN KEY (variable_id) REFERENCES variables(id), FOREIGN KEY (schedule_id) REFERENCES schedules(id))");
 
-    db.query("CREATE TABLE libraries (id TEXT, variable_id TEXT, user_id TEXT, value TEXT, description TEXT, PRIMARY KEY (id, variable_id, user_id), FOREIGN KEY (variable_id) REFERENCES variables(id), FOREIGN KEY (user_id) REFERENCES users(id))");
+    db.query("CREATE TABLE libraries (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id TEXT, name TEXT, description TEXT, variable_id TEXT, UNIQUE (user_id, variable_id, name), FOREIGN KEY (user_id) REFERENCES users(id), FOREIGN KEY (variable_id) REFERENCES variables(id))")
+    
+    db.query("CREATE TABLE library_variables (variable_id TEXT, library_id INTEGER, value TEXT, PRIMARY KEY (variable_id, library_id), FOREIGN KEY (variable_id) REFERENCES variables(id), FOREIGN KEY (library_id) REFERENCES libraries(id))");
 
     db.query("CREATE TABLE logins (token_id TEXT, user_id TEXT, last_interaction_time INTEGER, PRIMARY KEY (token_id), FOREIGN KEY (user_id) REFERENCES users(user_id))")
 
@@ -151,7 +153,6 @@ with open("schedules.json") as jsonFile:
                 "value": pickle.dumps(variableJSon["value"])
             }
             scheduleVariables.upsert(variable, ["variable_id", "schedule_id"])
-'''
 with open("libraries.json") as jsonFile:
     librariesDBJSon = json.load(jsonFile)
     librariesJSon = librariesDBJSon["libraries"]
@@ -166,7 +167,6 @@ with open("libraries.json") as jsonFile:
                 "value": pickle.dumps(variableLibJSon["values"])
             }
             libraries.upsert(library, ["id", "variable_id", "user_id"])
-'''
 nCols = 10
 idx = 1
 maxIdx = 1000

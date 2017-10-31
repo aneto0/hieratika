@@ -38,16 +38,18 @@
                         super();
                     }
 
-                    showSelector (optionNames, currentOption) {
+                    showSelector (availableLibraries, currentLibraryName) {
                         var diag = this.shadowRoot.querySelector("#dselector");
                         var selector = this.shadowRoot.querySelector("#tselect");
                         selector.innerHTML = "";
-                        $.each(optionNames, function(i, optionName) {
+                        $.each(availableLibraries, function(i, library) {
                             var option = document.createElement( 'option' );
-                            option.value = option.text = optionName;
+                            option.id = library.id;
+                            option.value = library.name;
+                            option.text = library.name;
                             selector.add(option);
                         });
-                        selector.value = currentOption;
+                        selector.value = currentLibraryName;
                         this.editLibrary();
                         diag.showModal();
                     }
@@ -55,21 +57,30 @@
 
                     editLibrary () {
                         var selector = this.shadowRoot.querySelector("#tselect");
-                        this.editor.setTypeValue(this.owner.getTypeValue());
-                        this.editor.setReference(this.owner.getReference());
+                        var user = JSON.parse(localStorage.user);
+                        /*this.editor.setTypeValue(this.owner.getTypeValue());
+                        this.editor.setReference(this.owner.getReference());*/
                         if (this.owner.getReference() !== "none") {
-                            if (this.owner.getReferenceValue() !== undefined) {
+                            var referenceValue = this.owner.getReferenceValue();
+                            if (referenceValue !== undefined) {
                                 $.ajax({
                                     type: "post",
                                     url: "/getlibrary",
                                     data: {
                                         token: currentToken,
-                                        variable : this.owner.id, 
-                                        libraryName : this.owner.getReferenceValue()  
+                                        variableId: this.owner.id, 
+                                        userId: user.id, 
+                                        libraryName: this.owner.getReferenceValue()
                                     },
                                     success: function (response) {
-                                        var libInfo = $.parseJSON(response);
-                                        this.editor.setReferenceValue(libInfo["value"][0]);
+                                        var libraryVariables = $.parseJSON(response);
+                                        for (var v in libraryVariables) {
+                                            var libraryVariable = libraryVariables[v];
+                                            var comps = this.editorComponents[libraryVariable.variableId];
+                                            for (var c in comps) {
+                                                comps[c].setReferenceValue(libraryVariable.value);
+                                            } 
+                                        }
                                     }.bind(this),
                                     error: function (response) {
                                         console.log(response);
@@ -78,7 +89,7 @@
                                 });
                             }
                         }
-
+/*
                         if (this.owner.getInitialValue() !== undefined) {
                             $.ajax({
                                 type: "post",
@@ -139,7 +150,7 @@
                                 console.log(response);
                                 alert(response);
                             }
-                        });
+                        });*/
                     }
 
                     createdCallback() {
@@ -158,7 +169,7 @@
                         var cancelButton = this.shadowRoot.querySelector("#tselectorCancel");
                         this.saveButton = this.shadowRoot.querySelector("#saveButton");
                         this.saveAsButton = this.shadowRoot.querySelector("#saveAsButton");
-                        var saveAsLibraryName = this.shadowRoot.querySelector("#saveAsLibraryName");
+                        this.saveAsLibraryName = this.shadowRoot.querySelector("#saveAsLibraryName");
                         this.descriptionTextArea = this.shadowRoot.querySelector("#descriptionTextArea");
 
                         this.okButton.onclick = function() {
@@ -181,32 +192,18 @@
                         this.saveButton.onclick = function() {
                             var saveAsName = selector.options[selector.selectedIndex].text;
                             var description = this.descriptionTextArea.value;
-                            $.ajax({
-                                type: "post",
-                                url: "/savelibrary",
-                                data: {
-                                    token: currentToken,
-                                    variable : this.owner.id, 
-                                    libraryName : saveAsName,
-                                    libraryDescription: description,
-                                    libraryValues : JSON.stringify(this.editor.getValue())
-                                },
-                                success: function (response) {
-                                    if (response == "ok") {
-                                        alert("Library updated successfully!");
-                                    }
-                                }.bind(this),
-                                error: function (response) {
-                                    console.log(response);
-                                    alert(response);
+                            var user = JSON.parse(localStorage.user);
+                            var variablesValues = [];
+                            for (var key in this.editorComponents) {
+                                var comps = this.editorComponents[key];
+                                //The same id might be used in different components...
+                                for (var c in comps) {
+                                    variablesValues.push({
+                                        variableId: comps[c].id,
+                                        value: JSON.stringify(comps[c].getValue())
+                                    });
                                 }
-                            });
-                        }.bind(this);
-
-
-                        this.saveAsButton.onclick = function() {
-                            var saveAsName = saveAsLibraryName.value;
-                            var description = descriptionTextArea.value;
+                            }
                             if (saveAsName.length === 0) {
                                 alert("Please introduce a library name");
                             }
@@ -216,10 +213,55 @@
                                     url: "/savelibrary",
                                     data: {
                                         token: currentToken,
-                                        variable : this.owner.id, 
+                                        userId: user.id, 
+                                        variableId : this.owner.id, 
                                         libraryName : saveAsName,
                                         libraryDescription: description,
-                                        libraryValues : JSON.stringify(this.editor.getValue())
+                                        variables: JSON.stringify(variablesValues)
+                                    },
+                                    success: function (response) {
+                                        if (response == "ok") {
+                                            alert("Library updated successfully!");
+                                        }
+                                    }.bind(this),
+                                    error: function (response) {
+                                        console.log(response);
+                                        alert(response);
+                                    }
+                                });
+                            }
+                        }.bind(this);
+
+
+                        this.saveAsButton.onclick = function() {
+                            var saveAsName = this.saveAsLibraryName.value;
+                            var description = this.descriptionTextArea.value;
+                            var user = JSON.parse(localStorage.user);
+                            var variablesValues = [];
+                            for (var key in this.editorComponents) {
+                                var comps = this.editorComponents[key];
+                                //The same id might be used in different components...
+                                for (var c in comps) {
+                                    variablesValues.push({
+                                        variableId: comps[c].id,
+                                        value: JSON.stringify(comps[c].getValue())
+                                    });
+                                }
+                            }
+                            if (saveAsName.length === 0) {
+                                alert("Please introduce a library name");
+                            }
+                            else {
+                                $.ajax({
+                                    type: "post",
+                                    url: "/savelibrary",
+                                    data: {
+                                        token: currentToken,
+                                        userId: user.id, 
+                                        variableId : this.owner.id, 
+                                        libraryName : saveAsName,
+                                        libraryDescription: description,
+                                        variables: JSON.stringify(variablesValues)
                                     },
                                     success: function (response) {
                                         if (response == "ok") {
@@ -234,14 +276,44 @@
                             }
                         }.bind(this);
                         
-                        this.divEditor = this.shadowRoot.querySelector("#divEditor");
+                        this.divEditor = this.shadowRoot.querySelector("#diveditor");
+                        this.editorComponents = {};
                     }
 
                     // Use Shadow DOM and a template. Use the attachedCallback as @ createdCallback this.owner will not exist and I need this id (at least in this prototype phase)
-                    attachedCallback() {
+                    /*attachedCallback() {
                         if(!this.divEditor.firstChild) {
                             this.divEditor.appendChild(this.editor);
                         }
+                    }*/
+
+                    setOwnerComponent(owner) {
+                        this.owner = owner;
+                    }
+    
+                    setLibraryVariables(libraryVariables) {
+                        //this.editor = editor;
+                        var divHTML = "";
+                        for(var i in libraryVariables) {
+                            var varName = libraryVariables[i].variable;
+                            var editorTag = libraryVariables[i].editor;
+                            divHTML += "<" + editorTag + " id=\"" + varName + "\"></" + editorTag + ">\n";
+                        }
+                        this.divEditor.innerHTML = divHTML;
+                        var allDivTags = this.divEditor.getElementsByTagName("*");
+                        for (var i=0; i<allDivTags.length; i++) {
+                            var comp = allDivTags[i];
+                            if(this.editorComponents[comp.id] === undefined) {
+                                this.editorComponents[comp.id] = [comp];
+                            }
+                            else {
+                                this.editorComponents[comp.id].push(this);
+                            }
+                        }
+                    }
+
+                    getEditor() {
+                        return this.editor;
                     }
 
                     setReadOnly (isReadOnly) {

@@ -80,7 +80,7 @@
                         var targetElements = allPMCComponents[librariesJson.variable];
                         if (targetElements != null) {
                             $.each(targetElements, function (i, pmcLibrary) {
-                                pmcLibrary.availableLibraries = librariesJson.ids;
+                                pmcLibrary.setAvailableLibraries(librariesJson.ids);
                             });
                         }
                     });

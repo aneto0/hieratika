@@ -12,37 +12,44 @@
                     this.availableLibraries = [];
                 }
 
-                setValidations (validationsToSet) {
+                /*setValidations (validationsToSet) {
                     if (this.editor !== undefined) {
                         this.editor.setValidations(validationsToSet);
                     }
-                }
+                }*/
 
                 attachLibraryHandler () {
                     //Create an editor
-                    var editorName = this.getAttribute("data-library-editor");
-                    this.editor = document.createElement(editorName);
+                    var libraryVariables = this.getAttribute("data-library-variables");
+                    this.libraryEditor = this.shadowRoot.querySelector("#tlibrary-editor");
+                    /*var editorName = this.getAttribute("data-library-variables");
+                    this.editor = document.createElement(editorName);*/
 
                     //Attach a selector
-                    this.libraryEditor = document.createElement("pmc-library-editor");
-                    this.libraryEditor.owner = this;
-                    this.libraryEditor.editor = this.editor;
+                    //this.libraryEditor = document.createElement("pmc-library-editor");
+                    this.libraryEditor.setOwnerComponent(this);
+                    this.libraryEditor.setLibraryVariables(JSON.parse(libraryVariables));
                 }
 
                 showLibraryEditor () {
                     document.body.appendChild(this.libraryEditor);
                     this.libraryEditor.showSelector(this.availableLibraries, this.getValue());
                 }
+            
+                setAvailableLibraries(libraries) {
+                    //copy the array
+                    this.availableLibraries = libraries.slice();
+                }
 
-                setReadOnly (isReadOnly) {
+                /*setReadOnly (isReadOnly) {
                     super.setReadOnly(isReadOnly);
                     this.libraryEditor.setReadOnly(isReadOnly);
-                }
+                }*/
 
-                setUserAllowedToWrite (isUserAllowedToWrite) {
+                /*setUserAllowedToWrite (isUserAllowedToWrite) {
                     super.setUserAllowedToWrite(isUserAllowedToWrite);
-                    this.libraryEditor.editor.setUserAllowedToWrite(isUserAllowedToWrite);
-                }
+                    this.libraryEditor.getEditor().setUserAllowedToWrite(isUserAllowedToWrite);
+                }*/
 
                 libraryChanged (newLibraryName) {
                 }

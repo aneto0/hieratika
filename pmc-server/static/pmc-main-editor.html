@@ -57,7 +57,7 @@
 
                     populateComponentInfo(component, pvInfo, user) {
                         component.setTypeValue(pvInfo.type);
-                        component.setLibrary(pvInfo.library === true);
+                        component.setLibrary(pvInfo.isLibrary === true);
                         component.setNumberOfElements(pvInfo.numberOfElements);
                         component.setReference("none");
                         component.setInitialValue(pvInfo.value);

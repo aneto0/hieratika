@@ -2,9 +2,11 @@
     <head>
         <link rel="import" href="libraries.html">
         <link rel="import" href="pmc-library.html">
+        <link rel="import" href="pmc-library-editor.html">
     </head>
     <body>
         <template id="ttlibrary">
+            <pmc-library-editor id="tlibrary-editor"></pmc-library-editor>
             <button type="button" id="blibrary"></button>
         </template>
 
@@ -48,9 +50,11 @@
                     }
 
                     libraryChanged (newLibraryName) {
-                        this.buttonInput.innerHTML = newLibraryName;
-                        this.setValue(newLibraryName);
-                        this.checkValues(this.buttonInput);
+                        if (!this.isReadOnly()) {
+                            this.buttonInput.innerHTML = newLibraryName;
+                            this.setValue(newLibraryName);
+                            this.checkValues(this.buttonInput);
+                        }
                     }
                 }
 

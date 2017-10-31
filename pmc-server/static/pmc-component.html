@@ -156,7 +156,9 @@
             $.each(othersSameId, function (j, otherPMCComp) {
                 otherPMCComp.setValue(valueToUpdate.value, false);
             });
-            valuesToSynchroniseRemote.push(valueToUpdate);
+            if (currentScheduleId !== undefined) {
+                valuesToSynchroniseRemote.push(valueToUpdate);
+            }
         }
 
         setValidations (validationsToSet) {

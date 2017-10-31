@@ -12,6 +12,7 @@ CLASSES = \
 	JavaToJson.java  \
 	PMCVariable.java  \
 	PMCGap.java  \
+	PMCLibrary.java  \
 	PMCShape.java \
 	PMCTest0.java \
 	PMCTestStruct1.java \
