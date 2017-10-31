@@ -154,9 +154,7 @@
             var othersSameId = allPMCComponents[this.id];
             var otherPMCComp;
             $.each(othersSameId, function (j, otherPMCComp) {
-                if(otherPMCComp !== this) {
-                    otherPMCComp.setValue(valueToUpdate, false);
-                } 
+                otherPMCComp.setValue(valueToUpdate.value, false);
             });
             valuesToSynchroniseRemote.push(valueToUpdate);
         }

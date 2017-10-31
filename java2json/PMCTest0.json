@@ -253,7 +253,7 @@
               "fun": "checkMax",
               "parameters": [
                 [
-                  -10
+                  30
                 ]
               ],
               "description": "Check the maximum value"
@@ -270,7 +270,7 @@
           ]
         },
         "var5": {
-          "name": "var",
+          "name": "var5",
           "description": "An array",
           "value": [
             [
@@ -292,10 +292,10 @@
               "fun": "checkMax",
               "parameters": [
                 [
-                  2.0,
-                  4.0,
-                  6.0,
-                  8.0
+                  100.0,
+                  50.0,
+                  200.0,
+                  200.0
                 ]
               ],
               "description": "Check the maximum value"
@@ -304,10 +304,10 @@
               "fun": "checkMin",
               "parameters": [
                 [
-                  -2.0,
-                  -4.0,
-                  -6.0,
-                  -8.0
+                  -100.0,
+                  -150.0,
+                  -200.0,
+                  -250.0
                 ]
               ],
               "description": "Check the minimum value"
@@ -490,7 +490,7 @@
                 "fun": "checkMax",
                 "parameters": [
                   [
-                    -10
+                    30
                   ]
                 ],
                 "description": "Check the maximum value"
@@ -507,7 +507,7 @@
             ]
           },
           "var5": {
-            "name": "var",
+            "name": "var5",
             "description": "An array",
             "value": [
               [
@@ -529,10 +529,10 @@
                 "fun": "checkMax",
                 "parameters": [
                   [
-                    2.0,
-                    4.0,
-                    6.0,
-                    8.0
+                    100.0,
+                    50.0,
+                    200.0,
+                    200.0
                   ]
                 ],
                 "description": "Check the maximum value"
@@ -541,10 +541,10 @@
                 "fun": "checkMin",
                 "parameters": [
                   [
-                    -2.0,
-                    -4.0,
-                    -6.0,
-                    -8.0
+                    -100.0,
+                    -150.0,
+                    -200.0,
+                    -250.0
                   ]
                 ],
                 "description": "Check the minimum value"
@@ -727,7 +727,7 @@
                   "fun": "checkMax",
                   "parameters": [
                     [
-                      -10
+                      30
                     ]
                   ],
                   "description": "Check the maximum value"
@@ -744,7 +744,7 @@
               ]
             },
             "var5": {
-              "name": "var",
+              "name": "var5",
               "description": "An array",
               "value": [
                 [
@@ -766,10 +766,10 @@
                   "fun": "checkMax",
                   "parameters": [
                     [
+                      50.0,
                       0.0,
-                      2.0,
-                      4.0,
-                      6.0
+                      150.0,
+                      150.0
                     ]
                   ],
                   "description": "Check the maximum value"
@@ -778,10 +778,10 @@
                   "fun": "checkMin",
                   "parameters": [
                     [
-                      -0.0,
-                      -2.0,
-                      -4.0,
-                      -6.0
+                      -50.0,
+                      -100.0,
+                      -150.0,
+                      -200.0
                     ]
                   ],
                   "description": "Check the minimum value"
@@ -963,7 +963,7 @@
                   "fun": "checkMax",
                   "parameters": [
                     [
-                      -10
+                      30
                     ]
                   ],
                   "description": "Check the maximum value"
@@ -980,7 +980,7 @@
               ]
             },
             "var5": {
-              "name": "var",
+              "name": "var5",
               "description": "An array",
               "value": [
                 [
@@ -1002,10 +1002,10 @@
                   "fun": "checkMax",
                   "parameters": [
                     [
-                      2.0,
-                      4.0,
-                      6.0,
-                      8.0
+                      100.0,
+                      50.0,
+                      200.0,
+                      200.0
                     ]
                   ],
                   "description": "Check the maximum value"
@@ -1014,10 +1014,10 @@
                   "fun": "checkMin",
                   "parameters": [
                     [
-                      -2.0,
-                      -4.0,
-                      -6.0,
-                      -8.0
+                      -100.0,
+                      -150.0,
+                      -200.0,
+                      -250.0
                     ]
                   ],
                   "description": "Check the minimum value"
@@ -1199,7 +1199,7 @@
                   "fun": "checkMax",
                   "parameters": [
                     [
-                      -10
+                      30
                     ]
                   ],
                   "description": "Check the maximum value"
@@ -1216,7 +1216,7 @@
               ]
             },
             "var5": {
-              "name": "var",
+              "name": "var5",
               "description": "An array",
               "value": [
                 [
@@ -1238,10 +1238,10 @@
                   "fun": "checkMax",
                   "parameters": [
                     [
-                      4.0,
-                      6.0,
-                      8.0,
-                      10.0
+                      150.0,
+                      100.0,
+                      250.0,
+                      250.0
                     ]
                   ],
                   "description": "Check the maximum value"
@@ -1250,10 +1250,10 @@
                   "fun": "checkMin",
                   "parameters": [
                     [
-                      -4.0,
-                      -6.0,
-                      -8.0,
-                      -10.0
+                      -150.0,
+                      -200.0,
+                      -250.0,
+                      -300.0
                     ]
                   ],
                   "description": "Check the minimum value"
@@ -1439,7 +1439,7 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          -10
+                          30
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -1456,7 +1456,7 @@
                   ]
                 },
                 "var5": {
-                  "name": "var",
+                  "name": "var5",
                   "description": "An array",
                   "value": [
                     [
@@ -1478,9 +1478,9 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          0.0,
-                          0.0,
-                          0.0,
+                          50.0,
+                          -50.0,
+                          50.0,
                           0.0
                         ]
                       ],
@@ -1490,10 +1490,10 @@
                       "fun": "checkMin",
                       "parameters": [
                         [
-                          -0.0,
-                          -0.0,
-                          0.0,
-                          0.0
+                          -50.0,
+                          -50.0,
+                          -50.0,
+                          -50.0
                         ]
                       ],
                       "description": "Check the minimum value"
@@ -1675,7 +1675,7 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          -10
+                          30
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -1692,7 +1692,7 @@
                   ]
                 },
                 "var5": {
-                  "name": "var",
+                  "name": "var5",
                   "description": "An array",
                   "value": [
                     [
@@ -1714,9 +1714,9 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          0.0,
-                          0.0,
-                          2.0,
+                          50.0,
+                          -50.0,
+                          100.0,
                           0.0
                         ]
                       ],
@@ -1726,10 +1726,10 @@
                       "fun": "checkMin",
                       "parameters": [
                         [
-                          -0.0,
-                          -0.0,
-                          -2.0,
-                          0.0
+                          -50.0,
+                          -50.0,
+                          -100.0,
+                          -50.0
                         ]
                       ],
                       "description": "Check the minimum value"
@@ -1911,7 +1911,7 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          -10
+                          30
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -1928,7 +1928,7 @@
                   ]
                 },
                 "var5": {
-                  "name": "var",
+                  "name": "var5",
                   "description": "An array",
                   "value": [
                     [
@@ -1950,9 +1950,9 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          0.0,
-                          0.0,
-                          4.0,
+                          50.0,
+                          -50.0,
+                          150.0,
                           0.0
                         ]
                       ],
@@ -1962,10 +1962,10 @@
                       "fun": "checkMin",
                       "parameters": [
                         [
-                          -0.0,
-                          -0.0,
-                          -4.0,
-                          0.0
+                          -50.0,
+                          -50.0,
+                          -150.0,
+                          -50.0
                         ]
                       ],
                       "description": "Check the minimum value"
@@ -2147,7 +2147,7 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          -10
+                          30
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -2164,7 +2164,7 @@
                   ]
                 },
                 "var5": {
-                  "name": "var",
+                  "name": "var5",
                   "description": "An array",
                   "value": [
                     [
@@ -2186,9 +2186,9 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          0.0,
-                          0.0,
-                          6.0,
+                          50.0,
+                          -50.0,
+                          200.0,
                           0.0
                         ]
                       ],
@@ -2198,10 +2198,10 @@
                       "fun": "checkMin",
                       "parameters": [
                         [
-                          -0.0,
-                          -0.0,
-                          -6.0,
-                          0.0
+                          -50.0,
+                          -50.0,
+                          -200.0,
+                          -50.0
                         ]
                       ],
                       "description": "Check the minimum value"
@@ -2385,7 +2385,7 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          -10
+                          30
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -2402,7 +2402,7 @@
                   ]
                 },
                 "var5": {
-                  "name": "var",
+                  "name": "var5",
                   "description": "An array",
                   "value": [
                     [
@@ -2424,9 +2424,9 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
+                          50.0,
                           0.0,
-                          2.0,
-                          0.0,
+                          50.0,
                           0.0
                         ]
                       ],
@@ -2436,10 +2436,10 @@
                       "fun": "checkMin",
                       "parameters": [
                         [
-                          -0.0,
-                          -2.0,
-                          0.0,
-                          0.0
+                          -50.0,
+                          -100.0,
+                          -50.0,
+                          -50.0
                         ]
                       ],
                       "description": "Check the minimum value"
@@ -2621,7 +2621,7 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          -10
+                          30
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -2638,7 +2638,7 @@
                   ]
                 },
                 "var5": {
-                  "name": "var",
+                  "name": "var5",
                   "description": "An array",
                   "value": [
                     [
@@ -2660,9 +2660,9 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
+                          50.0,
                           0.0,
-                          2.0,
-                          2.0,
+                          100.0,
                           0.0
                         ]
                       ],
@@ -2672,10 +2672,10 @@
                       "fun": "checkMin",
                       "parameters": [
                         [
-                          -0.0,
-                          -2.0,
-                          -2.0,
-                          0.0
+                          -50.0,
+                          -100.0,
+                          -100.0,
+                          -50.0
                         ]
                       ],
                       "description": "Check the minimum value"
@@ -2857,7 +2857,7 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          -10
+                          30
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -2874,7 +2874,7 @@
                   ]
                 },
                 "var5": {
-                  "name": "var",
+                  "name": "var5",
                   "description": "An array",
                   "value": [
                     [
@@ -2896,9 +2896,9 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
+                          50.0,
                           0.0,
-                          2.0,
-                          4.0,
+                          150.0,
                           0.0
                         ]
                       ],
@@ -2908,10 +2908,10 @@
                       "fun": "checkMin",
                       "parameters": [
                         [
-                          -0.0,
-                          -2.0,
-                          -4.0,
-                          0.0
+                          -50.0,
+                          -100.0,
+                          -150.0,
+                          -50.0
                         ]
                       ],
                       "description": "Check the minimum value"
@@ -3093,7 +3093,7 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          -10
+                          30
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -3110,7 +3110,7 @@
                   ]
                 },
                 "var5": {
-                  "name": "var",
+                  "name": "var5",
                   "description": "An array",
                   "value": [
                     [
@@ -3132,9 +3132,9 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
+                          50.0,
                           0.0,
-                          2.0,
-                          6.0,
+                          200.0,
                           0.0
                         ]
                       ],
@@ -3144,10 +3144,10 @@
                       "fun": "checkMin",
                       "parameters": [
                         [
-                          -0.0,
-                          -2.0,
-                          -6.0,
-                          0.0
+                          -50.0,
+                          -100.0,
+                          -200.0,
+                          -50.0
                         ]
                       ],
                       "description": "Check the minimum value"
@@ -3333,7 +3333,7 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          -10
+                          30
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -3350,7 +3350,7 @@
                   ]
                 },
                 "var5": {
-                  "name": "var",
+                  "name": "var5",
                   "description": "An array",
                   "value": [
                     [
@@ -3372,9 +3372,9 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          2.0,
-                          0.0,
-                          0.0,
+                          100.0,
+                          -50.0,
+                          50.0,
                           0.0
                         ]
                       ],
@@ -3384,10 +3384,10 @@
                       "fun": "checkMin",
                       "parameters": [
                         [
-                          -2.0,
-                          -0.0,
-                          0.0,
-                          0.0
+                          -100.0,
+                          -50.0,
+                          -50.0,
+                          -50.0
                         ]
                       ],
                       "description": "Check the minimum value"
@@ -3569,7 +3569,7 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          -10
+                          30
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -3586,7 +3586,7 @@
                   ]
                 },
                 "var5": {
-                  "name": "var",
+                  "name": "var5",
                   "description": "An array",
                   "value": [
                     [
@@ -3608,9 +3608,9 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          2.0,
-                          0.0,
-                          2.0,
+                          100.0,
+                          -50.0,
+                          100.0,
                           0.0
                         ]
                       ],
@@ -3620,10 +3620,10 @@
                       "fun": "checkMin",
                       "parameters": [
                         [
-                          -2.0,
-                          -0.0,
-                          -2.0,
-                          0.0
+                          -100.0,
+                          -50.0,
+                          -100.0,
+                          -50.0
                         ]
                       ],
                       "description": "Check the minimum value"
@@ -3805,7 +3805,7 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          -10
+                          30
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -3822,7 +3822,7 @@
                   ]
                 },
                 "var5": {
-                  "name": "var",
+                  "name": "var5",
                   "description": "An array",
                   "value": [
                     [
@@ -3844,9 +3844,9 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          2.0,
-                          0.0,
-                          4.0,
+                          100.0,
+                          -50.0,
+                          150.0,
                           0.0
                         ]
                       ],
@@ -3856,10 +3856,10 @@
                       "fun": "checkMin",
                       "parameters": [
                         [
-                          -2.0,
-                          -0.0,
-                          -4.0,
-                          0.0
+                          -100.0,
+                          -50.0,
+                          -150.0,
+                          -50.0
                         ]
                       ],
                       "description": "Check the minimum value"
@@ -4041,7 +4041,7 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          -10
+                          30
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -4058,7 +4058,7 @@
                   ]
                 },
                 "var5": {
-                  "name": "var",
+                  "name": "var5",
                   "description": "An array",
                   "value": [
                     [
@@ -4080,9 +4080,9 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          2.0,
-                          0.0,
-                          6.0,
+                          100.0,
+                          -50.0,
+                          200.0,
                           0.0
                         ]
                       ],
@@ -4092,10 +4092,10 @@
                       "fun": "checkMin",
                       "parameters": [
                         [
-                          -2.0,
-                          -0.0,
-                          -6.0,
-                          0.0
+                          -100.0,
+                          -50.0,
+                          -200.0,
+                          -50.0
                         ]
                       ],
                       "description": "Check the minimum value"
@@ -4279,7 +4279,7 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          -10
+                          30
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -4296,7 +4296,7 @@
                   ]
                 },
                 "var5": {
-                  "name": "var",
+                  "name": "var5",
                   "description": "An array",
                   "value": [
                     [
@@ -4318,9 +4318,9 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          2.0,
-                          2.0,
+                          100.0,
                           0.0,
+                          50.0,
                           0.0
                         ]
                       ],
@@ -4330,10 +4330,10 @@
                       "fun": "checkMin",
                       "parameters": [
                         [
-                          -2.0,
-                          -2.0,
-                          0.0,
-                          0.0
+                          -100.0,
+                          -100.0,
+                          -50.0,
+                          -50.0
                         ]
                       ],
                       "description": "Check the minimum value"
@@ -4515,7 +4515,7 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          -10
+                          30
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -4532,7 +4532,7 @@
                   ]
                 },
                 "var5": {
-                  "name": "var",
+                  "name": "var5",
                   "description": "An array",
                   "value": [
                     [
@@ -4554,9 +4554,9 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          2.0,
-                          2.0,
-                          2.0,
+                          100.0,
+                          0.0,
+                          100.0,
                           0.0
                         ]
                       ],
@@ -4566,10 +4566,10 @@
                       "fun": "checkMin",
                       "parameters": [
                         [
-                          -2.0,
-                          -2.0,
-                          -2.0,
-                          0.0
+                          -100.0,
+                          -100.0,
+                          -100.0,
+                          -50.0
                         ]
                       ],
                       "description": "Check the minimum value"
@@ -4751,7 +4751,7 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          -10
+                          30
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -4768,7 +4768,7 @@
                   ]
                 },
                 "var5": {
-                  "name": "var",
+                  "name": "var5",
                   "description": "An array",
                   "value": [
                     [
@@ -4790,9 +4790,9 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          2.0,
-                          2.0,
-                          4.0,
+                          100.0,
+                          0.0,
+                          150.0,
                           0.0
                         ]
                       ],
@@ -4802,10 +4802,10 @@
                       "fun": "checkMin",
                       "parameters": [
                         [
-                          -2.0,
-                          -2.0,
-                          -4.0,
-                          0.0
+                          -100.0,
+                          -100.0,
+                          -150.0,
+                          -50.0
                         ]
                       ],
                       "description": "Check the minimum value"
@@ -4987,7 +4987,7 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          -10
+                          30
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -5004,7 +5004,7 @@
                   ]
                 },
                 "var5": {
-                  "name": "var",
+                  "name": "var5",
                   "description": "An array",
                   "value": [
                     [
@@ -5026,9 +5026,9 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          2.0,
-                          2.0,
-                          6.0,
+                          100.0,
+                          0.0,
+                          200.0,
                           0.0
                         ]
                       ],
@@ -5038,10 +5038,10 @@
                       "fun": "checkMin",
                       "parameters": [
                         [
-                          -2.0,
-                          -2.0,
-                          -6.0,
-                          0.0
+                          -100.0,
+                          -100.0,
+                          -200.0,
+                          -50.0
                         ]
                       ],
                       "description": "Check the minimum value"
@@ -5227,7 +5227,7 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          -10
+                          30
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -5244,7 +5244,7 @@
                   ]
                 },
                 "var5": {
-                  "name": "var",
+                  "name": "var5",
                   "description": "An array",
                   "value": [
                     [
@@ -5266,9 +5266,9 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          4.0,
-                          0.0,
-                          0.0,
+                          150.0,
+                          -50.0,
+                          50.0,
                           0.0
                         ]
                       ],
@@ -5278,10 +5278,10 @@
                       "fun": "checkMin",
                       "parameters": [
                         [
-                          -4.0,
-                          -0.0,
-                          0.0,
-                          0.0
+                          -150.0,
+                          -50.0,
+                          -50.0,
+                          -50.0
                         ]
                       ],
                       "description": "Check the minimum value"
@@ -5463,7 +5463,7 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          -10
+                          30
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -5480,7 +5480,7 @@
                   ]
                 },
                 "var5": {
-                  "name": "var",
+                  "name": "var5",
                   "description": "An array",
                   "value": [
                     [
@@ -5502,9 +5502,9 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          4.0,
-                          0.0,
-                          2.0,
+                          150.0,
+                          -50.0,
+                          100.0,
                           0.0
                         ]
                       ],
@@ -5514,10 +5514,10 @@
                       "fun": "checkMin",
                       "parameters": [
                         [
-                          -4.0,
-                          -0.0,
-                          -2.0,
-                          0.0
+                          -150.0,
+                          -50.0,
+                          -100.0,
+                          -50.0
                         ]
                       ],
                       "description": "Check the minimum value"
@@ -5699,7 +5699,7 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          -10
+                          30
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -5716,7 +5716,7 @@
                   ]
                 },
                 "var5": {
-                  "name": "var",
+                  "name": "var5",
                   "description": "An array",
                   "value": [
                     [
@@ -5738,9 +5738,9 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          4.0,
-                          0.0,
-                          4.0,
+                          150.0,
+                          -50.0,
+                          150.0,
                           0.0
                         ]
                       ],
@@ -5750,10 +5750,10 @@
                       "fun": "checkMin",
                       "parameters": [
                         [
-                          -4.0,
-                          -0.0,
-                          -4.0,
-                          0.0
+                          -150.0,
+                          -50.0,
+                          -150.0,
+                          -50.0
                         ]
                       ],
                       "description": "Check the minimum value"
@@ -5935,7 +5935,7 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          -10
+                          30
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -5952,7 +5952,7 @@
                   ]
                 },
                 "var5": {
-                  "name": "var",
+                  "name": "var5",
                   "description": "An array",
                   "value": [
                     [
@@ -5974,9 +5974,9 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          4.0,
-                          0.0,
-                          6.0,
+                          150.0,
+                          -50.0,
+                          200.0,
                           0.0
                         ]
                       ],
@@ -5986,10 +5986,10 @@
                       "fun": "checkMin",
                       "parameters": [
                         [
-                          -4.0,
-                          -0.0,
-                          -6.0,
-                          0.0
+                          -150.0,
+                          -50.0,
+                          -200.0,
+                          -50.0
                         ]
                       ],
                       "description": "Check the minimum value"
@@ -6173,7 +6173,7 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          -10
+                          30
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -6190,7 +6190,7 @@
                   ]
                 },
                 "var5": {
-                  "name": "var",
+                  "name": "var5",
                   "description": "An array",
                   "value": [
                     [
@@ -6212,9 +6212,9 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          4.0,
-                          2.0,
+                          150.0,
                           0.0,
+                          50.0,
                           0.0
                         ]
                       ],
@@ -6224,10 +6224,10 @@
                       "fun": "checkMin",
                       "parameters": [
                         [
-                          -4.0,
-                          -2.0,
-                          0.0,
-                          0.0
+                          -150.0,
+                          -100.0,
+                          -50.0,
+                          -50.0
                         ]
                       ],
                       "description": "Check the minimum value"
@@ -6409,7 +6409,7 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          -10
+                          30
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -6426,7 +6426,7 @@
                   ]
                 },
                 "var5": {
-                  "name": "var",
+                  "name": "var5",
                   "description": "An array",
                   "value": [
                     [
@@ -6448,9 +6448,9 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          4.0,
-                          2.0,
-                          2.0,
+                          150.0,
+                          0.0,
+                          100.0,
                           0.0
                         ]
                       ],
@@ -6460,10 +6460,10 @@
                       "fun": "checkMin",
                       "parameters": [
                         [
-                          -4.0,
-                          -2.0,
-                          -2.0,
-                          0.0
+                          -150.0,
+                          -100.0,
+                          -100.0,
+                          -50.0
                         ]
                       ],
                       "description": "Check the minimum value"
@@ -6645,7 +6645,7 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          -10
+                          30
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -6662,7 +6662,7 @@
                   ]
                 },
                 "var5": {
-                  "name": "var",
+                  "name": "var5",
                   "description": "An array",
                   "value": [
                     [
@@ -6684,9 +6684,9 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          4.0,
-                          2.0,
-                          4.0,
+                          150.0,
+                          0.0,
+                          150.0,
                           0.0
                         ]
                       ],
@@ -6696,10 +6696,10 @@
                       "fun": "checkMin",
                       "parameters": [
                         [
-                          -4.0,
-                          -2.0,
-                          -4.0,
-                          0.0
+                          -150.0,
+                          -100.0,
+                          -150.0,
+                          -50.0
                         ]
                       ],
                       "description": "Check the minimum value"
@@ -6881,7 +6881,7 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          -10
+                          30
                         ]
                       ],
                       "description": "Check the maximum value"
@@ -6898,7 +6898,7 @@
                   ]
                 },
                 "var5": {
-                  "name": "var",
+                  "name": "var5",
                   "description": "An array",
                   "value": [
                     [
@@ -6920,9 +6920,9 @@
                       "fun": "checkMax",
                       "parameters": [
                         [
-                          4.0,
-                          2.0,
-                          6.0,
+                          150.0,
+                          0.0,
+                          200.0,
                           0.0
                         ]
                       ],
@@ -6932,10 +6932,10 @@
                       "fun": "checkMin",
                       "parameters": [
                         [
-                          -4.0,
-                          -2.0,
-                          -6.0,
-                          0.0
+                          -150.0,
+                          -100.0,
+                          -200.0,
+                          -50.0
                         ]
                       ],
                       "description": "Check the minimum value"
@@ -7243,7 +7243,7 @@
                   "fun": "checkMax",
                   "parameters": [
                     [
-                      -10
+                      30
                     ]
                   ],
                   "description": "Check the maximum value"
@@ -7260,7 +7260,7 @@
               ]
             },
             "var5": {
-              "name": "var",
+              "name": "var5",
               "description": "An array",
               "value": [
                 [
@@ -7282,10 +7282,10 @@
                   "fun": "checkMax",
                   "parameters": [
                     [
-                      0.0,
-                      0.0,
-                      2.0,
-                      2.0
+                      50.0,
+                      -50.0,
+                      100.0,
+                      50.0
                     ]
                   ],
                   "description": "Check the maximum value"
@@ -7294,10 +7294,10 @@
                   "fun": "checkMin",
                   "parameters": [
                     [
-                      -0.0,
-                      -0.0,
-                      -2.0,
-                      -2.0
+                      -50.0,
+                      -50.0,
+                      -100.0,
+                      -100.0
                     ]
                   ],
                   "description": "Check the minimum value"
@@ -7479,7 +7479,7 @@
                   "fun": "checkMax",
                   "parameters": [
                     [
-                      -10
+                      30
                     ]
                   ],
                   "description": "Check the maximum value"
@@ -7496,7 +7496,7 @@
               ]
             },
             "var5": {
-              "name": "var",
+              "name": "var5",
               "description": "An array",
               "value": [
                 [
@@ -7518,10 +7518,10 @@
                   "fun": "checkMax",
                   "parameters": [
                     [
-                      0.0,
-                      0.0,
-                      4.0,
-                      6.0
+                      50.0,
+                      -50.0,
+                      150.0,
+                      150.0
                     ]
                   ],
                   "description": "Check the maximum value"
@@ -7530,10 +7530,10 @@
                   "fun": "checkMin",
                   "parameters": [
                     [
-                      -0.0,
-                      -0.0,
-                      -4.0,
-                      -6.0
+                      -50.0,
+                      -50.0,
+                      -150.0,
+                      -200.0
                     ]
                   ],
                   "description": "Check the minimum value"
@@ -7717,7 +7717,7 @@
                   "fun": "checkMax",
                   "parameters": [
                     [
-                      -10
+                      30
                     ]
                   ],
                   "description": "Check the maximum value"
@@ -7734,7 +7734,7 @@
               ]
             },
             "var5": {
-              "name": "var",
+              "name": "var5",
               "description": "An array",
               "value": [
                 [
@@ -7756,10 +7756,10 @@
                   "fun": "checkMax",
                   "parameters": [
                     [
-                      0.0,
-                      0.0,
-                      2.0,
-                      2.0
+                      50.0,
+                      -50.0,
+                      100.0,
+                      50.0
                     ]
                   ],
                   "description": "Check the maximum value"
@@ -7768,10 +7768,10 @@
                   "fun": "checkMin",
                   "parameters": [
                     [
-                      -0.0,
-                      -0.0,
-                      -2.0,
-                      -2.0
+                      -50.0,
+                      -50.0,
+                      -100.0,
+                      -100.0
                     ]
                   ],
                   "description": "Check the minimum value"
@@ -7953,7 +7953,7 @@
                   "fun": "checkMax",
                   "parameters": [
                     [
-                      -10
+                      30
                     ]
                   ],
                   "description": "Check the maximum value"
@@ -7970,7 +7970,7 @@
               ]
             },
             "var5": {
-              "name": "var",
+              "name": "var5",
               "description": "An array",
               "value": [
                 [
@@ -7992,10 +7992,10 @@
                   "fun": "checkMax",
                   "parameters": [
                     [
-                      0.0,
-                      0.0,
-                      4.0,
-                      6.0
+                      50.0,
+                      -50.0,
+                      150.0,
+                      150.0
                     ]
                   ],
                   "description": "Check the maximum value"
@@ -8004,10 +8004,10 @@
                   "fun": "checkMin",
                   "parameters": [
                     [
-                      -0.0,
-                      -0.0,
-                      -4.0,
-                      -6.0
+                      -50.0,
+                      -50.0,
+                      -150.0,
+                      -200.0
                     ]
                   ],
                   "description": "Check the minimum value"

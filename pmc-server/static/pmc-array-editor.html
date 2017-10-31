@@ -144,17 +144,27 @@
                             this.checkValues(false);
                         }
                     }
-                    
-                    setValue (elementsToSet, updateRemote=true) {
+                   
+                    sliceArray (arrayToSlice) {
                         //Make a shallow copy!
-                        if (elementsToSet.length > 0) {
-                            if (elementsToSet[0].length !== undefined) {
-                                super.setValue(elementsToSet[0].slice(0), updateRemote);
+                        var ret = arrayToSlice;
+                        if (arrayToSlice.length > 0) {
+                            var sliceAt0 = (typeof(arrayToSlice[0]) === "string");
+                            if (!sliceAt0) {
+                                sliceAt0 = (arrayToSlice[0].length !== undefined);
+                            }
+                            if (sliceAt0) {
+                                ret = arrayToSlice[0].slice(0);
                             }
                             else {
-                                super.setValue(elementsToSet.slice(0), updateRemote);
+                                ret = arrayToSlice.slice(0);
                             }
                         }
+                        return ret;
+                    } 
+                    
+                    setValue (elementsToSet, updateRemote=true) {
+                        super.setValue(this.sliceArray(elementsToSet), updateRemote);
                     }
 
                     setInitialValue (initialValueToSet) {

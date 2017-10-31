@@ -22,10 +22,11 @@ class PMCTestStruct1 extends PMCVariable {
             new PMCValidation("checkMax", new Vector(Arrays.asList(new int[]{30})), "Check the maximum value"),
             new PMCValidation("checkMin", new Vector(Arrays.asList(new int[]{-100})), "Check the minimum value")});
 
+        float delta = 50;
         this.var5 = new PMCVariable("var5", "An array", new Vector(Arrays.asList(new float[]{var1, var2, var3, var4})), "float32", new int[]{4}, false, false, false,
         new PMCValidation[]{
-            new PMCValidation("checkMax", new Vector(Arrays.asList(new float[][]{{2 * var1, 2 * var2, 2 * var3, 2 * var4}})), "Check the maximum value"),
-            new PMCValidation("checkMin", new Vector(Arrays.asList(new float[][]{{-2 * var1, -2 * var2, -2 * var3, -2 * var4}})), "Check the minimum value"),
+            new PMCValidation("checkMax", new Vector(Arrays.asList(new float[][]{{delta * var1 + delta, delta * var2 + delta, delta * var3 + delta, delta * var4 + delta}})), "Check the maximum value"),
+            new PMCValidation("checkMin", new Vector(Arrays.asList(new float[][]{{-delta * var1 - delta, -delta * var2 -delta, -delta * var3 - delta,  -delta * var4 - delta}})), "Check the minimum value"),
             new PMCValidation("checkType", new Vector(Arrays.asList(new float[]{})), "Check the type")});
 
 

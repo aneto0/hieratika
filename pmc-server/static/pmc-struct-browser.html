@@ -8,19 +8,25 @@
         <template id="tstructbrowser">
             <style>
                 .collapsibleList li{
-                  list-style-image : url('icons/tree-item-8.png');
-                  cursor           : auto;
+                    list-style-image : url('icons/tree-item-8.png');
+                    cursor           : auto;
                 }
 
                 li.collapsibleListOpen{
-                  list-style-image : url('icons/tree-close-8.png');
-                  cursor           : pointer;
+                    list-style-image : url('icons/tree-close-8.png');
+                    cursor           : pointer;
+                }
+                
+                li.collapsibleListClosed{
+                    list-style-image : url('icons/tree-open-8.png');
+                    cursor           : pointer;
                 }
 
-                li.collapsibleListClosed{
-                  list-style-image : url('icons/tree-open-8.png');
-                  cursor           : pointer;
+                li.collapsibleListClosed:hover{
+                    background-color: gray;
                 }
+
+
             </style>
             <div id="dstructbrowser"></div>
         </template>
@@ -98,11 +104,24 @@
                                         }
                                     }
                                     else {
-                                        this.treeHTML += "<li>\n";
+                                        this.treeHTML += "<ul>\n";
+                                        this.treeHTML += "<li><div>\n";
                                         var memberIdValidCSS = "P" + memberId.replace(/[|&;$%@"<>()+,]/g, "");
                                         memberIdValidCSS = memberIdValidCSS.replace(/:/g, "");
-                                        this.treeHTML += memberId + ": <pmc-input id=\"" + memberId + "\" name=\"" + memberId + "\" class=\"" + memberIdValidCSS + "\">\n";
-                                        this.treeHTML += "</li>\n";
+                                        var memberIsArray = false;
+                                        if (member.numberOfElements.length > 0) {
+                                            if ((member.numberOfElements[0] > 1) || (member.numberOfElements[0].length > 0)) {
+                                                memberIsArray = true;
+                                            }
+                                        }
+                                        if (memberIsArray) {
+                                            this.treeHTML += callerMemberId + ": <pmc-array-editor id=\"" + memberId + "\" name=\"" + memberId + "\" class=\"" + memberIdValidCSS + "\"></pmc-array-editor>\n";
+                                        }
+                                        else {
+                                            this.treeHTML += callerMemberId + ": <pmc-input id=\"" + memberId + "\" name=\"" + memberId + "\" class=\"" + memberIdValidCSS + "\"></pmc-input>\n";
+                                        }
+                                        this.treeHTML += "</div></li>\n";
+                                        this.treeHTML += "</ul>\n";
                                     }
                                 }
                             }
