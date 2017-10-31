@@ -13,6 +13,10 @@ CLASSES = \
 	PMCVariable.java  \
 	PMCGap.java  \
 	PMCShape.java \
+	PMCTest0.java \
+	PMCTestStruct1.java \
+	PMCTestStruct2.java \
+	PMCTestStruct3.java \
 	PlantDEMO0.java \
 	Plant55A0.java
 

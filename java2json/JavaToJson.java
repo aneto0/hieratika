@@ -17,7 +17,8 @@ class Java2JSon {
        
         //variables.add(new Plant55A0()); 
         //Plant55A0 plant = new Plant55A0(variables);
-        PlantDEMO0 plant = new PlantDEMO0(variables);
+        //PlantDEMO0 plant = new PlantDEMO0(variables);
+        PMCTest0 plant = new PMCTest0(variables);
         String json = gson.toJson(this);
         System.out.println(json);
     }

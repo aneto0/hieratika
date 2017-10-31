@@ -19,20 +19,26 @@
         {
           "fun": "checkMax",
           "parameters": [
-            "10"
+            [
+              10.0
+            ]
           ],
           "description": "Check the maximum value"
         },
         {
           "fun": "checkMin",
           "parameters": [
-            "-1"
+            [
+              -1.0
+            ]
           ],
           "description": "Check the minimum value"
         },
         {
           "fun": "checkType",
-          "parameters": [],
+          "parameters": [
+            []
+          ],
           "description": "Check the type"
         }
       ]
@@ -60,10 +66,10 @@
           "fun": "checkMax",
           "parameters": [
             [
-              "10",
-              "11",
-              "12",
-              "13"
+              10.0,
+              11.0,
+              12.0,
+              13.0
             ]
           ],
           "description": "Check the maximum value"
@@ -72,17 +78,19 @@
           "fun": "checkMin",
           "parameters": [
             [
-              "-1",
-              "-2",
-              "-3",
-              "-4"
+              -1.0,
+              -2.0,
+              -3.0,
+              -4.0
             ]
           ],
           "description": "Check the minimum value"
         },
         {
           "fun": "checkType",
-          "parameters": [],
+          "parameters": [
+            []
+          ],
           "description": "Check the type"
         }
       ]

@@ -18,17 +18,17 @@ class PlantDEMO0 {
 
     public PMCVariable var1 = new PMCVariable("VAR1", "A variable", new Vector(Arrays.asList(new int[]{1})), "int32", new int[]{1}, false, false, false,
         new PMCValidation[]{
-            new PMCValidation("checkMax", new Vector(Arrays.asList(new String[]{"10"})), "Check the maximum value"),
-            new PMCValidation("checkMin", new Vector(Arrays.asList(new String[]{"-1"})), "Check the minimum value"),
-            new PMCValidation("checkType", new Vector(Arrays.asList(new String[]{})), "Check the type")
+            new PMCValidation("checkMax", new Vector(Arrays.asList(new float[]{10})), "Check the maximum value"),
+            new PMCValidation("checkMin", new Vector(Arrays.asList(new float[]{-1})), "Check the minimum value"),
+            new PMCValidation("checkType", new Vector(Arrays.asList(new float[]{})), "Check the type")
         });
 
 
     public PMCVariable var2 = new PMCVariable("VAR2", "An array", new Vector(Arrays.asList(new float[]{7, 8, 9, 0})), "float32", new int[]{4}, false, false, false,
         new PMCValidation[]{
-            new PMCValidation("checkMax", new Vector(Arrays.asList(new String[][]{{"10", "11", "12", "13"}})), "Check the maximum value"),
-            new PMCValidation("checkMin", new Vector(Arrays.asList(new String[][]{{"-1", "-2", "-3", "-4"}})), "Check the minimum value"),
-            new PMCValidation("checkType", new Vector(Arrays.asList(new String[]{})), "Check the type")
+            new PMCValidation("checkMax", new Vector(Arrays.asList(new float[][]{{10, 11, 12, 13}})), "Check the maximum value"),
+            new PMCValidation("checkMin", new Vector(Arrays.asList(new float[][]{{-1, -2, -3, -4}})), "Check the minimum value"),
+            new PMCValidation("checkType", new Vector(Arrays.asList(new float[]{})), "Check the type")
         });
 
 
