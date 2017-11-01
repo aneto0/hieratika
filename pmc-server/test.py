@@ -519,7 +519,7 @@ class Server:
         librariesNames = {}
         tableLibraryVariables = db["libraryVariables"]
         variables = []
-        toReturn = ""
+        toReturn = {"description":"", "variables":[]}
         if (not self.isTokenValid(request)):
             toReturn = "InvalidToken"
         else:
@@ -532,14 +532,15 @@ class Server:
                 libraries = tableLibraries.find_one(name=requestedLibraryName, user_id=requestedLibraryUser, variable_id=variableId)
                 requestedLibraryId = libraries["id"]
 
+            toReturn["description"] = libraries["description"]
             libraryVariables = tableLibraryVariables.find(library_id=requestedLibraryId)
             for l in libraryVariables:
                 lv = {
                     "variableId": l["variable_id"],
                     "value": pickle.loads(l["value"])
                 } 
-                variables.append(lv)
-            toReturn = json.dumps(variables)
+                toReturn["variables"].append(lv)
+            toReturn = json.dumps(toReturn)
         return toReturn
 
     def saveLibrary(self, request):
@@ -568,7 +569,7 @@ class Server:
                     "value": pickle.dumps(json.loads(lv["value"]))
                 }
                 tableLibraryVariables.upsert(value, ["variable_id", "library_id"])
-            toReturn = "ok"
+            toReturn = json.dumps({"id":str(createdLibrary["id"])})
         return toReturn
 
     def login(self):

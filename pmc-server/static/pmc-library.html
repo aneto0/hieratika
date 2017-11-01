@@ -12,12 +12,6 @@
                     this.availableLibraries = [];
                 }
 
-                /*setValidations (validationsToSet) {
-                    if (this.editor !== undefined) {
-                        this.editor.setValidations(validationsToSet);
-                    }
-                }*/
-
                 attachLibraryHandler () {
                     //Create an editor
                     var libraryVariables = this.getAttribute("data-library-variables");
@@ -41,15 +35,19 @@
                     this.availableLibraries = libraries.slice();
                 }
 
-                /*setReadOnly (isReadOnly) {
+                addAvailableLibrary(library) {
+                    this.availableLibraries.push(library);
+                } 
+
+                setReadOnly (isReadOnly) {
                     super.setReadOnly(isReadOnly);
                     this.libraryEditor.setReadOnly(isReadOnly);
-                }*/
+                }
 
-                /*setUserAllowedToWrite (isUserAllowedToWrite) {
+                setUserAllowedToWrite (isUserAllowedToWrite) {
                     super.setUserAllowedToWrite(isUserAllowedToWrite);
-                    this.libraryEditor.getEditor().setUserAllowedToWrite(isUserAllowedToWrite);
-                }*/
+                    this.libraryEditor.setUserAllowedToWrite(isUserAllowedToWrite);
+                }
 
                 libraryChanged (newLibraryName) {
                 }

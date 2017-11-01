@@ -44,11 +44,6 @@
                         return template;
                     }
 
-                    setReadOnly (isReadOnly) {
-                        super.setReadOnly(isReadOnly);
-                        this.buttonInput.backgroundColor = DISABLED_COLOR;
-                    }
-
                     libraryChanged (newLibraryName) {
                         if (!this.isReadOnly()) {
                             this.buttonInput.innerHTML = newLibraryName;
