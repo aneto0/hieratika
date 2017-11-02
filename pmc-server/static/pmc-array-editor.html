@@ -161,7 +161,7 @@
                             }
                         }
                         else {
-                            Logger.warn("arrayToSlice is undefined");
+                            Logger.warn(this.id + ": arrayToSlice is undefined");
                         }
                         return ret;
                     } 
@@ -204,6 +204,7 @@
                     }
     
                     setReadOnly (isReadOnly) {
+                        super.setReadOnly(isReadOnly);
                         this.addButton.disabled = isReadOnly;
                         this.removeButton.disabled = isReadOnly;
                     }

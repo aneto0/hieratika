@@ -12,7 +12,7 @@ import pickle
 import numpy
 
 #Private keys that cannot be used as member names in structures
-variableStandardKeys = ["id", "name", "type", "description", "value", "numberOfElements", "isLibrary", "isLiveVariable", "isStruct", "validation"]
+variableStandardKeys = ["id", "name", "type", "description", "value", "numberOfElements", "isLiveVariable", "isStruct", "validation"]
 
 def isFirstIndexOfArray(variableId):
     varLen = len(variableId)
@@ -42,7 +42,6 @@ def importVariable(variableJSon, variablesDB, validationsDB, permissionsDB, grou
             idx = oidx + str(k)
             importVariable(member, variablesDB, validationsDB, permissionsDB, groups, fullVariableName, idx)
     else:
-        isLibrary = ((variableJSon["isLibrary"] == "true") or (variableJSon["isLibrary"] == True))
         isLiveVariable = ((variableJSon["isLiveVariable"] == "true") or (variableJSon["isLiveVariable"] == True))
         isStruct = ((variableJSon["isStruct"] == "true") or (variableJSon["isStruct"] == True))
         if (len(dimensions) == 0):
@@ -56,7 +55,6 @@ def importVariable(variableJSon, variablesDB, validationsDB, permissionsDB, grou
             "description": variableJSon["description"],
             "value": pickle.dumps(variableJSon["value"]),
             "numberOfElements": pickle.dumps(variableJSon["numberOfElements"]),
-            "isLibrary": isLibrary,
             "isLiveVariable": isLiveVariable,
             "isStruct": isStruct 
         }
@@ -96,7 +94,6 @@ def importVariable(variableJSon, variablesDB, validationsDB, permissionsDB, grou
                             "type": "",
                             "description": "",
                             "value": "",
-                            "isLibrary": False,
                             "isLiveVariable": False,
                             "isStruct": True
                         }

@@ -55,78 +55,29 @@
                         }
                     }
 
-                    populateComponentInfo(component, pvInfo, user) {
-                        component.setTypeValue(pvInfo.type);
-                        component.setLibrary(pvInfo.isLibrary === true);
-                        component.setNumberOfElements(pvInfo.numberOfElements);
-                        component.setReference("none");
-                        component.setInitialValue(pvInfo.value);
-                        component.setPlantValue(pvInfo.value);
-                        component.setValidations(pvInfo.validation);
-                        component.setPermissionGroups(pvInfo.permissions);
-                        var userAllowed = false;
-                        for (var g in user.groups) {
-                            userAllowed = pvInfo.permissions.includes(user.groups[g]); 
-                            if (userAllowed) {
-                                break;
-                            }
-                        }
-                        component.setUserAllowedToWrite(userAllowed);
-                        //Loop through all the elements
-                        component.isStruct = false;
-                        var keys = Object.keys(pvInfo); 
-                        for (var keyIdx in keys) { 
-                            var memberId = keys[keyIdx];
-                            var memberPVInfo = pvInfo[memberId];
-                            var memberVariableId = memberPVInfo["variableId"];
-                            if (memberVariableId === undefined) {
-                                if (Array.isArray(memberPVInfo)) {
-                                    component[memberId] = memberPVInfo;
-                                }
-                                component.isStruct = true;
-                            }
-                            else {
-                                component[memberId] = memberPVInfo;
-                            }
-                        }
-                        component.setValue(component.value);
-                        component.infoLoaded();
-                    }
-
                     loadPlantInfo() {
                         var allVariableIds = [];
                         for (var k in allPMCComponents) {
                             allVariableIds.push(k)
                         }
-                        $.ajax({
-                            type: "post",
-                            url: "/getplantinfo",
-                            data: {
-                                token: currentToken,
-                                variables: JSON.stringify(allVariableIds)
-                            },
-                            success: function (response) {
-                                var pvInfosJson = $.parseJSON(response);
-                                var pvInfos = pvInfosJson["variables"];
-                                var user = JSON.parse(localStorage.user);
-                                for (var i in pvInfos) {
-                                    var pvInfo = pvInfos[i];
-                                    var targetElements = allPMCComponents[pvInfo.variableId];
-                                    if (targetElements != null) {
-                                        for (var j in targetElements) {
-                                            this.populateComponentInfo(targetElements[j], pvInfo, user);                    
-                                        }
+                        getPlantInfo(allVariableIds, function (response) {
+                            var pvInfosJson = $.parseJSON(response);
+                            var pvInfos = pvInfosJson["variables"];
+                            var user = JSON.parse(localStorage.user);
+                            for (var i in pvInfos) {
+                                var pvInfo = pvInfos[i];
+                                var targetElements = allPMCComponents[pvInfo.variableId];
+                                if (targetElements != null) {
+                                    for (var j in targetElements) {
+                                        populateComponentInfo(targetElements[j], pvInfo, user);                    
                                     }
                                 }
-                                getAvailableLibraries();
-
-                                this.firePlantInfoLoaded();
-                            }.bind(this),
-                            error: function (response) {
-                                console.log(response);
-                                alert(response);
                             }
-                        });
+                            getAvailableLibraries();
+
+                            this.firePlantInfoLoaded();
+                        }.bind(this),
+                        );
                     }
 
                     pageChanged (page) {

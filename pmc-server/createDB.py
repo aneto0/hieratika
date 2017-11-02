@@ -16,7 +16,7 @@ if not users.exists:
     
     db.query("CREATE TABLE pages (id TEXT, name TEXT, description TEXT, PRIMARY KEY (id))")
 
-    db.query("CREATE TABLE variables(id TEXT, type TEXT, name TEXT, description TEXT, numberOfElements TEXT, isLibrary BOOLEAN, isLiveVariable BOOLEAN, isStruct BOOLEAN, value TEXT, PRIMARY KEY(id))")
+    db.query("CREATE TABLE variables(id TEXT, type TEXT, name TEXT, description TEXT, numberOfElements TEXT, isLiveVariable BOOLEAN, isStruct BOOLEAN, value TEXT, PRIMARY KEY(id))")
 
     db.query("CREATE TABLE permissions(variable_id TEXT, group_id TEXT NOT NULL, PRIMARY KEY(variable_id, group_id), FOREIGN KEY (variable_id) REFERENCES variables(id), FOREIGN KEY(group_id) REFERENCES groups(id))")
 

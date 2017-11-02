@@ -46,12 +46,67 @@
             });
         }
 
-        
+        function getPlantInfo(variableIds, successFn) {
+            $.ajax({
+                type: "post",
+                url: "/getplantinfo",
+                data: {
+                    token: currentToken,
+                    variables: JSON.stringify(variableIds)
+                },
+                success: successFn,
+                error: function (response) {
+                    console.log(response);
+                    alert(response);
+                }
+            });
+        }
+
+        function populateComponentInfo(component, pvInfo, user) {
+            component.setTypeValue(pvInfo.type);
+            component.setNumberOfElements(pvInfo.numberOfElements);
+            component.setReference("none");
+            component.setInitialValue(pvInfo.value);
+            component.setPlantValue(pvInfo.value);
+            component.setValidations(pvInfo.validation);
+            component.setPermissionGroups(pvInfo.permissions);
+            var userAllowed = false;
+            for (var g in user.groups) {
+                userAllowed = pvInfo.permissions.includes(user.groups[g]); 
+                if (userAllowed) {
+                    break;
+                }
+            }
+            component.setUserAllowedToWrite(userAllowed);
+            //Loop through all the elements
+            component.isStruct = false;
+            var keys = Object.keys(pvInfo); 
+            for (var keyIdx in keys) { 
+                var memberId = keys[keyIdx];
+                var memberPVInfo = pvInfo[memberId];
+                var memberVariableId = memberPVInfo["variableId"];
+                if (memberVariableId === undefined) {
+                    if (Array.isArray(memberPVInfo)) {
+                        component[memberId] = memberPVInfo;
+                    }
+                    component.isStruct = true;
+                }
+                else {
+                    component[memberId] = memberPVInfo;
+                }
+            }
+            component.setValue(component.value);
+            component.infoLoaded();
+        }
+
         function displayPlant() {
             $.each(allPMCComponents, function (i, pmcCompArray) {
                 $.each(pmcCompArray, function (j, pmcComp) {
                     pmcComp.setReadOnly(true);
-                    pmcComp.setValue(pmcComp.getPlantValue(), false);
+                    var value = pmcComp.getPlantValue();
+                    if (value !== undefined) {
+                        pmcComp.setValue(value, false);
+                    }
                 });
             });
         }

@@ -77,13 +77,9 @@
         }
 
         isLibrary () {
-            return this.library;
+            return (this.getTypeValue() === "library");
         }
 
-        setLibrary (isLibrary) {
-            this.library = isLibrary;
-        }
-    
         isReadOnly() {
             return this.readOnly;
         }

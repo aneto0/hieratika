@@ -176,7 +176,6 @@ class Server:
         """
         variable = row
         variable["variableId"] = variable["id"]  
-        variable["isLibrary"] = (variable["isLibrary"] == 1)
         if (variable["value"] != ""):
             variable["value"] = pickle.loads(variable["value"])  
         variable["numberOfElements"] = pickle.loads(variable["numberOfElements"])  

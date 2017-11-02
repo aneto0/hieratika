@@ -153,7 +153,6 @@
                                         memberIdValidCSS = memberIdValidCSS.replace(/:/g, "");
                                         var compMember = this.shadowRoot.querySelector(memberIdValidCSS);
                                         compMember.setTypeValue(member.type);
-                                        compMember.setLibrary(member.library === true);
                                         compMember.setNumberOfElements(member.numberOfElements);
                                         compMember.setReference("none");
                                         compMember.setInitialValue(member.value);

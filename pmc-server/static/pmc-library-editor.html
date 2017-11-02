@@ -208,13 +208,17 @@
                                     success: function (response) {
                                         var library = $.parseJSON(response);
                                         if (library.id !== undefined) {
-                                            var option = document.createElement( 'option' );
-                                            option.id = library.id;
-                                            option.value = saveAsName;
-                                            option.text = saveAsName;
-                                            this.selector.add(option);
-                                            this.selector.value = saveAsName;
-                                            this.owner.addAvailableLibrary({id:library.id, name:saveAsName});
+                                            var optionsAsArray = Array.apply(null, this.selector.options).map(function(el){return el.text;});
+                                            if(optionsAsArray.indexOf(saveAsName) == -1) {
+                                                this.selector.options
+                                                var option = document.createElement( 'option' );
+                                                option.id = library.id;
+                                                option.value = saveAsName;
+                                                option.text = saveAsName;
+                                                this.selector.add(option);
+                                                this.selector.value = saveAsName;
+                                                this.owner.addAvailableLibrary({id:library.id, name:saveAsName});
+                                            }
                                             alert("Library updated successfully!");
                                         }
                                     }.bind(this),
@@ -243,11 +247,9 @@
                                 var keys = Object.keys(libraryVariables);
                                 for(var i in keys) {
                                     var reg = new RegExp("{" + keys[i] + "}", "g");
-                                    console.log(reg);
                                     response = response.replace(reg, libraryVariables[keys[i]]);
                                 }
                                 this.divEditor.innerHTML = response;
-                                console.log(this.divEditor.innerHTML);
                                 var allDivTags = this.divEditor.getElementsByTagName("*");
                                 for (var i=0; i<allDivTags.length; i++) {
                                     var comp = allDivTags[i];
@@ -261,36 +263,32 @@
                                     }
                                 }
 
+                                var allVariableIds = [];
+                                for (var k in this.editorComponents) {
+                                    allVariableIds.push(k)
+                                }
+                                getPlantInfo(allVariableIds, 
+                                    function (response) {
+                                        var pvInfosJson = $.parseJSON(response);
+                                        var pvInfos = pvInfosJson["variables"];
+                                        var user = JSON.parse(localStorage.user);
+                                        for (var i in pvInfos) {
+                                            var pvInfo = pvInfos[i];
+                                            var targetElements = this.editorComponents[pvInfo.variableId];
+                                            if (targetElements != null) {
+                                                for (var j in targetElements) {
+                                                    populateComponentInfo(targetElements[j], pvInfo, user);                    
+                                                }
+                                            }
+                                        }
+                                    }.bind(this)
+                                );
                             }.bind(this),
                             error: function (response) {
                                 console.log(response);
                                 alert(response);
                             }
                         });
-
-
-                        //this.editor = editor;
-                        /*var divHTML = "";
-                        for(var i in libraryVariables) {
-                            divHTML += "<div>";
-                            var varName = libraryVariables[i].variable;
-                            var editorTag = libraryVariables[i].editor;
-                            divHTML += varName + ": <" + editorTag + " id=\"" + varName + "\"></" + editorTag + ">\n";
-                            divHTML += "</div>";
-                        }
-                        this.divEditor.innerHTML = divHTML;
-                        var allDivTags = this.divEditor.getElementsByTagName("*");
-                        for (var i=0; i<allDivTags.length; i++) {
-                            var comp = allDivTags[i];
-                            if (comp.id !== undefined) {
-                                if(this.editorComponents[comp.id] === undefined) {
-                                    this.editorComponents[comp.id] = [comp];
-                                }
-                                else {
-                                    this.editorComponents[comp.id].push(this);
-                                }
-                            }
-                        }*/
                     }
 
                     getEditor() {

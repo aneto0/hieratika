@@ -9,20 +9,20 @@
             class PMCLibrary extends PMCAbstractInput {
                 constructor() {
                     super();
-                    this.availableLibraries = [];
                 }
 
                 attachLibraryHandler () {
+                    this.availableLibraries = [];
                     //Create an editor
                     var libraryVariables = this.getAttribute("data-library-variables");
                     var libraryEditor = this.getAttribute("data-library-editor");
                     this.libraryEditor = this.shadowRoot.querySelector("#tlibrary-editor");
-                    /*var editorName = this.getAttribute("data-library-variables");
-                    this.editor = document.createElement(editorName);*/
 
                     //Attach a selector
-                    //this.libraryEditor = document.createElement("pmc-library-editor");
                     this.libraryEditor.setOwnerComponent(this);
+                    if (libraryVariables === undefined) {
+                        libraryVariables = "{}";
+                    }
                     this.libraryEditor.setLibraryVariables(libraryEditor, JSON.parse(libraryVariables));
                 }
 
