@@ -234,9 +234,43 @@
                         this.owner = owner;
                     }
     
-                    setLibraryVariables(libraryVariables) {
+                    setLibraryVariables(editor, libraryVariables) {
+                        var editorUrl = editor + "?" + new Date().getTime(); //new Date... to force reloading with no caching
+                        $.ajax({
+                            type: "get",
+                            url: editorUrl, 
+                            success: function (response) {
+                                var keys = Object.keys(libraryVariables);
+                                for(var i in keys) {
+                                    var reg = new RegExp("{" + keys[i] + "}", "g");
+                                    console.log(reg);
+                                    response = response.replace(reg, libraryVariables[keys[i]]);
+                                }
+                                this.divEditor.innerHTML = response;
+                                console.log(this.divEditor.innerHTML);
+                                var allDivTags = this.divEditor.getElementsByTagName("*");
+                                for (var i=0; i<allDivTags.length; i++) {
+                                    var comp = allDivTags[i];
+                                    if (comp.isPMCComponent !== undefined) {
+                                        if(this.editorComponents[comp.id] === undefined) {
+                                            this.editorComponents[comp.id] = [comp];
+                                        }
+                                        else {
+                                            this.editorComponents[comp.id].push(this);
+                                        }
+                                    }
+                                }
+
+                            }.bind(this),
+                            error: function (response) {
+                                console.log(response);
+                                alert(response);
+                            }
+                        });
+
+
                         //this.editor = editor;
-                        var divHTML = "";
+                        /*var divHTML = "";
                         for(var i in libraryVariables) {
                             divHTML += "<div>";
                             var varName = libraryVariables[i].variable;
@@ -256,7 +290,7 @@
                                     this.editorComponents[comp.id].push(this);
                                 }
                             }
-                        }
+                        }*/
                     }
 
                     getEditor() {

@@ -148,15 +148,20 @@
                     sliceArray (arrayToSlice) {
                         //Make a shallow copy!
                         var ret = arrayToSlice;
-                        if (arrayToSlice.length > 0) {
-                            var arrayOfStr = (typeof(arrayToSlice[0]) === "string");
-                            var sliceAt0 = (arrayToSlice[0].length !== undefined);
-                            if ((sliceAt0) && (!arrayOfStr)) {
-                                ret = arrayToSlice[0].slice(0);
+                        if (arrayToSlice !== undefined) {
+                            if (arrayToSlice.length > 0) {
+                                var arrayOfStr = (typeof(arrayToSlice[0]) === "string");
+                                var sliceAt0 = (arrayToSlice[0].length !== undefined);
+                                if ((sliceAt0) && (!arrayOfStr)) {
+                                    ret = arrayToSlice[0].slice(0);
+                                }
+                                else {
+                                    ret = arrayToSlice.slice(0);
+                                }
                             }
-                            else {
-                                ret = arrayToSlice.slice(0);
-                            }
+                        }
+                        else {
+                            Logger.warn("arrayToSlice is undefined");
                         }
                         return ret;
                     } 
