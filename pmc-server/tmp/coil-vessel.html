@@ -1,0 +1,59 @@
+<html>
+<head>
+    <script>
+        var rcoords = [3540, 3540, 3540, 3540, 3540, 3540, 3540, 3540, 3540, 3540, 3540, 3540, 3540, 3540, 3540, 3540, 3540, 3540, 3540, 3551, 3587, 3645, 3726, 3828, 3949, 4088, 4243, 4411, 4590, 4778, 4971, 5167, 5363, 5556, 5744, 5923, 6091, 6247, 6403, 6560, 6716, 6872, 7031, 7187, 7337, 7482, 7623, 7757, 7886, 8009, 8126, 8237, 8341, 8439, 8530, 8614, 8692, 8762, 8825, 8876, 8917, 8945, 8964, 8977, 8984, 8987, 8983, 8974, 8960, 8936, 8898, 8847, 8782, 8702, 8623, 8543, 8464, 8384, 8305, 8225, 8146, 8066, 7987, 7908, 7828, 7749, 7669, 7590, 7510, 7431, 7346, 7249, 7140, 7019, 6889, 6748, 6599, 6441, 6276, 6105, 5928, 5747, 5562, 5375, 5187, 4990, 4795, 4605, 4424, 4254, 4097, 3956, 3833, 3729, 3647, 3588, 3552, 3540, 3540, 3540, 3540, 3540, 3540, 3540, 3540, 3540, 3540, 3540, 3540, 3540, 3540, 3540, 3540, 3540, 3540];
+        var zcoords = [31, 228, 425, 622, 819, 1016, 1214, 1411, 1608, 1805, 2002, 2199, 2396, 2593, 2791, 2988, 3185, 3382, 3579, 3775, 3969, 4156, 4335, 4504, 4658, 4797, 4918, 5020, 5101, 5159, 5194, 5206, 5194, 5159, 5100, 5020, 4918, 4810, 4702, 4595, 4487, 4379, 4264, 4143, 4016, 3883, 3745, 3601, 3452, 3298, 3140, 2977, 2810, 2639, 2465, 2287, 2106, 1922, 1735, 1553, 1368, 1181, 1007, 833, 659, 484, 310, 136, -38, -209, -377, -541, -701, -874, -1048, -1222, -1395, -1569, -1743, -1917, -2090, -2264, -2438, -2611, -2785, -2959, -3133, -3306, -3480, -3654, -3822, -3984, -4138, -4283, -4420, -4546, -4661, -4764, -4856, -4935, -5001, -5054, -5093, -5118, -5129, -5122, -5090, -5034, -4956, -4857, -4737, -4599, -4445, -4277, -4097, -3909, -3715, -3518, -3321, -3123, -2926, -2729, -2532, -2335, -2138, -1941, -1744, -1546, -1349, -1152, -955, -758, -561, -364, -166];
+
+        function createText(r1, z1, h, t, color, scale = 0.05, roffset = -3000, zoffset = 6000) {
+            var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text.setAttribute('x', (r1 + roffset) * scale);
+            text.setAttribute('y', h - (z1 + zoffset) * scale);
+            text.setAttribute('fill', color);
+            text.setAttribute('font-size', 8);
+            text.textContent = t; 
+            return text;
+        }
+
+        function createLine(r1, z1, r2, z2, h, w, color, scale = 0.05, roffset = -3000, zoffset = 6000) {
+            var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', (r1 + roffset) * scale);
+            line.setAttribute('y1', h - (z1 + zoffset) * scale);
+            line.setAttribute('x2', (r2 + roffset) * scale);
+            line.setAttribute('y2', h - (z2 + zoffset) * scale);
+            line.setAttribute('stroke', color);
+            line.setAttribute('stroke-width', w);
+            return line;
+        }
+
+        function drawCoil(canvas, r, z, angle, name, h, w, color, coilPseudoSize = 100) {
+            var angleRads = angle * Math.PI / 180.;
+            var r1 = r - (coilPseudoSize * Math.cos(angleRads)); 
+            var r2 = r + coilPseudoSize * Math.cos(angleRads); 
+            var z1 = z - coilPseudoSize * Math.sin(angleRads); 
+            var z2 = z + coilPseudoSize * Math.sin(angleRads); 
+            canvas.appendChild(createLine(r1, z1, r2, z2, h, w, color));
+            canvas.appendChild(createText(r1, z1, h, name, color));
+        }
+
+        function drawVessel(canvas, h, w, color) {
+            for (var i=0; i<(rcoords.length - 1); i++) {
+                canvas.appendChild(createLine(rcoords[i], zcoords[i], rcoords[i+1], zcoords[i+1], h, w, color) );
+            }
+            canvas.appendChild(createLine(rcoords[i], zcoords[i], rcoords[0], zcoords[0], h, w, color) );
+        }
+    
+        function start() {
+            var svg = document.getElementById("canvas");
+            var h = svg.getAttribute("height");
+            console.log(h);
+            drawVessel(svg, h, 1, "red");
+            drawCoil(svg, 3604, -1943, -90, "55.AA.00-MLF-1001", h, 3, "green");
+            drawCoil(svg, 7171, 4064, 140, "55.AA.00-MLF-2011", h, 3, "green");
+        }
+    </script>
+</head>
+<body onload="start()">
+    <svg id="canvas" xmlns="http://www.w3.org/2000/svg" width="600" height="600">
+    </svg>
+</body>
+</html>

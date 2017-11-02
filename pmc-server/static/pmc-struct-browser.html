@@ -175,6 +175,7 @@
 
                     infoLoaded () {
                         this.variableId = this.id;
+                        this.mainDiv.innerHTML = "Loading structure, please wait";
                         this.treeHTML = "<ul class=\"collapsibleList\" id=\"struct-tree\">";
                         this.addMember(this);
                         this.treeHTML += "</ul>";
