@@ -5,6 +5,7 @@
         <link rel="import" href="libraries.html">
         <link rel="import" href="pmc-array-editor.html">
         <link rel="import" href="pmc-cubicle-editor.html">
+        <link rel="import" href="pmc-discrete-coils-2d.html">
         <link rel="import" href="pmc-filter-editor.html">
         <link rel="import" href="pmc-input.html">
         <link rel="import" href="pmc-library-button.html">
@@ -14,6 +15,8 @@
     </head>
     <body>
         <template id="tmaineditor">
+            <style id="spagestyle">
+            </style>
             <div id="dmaineditor">
             </div>
         </template>
@@ -33,8 +36,11 @@
                         var clone = document.importNode(template.content, true);
                         var root = this.createShadowRoot();
                         root.appendChild(clone);
+                        var templateDiv = this.shadowRoot.querySelector("#dmaineditor");
+                        this.pageStyle = this.shadowRoot.querySelector("#spagestyle");
 
                         this.plantInfoLoadedListeners = [this];
+                        pmcMainEditor = this;
                     }
 
                     attachedCallback() {
@@ -89,8 +95,17 @@
                                 url: pageUrl,
                                 success: function (response) {
                                     allPMCComponents = {};
-
+                                                                        
                                     templateDiv.innerHTML = response;
+
+                                    //eval to execute any embedded js in the page.
+                                    var htmlJs = templateDiv.getElementsByTagName("script");   
+                                    if (htmlJs !== undefined) {
+                                        for(var i=0;i<htmlJs.length;i++) {  
+                                            eval(htmlJs[i].text);  
+                                        }
+                                    }
+                                    
 
                                     this.loadPlantInfo(); 
 

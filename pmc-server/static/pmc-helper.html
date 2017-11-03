@@ -288,6 +288,8 @@
         var allPMCComponents = {};
         var currentScheduleId = undefined;
         var currentToken = undefined;
+        //This reference to the main editor can be used to listen to page events for components that e.g. do not inherit from PMCComponent
+        var pmcMainEditor = undefined;
     
         synchroniseRemote();
     </script>

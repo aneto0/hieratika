@@ -1,12 +1,14 @@
 <html>
 <head>
 <script>
-    function add55DiscreteCoilsTableCells(prefix, min, max) {
+
+    function add55DiscreteCoilsTableCells(prefix, min, max, ignore=[]) {
         var htmlToReturn = "";
-        var cellTemplate = '
-                <table style="border-width: 1px; background-color:#FFA500">
+        //ES6 uses backticks ` to allow to declare multi-line strings
+        var cellTemplate = `
+            <table style="border-width: 1px; background-color:#FFA500">
                 <tr>
-                    <td colspan="2">MLF-1001</td>
+                    <td colspan="2">{KEY}</td>
                 </tr>
                 <tr>
                     <td>r (m)</td><td><pmc-input id="{KEY}@r" name="{KEY}@r"></pmc-input></td>
@@ -17,43 +19,194 @@
                 <tr>
                     <td>angle (deg)</td><td><pmc-input id="{KEY}@angle" name="{KEY}@angle"></pmc-input></td>
                 </tr>
-            </table>'
+            </table>`;
         var reg = new RegExp("{KEY}", "g");
         var cellCount = 0;
+        var cellsPerRow = 3;
         for(var i=min; i<=max; i++) {
-            if ((cellCount % 4) == 0) {
-                htmlToReturn += "<tr>\n";
-            }
-            htmlToReturn += "<td>\n";
-            var toReplace = prefix;
-            if (i<10) {
-                toReplace += ("0" + i);
-            }
-            else {
-                toReplace += ("0" + i);
-            }
-            htmlToReturn += cellTemplate.replace(reg, toReplace);
-            htmlToReturn += "</td>\n";
-            cellCount++;
-            if ((cellCount % 4) == 1) {
-                htmlToReturn += "</tr>\n";
+            if (!ignore.includes(i)) {
+                if ((cellCount % cellsPerRow) == 0) {
+                    htmlToReturn += "<tr>\n";
+                }
+                htmlToReturn += "<td>\n";
+                var toReplace = prefix;
+                if (i<10) {
+                    toReplace += ("0" + i);
+                }
+                else {
+                    toReplace += i;
+                }
+                htmlToReturn += cellTemplate.replace(reg, toReplace);
+                htmlToReturn += "</td>\n";
+                if (cellCount % cellsPerRow == (cellsPerRow - 1)) {
+                    htmlToReturn += "</tr>\n";
+                }
+                cellCount++;
             }
         }
         return htmlToReturn;
     }
 
     function loadTables() {
-        console.log("WHAT??");
-        var table = document.getElementById("tableAA1");
-        table.innerHTML = add55DiscreteCoilsTableCells("55A0::MLFS@AA@M100", 1, 4);
+        //Must find the main-editor
+        var table = document.getElementById("main-editor").shadowRoot.querySelector("#dmaineditor").getRootNode().querySelector("#tableAA1");
+        //var table = pmcMainEditor.querySelector("#tableAA1");
+        //console.log(pmcMainEditor);
+        if (table != null) {
+            table.innerHTML = add55DiscreteCoilsTableCells("55A0::MLFS@AA@M10", 1, 25, [19]);
+        }
+        table = document.getElementById("main-editor").shadowRoot.querySelector("#dmaineditor").getRootNode().querySelector("#tableAA2");
+        if (table != null) {
+            table.innerHTML = add55DiscreteCoilsTableCells("55A0::MLFS@AA@M20", 1, 25, [19]);
+        }
+        table = document.getElementById("main-editor").shadowRoot.querySelector("#dmaineditor").getRootNode().querySelector("#tableAA4");
+        if (table != null) {
+            table.innerHTML = add55DiscreteCoilsTableCells("55A0::MLFS@AA@M40", 1, 25, [19]);
+        }
+        table = document.getElementById("main-editor").shadowRoot.querySelector("#dmaineditor").getRootNode().querySelector("#tableAA5");
+        if (table != null) {
+            table.innerHTML = add55DiscreteCoilsTableCells("55A0::MLFS@AA@M50", 1, 25, [19]);
+        }
+        table = document.getElementById("main-editor").shadowRoot.querySelector("#dmaineditor").getRootNode().querySelector("#tableAA7");
+        if (table != null) {
+            table.innerHTML = add55DiscreteCoilsTableCells("55A0::MLFS@AA@M70", 1, 25, [19]);
+        }
+        table = document.getElementById("main-editor").shadowRoot.querySelector("#dmaineditor").getRootNode().querySelector("#tableAA8");
+        if (table != null) {
+            table.innerHTML = add55DiscreteCoilsTableCells("55A0::MLFS@AA@M80", 1, 25, [19]);
+        }
     }
-</script>
-</head>
-<body onload="loadTables()">
-    <h3>AA sensors sector 1</h3>
-        <table id="tableAA1" style="border-style: dotted;border-width: 3px">
-            <!--<td>Sensors</td><td><pmc-struct-browser id="55A0::MLFS@AA" name="55A0::MLFS"></pmc-struct-browser></td>-->
-        </table>
 
-    </body>
+    function openTab(evt, tabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+
+    // Get the element with id="defaultOpen" and click on it
+    document.getElementById("defaultOpen").click();
+
+    loadTables();
+</script>
+
+</head>
+<body>
+     <style>
+        /* Style the tab */
+        div.tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+            font-family: "Lato", sans-serif;
+        }
+
+        /* Style the buttons inside the tab */
+        div.tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 20px 16px;
+            transition: 0.3s;
+            font-size: 16px;
+        }
+
+        /* Change background color of buttons on hover */
+        div.tab button:hover {
+            background-color: #ddd;
+        }
+
+        /* Create an active/current tablink class */
+        div.tab button.active {
+            background-color: #ccc;
+        }
+
+    </style>
+
+    <div class="tab">
+        <button class="tablinks" onclick="openCity(event, 'tab55AA')" id="defaultOpen">55.AA</button>
+        <button class="tablinks" onclick="openCity(event, 'tab55AB')">55.AB</button>
+    </div>
+    <div id="tab55AA" style="background-color:cornsilk" class="tabcontent">
+        <table style="border-style: dotted; border-width: 3px">
+            <th colspan="2" style="background-color:#DCDCDC;font-size:larger;padding-bottom: 5px;padding-top: 5px">AA sensors sector 1</th>
+            <tr>
+                <td>
+                    <table id="tableAA1" style="border-width: 1px; background-color: transparent" ></table>
+                </td>
+                <td>
+                    <pmc-discrete-coils-2d id="vesselAA1" data-coil-variables='{"ids": ["55A0::MLFS@AA@M1001", "55A0::MLFS@AA@M1002", "55A0::MLFS@AA@M1003", "55A0::MLFS@AA@M1004", "55A0::MLFS@AA@M1005", "55A0::MLFS@AA@M1006", "55A0::MLFS@AA@M1007", "55A0::MLFS@AA@M1008", "55A0::MLFS@AA@M1009", "55A0::MLFS@AA@M1010", "55A0::MLFS@AA@M1011", "55A0::MLFS@AA@M1012", "55A0::MLFS@AA@M1013", "55A0::MLFS@AA@M1014", "55A0::MLFS@AA@M1015", "55A0::MLFS@AA@M1016", "55A0::MLFS@AA@M1017", "55A0::MLFS@AA@M1018", "55A0::MLFS@AA@M1020", "55A0::MLFS@AA@M1021", "55A0::MLFS@AA@M1022", "55A0::MLFS@AA@M1023", "55A0::MLFS@AA@M1024", "55A0::MLFS@AA@M1025"]}'></pmc-discrete-coils-2d>
+                </td>
+            </tr>
+        </table>
+        <table style="border-style: dotted; border-width: 3px">
+            <th colspan="2" style="background-color:#DCDCDC;font-size:larger;padding-bottom: 5px;padding-top: 5px">AA sensors sector 2</th>
+            <tr>
+                <td>
+                    <table id="tableAA2" style="border-width: 1px; background-color: transparent" ></table>
+                </td>
+                <td>
+                    <pmc-discrete-coils-2d id="vesselAA2" data-coil-variables='{"ids": ["55A0::MLFS@AA@M2001", "55A0::MLFS@AA@M2002", "55A0::MLFS@AA@M2003", "55A0::MLFS@AA@M2004", "55A0::MLFS@AA@M2005", "55A0::MLFS@AA@M2006", "55A0::MLFS@AA@M2007", "55A0::MLFS@AA@M2008", "55A0::MLFS@AA@M2009", "55A0::MLFS@AA@M2020", "55A0::MLFS@AA@M2011", "55A0::MLFS@AA@M2012", "55A0::MLFS@AA@M2013", "55A0::MLFS@AA@M2014", "55A0::MLFS@AA@M2015", "55A0::MLFS@AA@M2016", "55A0::MLFS@AA@M2017", "55A0::MLFS@AA@M2018", "55A0::MLFS@AA@M2020", "55A0::MLFS@AA@M2021", "55A0::MLFS@AA@M2022", "55A0::MLFS@AA@M2023", "55A0::MLFS@AA@M2024", "55A0::MLFS@AA@M2025"]}'></pmc-discrete-coils-2d>
+                </td>
+            </tr>
+        </table>
+        <table style="border-style: dotted; border-width: 3px">
+            <th colspan="2" style="background-color:#DCDCDC;font-size:larger;padding-bottom: 5px;padding-top: 5px">AA sensors sector 4</th>
+            <tr>
+                <td>
+                    <table id="tableAA4" style="border-width: 1px; background-color: transparent" ></table>
+                </td>
+                <td>
+                    <pmc-discrete-coils-2d id="vesselAA4" data-coil-variables='{"ids": ["55A0::MLFS@AA@M4001", "55A0::MLFS@AA@M4002", "55A0::MLFS@AA@M4003", "55A0::MLFS@AA@M4004", "55A0::MLFS@AA@M4005", "55A0::MLFS@AA@M4006", "55A0::MLFS@AA@M4007", "55A0::MLFS@AA@M4008", "55A0::MLFS@AA@M4009", "55A0::MLFS@AA@M4010", "55A0::MLFS@AA@M4011", "55A0::MLFS@AA@M4012", "55A0::MLFS@AA@M4013", "55A0::MLFS@AA@M4014", "55A0::MLFS@AA@M4015", "55A0::MLFS@AA@M4016", "55A0::MLFS@AA@M4017", "55A0::MLFS@AA@M4018", "55A0::MLFS@AA@M4020", "55A0::MLFS@AA@M4021", "55A0::MLFS@AA@M4022", "55A0::MLFS@AA@M4023", "55A0::MLFS@AA@M4024", "55A0::MLFS@AA@M4025"]}'></pmc-discrete-coils-2d>
+                </td>
+            </tr>
+        </table>
+        <table style="border-style: dotted; border-width: 3px">
+            <th colspan="2" style="background-color:#DCDCDC;font-size:larger;padding-bottom: 5px;padding-top: 5px">AA sensors sector 5</th>
+            <tr>
+                <td>
+                    <table id="tableAA5" style="border-width: 1px; background-color: transparent" ></table>
+                </td>
+                <td>
+                    <pmc-discrete-coils-2d id="vesselAA5" data-coil-variables='{"ids": ["55A0::MLFS@AA@M5001", "55A0::MLFS@AA@M5002", "55A0::MLFS@AA@M5003", "55A0::MLFS@AA@M5004", "55A0::MLFS@AA@M5005", "55A0::MLFS@AA@M5006", "55A0::MLFS@AA@M5007", "55A0::MLFS@AA@M5008", "55A0::MLFS@AA@M5009", "55A0::MLFS@AA@M5010", "55A0::MLFS@AA@M5011", "55A0::MLFS@AA@M5012", "55A0::MLFS@AA@M5013", "55A0::MLFS@AA@M5014", "55A0::MLFS@AA@M5015", "55A0::MLFS@AA@M5016", "55A0::MLFS@AA@M5017", "55A0::MLFS@AA@M5018", "55A0::MLFS@AA@M5020", "55A0::MLFS@AA@M5021", "55A0::MLFS@AA@M5022", "55A0::MLFS@AA@M5023", "55A0::MLFS@AA@M5024", "55A0::MLFS@AA@M5025"]}'></pmc-discrete-coils-2d>
+                </td>
+            </tr>
+        </table>
+        <table style="border-style: dotted; border-width: 3px">
+            <th colspan="2" style="background-color:#DCDCDC;font-size:larger;padding-bottom: 5px;padding-top: 5px">AA sensors sector 7</th>
+            <tr>
+                <td>
+                    <table id="tableAA7" style="border-width: 1px; background-color: transparent" ></table>
+                </td>
+                <td>
+                    <pmc-discrete-coils-2d id="vesselAA7" data-coil-variables='{"ids": ["55A0::MLFS@AA@M7001", "55A0::MLFS@AA@M7002", "55A0::MLFS@AA@M7003", "55A0::MLFS@AA@M7004", "55A0::MLFS@AA@M7005", "55A0::MLFS@AA@M7006", "55A0::MLFS@AA@M7007", "55A0::MLFS@AA@M7008", "55A0::MLFS@AA@M7009", "55A0::MLFS@AA@M7010", "55A0::MLFS@AA@M7011", "55A0::MLFS@AA@M7012", "55A0::MLFS@AA@M7013", "55A0::MLFS@AA@M7014", "55A0::MLFS@AA@M7015", "55A0::MLFS@AA@M7016", "55A0::MLFS@AA@M7017", "55A0::MLFS@AA@M7018", "55A0::MLFS@AA@M7020", "55A0::MLFS@AA@M7021", "55A0::MLFS@AA@M7022", "55A0::MLFS@AA@M7023", "55A0::MLFS@AA@M7024", "55A0::MLFS@AA@M7025"]}'></pmc-discrete-coils-2d>
+                </td>
+            </tr>
+        </table>
+        <table style="border-style: dotted; border-width: 3px">
+            <th colspan="2" style="background-color:#DCDCDC;font-size:larger;padding-bottom: 5px;padding-top: 5px">AA sensors sector 8</th>
+            <tr>
+                <td>
+                    <table id="tableAA8" style="border-width: 1px; background-color: transparent" ></table>
+                </td>
+                <td>
+                    <pmc-discrete-coils-2d id="vesselAA8" data-coil-variables='{"ids": ["55A0::MLFS@AA@M8001", "55A0::MLFS@AA@M8002", "55A0::MLFS@AA@M8003", "55A0::MLFS@AA@M8004", "55A0::MLFS@AA@M8005", "55A0::MLFS@AA@M8006", "55A0::MLFS@AA@M8007", "55A0::MLFS@AA@M8008", "55A0::MLFS@AA@M8009", "55A0::MLFS@AA@M8010", "55A0::MLFS@AA@M8011", "55A0::MLFS@AA@M8012", "55A0::MLFS@AA@M8013", "55A0::MLFS@AA@M8014", "55A0::MLFS@AA@M8015", "55A0::MLFS@AA@M8016", "55A0::MLFS@AA@M8017", "55A0::MLFS@AA@M8018", "55A0::MLFS@AA@M8020", "55A0::MLFS@AA@M8021", "55A0::MLFS@AA@M8022", "55A0::MLFS@AA@M8023", "55A0::MLFS@AA@M8024", "55A0::MLFS@AA@M8025"]}'></pmc-discrete-coils-2d>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="tab55AB" style="background-color:cornsilk">
+        TODO
+    </div>
+</div>
+</body>
 </html>
