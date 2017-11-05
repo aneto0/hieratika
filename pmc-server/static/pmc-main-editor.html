@@ -6,6 +6,7 @@
         <link rel="import" href="pmc-array-editor.html">
         <link rel="import" href="pmc-cubicle-editor.html">
         <link rel="import" href="pmc-discrete-coils-2d.html">
+        <link rel="import" href="pmc-loop-coils-3d.html">
         <link rel="import" href="pmc-filter-editor.html">
         <link rel="import" href="pmc-input.html">
         <link rel="import" href="pmc-library-button.html">
@@ -15,10 +16,8 @@
     </head>
     <body>
         <template id="tmaineditor">
-            <style id="spagestyle">
-            </style>
-            <div id="dmaineditor">
-            </div>
+            <iframe id="dmaineditor" style="position: absolute; height: 100%; width: 100%; border: none">
+            </iframe>
         </template>
 
         <script>
@@ -37,10 +36,9 @@
                         var root = this.createShadowRoot();
                         root.appendChild(clone);
                         var templateDiv = this.shadowRoot.querySelector("#dmaineditor");
-                        this.pageStyle = this.shadowRoot.querySelector("#spagestyle");
 
                         this.plantInfoLoadedListeners = [this];
-                        pmcMainEditor = this;
+                        parent._pmcMainEditor = this;
                     }
 
                     attachedCallback() {
@@ -63,7 +61,7 @@
 
                     loadPlantInfo() {
                         var allVariableIds = [];
-                        for (var k in allPMCComponents) {
+                        for (var k in parent._allPMCComponents) {
                             allVariableIds.push(k)
                         }
                         getPlantInfo(allVariableIds, function (response) {
@@ -72,7 +70,7 @@
                             var user = JSON.parse(localStorage.user);
                             for (var i in pvInfos) {
                                 var pvInfo = pvInfos[i];
-                                var targetElements = allPMCComponents[pvInfo.variableId];
+                                var targetElements = parent._allPMCComponents[pvInfo.variableId];
                                 if (targetElements != null) {
                                     for (var j in targetElements) {
                                         populateComponentInfo(targetElements[j], pvInfo, user);                    
@@ -86,15 +84,34 @@
                         );
                     }
 
+                    iFrameLoaded() {
+                        this.loadPlantInfo(); 
+
+                        $.each(parent._allPMCComponents, function (i, pmcCompArray) {
+                            $.each(pmcCompArray, function (j, pmcComp) {
+                                pmcComp.domLoaded();
+                            });
+                        });
+                    }
+
                     pageChanged (page) {
+                        parent._allPMCComponents = {};
+                        //Remove all the listeners (apart from this and the pmc-top-nav)
+                        this.plantInfoLoadedListeners = this.plantInfoLoadedListeners.slice(0, 2);
                         var pageUrl = page.id + ".html?" + new Date().getTime(); //new Date... to force reloading with no caching
                         var templateDiv = this.shadowRoot.querySelector("#dmaineditor");
+                        templateDiv.onload = function(evt) {
+                            this.iFrameLoaded();
+                        }.bind(this);
+                        templateDiv.src = pageUrl;
+                        
+                        /*
                         if (pageUrl !== undefined) {
                             $.ajax({
                                 type: "GET",
                                 url: pageUrl,
                                 success: function (response) {
-                                    allPMCComponents = {};
+                                    parent._allPMCComponents = {};
                                                                         
                                     templateDiv.innerHTML = response;
 
@@ -109,7 +126,7 @@
 
                                     this.loadPlantInfo(); 
 
-                                    $.each(allPMCComponents, function (i, pmcCompArray) {
+                                    $.each(parent._allPMCComponents, function (i, pmcCompArray) {
                                         $.each(pmcCompArray, function (j, pmcComp) {
                                             pmcComp.domLoaded();
                                         });
@@ -121,7 +138,7 @@
                                     alert(response);
                                 }
                             });
-                        }
+                        }*/
                     }
    
                     plantInfoLoaded() {

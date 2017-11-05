@@ -5,7 +5,7 @@
 
         start () {
             stop();
-            this.evtSrc = new EventSource("/stream?token=" + currentToken);
+            this.evtSrc = new EventSource("/stream?token=" + parent._currentToken);
             //Changed values are received in json format
             this.evtSrc.onmessage = function(e) {
                 if (e.data.length > 0) {
@@ -13,7 +13,7 @@
                     var reset = jsonData["reset"];
                     if (reset !== undefined) {
                         var tid = jsonData["tid"];
-                        remoteServerTid = tid;
+                        parent._remoteServerTid = tid;
                     }
                     else {
                         var variables = jsonData["variables"];
@@ -22,10 +22,10 @@
                         if (scheduleId !== undefined) {
                             updateSchedule = true;
                         }
-                        if ((!updateSchedule) || (scheduleId === currentScheduleId)) {
+                        if ((!updateSchedule) || (scheduleId === parent._currentScheduleId)) {
                             for (var i in variables) {
                                 var pv = variables[i];
-                                var targetElements = allPMCComponents[pv.variableId];
+                                var targetElements = parent._allPMCComponents[pv.variableId];
                                 if (targetElements  !== undefined) {
                                     $.each(targetElements, function (i, targetElement) {
                                         if (updateSchedule) {

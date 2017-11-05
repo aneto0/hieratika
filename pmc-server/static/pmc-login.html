@@ -59,8 +59,8 @@
                                     var user = $.parseJSON(response);
                                     if (user.id !== "") {
                                         localStorage.user = JSON.stringify(user);
-                                        currentToken = user.token;
-                                        localStorage.currentToken = currentToken;
+                                        parent._currentToken = user.token;
+                                        localStorage.currentToken = parent._currentToken;
                                         this.fireLoginSuccessful(user);
                                         this.diag.close();
                                     }

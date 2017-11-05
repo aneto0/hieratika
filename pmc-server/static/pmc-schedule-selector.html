@@ -148,7 +148,7 @@
                         var okNewScheduleButton = this.shadowRoot.querySelector("#oknewschedulebtn");
                         okNewScheduleButton.onclick = function() {
                             var schedule = {
-                                token: currentToken,
+                                token: parent._currentToken,
                                 id: this.newScheduleName.value,
                                 name: this.newScheduleName.value,
                                 description: this.newScheduleDescription.value,
@@ -161,7 +161,7 @@
                             }
                             else {
                                 var allVariableIds = [];
-                                for (var k in allPMCComponents) {
+                                for (var k in parent._allPMCComponents) {
                                     allVariableIds.push(k)
                                 }
                                 schedule["variables"] = JSON.stringify(allVariableIds);
@@ -207,7 +207,7 @@
                             type: "post",
                             url: "/getschedules",
                             data: {
-                                token: currentToken,
+                                token: parent._currentToken,
                                 userId: userId,
                                 pageId: this.pageId
                             },
@@ -254,7 +254,7 @@
                         type: "post",
                         url: "/getusers",
                         data: {
-                            token : currentToken
+                            token : parent._currentToken
                         },
                         success: function (response) {
                             var usersJSon = $.parseJSON(response);

@@ -130,6 +130,21 @@ page = {
 }
 pages.upsert(page, ["id"])
 
+page = {
+    "id": "55A0-discrete-coils",
+    "name": "55A0-discrete-coils",
+    "description": "Parameters related to the 55A0 discrete coils"
+}
+pages.upsert(page, ["id"])
+
+page = {
+    "id": "55A0-loop-coils",
+    "name": "55A0-loop-coils",
+    "description": "Parameters related to the 55A0 loop coils"
+}
+pages.upsert(page, ["id"])
+
+
 '''
 with open("schedules.json") as jsonFile:
     schedulesDBJSon = json.load(jsonFile)

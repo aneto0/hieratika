@@ -12,7 +12,7 @@
     </head>
     <body onload="loadTables()">
         <script>
-            function add55DiscreteCoilsTableCells(prefix, min, max, ignore=[]) {
+            function add55LoopCoilsTableCells(prefix, min, max, ignore=[]) {
                 var htmlToReturn = "";
                 //ES6 uses backticks ` to allow to declare multi-line strings
                 var cellTemplate = `
@@ -21,13 +21,22 @@
                             <td colspan="2">{KEY}</td>
                         </tr>
                         <tr>
-                            <td>r (m)</td><td><pmc-input id="{KEY}@r" name="{KEY}@r"></pmc-input></td>
+                            <td>r1 (m)</td><td><pmc-input id="{KEY}@r1" name="{KEY}@r1"></pmc-input></td>
                         </tr>
                         <tr>
-                            <td>z (m)</td><td><pmc-input id="{KEY}@z" name="{KEY}@z"></pmc-input></td>
+                            <td>z1 (m)</td><td><pmc-input id="{KEY}@z1" name="{KEY}@z1"></pmc-input></td>
                         </tr>
                         <tr>
-                            <td>angle (deg)</td><td><pmc-input id="{KEY}@angle" name="{KEY}@angle"></pmc-input></td>
+                            <td>r2 (m)</td><td><pmc-input id="{KEY}@r2" name="{KEY}@r2"></pmc-input></td>
+                        </tr>
+                        <tr>
+                            <td>z2 (m)</td><td><pmc-input id="{KEY}@z2" name="{KEY}@z2"></pmc-input></td>
+                        </tr>
+                        <tr>
+                            <td>&Phi<sub>1</sub> (deg)</td><td><pmc-input id="{KEY}@phi1" name="{KEY}@phi1"></pmc-input></td>
+                        </tr>
+                        <tr>
+                            <td>&Phi<sub>2</sub> (deg)</td><td><pmc-input id="{KEY}@phi2" name="{KEY}@phi2"></pmc-input></td>
                         </tr>
                     </table>`;
                 var reg = new RegExp("{KEY}", "g");
@@ -59,57 +68,57 @@
 
             function loadTables() {
                 //var table = document.getElementById("main-editor").shadowRoot.querySelector("#dmaineditor").getRootNode().querySelector("#tableAA1");
-                var table = document.getElementById("tableAA1");
+                var table = document.getElementById("tableAD1");
                 if (table != null) {
-                    table.innerHTML = add55DiscreteCoilsTableCells("55A0::MLFS@AA@M10", 1, 25, [19]);
+                    table.innerHTML = add55LoopCoilsTableCells("55A0::MSAS@AD@M10", 1, 1, []);
                 }
-                table = document.getElementById("tableAA2");
+       /*         table = document.getElementById("tableAA2");
                 if (table != null) {
-                    table.innerHTML = add55DiscreteCoilsTableCells("55A0::MLFS@AA@M20", 1, 25, [19]);
+                    table.innerHTML = add55LoopCoilsTableCells("55A0::MLFS@AA@M20", 1, 25, [19]);
                 }
                 table = document.getElementById("tableAA4");
                 if (table != null) {
-                    table.innerHTML = add55DiscreteCoilsTableCells("55A0::MLFS@AA@M40", 1, 25, [19]);
+                    table.innerHTML = add55LoopCoilsTableCells("55A0::MLFS@AA@M40", 1, 25, [19]);
                 }
                 table = document.getElementById("tableAA5");
                 if (table != null) {
-                    table.innerHTML = add55DiscreteCoilsTableCells("55A0::MLFS@AA@M50", 1, 25, [19]);
+                    table.innerHTML = add55LoopCoilsTableCells("55A0::MLFS@AA@M50", 1, 25, [19]);
                 }
                 table = document.getElementById("tableAA7");
                 if (table != null) {
-                    table.innerHTML = add55DiscreteCoilsTableCells("55A0::MLFS@AA@M70", 1, 25, [19]);
+                    table.innerHTML = add55LoopCoilsTableCells("55A0::MLFS@AA@M70", 1, 25, [19]);
                 }
                 table = document.getElementById("tableAA8");
                 if (table != null) {
-                    table.innerHTML = add55DiscreteCoilsTableCells("55A0::MLFS@AA@M80", 1, 25, [19]);
+                    table.innerHTML = add55LoopCoilsTableCells("55A0::MLFS@AA@M80", 1, 25, [19]);
                 }
 
                 table = document.getElementById("tableAB1");
                 if (table != null) {
-                    table.innerHTML = add55DiscreteCoilsTableCells("55A0::MLFS@AB@M11", 1, 12, []);
+                    table.innerHTML = add55LoopCoilsTableCells("55A0::MLFS@AB@M11", 1, 12, []);
                 }
                 table = document.getElementById("tableAB2");
                 if (table != null) {
-                    table.innerHTML = add55DiscreteCoilsTableCells("55A0::MLFS@AB@M21", 1, 12, []);
+                    table.innerHTML = add55LoopCoilsTableCells("55A0::MLFS@AB@M21", 1, 12, []);
                 }
                 table = document.getElementById("tableAB4");
                 if (table != null) {
-                    table.innerHTML = add55DiscreteCoilsTableCells("55A0::MLFS@AB@M41", 1, 12, []);
+                    table.innerHTML = add55LoopCoilsTableCells("55A0::MLFS@AB@M41", 1, 12, []);
                 }
                 table = document.getElementById("tableAB5");
                 if (table != null) {
-                    table.innerHTML = add55DiscreteCoilsTableCells("55A0::MLFS@AB@M51", 1, 12, []);
+                    table.innerHTML = add55LoopCoilsTableCells("55A0::MLFS@AB@M51", 1, 12, []);
                 }
                 table = document.getElementById("tableAB7");
                 if (table != null) {
-                    table.innerHTML = add55DiscreteCoilsTableCells("55A0::MLFS@AB@M71", 1, 12, []);
+                    table.innerHTML = add55LoopCoilsTableCells("55A0::MLFS@AB@M71", 1, 12, []);
                 }
                 table = document.getElementById("tableAB8");
                 if (table != null) {
-                    table.innerHTML = add55DiscreteCoilsTableCells("55A0::MLFS@AB@M81", 1, 12, []);
+                    table.innerHTML = add55LoopCoilsTableCells("55A0::MLFS@AB@M81", 1, 12, []);
                 }
 
-
+                */
                 // Get the element with id="defaultopen" and click on it
                 document.getElementById("defaultopen").click();
             }
@@ -170,32 +179,22 @@
     </style>
 
     <div class="tab">
-        <button class="tablinks" onclick="openTab(event, 'tab55AA')" id="defaultopen">55.AA</button>
-        <button class="tablinks" onclick="openTab(event, 'tab55AB')">55.AB</button>
+        <button class="tablinks" onclick="openTab(event, 'tab55AD')" id="defaultopen">55.AD</button>
+        <button class="tablinks" onclick="openTab(event, 'tab55AE')">55.AE</button>
     </div>
-    <div id="tab55AA" class="tabcontent"> 
+    <div id="tab55AD" class="tabcontent"> 
         <table style="border-style: dotted; border-width: 3px">
             <th colspan="2" style="background-color:#DCDCDC;font-size:larger;padding-bottom: 5px;padding-top: 5px">AD sensors sector 1</th>
             <tr>
                 <td>
+                    <table id="tableAD1" style="border-width: 1px; background-color: transparent" ></table>
                 </td>
                 <td>
-                    <pmc-loop-coils-3d> </pmc-loop-coils-3d>
+                    <pmc-loop-coils-3d id="vesselAD1" data-coil-variables='{"ids": ["55A0::MSAS@AD@M1001"]}'></pmc-loop-coils-3d>
                 </td>
             </tr>
         </table>
-        <table style="border-style: dotted; border-width: 3px">
-            <th colspan="2" style="background-color:#DCDCDC;font-size:larger;padding-bottom: 5px;padding-top: 5px">AA sensors sector 1</th>
-            <tr>
-                <td>
-                    <table id="tableAA1" style="border-width: 1px; background-color: transparent" ></table>
-                </td>
-                <td>
-                    <pmc-discrete-coils-2d id="vesselAA1" data-coil-variables='{"ids": ["55A0::MLFS@AA@M1001", "55A0::MLFS@AA@M1002", "55A0::MLFS@AA@M1003", "55A0::MLFS@AA@M1004", "55A0::MLFS@AA@M1005", "55A0::MLFS@AA@M1006", "55A0::MLFS@AA@M1007", "55A0::MLFS@AA@M1008", "55A0::MLFS@AA@M1009", "55A0::MLFS@AA@M1010", "55A0::MLFS@AA@M1011", "55A0::MLFS@AA@M1012", "55A0::MLFS@AA@M1013", "55A0::MLFS@AA@M1014", "55A0::MLFS@AA@M1015", "55A0::MLFS@AA@M1016", "55A0::MLFS@AA@M1017", "55A0::MLFS@AA@M1018", "55A0::MLFS@AA@M1020", "55A0::MLFS@AA@M1021", "55A0::MLFS@AA@M1022", "55A0::MLFS@AA@M1023", "55A0::MLFS@AA@M1024", "55A0::MLFS@AA@M1025"]}'></pmc-discrete-coils-2d>
-                </td>
-            </tr>
-        </table>
-        <table style="border-style: dotted; border-width: 3px">
+<!--        <table style="border-style: dotted; border-width: 3px">
             <th colspan="2" style="background-color:#DCDCDC;font-size:larger;padding-bottom: 5px;padding-top: 5px">AA sensors sector 2</th>
             <tr>
                 <td>
@@ -249,10 +248,11 @@
                     <pmc-discrete-coils-2d id="vesselAA8" data-coil-variables='{"ids": ["55A0::MLFS@AA@M8001", "55A0::MLFS@AA@M8002", "55A0::MLFS@AA@M8003", "55A0::MLFS@AA@M8004", "55A0::MLFS@AA@M8005", "55A0::MLFS@AA@M8006", "55A0::MLFS@AA@M8007", "55A0::MLFS@AA@M8008", "55A0::MLFS@AA@M8009", "55A0::MLFS@AA@M8010", "55A0::MLFS@AA@M8011", "55A0::MLFS@AA@M8012", "55A0::MLFS@AA@M8013", "55A0::MLFS@AA@M8014", "55A0::MLFS@AA@M8015", "55A0::MLFS@AA@M8016", "55A0::MLFS@AA@M8017", "55A0::MLFS@AA@M8018", "55A0::MLFS@AA@M8020", "55A0::MLFS@AA@M8021", "55A0::MLFS@AA@M8022", "55A0::MLFS@AA@M8023", "55A0::MLFS@AA@M8024", "55A0::MLFS@AA@M8025"]}'></pmc-discrete-coils-2d>
                 </td>
             </tr>
-        </table>
+        </table>-->
     </div>
-    <div id="tab55AB" class="tabcontent"> 
-        <table style="border-style: dotted; border-width: 3px">
+    <div id="tab55AE" class="tabcontent"> 
+        TODO
+<!--        <table style="border-style: dotted; border-width: 3px">
             <th colspan="2" style="background-color:#DCDCDC;font-size:larger;padding-bottom: 5px;padding-top: 5px">AB sensors sector 1</th>
             <tr>
                 <td>
@@ -317,8 +317,7 @@
                     <pmc-discrete-coils-2d id="vesselAB8" data-coil-variables='{"ids": ["55A0::MLFS@AB@M8101", "55A0::MLFS@AB@M8102", "55A0::MLFS@AB@M8103", "55A0::MLFS@AB@M8104", "55A0::MLFS@AB@M8105", "55A0::MLFS@AB@M8106", "55A0::MLFS@AB@M8107", "55A0::MLFS@AB@M8108", "55A0::MLFS@AB@M8109", "55A0::MLFS@AB@M8110", "55A0::MLFS@AB@M8111", "55A0::MLFS@AB@M8112"]}'></pmc-discrete-coils-2d>
                 </td>
             </tr>
-        </table>
-
+        </table>-->
     </div>
 </body>
 </html>

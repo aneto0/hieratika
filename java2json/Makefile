@@ -14,12 +14,14 @@ CLASSES = \
 	PMCGap.java  \
 	PMCDiscreteCoil.java  \
 	PMCLibrary.java  \
+	PMCLoopCoil.java  \
 	PMCShape.java \
 	PMCTest0.java \
 	PMCTestStruct1.java \
 	PMCTestStruct2.java \
 	PMCTestStruct3.java \
 	PlantDEMO0.java \
+	P55A0DiscreteCoils.java \
 	P55A3DiscreteCoils.java \
 	P55A4DiscreteCoils.java \
 	P55A5DiscreteCoils.java \
@@ -33,7 +35,8 @@ CLASSES = \
 	P55AKDiscreteCoils.java \
 	P55ALDiscreteCoils.java \
 	P55APDiscreteCoils.java	\
-	P55A0DiscreteCoils.java \
+	P55A0LoopCoils.java \
+	P55ADLoopCoils.java \
 	Plant55A0.java
 
 default: classes

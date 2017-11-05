@@ -130,7 +130,10 @@ def importVariables(jsonFileName, db, prefix = "", groups = ""):
         for var in variablesJSon:
             if (prefix != ""):
                 var["name"] = prefix + var["name"]
+            db.begin()
+            print "Importing " + var["name"]
             importVariable(var, variablesDB, validationsDB, permissionsDB, groups)
+            db.commit()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description = "Import plant variables from a json file to the backend database")

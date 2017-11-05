@@ -13,15 +13,15 @@
 
         function loadIntoPlant() {
             var allPMCDataJSon = {};
-            $.each(allPMCComponents, function (i, pmcComp) {
+            $.each(parent._allPMCComponents, function (i, pmcComp) {
                 allPMCDataJSon[pmcComp[0].id] = pmcComp[0].getValue();
             });
             $.ajax({
                 type: "post",
                 url: "/submit",
                 data: {
-                    token: currentToken,
-                    tid: remoteServerTid,
+                    token: parent._currentToken,
+                    tid: parent._remoteServerTid,
                     update: JSON.stringify(allPMCDataJSon)
                 },
                 success: function (response) {
@@ -29,7 +29,7 @@
                         alert("Values updated successfully!");
                         var pmcComp;
                         //The same id can be used to store multiple instances
-                        $.each(allPMCComponents, function (i, pmcCompArray) {
+                        $.each(parent._allPMCComponents, function (i, pmcCompArray) {
                             $.each(pmcCompArray, function (j, pmcComp) {
                                 pmcComp.setInitialValue(pmcComp.getValue());
                             });
@@ -51,7 +51,7 @@
                 type: "post",
                 url: "/getplantinfo",
                 data: {
-                    token: currentToken,
+                    token: parent._currentToken,
                     variables: JSON.stringify(variableIds)
                 },
                 success: successFn,
@@ -100,7 +100,7 @@
         }
 
         function displayPlant() {
-            $.each(allPMCComponents, function (i, pmcCompArray) {
+            $.each(parent._allPMCComponents, function (i, pmcCompArray) {
                 $.each(pmcCompArray, function (j, pmcComp) {
                     pmcComp.setReadOnly(true);
                     var value = pmcComp.getPlantValue();
@@ -113,7 +113,7 @@
 
         function getAvailableLibraries() {
             var allPMCLibVariablesJSon = [];
-            $.each(allPMCComponents, function (i, pmcCompArray) {
+            $.each(parent._allPMCComponents, function (i, pmcCompArray) {
                 $.each(pmcCompArray, function (j, pmcComp) {
                     if (pmcComp.isLibrary()) {
                         allPMCLibVariablesJSon.push(pmcComp.id);
@@ -125,14 +125,14 @@
                 type: "post",
                 url: "/getlibraries",
                 data: {
-                    token: currentToken,
+                    token: parent._currentToken,
                     variables: JSON.stringify(allPMCLibVariablesJSon)
                 },
                 success: function (response) {
                     var librariesJson = $.parseJSON(response);
                     var allLibraries = librariesJson["libraries"];
                     $.each(allLibraries, function(i, librariesJson) {
-                        var targetElements = allPMCComponents[librariesJson.variable];
+                        var targetElements = parent._allPMCComponents[librariesJson.variable];
                         if (targetElements != null) {
                             $.each(targetElements, function (i, pmcLibrary) {
                                 pmcLibrary.setAvailableLibraries(librariesJson.ids);
@@ -151,7 +151,7 @@
             if (currentReference === NONE_NAME) {
                 //Reset all the values to N/A
                 var pmcComp;
-                $.each(allPMCComponents, function (i, pmcCompArray) {
+                $.each(parent._allPMCComponents, function (i, pmcCompArray) {
                     $.each(pmcCompArray, function (j, pmcComp) {
                         pmcComp.setReferenceValue("N/A");
                         pmcComp.setReference(currentReference);
@@ -161,7 +161,7 @@
             else if (currentReference === PLANT_NAME) {
                 //Reset all the values to N/A
                 var pmcComp;
-                $.each(allPMCComponents, function (i, pmcCompArray) {
+                $.each(parent._allPMCComponents, function (i, pmcCompArray) {
                     $.each(pmcCompArray, function (j, pmcComp) {
                         pmcComp.setReferenceValue(pmcComp.getPlantValue());
                         pmcComp.setReference(currentReference);
@@ -173,14 +173,14 @@
                     type: "post",
                     url: "/getschedulevariables",
                     data: {
-                        token: currentToken,
+                        token: parent._currentToken,
                         scheduleId: currentReference
                     },
                     success: function (response) {
                         var variables = $.parseJSON(response);
                         var variable;
                         $.each(variables, function(i, variable) {
-                            var targetElements = allPMCComponents[variable.variableId];
+                            var targetElements = parent._allPMCComponents[variable.variableId];
                             if (targetElements != null) {
                                 $.each(targetElements, function (i, targetElement) {
                                     targetElement.setReferenceValue(variable.value);
@@ -202,13 +202,13 @@
                 type: "post",
                 url: "/getschedulevariables",
                 data: {
-                    token: currentToken,
+                    token: parent._currentToken,
                     scheduleId: schId
                 },
                 success: function (response) {
                     variables = $.parseJSON(response);
                     $.each(variables, function(i, variable) {
-                        var targetElements = allPMCComponents[variable.variableId];
+                        var targetElements = parent._allPMCComponents[variable.variableId];
                         if (targetElements != null) {
                             $.each(targetElements, function (i, targetElement) {
                                 if (resetValue) {
@@ -228,7 +228,7 @@
         }
 
         function commitAllChangesToSchedule() {
-            $.each(allPMCComponents, function (i, pmcCompArray) {
+            $.each(parent._allPMCComponents, function (i, pmcCompArray) {
                 $.each(pmcCompArray, function (j, pmcComp) {
                     pmcComp.setInitialValue(pmcComp.getValue());
                 });
@@ -236,7 +236,7 @@
         }
 
         function undoAllChangesToSchedule() {
-            $.each(allPMCComponents, function (i, pmcCompArray) {
+            $.each(parent._allPMCComponents, function (i, pmcCompArray) {
                 $.each(pmcCompArray, function (j, pmcComp) {
                     pmcComp.setValue(pmcComp.getInitialValue());
                 });
@@ -244,22 +244,22 @@
         }
 
         function synchroniseRemote() {
-            if (currentScheduleId !== undefined) {
-                var toPop = valuesToSynchroniseRemote.length;
+            if (parent._currentScheduleId !== undefined) {
+                var toPop = parent._valuesToSynchroniseRemote.length;
                 if (toPop > 0) {
                     var scheduleToUpdate = {
-                        tid: remoteServerTid,
-                        scheduleId:currentScheduleId,
-                        values:valuesToSynchroniseRemote
+                        tid: parent._remoteServerTid,
+                        scheduleId:parent._currentScheduleId,
+                        values:parent._valuesToSynchroniseRemote
                     }
                     var jSonData = {
-                        token: currentToken,
+                        token: parent._currentToken,
                         update: JSON.stringify(scheduleToUpdate)
                     }
                     var i = 0;
                     //Not perfectly safe, but worst comes to the worst I send twice the same thing from time to time
                     while (i < toPop) {
-                        valuesToSynchroniseRemote.pop();
+                        parent._valuesToSynchroniseRemote.pop();
                         i++;
                     }
                     $.ajax({
@@ -280,16 +280,17 @@
             setTimeout(synchroniseRemote, 2000);
         }
 
-        
+        //TODO re-write this has a class, e.g. singleton
+        //IMPORTANT! Remember when accessing to these global variables to prefix with parent. so that they can be accessed from an iframe
         //The thread identifier on the remote server which is sending events through the SSE. This is to avoid receiving updates from ourselves.
-        var remoteServerTid = "";
-        var valuesToSynchroniseRemote = [];
+        var _remoteServerTid = "";
+        var _valuesToSynchroniseRemote = [];
         //The same component id in the dictionary can be used to store multiple instances, i.e. id : []
-        var allPMCComponents = {};
-        var currentScheduleId = undefined;
-        var currentToken = undefined;
+        var _allPMCComponents = {};
+        var _currentScheduleId = undefined;
+        var _currentToken = undefined;
         //This reference to the main editor can be used to listen to page events for components that e.g. do not inherit from PMCComponent
-        var pmcMainEditor = undefined;
+        var _pmcMainEditor = undefined;
     
         synchroniseRemote();
     </script>

@@ -129,7 +129,7 @@
                         }.bind(this);
 
                         this.pageSelectButton.onclick = function() {
-                            currentScheduleId = undefined;
+                            parent._currentScheduleId = undefined;
                             this.pageSelectButton.disabled = true;
                             this.getSelectedPage();     
                         }.bind(this);
@@ -147,7 +147,7 @@
 
                         this.viewPlantButton = this.shadowRoot.querySelector("#viewplantbtn");
                         this.viewPlantButton.onclick = function() {
-                            currentScheduleId = undefined;
+                            parent._currentScheduleId = undefined;
                             this.currentDisplay.innerHTML = PLANT_NAME;
                             this.currentDisplay.style.color = PLANT_COLOR;
                             this.loadPlantButton.disabled = true;
@@ -168,7 +168,7 @@
                         }
                         else {
                             var user = JSON.parse(localStorage.user);
-                            currentToken = localStorage.currentToken;
+                            parent._currentToken = localStorage.currentToken;
                             this.loginSuccessful(user);
                         }
   
@@ -200,7 +200,7 @@
 
                         this.copyFromReferencePlantButton = this.shadowRoot.querySelector("#cpyreferenceplantbtn");
                         this.copyFromReferencePlantButton.onclick = function () {
-                            $.each(allPMCComponents, function (i, pmcCompArray) {
+                            $.each(parent._allPMCComponents, function (i, pmcCompArray) {
                                 $.each(pmcCompArray, function (j, pmcComp) {
                                     pmcComp.setValue(pmcComp.getPlantValue());
                                 });
@@ -238,7 +238,7 @@
                         type: "post",
                         url: "/getpage",
                         data: {
-                            token: currentToken,
+                            token: parent._currentToken,
                             pageId: pgId
                         },
                         success: function (response) {
@@ -258,7 +258,7 @@
                         type: "post",
                         url: "/getpages",
                         data: {
-                            token: currentToken,
+                            token: parent._currentToken,
                         },
                         success: function (response) {
                             var pagesJson = $.parseJSON(response);
@@ -349,7 +349,7 @@
                     this.currentDisplay.innerHTML = schedule.name; 
                     this.currentDisplay.style.color = REFERENCE_COLOR; 
                     copyFromSchedule(schedule.id, true, false, false);
-                    currentScheduleId = schedule.id;
+                    parent._currentScheduleId = schedule.id;
                     this.loadPlantButton.disabled = false;
                     this.copyFromReferenceScheduleButton.disabled = false;
                     this.copyFromReferencePlantButton.disabled = false;
@@ -361,7 +361,7 @@
                     this.currentDisplay.innerHTML = schedule.name; 
                     this.currentDisplay.style.color = REFERENCE_COLOR; 
                     copyFromSchedule(schedule.id, true, false, true);
-                    currentScheduleId = schedule.id;
+                    parent._currentScheduleId = schedule.id;
                     this.loadPlantButton.disabled = false;
                     this.copyFromReferenceScheduleButton.disabled = true;
                     this.copyFromReferencePlantButton.disabled = true;

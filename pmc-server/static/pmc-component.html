@@ -147,13 +147,13 @@
                 id:this.id,
                 value:valueToUpdate
             }
-            var othersSameId = allPMCComponents[this.id];
+            var othersSameId = parent.parent._allPMCComponents[this.id];
             var otherPMCComp;
             $.each(othersSameId, function (j, otherPMCComp) {
                 otherPMCComp.setValue(valueToUpdate.value, false);
             });
-            if (currentScheduleId !== undefined) {
-                valuesToSynchroniseRemote.push(valueToUpdate);
+            if (parent._currentScheduleId !== undefined) {
+                parent._valuesToSynchroniseRemote.push(valueToUpdate);
             }
         }
 
@@ -196,11 +196,11 @@
                 root.appendChild(clone);
                 if (this.id !== undefined) {
                     if (this.id.length > 0) {
-                        if(allPMCComponents[this.id] === undefined) {
-                            allPMCComponents[this.id] = [this];
+                        if(parent.parent._allPMCComponents[this.id] === undefined) {
+                            parent.parent._allPMCComponents[this.id] = [this];
                         }
                         else {
-                            allPMCComponents[this.id].push(this);
+                            parent.parent._allPMCComponents[this.id].push(this);
                         }
                     }
                 }

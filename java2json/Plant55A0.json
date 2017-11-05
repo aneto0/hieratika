@@ -126503,6 +126503,386 @@
       "numberOfElements": [
         1
       ]
+    },
+    {
+      "AD": {
+        "M1001": {
+          "r1": {
+            "name": "r1",
+            "description": "r1 location of the coil",
+            "value": [
+              [
+                3.567
+              ]
+            ],
+            "type": "float32",
+            "isStruct": false,
+            "isLiveVariable": false,
+            "numberOfElements": [
+              1
+            ],
+            "validation": [
+              {
+                "fun": "checkType",
+                "parameters": [],
+                "description": "Check the type"
+              }
+            ]
+          },
+          "z1": {
+            "name": "z1",
+            "description": "z1 location of the coil",
+            "value": [
+              [
+                -1.653
+              ]
+            ],
+            "type": "float32",
+            "isStruct": false,
+            "isLiveVariable": false,
+            "numberOfElements": [
+              1
+            ],
+            "validation": [
+              {
+                "fun": "checkType",
+                "parameters": [],
+                "description": "Check the type"
+              }
+            ]
+          },
+          "r2": {
+            "name": "r2",
+            "description": "r2 location of the coil",
+            "value": [
+              [
+                3.567
+              ]
+            ],
+            "type": "float32",
+            "isStruct": false,
+            "isLiveVariable": false,
+            "numberOfElements": [
+              1
+            ],
+            "validation": [
+              {
+                "fun": "checkType",
+                "parameters": [],
+                "description": "Check the type"
+              }
+            ]
+          },
+          "z2": {
+            "name": "z2",
+            "description": "z2 location of the coil",
+            "value": [
+              [
+                -2.55
+              ]
+            ],
+            "type": "float32",
+            "isStruct": false,
+            "isLiveVariable": false,
+            "numberOfElements": [
+              1
+            ],
+            "validation": [
+              {
+                "fun": "checkType",
+                "parameters": [],
+                "description": "Check the type"
+              }
+            ]
+          },
+          "phi1": {
+            "name": "phi1",
+            "description": "Starting angle of the loop",
+            "value": [
+              [
+                16.05
+              ]
+            ],
+            "type": "float32",
+            "isStruct": false,
+            "isLiveVariable": false,
+            "numberOfElements": [
+              1
+            ],
+            "validation": [
+              {
+                "fun": "checkMax",
+                "parameters": [
+                  [
+                    180.0
+                  ]
+                ],
+                "description": "Maximum allowed angle"
+              },
+              {
+                "fun": "checkMin",
+                "parameters": [
+                  [
+                    -180.0
+                  ]
+                ],
+                "description": "Minimum allowed angle"
+              },
+              {
+                "fun": "checkType",
+                "parameters": [],
+                "description": "Check the type"
+              }
+            ]
+          },
+          "phi2": {
+            "name": "phi2",
+            "description": "Ending angle of the loop",
+            "value": [
+              [
+                47.67
+              ]
+            ],
+            "type": "float32",
+            "isStruct": false,
+            "isLiveVariable": false,
+            "numberOfElements": [
+              1
+            ],
+            "validation": [
+              {
+                "fun": "checkMax",
+                "parameters": [
+                  [
+                    180.0
+                  ]
+                ],
+                "description": "Maximum allowed angle"
+              },
+              {
+                "fun": "checkMin",
+                "parameters": [
+                  [
+                    -180.0
+                  ]
+                ],
+                "description": "Minimum allowed angle"
+              },
+              {
+                "fun": "checkType",
+                "parameters": [],
+                "description": "Check the type"
+              }
+            ]
+          },
+          "name": "M1001",
+          "description": "55.AD.00-MSA-1001",
+          "value": [],
+          "type": "coil",
+          "isStruct": true,
+          "isLiveVariable": false,
+          "numberOfElements": [
+            1
+          ]
+        },
+        "M1013": {
+          "r1": {
+            "name": "r1",
+            "description": "r1 location of the coil",
+            "value": [
+              [
+                8.74
+              ]
+            ],
+            "type": "float32",
+            "isStruct": false,
+            "isLiveVariable": false,
+            "numberOfElements": [
+              1
+            ],
+            "validation": [
+              {
+                "fun": "checkType",
+                "parameters": [],
+                "description": "Check the type"
+              }
+            ]
+          },
+          "z1": {
+            "name": "z1",
+            "description": "z1 location of the coil",
+            "value": [
+              [
+                1.84
+              ]
+            ],
+            "type": "float32",
+            "isStruct": false,
+            "isLiveVariable": false,
+            "numberOfElements": [
+              1
+            ],
+            "validation": [
+              {
+                "fun": "checkType",
+                "parameters": [],
+                "description": "Check the type"
+              }
+            ]
+          },
+          "r2": {
+            "name": "r2",
+            "description": "r2 location of the coil",
+            "value": [
+              [
+                8.36
+              ]
+            ],
+            "type": "float32",
+            "isStruct": false,
+            "isLiveVariable": false,
+            "numberOfElements": [
+              1
+            ],
+            "validation": [
+              {
+                "fun": "checkType",
+                "parameters": [],
+                "description": "Check the type"
+              }
+            ]
+          },
+          "z2": {
+            "name": "z2",
+            "description": "z2 location of the coil",
+            "value": [
+              [
+                2.68
+              ]
+            ],
+            "type": "float32",
+            "isStruct": false,
+            "isLiveVariable": false,
+            "numberOfElements": [
+              1
+            ],
+            "validation": [
+              {
+                "fun": "checkType",
+                "parameters": [],
+                "description": "Check the type"
+              }
+            ]
+          },
+          "phi1": {
+            "name": "phi1",
+            "description": "Starting angle of the loop",
+            "value": [
+              [
+                35.13
+              ]
+            ],
+            "type": "float32",
+            "isStruct": false,
+            "isLiveVariable": false,
+            "numberOfElements": [
+              1
+            ],
+            "validation": [
+              {
+                "fun": "checkMax",
+                "parameters": [
+                  [
+                    180.0
+                  ]
+                ],
+                "description": "Maximum allowed angle"
+              },
+              {
+                "fun": "checkMin",
+                "parameters": [
+                  [
+                    -180.0
+                  ]
+                ],
+                "description": "Minimum allowed angle"
+              },
+              {
+                "fun": "checkType",
+                "parameters": [],
+                "description": "Check the type"
+              }
+            ]
+          },
+          "phi2": {
+            "name": "phi2",
+            "description": "Ending angle of the loop",
+            "value": [
+              [
+                44.67
+              ]
+            ],
+            "type": "float32",
+            "isStruct": false,
+            "isLiveVariable": false,
+            "numberOfElements": [
+              1
+            ],
+            "validation": [
+              {
+                "fun": "checkMax",
+                "parameters": [
+                  [
+                    180.0
+                  ]
+                ],
+                "description": "Maximum allowed angle"
+              },
+              {
+                "fun": "checkMin",
+                "parameters": [
+                  [
+                    -180.0
+                  ]
+                ],
+                "description": "Minimum allowed angle"
+              },
+              {
+                "fun": "checkType",
+                "parameters": [],
+                "description": "Check the type"
+              }
+            ]
+          },
+          "name": "M1013",
+          "description": "55.AD.00-MSA-1013",
+          "value": [],
+          "type": "coil",
+          "isStruct": true,
+          "isLiveVariable": false,
+          "numberOfElements": [
+            1
+          ]
+        },
+        "name": "AD",
+        "description": "55 AD loop coils",
+        "value": [],
+        "type": "",
+        "isStruct": true,
+        "isLiveVariable": false,
+        "numberOfElements": [
+          1
+        ]
+      },
+      "name": "MSAS",
+      "description": "55 A0 loop coils",
+      "value": [],
+      "type": "",
+      "isStruct": true,
+      "isLiveVariable": false,
+      "numberOfElements": [
+        1
+      ]
     }
   ]
 }

@@ -60,7 +60,7 @@
                                 type: "post",
                                 url: "/getlibrary",
                                 data: {
-                                    token: currentToken,
+                                    token: parent._currentToken,
                                     variableId: this.owner.id, 
                                     userId: user.id, 
                                     libraryName: libraryName 
@@ -198,7 +198,7 @@
                                     type: "post",
                                     url: "/savelibrary",
                                     data: {
-                                        token: currentToken,
+                                        token: parent._currentToken,
                                         userId: user.id, 
                                         variableId : this.owner.id, 
                                         libraryName : saveAsName,

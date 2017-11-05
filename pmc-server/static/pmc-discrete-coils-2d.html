@@ -24,7 +24,7 @@
                         root.appendChild(clone);
 
                         this.canvas = this.shadowRoot.querySelector("#tcanvas");
-                        pmcMainEditor.addPlantInfoLoadedListener(this);
+                        parent._pmcMainEditor.addPlantInfoLoadedListener(this);
                     }
 
                     plantInfoLoaded() {
@@ -45,7 +45,7 @@
                                 var coilPlant = {color:PLANT_COLOR};
                                 $.each(props, function(p, prop) {
                                     var coilVariableId = coilVariable + "@" + prop;
-                                    var pmcCompArray = allPMCComponents[coilVariableId];
+                                    var pmcCompArray = parent._allPMCComponents[coilVariableId];
                                     if (pmcCompArray !== undefined) {
                                         coil[prop] = parseFloat(pmcCompArray[0].getValue());
                                         coilRef[prop] = parseFloat(pmcCompArray[0].getValue());
