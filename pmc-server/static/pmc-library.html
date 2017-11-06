@@ -15,7 +15,7 @@
                     this.availableLibraries = [];
                     //Create an editor
                     var libraryVariables = this.getAttribute("data-library-variables");
-                    var libraryEditor = this.getAttribute("data-library-editor");
+                    var libraryEditorUrl = this.getAttribute("data-library-editor");
                     this.libraryEditor = this.shadowRoot.querySelector("#tlibrary-editor");
 
                     //Attach a selector
@@ -23,12 +23,36 @@
                     if (libraryVariables === undefined) {
                         libraryVariables = "{}";
                     }
-                    this.libraryEditor.setLibraryVariables(libraryEditor, JSON.parse(libraryVariables));
+                    this.libraryEditor.setLibraryVariables(libraryEditorUrl, JSON.parse(libraryVariables));
+                }
+
+                getAvailableLibraries() {
+                    var allPMCLibVariablesJSon = [this.id];
+                    $.ajax({
+                        type: "post",
+                        url: "/getlibraries",
+                        data: {
+                            token: parent._currentToken,
+                            variables: JSON.stringify(allPMCLibVariablesJSon)
+                        },
+                        success: function (response) {
+                            var librariesJson = $.parseJSON(response);
+                            var allLibraries = librariesJson["libraries"];
+                            if (librariesJson.ids !== undefined) {
+                                this.setAvailableLibraries(librariesJson.ids);
+                            }
+                            this.libraryEditor.showSelector(this.availableLibraries, this.getValue());
+                        }.bind(this),
+                        error: function (response) {
+                            console.log(response);
+                            alert(response);
+                        }
+                    });
                 }
 
                 showLibraryEditor () {
-                    document.body.appendChild(this.libraryEditor);
-                    this.libraryEditor.showSelector(this.availableLibraries, this.getValue());
+                    //document.body.appendChild(this.libraryEditor);
+                    this.getAvailableLibraries();
                 }
             
                 setAvailableLibraries(libraries) {

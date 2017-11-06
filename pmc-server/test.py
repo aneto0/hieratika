@@ -520,7 +520,7 @@ class Server:
         db = self.getDB()
         tableLibraries = db["libraries"]
         librariesNames = {}
-        tableLibraryVariables = db["libraryVariables"]
+        tableLibraryVariables = db["library_variables"]
         variables = []
         toReturn = {"description":"", "variables":[]}
         if (not self.isTokenValid(request)):
@@ -549,7 +549,7 @@ class Server:
     def saveLibrary(self, request):
         db = self.getDB()
         tableLibraries = db["libraries"]
-        tableLibraryVariables = db["libraryVariables"]
+        tableLibraryVariables = db["library_variables"]
         toReturn = ""
         #TODO Check if the library already exists (and in the future prevent it from being overwritten if was ever used)
         if (not self.isTokenValid(request)):

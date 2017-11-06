@@ -111,42 +111,7 @@
             });
         }
 
-        function getAvailableLibraries() {
-            var allPMCLibVariablesJSon = [];
-            $.each(parent._allPMCComponents, function (i, pmcCompArray) {
-                $.each(pmcCompArray, function (j, pmcComp) {
-                    if (pmcComp.isLibrary()) {
-                        allPMCLibVariablesJSon.push(pmcComp.id);
-                    }
-                });
-            });
-
-            $.ajax({
-                type: "post",
-                url: "/getlibraries",
-                data: {
-                    token: parent._currentToken,
-                    variables: JSON.stringify(allPMCLibVariablesJSon)
-                },
-                success: function (response) {
-                    var librariesJson = $.parseJSON(response);
-                    var allLibraries = librariesJson["libraries"];
-                    $.each(allLibraries, function(i, librariesJson) {
-                        var targetElements = parent._allPMCComponents[librariesJson.variable];
-                        if (targetElements != null) {
-                            $.each(targetElements, function (i, pmcLibrary) {
-                                pmcLibrary.setAvailableLibraries(librariesJson.ids);
-                            });
-                        }
-                    });
-                },
-                error: function (response) {
-                    console.log(response);
-                    alert(response);
-                }
-            });
-        }
-
+        
         function setReference(currentReference) {
             if (currentReference === NONE_NAME) {
                 //Reset all the values to N/A
