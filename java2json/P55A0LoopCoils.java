@@ -8,6 +8,7 @@ class P55A0LoopCoils extends PMCVariable {
     }
 
     P55ADLoopCoils AD = new P55ADLoopCoils();
+    P55AELoopCoils AE = new P55AELoopCoils();
 }
 
 

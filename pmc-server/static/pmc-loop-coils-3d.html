@@ -29,7 +29,9 @@
         
                     attachedCallback() {
                         this.div3d = this.shadowRoot.querySelector("#dloopcoils3d");
-                        this.drawVessel();
+                        var minPhi = parseFloat(this.getAttribute("data-tokamak-min-phi"));
+                        var maxPhi = parseFloat(this.getAttribute("data-tokamak-max-phi"));
+                        this.drawVessel(minPhi, maxPhi);
                     }
 
                     plantInfoLoaded() {
@@ -85,6 +87,8 @@
                         coil.wireFrameMat.wireframe = true;
                         var canvas = document.createElement("canvas");
                         var context = canvas.getContext("2d");
+                        canvas.width = 256;
+                        canvas.height = 128;
                         context.font = "16pt Arial";
                         context.textAlign = "center";
                         context.fillStyle = "yellow";
@@ -108,7 +112,7 @@
                         }
                     } 
 
-                    drawVessel() {
+                    drawVessel(minPhi, maxPhi) {
                         this.renderer = new THREE.WebGLRenderer();
                         this.renderer.setSize(window.innerWidth, window.innerHeight);
                         this.div3d.appendChild(this.renderer.domElement);
@@ -125,9 +129,9 @@
                             pts.push(new THREE.Vector2(rcoords[i], zcoords[i]));
                         }
                         pts.push(new THREE.Vector2(rcoords[1], zcoords[1]));
-                        var geometry = new THREE.LatheBufferGeometry( pts, 12, 0, Math.PI / 2);
+                        var geometry = new THREE.LatheBufferGeometry( pts, 12, minPhi * Math.PI / 180, maxPhi * Math.PI / 180);
                         var meshMaterial = new THREE.MeshBasicMaterial( { color: 0x2194ce} );
-                        meshMaterial.side = THREE.DoubleSide;
+                        //meshMaterial.side = THREE.DoubleSide;
                         var wireFrameMat = new THREE.MeshBasicMaterial();
                         wireFrameMat.wireframe = true;
                         var lathe = THREE.SceneUtils.createMultiMaterialObject(geometry, [meshMaterial, wireFrameMat]);

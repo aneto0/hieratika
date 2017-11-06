@@ -4,8 +4,8 @@
         <link rel="import" href="pmc-component.html">
         <link rel="import" href="libraries.html">
         <link rel="import" href="pmc-array-editor.html">
-        <link rel="import" href="pmc-loop-coils-3d.html">
         <link rel="import" href="pmc-discrete-coils-2d.html">
+        <link rel="import" href="pmc-loop-coils-3d.html">
         <link rel="import" href="pmc-helper.html">
         <link rel="import" href="pmc-input.html">
         <link rel="import" href="pmc-library-button.html">
@@ -33,10 +33,10 @@
                             <td>z2 (m)</td><td><pmc-input id="{KEY}@z2" name="{KEY}@z2"></pmc-input></td>
                         </tr>
                         <tr>
-                            <td>&Phi<sub>1</sub> (deg)</td><td><pmc-input id="{KEY}@phi1" name="{KEY}@phi1"></pmc-input></td>
+                            <td>&#934;<sub>1</sub> (deg)</td><td><pmc-input id="{KEY}@phi1" name="{KEY}@phi1"></pmc-input></td>
                         </tr>
                         <tr>
-                            <td>&Phi<sub>2</sub> (deg)</td><td><pmc-input id="{KEY}@phi2" name="{KEY}@phi2"></pmc-input></td>
+                            <td>&#934;<sub>2</sub> (deg)</td><td><pmc-input id="{KEY}@phi2" name="{KEY}@phi2"></pmc-input></td>
                         </tr>
                     </table>`;
                 var reg = new RegExp("{KEY}", "g");
@@ -67,55 +67,55 @@
             }
 
             function loadTables() {
-                //var table = document.getElementById("main-editor").shadowRoot.querySelector("#dmaineditor").getRootNode().querySelector("#tableAA1");
+                //var table = document.getElementById("main-editor").shadowRoot.querySelector("#dmaineditor").getRootNode().querySelector("#tableAD1");
                 var table = document.getElementById("tableAD1");
                 if (table != null) {
-                    table.innerHTML = add55LoopCoilsTableCells("55A0::MSAS@AD@M10", 1, 1, []);
+                    table.innerHTML = add55LoopCoilsTableCells("55A0::MSAS@AD@M10", 1, 22, []);
                 }
-       /*         table = document.getElementById("tableAA2");
+                table = document.getElementById("tableAD2");
                 if (table != null) {
-                    table.innerHTML = add55LoopCoilsTableCells("55A0::MLFS@AA@M20", 1, 25, [19]);
+                    table.innerHTML = add55LoopCoilsTableCells("55A0::MSAS@AD@M20", 1, 23, []);
                 }
-                table = document.getElementById("tableAA4");
+       /*         table = document.getElementById("tableAD4");
                 if (table != null) {
-                    table.innerHTML = add55LoopCoilsTableCells("55A0::MLFS@AA@M40", 1, 25, [19]);
+                    table.innerHTML = add55LoopCoilsTableCells("55A0::MSAS@AD@M40", 1, 25, [19]);
                 }
-                table = document.getElementById("tableAA5");
+                table = document.getElementById("tableAD5");
                 if (table != null) {
-                    table.innerHTML = add55LoopCoilsTableCells("55A0::MLFS@AA@M50", 1, 25, [19]);
+                    table.innerHTML = add55LoopCoilsTableCells("55A0::MSAS@AD@M50", 1, 25, [19]);
                 }
-                table = document.getElementById("tableAA7");
+                table = document.getElementById("tableAD7");
                 if (table != null) {
-                    table.innerHTML = add55LoopCoilsTableCells("55A0::MLFS@AA@M70", 1, 25, [19]);
+                    table.innerHTML = add55LoopCoilsTableCells("55A0::MSAS@AD@M70", 1, 25, [19]);
                 }
-                table = document.getElementById("tableAA8");
+                table = document.getElementById("tableAD8");
                 if (table != null) {
-                    table.innerHTML = add55LoopCoilsTableCells("55A0::MLFS@AA@M80", 1, 25, [19]);
-                }
+                    table.innerHTML = add55LoopCoilsTableCells("55A0::MSAS@AD@M80", 1, 25, [19]);
+                }*/
 
-                table = document.getElementById("tableAB1");
+                table = document.getElementById("tableAE0");
                 if (table != null) {
-                    table.innerHTML = add55LoopCoilsTableCells("55A0::MLFS@AB@M11", 1, 12, []);
+                    table.innerHTML = add55LoopCoilsTableCells("55A0::MSAS@AE@M00", 1, 4, []);
                 }
-                table = document.getElementById("tableAB2");
+/*                table = document.getElementById("tableAB2");
                 if (table != null) {
-                    table.innerHTML = add55LoopCoilsTableCells("55A0::MLFS@AB@M21", 1, 12, []);
+                    table.innerHTML = add55LoopCoilsTableCells("55A0::MSAS@AB@M21", 1, 12, []);
                 }
                 table = document.getElementById("tableAB4");
                 if (table != null) {
-                    table.innerHTML = add55LoopCoilsTableCells("55A0::MLFS@AB@M41", 1, 12, []);
+                    table.innerHTML = add55LoopCoilsTableCells("55A0::MSAS@AB@M41", 1, 12, []);
                 }
                 table = document.getElementById("tableAB5");
                 if (table != null) {
-                    table.innerHTML = add55LoopCoilsTableCells("55A0::MLFS@AB@M51", 1, 12, []);
+                    table.innerHTML = add55LoopCoilsTableCells("55A0::MSAS@AB@M51", 1, 12, []);
                 }
                 table = document.getElementById("tableAB7");
                 if (table != null) {
-                    table.innerHTML = add55LoopCoilsTableCells("55A0::MLFS@AB@M71", 1, 12, []);
+                    table.innerHTML = add55LoopCoilsTableCells("55A0::MSAS@AB@M71", 1, 12, []);
                 }
                 table = document.getElementById("tableAB8");
                 if (table != null) {
-                    table.innerHTML = add55LoopCoilsTableCells("55A0::MLFS@AB@M81", 1, 12, []);
+                    table.innerHTML = add55LoopCoilsTableCells("55A0::MSAS@AB@M81", 1, 12, []);
                 }
 
                 */
@@ -190,134 +190,89 @@
                     <table id="tableAD1" style="border-width: 1px; background-color: transparent" ></table>
                 </td>
                 <td>
-                    <pmc-loop-coils-3d id="vesselAD1" data-coil-variables='{"ids": ["55A0::MSAS@AD@M1001"]}'></pmc-loop-coils-3d>
+                    <pmc-loop-coils-3d id="vesselAD1" data-coil-variables='{"ids": ["55A0::MSAS@AD@M1001", "55A0::MSAS@AD@M1002", "55A0::MSAS@AD@M1003", "55A0::MSAS@AD@M1004", "55A0::MSAS@AD@M1005", "55A0::MSAS@AD@M1006", "55A0::MSAS@AD@M1007", "55A0::MSAS@AD@M1008", "55A0::MSAS@AD@M1009", "55A0::MSAS@AD@M1010", "55A0::MSAS@AD@M1011", "55A0::MSAS@AD@M1012", "55A0::MSAS@AD@M1013", "55A0::MSAS@AD@M1014", "55A0::MSAS@AD@M1015", "55A0::MSAS@AD@M1016", "55A0::MSAS@AD@M1017", "55A0::MSAS@AD@M1018", "55A0::MSAS@AD@M1020", "55A0::MSAS@AD@M1021"]}' data-tokamak-min-phi='0' data-tokamak-max-phi='180'></pmc-loop-coils-3d>
+                </td>
+            </tr>
+        </table>
+        <table style="border-style: dotted; border-width: 3px">
+            <th colspan="2" style="background-color:#DCDCDC;font-size:larger;padding-bottom: 5px;padding-top: 5px">AD sensors sector 2</th>
+            <tr>
+                <td>
+                    <table id="tableAD2" style="border-width: 1px; background-color: transparent" ></table>
+                </td>
+                <td>
+                    <pmc-loop-coils-3d id="vesselAD2" data-coil-variables='{"ids": ["55A0::MSAS@AD@M2001", "55A0::MSAS@AD@M2002", "55A0::MSAS@AD@M2003", "55A0::MSAS@AD@M2004", "55A0::MSAS@AD@M2005", "55A0::MSAS@AD@M2006", "55A0::MSAS@AD@M2007", "55A0::MSAS@AD@M2008", "55A0::MSAS@AD@M2009", "55A0::MSAS@AD@M2020", "55A0::MSAS@AD@M2011", "55A0::MSAS@AD@M2012", "55A0::MSAS@AD@M2013", "55A0::MSAS@AD@M2014", "55A0::MSAS@AD@M2015", "55A0::MSAS@AD@M2016", "55A0::MSAS@AD@M2017", "55A0::MSAS@AD@M2018", "55A0::MSAS@AD@M2020", "55A0::MSAS@AD@M2021", "55A0::MSAS@AD@M2022", "55A0::MSAS@AD@M2023"]}' data-tokamak-min-phi='0' data-tokamak-max-phi='180'></pmc-loop-coils-3d>
                 </td>
             </tr>
         </table>
 <!--        <table style="border-style: dotted; border-width: 3px">
-            <th colspan="2" style="background-color:#DCDCDC;font-size:larger;padding-bottom: 5px;padding-top: 5px">AA sensors sector 2</th>
+            <th colspan="2" style="background-color:#DCDCDC;font-size:larger;padding-bottom: 5px;padding-top: 5px">AD sensors sector 4</th>
             <tr>
                 <td>
-                    <table id="tableAA2" style="border-width: 1px; background-color: transparent" ></table>
+                    <table id="tableAD4" style="border-width: 1px; background-color: transparent" ></table>
                 </td>
                 <td>
-                    <pmc-discrete-coils-2d id="vesselAA2" data-coil-variables='{"ids": ["55A0::MLFS@AA@M2001", "55A0::MLFS@AA@M2002", "55A0::MLFS@AA@M2003", "55A0::MLFS@AA@M2004", "55A0::MLFS@AA@M2005", "55A0::MLFS@AA@M2006", "55A0::MLFS@AA@M2007", "55A0::MLFS@AA@M2008", "55A0::MLFS@AA@M2009", "55A0::MLFS@AA@M2020", "55A0::MLFS@AA@M2011", "55A0::MLFS@AA@M2012", "55A0::MLFS@AA@M2013", "55A0::MLFS@AA@M2014", "55A0::MLFS@AA@M2015", "55A0::MLFS@AA@M2016", "55A0::MLFS@AA@M2017", "55A0::MLFS@AA@M2018", "55A0::MLFS@AA@M2020", "55A0::MLFS@AA@M2021", "55A0::MLFS@AA@M2022", "55A0::MLFS@AA@M2023", "55A0::MLFS@AA@M2024", "55A0::MLFS@AA@M2025"]}'></pmc-discrete-coils-2d>
+                    <pmc-loop-coils-3d id="vesselAD4" data-coil-variables='{"ids": ["55A0::MSAS@AD@M4001", "55A0::MSAS@AD@M4002", "55A0::MSAS@AD@M4003", "55A0::MSAS@AD@M4004", "55A0::MSAS@AD@M4005", "55A0::MSAS@AD@M4006", "55A0::MSAS@AD@M4007", "55A0::MSAS@AD@M4008", "55A0::MSAS@AD@M4009", "55A0::MSAS@AD@M4010", "55A0::MSAS@AD@M4011", "55A0::MSAS@AD@M4012", "55A0::MSAS@AD@M4013", "55A0::MSAS@AD@M4014", "55A0::MSAS@AD@M4015", "55A0::MSAS@AD@M4016", "55A0::MSAS@AD@M4017", "55A0::MSAS@AD@M4018", "55A0::MSAS@AD@M4020", "55A0::MSAS@AD@M4021", "55A0::MSAS@AD@M4022", "55A0::MSAS@AD@M4023", "55A0::MSAS@AD@M4024", "55A0::MSAS@AD@M4025"]}' data-tokamak-min-phi='0' data-tokamak-max-phi='90'></pmc-loop-coils-3d>
                 </td>
             </tr>
         </table>
         <table style="border-style: dotted; border-width: 3px">
-            <th colspan="2" style="background-color:#DCDCDC;font-size:larger;padding-bottom: 5px;padding-top: 5px">AA sensors sector 4</th>
+            <th colspan="2" style="background-color:#DCDCDC;font-size:larger;padding-bottom: 5px;padding-top: 5px">AD sensors sector 5</th>
             <tr>
                 <td>
-                    <table id="tableAA4" style="border-width: 1px; background-color: transparent" ></table>
+                    <table id="tableAD5" style="border-width: 1px; background-color: transparent" ></table>
                 </td>
                 <td>
-                    <pmc-discrete-coils-2d id="vesselAA4" data-coil-variables='{"ids": ["55A0::MLFS@AA@M4001", "55A0::MLFS@AA@M4002", "55A0::MLFS@AA@M4003", "55A0::MLFS@AA@M4004", "55A0::MLFS@AA@M4005", "55A0::MLFS@AA@M4006", "55A0::MLFS@AA@M4007", "55A0::MLFS@AA@M4008", "55A0::MLFS@AA@M4009", "55A0::MLFS@AA@M4010", "55A0::MLFS@AA@M4011", "55A0::MLFS@AA@M4012", "55A0::MLFS@AA@M4013", "55A0::MLFS@AA@M4014", "55A0::MLFS@AA@M4015", "55A0::MLFS@AA@M4016", "55A0::MLFS@AA@M4017", "55A0::MLFS@AA@M4018", "55A0::MLFS@AA@M4020", "55A0::MLFS@AA@M4021", "55A0::MLFS@AA@M4022", "55A0::MLFS@AA@M4023", "55A0::MLFS@AA@M4024", "55A0::MLFS@AA@M4025"]}'></pmc-discrete-coils-2d>
+                    <pmc-loop-coils-3d id="vesselAD5" data-coil-variables='{"ids": ["55A0::MSAS@AD@M5001", "55A0::MSAS@AD@M5002", "55A0::MSAS@AD@M5003", "55A0::MSAS@AD@M5004", "55A0::MSAS@AD@M5005", "55A0::MSAS@AD@M5006", "55A0::MSAS@AD@M5007", "55A0::MSAS@AD@M5008", "55A0::MSAS@AD@M5009", "55A0::MSAS@AD@M5010", "55A0::MSAS@AD@M5011", "55A0::MSAS@AD@M5012", "55A0::MSAS@AD@M5013", "55A0::MSAS@AD@M5014", "55A0::MSAS@AD@M5015", "55A0::MSAS@AD@M5016", "55A0::MSAS@AD@M5017", "55A0::MSAS@AD@M5018", "55A0::MSAS@AD@M5020", "55A0::MSAS@AD@M5021", "55A0::MSAS@AD@M5022", "55A0::MSAS@AD@M5023", "55A0::MSAS@AD@M5024", "55A0::MSAS@AD@M5025"]}' data-tokamak-min-phi='0' data-tokamak-max-phi='90'></pmc-loop-coils-3d>
                 </td>
             </tr>
         </table>
         <table style="border-style: dotted; border-width: 3px">
-            <th colspan="2" style="background-color:#DCDCDC;font-size:larger;padding-bottom: 5px;padding-top: 5px">AA sensors sector 5</th>
+            <th colspan="2" style="background-color:#DCDCDC;font-size:larger;padding-bottom: 5px;padding-top: 5px">AD sensors sector 7</th>
             <tr>
                 <td>
-                    <table id="tableAA5" style="border-width: 1px; background-color: transparent" ></table>
+                    <table id="tableAD7" style="border-width: 1px; background-color: transparent" ></table>
                 </td>
                 <td>
-                    <pmc-discrete-coils-2d id="vesselAA5" data-coil-variables='{"ids": ["55A0::MLFS@AA@M5001", "55A0::MLFS@AA@M5002", "55A0::MLFS@AA@M5003", "55A0::MLFS@AA@M5004", "55A0::MLFS@AA@M5005", "55A0::MLFS@AA@M5006", "55A0::MLFS@AA@M5007", "55A0::MLFS@AA@M5008", "55A0::MLFS@AA@M5009", "55A0::MLFS@AA@M5010", "55A0::MLFS@AA@M5011", "55A0::MLFS@AA@M5012", "55A0::MLFS@AA@M5013", "55A0::MLFS@AA@M5014", "55A0::MLFS@AA@M5015", "55A0::MLFS@AA@M5016", "55A0::MLFS@AA@M5017", "55A0::MLFS@AA@M5018", "55A0::MLFS@AA@M5020", "55A0::MLFS@AA@M5021", "55A0::MLFS@AA@M5022", "55A0::MLFS@AA@M5023", "55A0::MLFS@AA@M5024", "55A0::MLFS@AA@M5025"]}'></pmc-discrete-coils-2d>
+                    <pmc-loop-coils-3d id="vesselAD7" data-coil-variables='{"ids": ["55A0::MSAS@AD@M7001", "55A0::MSAS@AD@M7002", "55A0::MSAS@AD@M7003", "55A0::MSAS@AD@M7004", "55A0::MSAS@AD@M7005", "55A0::MSAS@AD@M7006", "55A0::MSAS@AD@M7007", "55A0::MSAS@AD@M7008", "55A0::MSAS@AD@M7009", "55A0::MSAS@AD@M7010", "55A0::MSAS@AD@M7011", "55A0::MSAS@AD@M7012", "55A0::MSAS@AD@M7013", "55A0::MSAS@AD@M7014", "55A0::MSAS@AD@M7015", "55A0::MSAS@AD@M7016", "55A0::MSAS@AD@M7017", "55A0::MSAS@AD@M7018", "55A0::MSAS@AD@M7020", "55A0::MSAS@AD@M7021", "55A0::MSAS@AD@M7022", "55A0::MSAS@AD@M7023", "55A0::MSAS@AD@M7024", "55A0::MSAS@AD@M7025"]}' data-tokamak-min-phi='0' data-tokamak-max-phi='90'></pmc-loop-coils-3d>
                 </td>
             </tr>
         </table>
         <table style="border-style: dotted; border-width: 3px">
-            <th colspan="2" style="background-color:#DCDCDC;font-size:larger;padding-bottom: 5px;padding-top: 5px">AA sensors sector 7</th>
+            <th colspan="2" style="background-color:#DCDCDC;font-size:larger;padding-bottom: 5px;padding-top: 5px">AD sensors sector 8</th>
             <tr>
                 <td>
-                    <table id="tableAA7" style="border-width: 1px; background-color: transparent" ></table>
+                    <table id="tableAD8" style="border-width: 1px; background-color: transparent" ></table>
                 </td>
                 <td>
-                    <pmc-discrete-coils-2d id="vesselAA7" data-coil-variables='{"ids": ["55A0::MLFS@AA@M7001", "55A0::MLFS@AA@M7002", "55A0::MLFS@AA@M7003", "55A0::MLFS@AA@M7004", "55A0::MLFS@AA@M7005", "55A0::MLFS@AA@M7006", "55A0::MLFS@AA@M7007", "55A0::MLFS@AA@M7008", "55A0::MLFS@AA@M7009", "55A0::MLFS@AA@M7010", "55A0::MLFS@AA@M7011", "55A0::MLFS@AA@M7012", "55A0::MLFS@AA@M7013", "55A0::MLFS@AA@M7014", "55A0::MLFS@AA@M7015", "55A0::MLFS@AA@M7016", "55A0::MLFS@AA@M7017", "55A0::MLFS@AA@M7018", "55A0::MLFS@AA@M7020", "55A0::MLFS@AA@M7021", "55A0::MLFS@AA@M7022", "55A0::MLFS@AA@M7023", "55A0::MLFS@AA@M7024", "55A0::MLFS@AA@M7025"]}'></pmc-discrete-coils-2d>
-                </td>
-            </tr>
-        </table>
-        <table style="border-style: dotted; border-width: 3px">
-            <th colspan="2" style="background-color:#DCDCDC;font-size:larger;padding-bottom: 5px;padding-top: 5px">AA sensors sector 8</th>
-            <tr>
-                <td>
-                    <table id="tableAA8" style="border-width: 1px; background-color: transparent" ></table>
-                </td>
-                <td>
-                    <pmc-discrete-coils-2d id="vesselAA8" data-coil-variables='{"ids": ["55A0::MLFS@AA@M8001", "55A0::MLFS@AA@M8002", "55A0::MLFS@AA@M8003", "55A0::MLFS@AA@M8004", "55A0::MLFS@AA@M8005", "55A0::MLFS@AA@M8006", "55A0::MLFS@AA@M8007", "55A0::MLFS@AA@M8008", "55A0::MLFS@AA@M8009", "55A0::MLFS@AA@M8010", "55A0::MLFS@AA@M8011", "55A0::MLFS@AA@M8012", "55A0::MLFS@AA@M8013", "55A0::MLFS@AA@M8014", "55A0::MLFS@AA@M8015", "55A0::MLFS@AA@M8016", "55A0::MLFS@AA@M8017", "55A0::MLFS@AA@M8018", "55A0::MLFS@AA@M8020", "55A0::MLFS@AA@M8021", "55A0::MLFS@AA@M8022", "55A0::MLFS@AA@M8023", "55A0::MLFS@AA@M8024", "55A0::MLFS@AA@M8025"]}'></pmc-discrete-coils-2d>
+                    <pmc-loop-coils-3d id="vesselAD8" data-coil-variables='{"ids": ["55A0::MSAS@AD@M8001", "55A0::MSAS@AD@M8002", "55A0::MSAS@AD@M8003", "55A0::MSAS@AD@M8004", "55A0::MSAS@AD@M8005", "55A0::MSAS@AD@M8006", "55A0::MSAS@AD@M8007", "55A0::MSAS@AD@M8008", "55A0::MSAS@AD@M8009", "55A0::MSAS@AD@M8010", "55A0::MSAS@AD@M8011", "55A0::MSAS@AD@M8012", "55A0::MSAS@AD@M8013", "55A0::MSAS@AD@M8014", "55A0::MSAS@AD@M8015", "55A0::MSAS@AD@M8016", "55A0::MSAS@AD@M8017", "55A0::MSAS@AD@M8018", "55A0::MSAS@AD@M8020", "55A0::MSAS@AD@M8021", "55A0::MSAS@AD@M8022", "55A0::MSAS@AD@M8023", "55A0::MSAS@AD@M8024", "55A0::MSAS@AD@M8025"]}' data-tokamak-min-phi='0' data-tokamak-max-phi='90'></pmc-loop-coils-3d>
                 </td>
             </tr>
         </table>-->
     </div>
     <div id="tab55AE" class="tabcontent"> 
-        TODO
-<!--        <table style="border-style: dotted; border-width: 3px">
-            <th colspan="2" style="background-color:#DCDCDC;font-size:larger;padding-bottom: 5px;padding-top: 5px">AB sensors sector 1</th>
+        <table style="border-style: dotted; border-width: 3px">
+            <th colspan="2" style="background-color:#DCDCDC;font-size:larger;padding-bottom: 5px;padding-top: 5px">AE sensors full flux</th>
             <tr>
                 <td>
-                    <table id="tableAB1" style="border-width: 1px; background-color: transparent" ></table>
+                    <table id="tableAE0" style="border-width: 1px; background-color: transparent" ></table>
                 </td>
                 <td>
-                    <pmc-discrete-coils-2d id="vesselAB1" data-coil-variables='{"ids": ["55A0::MLFS@AB@M1101", "55A0::MLFS@AB@M1102", "55A0::MLFS@AB@M1103", "55A0::MLFS@AB@M1104", "55A0::MLFS@AB@M1105", "55A0::MLFS@AB@M1106", "55A0::MLFS@AB@M1107", "55A0::MLFS@AB@M1108", "55A0::MLFS@AB@M1109", "55A0::MLFS@AB@M1110", "55A0::MLFS@AB@M1111", "55A0::MLFS@AB@M1112"]}'></pmc-discrete-coils-2d>
+                    <pmc-loop-coils-3d id="vesselAE0" data-coil-variables='{"ids": ["55A0::MSAS@AE@M0001", "55A0::MSAS@AE@M0002", "55A0::MSAS@AE@M0003", "55A0::MSAS@AE@M0004"]}' data-tokamak-min-phi='0' data-tokamak-max-phi='180'></pmc-loop-coils-3d>
                 </td>
             </tr>
         </table>
-        <table style="border-style: dotted; border-width: 3px">
+<!--        <table style="border-style: dotted; border-width: 3px">
             <th colspan="2" style="background-color:#DCDCDC;font-size:larger;padding-bottom: 5px;padding-top: 5px">AB sensors sector 2</th>
             <tr>
                 <td>
                     <table id="tableAB2" style="border-width: 1px; background-color: transparent" ></table>
                 </td>
                 <td>
-                    <pmc-discrete-coils-2d id="vesselAB2" data-coil-variables='{"ids": ["55A0::MLFS@AB@M2101", "55A0::MLFS@AB@M2102", "55A0::MLFS@AB@M2103", "55A0::MLFS@AB@M2104", "55A0::MLFS@AB@M2105", "55A0::MLFS@AB@M2106", "55A0::MLFS@AB@M2107", "55A0::MLFS@AB@M2108", "55A0::MLFS@AB@M2109", "55A0::MLFS@AB@M2110", "55A0::MLFS@AB@M2111", "55A0::MLFS@AB@M2112"]}'></pmc-discrete-coils-2d>
+                    <pmc-loop-coils-3d id="vesselAB2" data-coil-variables='{"ids": ["55A0::MSAS@AB@M2101", "55A0::MSAS@AB@M2102", "55A0::MSAS@AB@M2103", "55A0::MSAS@AB@M2104", "55A0::MSAS@AB@M2105", "55A0::MSAS@AB@M2106", "55A0::MSAS@AB@M2107", "55A0::MSAS@AB@M2108", "55A0::MSAS@AB@M2109", "55A0::MSAS@AB@M2110", "55A0::MSAS@AB@M2111", "55A0::MSAS@AB@M2112"]}' data-tokamak-min-phi='0' data-tokamak-max-phi='180'></pmc-loop-coils-3d>
                 </td>
             </tr>
         </table>
-        <table style="border-style: dotted; border-width: 3px">
-            <th colspan="2" style="background-color:#DCDCDC;font-size:larger;padding-bottom: 5px;padding-top: 5px">AB sensors sector 4</th>
-            <tr>
-                <td>
-                    <table id="tableAB4" style="border-width: 1px; background-color: transparent" ></table>
-                </td>
-                <td>
-                    <pmc-discrete-coils-2d id="vesselAB4" data-coil-variables='{"ids": ["55A0::MLFS@AB@M4101", "55A0::MLFS@AB@M4102", "55A0::MLFS@AB@M4103", "55A0::MLFS@AB@M4104", "55A0::MLFS@AB@M4105", "55A0::MLFS@AB@M4106", "55A0::MLFS@AB@M4107", "55A0::MLFS@AB@M4108", "55A0::MLFS@AB@M4109", "55A0::MLFS@AB@M4110", "55A0::MLFS@AB@M4111", "55A0::MLFS@AB@M4112"]}'></pmc-discrete-coils-2d>
-                </td>
-            </tr>
-        </table>
-        <table style="border-style: dotted; border-width: 3px">
-            <th colspan="2" style="background-color:#DCDCDC;font-size:larger;padding-bottom: 5px;padding-top: 5px">AB sensors sector 5</th>
-            <tr>
-                <td>
-                    <table id="tableAB5" style="border-width: 1px; background-color: transparent" ></table>
-                </td>
-                <td>
-                    <pmc-discrete-coils-2d id="vesselAB5" data-coil-variables='{"ids": ["55A0::MLFS@AB@M5101", "55A0::MLFS@AB@M5102", "55A0::MLFS@AB@M5103", "55A0::MLFS@AB@M5104", "55A0::MLFS@AB@M5105", "55A0::MLFS@AB@M5106", "55A0::MLFS@AB@M5107", "55A0::MLFS@AB@M5108", "55A0::MLFS@AB@M5109", "55A0::MLFS@AB@M5110", "55A0::MLFS@AB@M5111", "55A0::MLFS@AB@M5112"]}'></pmc-discrete-coils-2d>
-                </td>
-            </tr>
-        </table>
-        <table style="border-style: dotted; border-width: 3px">
-            <th colspan="2" style="background-color:#DCDCDC;font-size:larger;padding-bottom: 5px;padding-top: 5px">AB sensors sector 7</th>
-            <tr>
-                <td>
-                    <table id="tableAB7" style="border-width: 1px; background-color: transparent" ></table>
-                </td>
-                <td>
-                    <pmc-discrete-coils-2d id="vesselAB7" data-coil-variables='{"ids": ["55A0::MLFS@AB@M7101", "55A0::MLFS@AB@M7102", "55A0::MLFS@AB@M7103", "55A0::MLFS@AB@M7104", "55A0::MLFS@AB@M7105", "55A0::MLFS@AB@M7106", "55A0::MLFS@AB@M7107", "55A0::MLFS@AB@M7108", "55A0::MLFS@AB@M7109", "55A0::MLFS@AB@M7110", "55A0::MLFS@AB@M7111", "55A0::MLFS@AB@M7112"]}'></pmc-discrete-coils-2d>
-                </td>
-            </tr>
-        </table>
-        <table style="border-style: dotted; border-width: 3px">
-            <th colspan="2" style="background-color:#DCDCDC;font-size:larger;padding-bottom: 5px;padding-top: 5px">AB sensors sector 8</th>
-            <tr>
-                <td>
-                    <table id="tableAB8" style="border-width: 1px; background-color: transparent" ></table>
-                </td>
-                <td>
-                    <pmc-discrete-coils-2d id="vesselAB8" data-coil-variables='{"ids": ["55A0::MLFS@AB@M8101", "55A0::MLFS@AB@M8102", "55A0::MLFS@AB@M8103", "55A0::MLFS@AB@M8104", "55A0::MLFS@AB@M8105", "55A0::MLFS@AB@M8106", "55A0::MLFS@AB@M8107", "55A0::MLFS@AB@M8108", "55A0::MLFS@AB@M8109", "55A0::MLFS@AB@M8110", "55A0::MLFS@AB@M8111", "55A0::MLFS@AB@M8112"]}'></pmc-discrete-coils-2d>
-                </td>
-            </tr>
-        </table>-->
-    </div>
+    </div>-->
 </body>
 </html>

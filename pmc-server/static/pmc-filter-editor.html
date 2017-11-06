@@ -42,16 +42,17 @@
                 generatePolynomialMathML(pol) {
                     var polynomialInnerHTML = "<mrow>";
                     for (var i=0; i<pol.length; i++) {
-                        if (pol[i] !== 0) {
+                        var polVal = parseFloat(pol[i]);
+                        if (polVal !== 0) {
                             if (i !== 0) {
-                                if (pol[i] > 0) {
+                                if (polVal > 0) {
                                     polynomialInnerHTML += "<mo>+</mo>";
                                 }
                             }
                             var expVal = (pol.length - i - 1);
-                            if ((expVal === 0) || (pol[i] != 1)) {
+                            if ((expVal === 0) || (polVal != 1)) {
                                 polynomialInnerHTML += "<mn>";
-                                polynomialInnerHTML += pol[i];
+                                polynomialInnerHTML += polVal;
                                 polynomialInnerHTML += "</mn>";
                             }
                             if (expVal > 0) {
@@ -94,29 +95,34 @@
                         w[i] = w[i-1] + this.frequencyStep; 
                     }
                     for (var i=0; i<numberOfFrequencies; i++) {
-                        var a = num[num.length - 1];
+                        var a = parseFloat(num[num.length - 1]);
                         var b = 0;
-                        //Go right to left
                         for (var j=num.length-2; j>=0; j--) {
-                            var pwr = num.length - j + 1;
-                            if ((pwr % 2) == 0) {
-                                a = a - num[j] * Math.pow(w[i], pwr);
-                            }
-                            else  {
-                                b = b - num[j] * Math.pow(w[i], pwr);
+                            var pwr = num.length - j -1;
+                            var numVal = parseFloat(num[j]);
+                            if (numVal !== 0) {
+                                if ((pwr % 2) === 0) {
+                                    a = a - numVal * Math.pow(w[i], pwr);
+                                }
+                                else  {
+                                    b = b - numVal * Math.pow(w[i], pwr);
+                                }
                             }
                         }
                         var numAbs = Math.sqrt(a*a + b*b);
                         
-                        a = den[den.length - 1];
+                        a = parseFloat(den[den.length - 1]);
                         b = 0;
                         for (var j=den.length-2; j>=0; j--) {
-                            var pwr = den.length - j + 1;
-                            if ((pwr % 2) == 0) {
-                                a = a - den[j] * Math.pow(w[i], pwr);
-                            }
-                            else  {
-                                b = b - den[j] * Math.pow(w[i], pwr);
+                            var pwr = den.length - j -1;
+                            var denVal = parseFloat(den[j]);
+                            if (denVal !== 0) {
+                                if ((pwr % 2) === 0) {
+                                    a = a - denVal * Math.pow(w[i], pwr);
+                                }
+                                else  {
+                                    b = b - denVal * Math.pow(w[i], pwr);
+                                }
                             }
                         }
                         var denAbs = Math.sqrt(a*a + b*b);

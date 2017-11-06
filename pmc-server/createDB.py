@@ -144,6 +144,12 @@ page = {
 }
 pages.upsert(page, ["id"])
 
+page = {
+    "id": "55A0-embedded",
+    "name": "55A0-embedded",
+    "description": "Parameters related to the embedded parameters of the 55A0 system"
+}
+pages.upsert(page, ["id"])
 
 '''
 with open("schedules.json") as jsonFile:

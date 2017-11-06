@@ -1,0 +1,138 @@
+<html>
+    <head>
+        <link rel="import" href="libraries.html">
+        <link rel="import" href="pmc-array-editor.html">
+        <link rel="import" href="pmc-cubicle-editor.html">
+        <link rel="import" href="pmc-discrete-coils-2d.html">
+        <link rel="import" href="pmc-loop-coils-3d.html">
+        <link rel="import" href="pmc-filter-editor.html">
+        <link rel="import" href="pmc-input.html">
+        <link rel="import" href="pmc-library-button.html">
+        <link rel="import" href="pmc-struct-browser.html">
+        <link rel="import" href="pmc-switch.html">
+        <link rel="import" href="pmc-switch-editor.html">
+    </head>
+    <body onload="loadTables()">
+        <script>
+            function add55EmbeddedTableCells(prefix, namePrefix, min, max, ignore=[]) {
+                //ES6 uses backticks ` to allow to declare multi-line strings
+                var cellTemplate = `
+                        <td>{NAMEKEY}</td> 
+                        <td><pmc-library-button id="{KEY}@LIBRARY" name="{KEY}@LIBRARY" data-library-editor="libraries/55A0-embedded-lib.html" data-library-variables='{"VARNAME":"{KEY}","WO-id":"{KEY}@WO", "EO-id":"{KEY}@EO", "CHOPPERF-id":"{KEY}@CHOPPERF", "CHOPPEREQRISE-id":"{KEY}@CHOPPEREQIN", "CHOPPEREQFALL-id":"{KEY}@CHOPPEREQOUT", "FILTER-id":"{KEY}@FILTER"}'></pmc-library-button></td>
+                        `;
+                var htmlToReturn = "";
+                var reg = new RegExp("{KEY}", "g");
+                var regName = new RegExp("{NAMEKEY}", "g");
+                var cellCount = 0;
+                var cellsPerRow = 6;
+                for(var i=min; i<=max; i++) {
+                    if (!ignore.includes(i)) {
+                        if ((cellCount % cellsPerRow) == 0) {
+                            htmlToReturn += "<tr>\n";
+                        }
+                        var toReplace = prefix;
+                        var toReplaceName = namePrefix;
+                        if (i<10) {
+                            toReplace += ("0" + i);
+                            toReplaceName += ("0" + i);
+                        }
+                        else {
+                            toReplace += i;
+                            toReplaceName += i;
+                        }
+                        var cellTemplateNewName = cellTemplate.replace(regName, toReplaceName);
+                        htmlToReturn += cellTemplateNewName.replace(reg, toReplace);
+                        if (cellCount % cellsPerRow == (cellsPerRow - 1)) {
+                            htmlToReturn += "</tr>\n";
+                        }
+                        cellCount++;
+                    }
+                }
+                return htmlToReturn;
+            }
+
+            function loadTables() {
+                //var table = document.getElementById("main-editor").shadowRoot.querySelector("#dmaineditor").getRootNode().querySelector("#tableAA1");
+                var table = document.getElementById("tableAA1");
+                if (table != null) {
+                    table.innerHTML = add55EmbeddedTableCells("55A0::EMBED@AA@M10", "M10", 1, 25, [19]);
+                }
+                // Get the element with id="defaultopen" and click on it
+                document.getElementById("defaultopen").click();
+            }
+
+            function openTab(evt, tabName) {
+                var i, tabcontent, tablinks;
+                tabcontent = document.getElementsByClassName("tabcontent");
+                for (i = 0; i < tabcontent.length; i++) {
+                    tabcontent[i].style.display = "none";
+                }
+                tablinks = document.getElementsByClassName("tablinks");
+                for (i = 0; i < tablinks.length; i++) {
+                    tablinks[i].className = tablinks[i].className.replace(" active", "");
+                }
+                document.getElementById(tabName).style.display = "block";
+                evt.currentTarget.className += " active";
+            }
+
+    </script>
+
+    <style>
+        /* Style the tab (from https://www.w3schools.com/howto/howto_js_tabs.asp)*/
+        div.tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+        }
+
+        /* Style the buttons inside the tab */
+        div.tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+            font-size: 17px;
+        }
+
+        /* Change background color of buttons on hover */
+        div.tab button:hover {
+            background-color: #ddd;
+        }
+
+        /* Create an active/current tablink class */
+        div.tab button.active {
+            background-color: #ccc;
+        }
+
+        /* Style the tab content */
+        .tabcontent {
+            display: none;
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-top: none;
+        }
+    </style>
+
+    <div class="tab">
+        <button class="tablinks" onclick="openTab(event, 'tab55AA')" id="defaultopen">55.AA</button>
+        <button class="tablinks" onclick="openTab(event, 'tab55AB')">55.AB</button>
+    </div>
+    <div id="tab55AA" class="tabcontent"> 
+        <table style="border-style: dotted; border-width: 3px">
+            <th style="background-color:#DCDCDC;font-size:larger;padding-bottom: 5px;padding-top: 5px">AA sensors sector 1</th>
+            <tr>
+                <td>
+                    <table id="tableAA1" style="border-width: 1px; background-color: transparent" ></table>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="tab55AB" class="tabcontent"> 
+        TODO
+    </div>
+
+</body>
+</html>

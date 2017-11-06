@@ -37,6 +37,10 @@ CLASSES = \
 	P55APDiscreteCoils.java	\
 	P55A0LoopCoils.java \
 	P55ADLoopCoils.java \
+	P55AELoopCoils.java \
+	P55A0Embedded.java \
+	P55A0EmbeddedList.java \
+	P55AAEmbedded.java \
 	Plant55A0.java
 
 default: classes
