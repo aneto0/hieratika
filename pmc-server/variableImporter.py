@@ -44,6 +44,10 @@ def importVariable(variableJSon, variablesDB, validationsDB, permissionsDB, grou
     else:
         isLiveVariable = ((variableJSon["isLiveVariable"] == "true") or (variableJSon["isLiveVariable"] == True))
         isStruct = ((variableJSon["isStruct"] == "true") or (variableJSon["isStruct"] == True))
+        if ("libraryAlias" not in variableJSon):
+            libraryAlias = ""
+        else:
+            libraryAlias  = variableJSon["libraryAlias"]
         if (len(dimensions) == 0):
             numberOfElements = pickle.dumps(variableJSon["numberOfElements"])
         else:
@@ -57,15 +61,19 @@ def importVariable(variableJSon, variablesDB, validationsDB, permissionsDB, grou
             "numberOfElements": pickle.dumps(variableJSon["numberOfElements"]),
             "isLiveVariable": isLiveVariable,
             "isStruct": isStruct,
-            "libraryAlias": variableJSon["libraryAlias"]
+            "libraryAlias": libraryAlias
         }
+        oVariableId = variable["id"]
         if (idx != ""):
             variable["id"] = idx
             variable["libraryAlias"] = idx
         if (fullVariableName != ""):
-            oVariableId = variable["id"]
             variable["id"] = fullVariableName + "@" + oVariableId
             if (len(variable["libraryAlias"]) > 0):
+                print "@@@@@@@@" 
+                print fullVariableAlias 
+                print variable["libraryAlias"]
+                print "@@@@@@@@" 
                 variable["libraryAlias"] = fullVariableAlias + "@" + variable["libraryAlias"]
             else:
                 variable["libraryAlias"] = fullVariableAlias + "@" + oVariableId
@@ -73,7 +81,7 @@ def importVariable(variableJSon, variablesDB, validationsDB, permissionsDB, grou
         variableId = variable["id"]
         libraryAlias = variable["libraryAlias"]
         if (len(libraryAlias) == 0):
-            libraryAlias = variable["id"]
+            libraryAlias = oVariableId
         variablesDB.upsert(variable, ["id"])
 
         checkFirstIndexOfArray = isFirstIndexOfArray(variableId)
@@ -99,10 +107,6 @@ def importVariable(variableJSon, variablesDB, validationsDB, permissionsDB, grou
                     if (memberIsArray):
                         variableId = oVariableId + "@" + memberId
                         libraryAlias = oLibraryAlias + "@" + memberId
-                        memberLibraryAlias = member["libraryAlias"]
-                        if (len(memberLibraryAlias) == 0):
-                            memberLibraryAlias = memberId     
-                        libraryAlias = oVariableId + "@" + memberLibraryAlias
                         dimensions = list(numpy.shape(member))
                         #Declare the array (the type will be discovered later (it will be the type of the first element), see above)
                         variable = {

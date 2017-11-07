@@ -27,21 +27,20 @@
                 }
 
                 getAvailableLibraries() {
-                    var allPMCLibVariablesJSon = [this.id];
                     $.ajax({
                         type: "post",
                         url: "/getlibraries",
                         data: {
                             token: parent._currentToken,
-                            variables: JSON.stringify(allPMCLibVariablesJSon)
+                            variable: this.id 
                         },
                         success: function (response) {
                             var librariesJson = $.parseJSON(response);
                             var allLibraries = librariesJson["libraries"];
-                            if (librariesJson.ids !== undefined) {
-                                this.setAvailableLibraries(librariesJson.ids);
+                            if (allLibraries.length > 0) {
+                                this.availableLibraries = allLibraries.slice();
+                                this.libraryEditor.showSelector(this.availableLibraries, this.getValue());
                             }
-                            this.libraryEditor.showSelector(this.availableLibraries, this.getValue());
                         }.bind(this),
                         error: function (response) {
                             console.log(response);
@@ -53,11 +52,6 @@
                 showLibraryEditor () {
                     //document.body.appendChild(this.libraryEditor);
                     this.getAvailableLibraries();
-                }
-            
-                setAvailableLibraries(libraries) {
-                    //copy the array
-                    this.availableLibraries = libraries.slice();
                 }
 
                 addAvailableLibrary(library) {

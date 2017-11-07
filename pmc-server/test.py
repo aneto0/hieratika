@@ -489,34 +489,34 @@ class Server:
 
     def getLibraries(self, request):
         db = self.getDB()
+        tableVariables = db["variables"]
         tableLibraries = db["libraries"]
-        librariesNames = {}
+        librariesToReturn = []
         toReturn = ""
         if (not self.isTokenValid(request)):
             toReturn = "InvalidToken"
         else: 
-            pmcLibVariables = json.loads(request.form["variables"])
-            for variable in pmcLibVariables:
+            variable = request.form["variable"]
+            variableResultIter = tableVariables.find(id=variable)
+            for vri in variableResultIter:
+                libraryAlias = vri["libraryAlias"]
+            if (len(libraryAlias) == 0):
                 libraries = tableLibraries.find(variable_id=variable)
-                for library in libraries:
-                    if variable in librariesNames:
-                        librariesNames[variable]["ids"].append(
-                            {
-                                "id": library["id"],
-                                "name": library["name"]
-                            }
-                        )
-                    else:
-                        librariesNames[variable] = {"variable":variable, "ids": [
-                            {
-                                "id": library["id"],
-                                "name": library["name"]
-                            }
-                        ]}
-            toReturn = json.dumps({"libraries": librariesNames.values()}) 
+            else:
+                statement = "SELECT libraries.id,libraries.name FROM libraries INNER JOIN variables ON libraries.variable_id=variables.id AND variables.libraryAlias='" + libraryAlias + "'"
+                libraries = db.query(statement)
+            for library in libraries:
+                librariesToReturn.append(
+                        {
+                            "id": library["id"],
+                            "name": library["name"]
+                        }
+                    )
+            toReturn = json.dumps({"libraries": librariesToReturn}) 
         return toReturn
 
     def getLibrary(self, request):
+        #TODO SELECT library_variables.variable_id,library_variables.library_id FROM library_variables INNER JOIN variables ON library_variables.variable_id=variables.id AND variables.libraryAlias='55A0::EMBED@AA@M@FILTER'
         db = self.getDB()
         tableLibraries = db["libraries"]
         librariesNames = {}
@@ -529,6 +529,7 @@ class Server:
             variableId = request.form["variableId"]
             if("libraryId" in request.form):
                 requestedLibraryId = request.form["libraryId"]
+                libraries = tableLibraries.find_one(library_id=requestedLibraryId)
             else:
                 requestedLibraryName = request.form["libraryName"]
                 requestedLibraryUser = request.form["userId"]

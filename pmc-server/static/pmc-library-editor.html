@@ -162,13 +162,11 @@
                             this.selected = this.selector.options[this.selector.selectedIndex].text;
                             this.owner.libraryChanged(this.selected);
                             diag.close();
-                            document.body.removeChild(this);
                         }.bind(this); //bind is needed to make sure that the "this" is still valid in the context of the callback
 
                         cancelButton.onclick = function() {
                             this.selected = "";
                             diag.close();
-                            document.body.removeChild(this);
                         }.bind(this); //bind is needed to make sure that the "this" is still valid in the context of the callback
 
                         this.selector.onchange = function() {

@@ -4,8 +4,8 @@ import java.util.Vector;
 class P55A0Embedded extends PMCVariable {
 
     public P55A0Embedded(String name, String description, boolean isLiveVariable, String libraryAlias) {
-        super(name, description, new Vector(), "", new int[]{1}, true, isLiveVariable, null);
-        library = new PMCLibrary("LIBRARY", "Library to group all the embedded configuration parameters", libraryAlias);
+        super(name, description, new Vector(), "", new int[]{1}, true, isLiveVariable, null, libraryAlias);
+        library = new PMCLibrary("LIBRARY", "Library to group all the embedded configuration parameters");
     }
 
     public PMCVariable wo = new PMCVariable("WO", "WO time in seconds", new Vector(Arrays.asList(new int[]{1})), "float32", new int[]{1}, false, false, 
