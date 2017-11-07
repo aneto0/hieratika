@@ -34,7 +34,7 @@ class PMCTest0 {
 
     public PMCTestStruct3 var3 = new PMCTestStruct3("VAR3", "A complex structure", false);
 
-    public PMCVariable multiDim = new PMCVariable("VAR4", "A multi dimensional variable", new Vector(), "PMCTestStruct1", new int[]{2, 2}, true, false, new PMCValidation[]{}, new Vector(
+    public PMCVariable multiDim = new PMCVariable("VAR4", "A multi dimensional variable", new Vector(), "PMCTestStruct1", new int[]{2, 2}, true, false, new PMCValidation[]{}, "", new Vector(
         Arrays.asList(new PMCTestStruct1[][]{
             {
                 new PMCTestStruct1("gap4", "A gap", false, 0, 0, 1, 1), 

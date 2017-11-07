@@ -37,7 +37,7 @@ class PlantDEMO0 {
         new PMCGap("gap2", "Another gap", false, 0, 0, 2, 3), 
         new PMCGap("gap3", "Another gap", false, 0, 0, 2, 4)});
 
-    public PMCVariable multiDim = new PMCVariable("VAR5", "A multi dimensional variable", new Vector(), "gap", new int[]{2, 2}, true, false, new PMCValidation[]{}, new Vector(
+    public PMCVariable multiDim = new PMCVariable("VAR5", "A multi dimensional variable", new Vector(), "gap", new int[]{2, 2}, true, false, new PMCValidation[]{}, "", new Vector(
         Arrays.asList(new PMCGap[][]{
             {
                 new PMCGap("gap4", "A gap", false, 0, 0, 1, 1), 

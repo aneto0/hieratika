@@ -12,7 +12,7 @@ import pickle
 import numpy
 
 #Private keys that cannot be used as member names in structures
-variableStandardKeys = ["id", "name", "type", "description", "value", "numberOfElements", "isLiveVariable", "isStruct", "validation"]
+variableStandardKeys = ["id", "name", "type", "description", "value", "numberOfElements", "isLiveVariable", "isStruct", "validation", "libraryAlias"]
 
 def isFirstIndexOfArray(variableId):
     varLen = len(variableId)
@@ -26,7 +26,7 @@ def isFirstIndexOfArray(variableId):
         i = i + 1
     return (isFirstIndex, variableId[0:-i+1])
 
-def importVariable(variableJSon, variablesDB, validationsDB, permissionsDB, groups, fullVariableName = "", idx = "", dimensions = []):
+def importVariable(variableJSon, variablesDB, validationsDB, permissionsDB, groups, fullVariableName = "", idx = "", fullVariableAlias = "", dimensions = []):
     """Recursive function which adds a variable to the database.
 
     This function supports the addition of multi-dimensional structured types to the database, where each member is separated by a @ sign.
@@ -40,7 +40,7 @@ def importVariable(variableJSon, variablesDB, validationsDB, permissionsDB, grou
         oidx = idx
         for k, member in enumerate(variableJSon):
             idx = oidx + str(k)
-            importVariable(member, variablesDB, validationsDB, permissionsDB, groups, fullVariableName, idx)
+            importVariable(member, variablesDB, validationsDB, permissionsDB, groups, fullVariableName, idx, fullVariableAlias)
     else:
         isLiveVariable = ((variableJSon["isLiveVariable"] == "true") or (variableJSon["isLiveVariable"] == True))
         isStruct = ((variableJSon["isStruct"] == "true") or (variableJSon["isStruct"] == True))
@@ -56,14 +56,24 @@ def importVariable(variableJSon, variablesDB, validationsDB, permissionsDB, grou
             "value": pickle.dumps(variableJSon["value"]),
             "numberOfElements": pickle.dumps(variableJSon["numberOfElements"]),
             "isLiveVariable": isLiveVariable,
-            "isStruct": isStruct 
+            "isStruct": isStruct,
+            "libraryAlias": variableJSon["libraryAlias"]
         }
         if (idx != ""):
             variable["id"] = idx
+            variable["libraryAlias"] = idx
         if (fullVariableName != ""):
-            variable["id"] = fullVariableName + "@" + variable["id"]
+            oVariableId = variable["id"]
+            variable["id"] = fullVariableName + "@" + oVariableId
+            if (len(variable["libraryAlias"]) > 0):
+                variable["libraryAlias"] = fullVariableAlias + "@" + variable["libraryAlias"]
+            else:
+                variable["libraryAlias"] = fullVariableAlias + "@" + oVariableId
 
         variableId = variable["id"]
+        libraryAlias = variable["libraryAlias"]
+        if (len(libraryAlias) == 0):
+            libraryAlias = variable["id"]
         variablesDB.upsert(variable, ["id"])
 
         checkFirstIndexOfArray = isFirstIndexOfArray(variableId)
@@ -78,6 +88,9 @@ def importVariable(variableJSon, variablesDB, validationsDB, permissionsDB, grou
 
         if (isStruct):
             oVariableId = variable["id"]
+            oLibraryAlias = variable["libraryAlias"]
+            if (len(oLibraryAlias) == 0):
+                oLibraryAlias = oVariableId
             for memberId in variableJSon.keys():
                 if (memberId not in variableStandardKeys):
                     dimensions = []
@@ -85,6 +98,11 @@ def importVariable(variableJSon, variablesDB, validationsDB, permissionsDB, grou
                     memberIsArray = isinstance(member, list)
                     if (memberIsArray):
                         variableId = oVariableId + "@" + memberId
+                        libraryAlias = oLibraryAlias + "@" + memberId
+                        memberLibraryAlias = member["libraryAlias"]
+                        if (len(memberLibraryAlias) == 0):
+                            memberLibraryAlias = memberId     
+                        libraryAlias = oVariableId + "@" + memberLibraryAlias
                         dimensions = list(numpy.shape(member))
                         #Declare the array (the type will be discovered later (it will be the type of the first element), see above)
                         variable = {
@@ -95,10 +113,11 @@ def importVariable(variableJSon, variablesDB, validationsDB, permissionsDB, grou
                             "description": "",
                             "value": "",
                             "isLiveVariable": False,
-                            "isStruct": True
+                            "isStruct": True,
+                            "libraryAlias": libraryAlias
                         }
                         variablesDB.upsert(variable, ["id"])
-                    importVariable(member, variablesDB, validationsDB, permissionsDB, groups, variableId, "", dimensions)
+                    importVariable(member, variablesDB, validationsDB, permissionsDB, groups, variableId, "", libraryAlias, dimensions)
         if "validation" in variableJSon:
             validationsJSon = variableJSon["validation"]
             for validationJSon in validationsJSon:
