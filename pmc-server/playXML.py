@@ -1,8 +1,8 @@
-from xml.etree import ElementTree
+from xml.etree import cElementTree
 from xml.dom import minidom
 from lxml import etree
 
-tree = ElementTree.parse('/tmp/Plant55A0.xml')
+tree = cElementTree.parse('/tmp/Plant55A0.xml')
 root = tree.getroot()
 
 ns = {"default": "http://www.iter.org/CODAC/PlantSystemConfig/2014",
@@ -44,5 +44,13 @@ def getVariable(variableName):
 
     print variable
     
-getVariable("MLFS@AA@M1007@angle")
+getVariable("55A0::MLFS@AA@M1007@angle")
+
+tree = cElementTree.parse('/tmp/Plant55A0.xml')
+root = tree.getroot()
+r = root.find("./default:plantSystems/default:plantSystem/default:plantRecords", ns)
+rs = r.iterfind(".//default:record", ns)
+print rs
+for rss in rs:
+    print rss
 

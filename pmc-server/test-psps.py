@@ -2,7 +2,7 @@
 
 import argparse
 import threading
-from multiprocessing import Process
+import multiprocessing 
 import os
 import epics
 from epics import caget, caput, camonitor
@@ -24,17 +24,27 @@ import dataset
 import pickle
 
 #XML interaction
-from xml.etree import ElementTree
+from xml.etree import cElementTree
 from xml.dom import minidom
 from lxml import etree
+
+#To search for the files
+import os
+import fnmatch
 
 #Maximum time that a user is allowed to be logged in without interacting with the database
 LOGIN_TIMEOUT = 3600
 UDP_BROADCAST_PORT = 23450
 
+#The schedule main dir
+SCHEDULES_MAIN_DIR="/tmp"
+
 #XML namespaces
 ns = {"default": "http://www.iter.org/CODAC/PlantSystemConfig/2014",
       "xsi": "http://www.w3.org/2001/XMLSchema-instance"}
+
+#Note that gunicorn must be run with --preload, otherwise there will be an xmlProcessUpdateLock for every process, which beats the purpose
+xmlProcessUpdateLock = multiprocessing.Lock()
 
 class Server:
     #A DB access cannot be shared between different threads.
@@ -54,6 +64,8 @@ class Server:
     udpQueue = BroacastQueue(UDP_BROADCAST_PORT) 
 
     def __init__(self):
+        self.xmlThreadUpdateLock = threading.Lock()
+        self.openedSchedules = {}
         epics.ca.find_libca()
         db = self.getDB()
         variables = db["variables"]
@@ -141,14 +153,48 @@ class Server:
         return True
 
     def updateScheduleVariablesDB(self, variableId, scheduleId, variableValue):
-        db = self.getDB()
-        scheduleVariables = db["schedule_variables"]
-        row = {
-            "variable_id": variableId,
-            "schedule_id": scheduleId,
-            "value": pickle.dumps(variableValue)
-        }
-        scheduleVariables.upsert(row, ["variable_id", "schedule_id"])
+        #db = self.getDB()
+        #scheduleVariables = db["schedule_variables"]
+        #row = {
+        #    "variable_id": variableId,
+        #    "schedule_id": scheduleId,
+        #    "value": pickle.dumps(variableValue)
+        #}
+        #scheduleVariables.upsert(row, ["variable_id", "schedule_id"])
+        xmlProcessUpdateLock.acquire() 
+        self.xmlThreadUpdateLock.acquire() 
+        print "IN@ " + self.getTid() + " @ " + str(id(xmlProcessUpdateLock))
+        if (scheduleId not in self.openedSchedules):
+            self.openedSchedules[scheduleId] = cElementTree.parse(scheduleId)
+
+        tree = self.openedSchedules[scheduleId]
+        root = tree.getroot()
+        #This will have to be retrieved per plant system
+        plantSystemName = 'psps-dummy1'
+        plantRootXml = root.find("./default:plantSystems/default:plantSystem[default:name='{0}']/default:plantRecords".format(plantSystemName), ns)
+        #For the time being I am assuming that the variable id is fully defined in the record, but this means redundant information
+        #The alternative to get the full path to the node for each variable also seems to be too heavy
+        #Another option is to ask for the variables from the page as we already do for getPlantInfo
+        #The variable value will have to encoded in a single string
+        path = variableId.split("@")
+        r = plantRootXml
+        for p in path[:-1]:
+            r = r.find("./default:folders/default:folder[default:name='{0}']".format(p), ns)
+            if (r == None):
+                break
+        #r = r.find("./default:records/default:record[default:name='{0}']".format(path[-1]), ns)
+        #TODO this will have to be changed to the version above as the final name will only be path[-1] and not the full path
+        variable = {}
+        if (r is not None):
+            r = r.find("./default:records/default:record[default:name='{0}']".format(variableId), ns)
+            #Assume that it is not an array
+            valueXml = r.find("./default:values/default:value", ns)
+            valueXml.text = str(variableValue)
+        #Dump the xml file back to disk again...this will have to be optimised!
+        #tree.write(scheduleId)
+        print "OUT@ " + self.getTid()
+        self.xmlThreadUpdateLock.release() 
+        xmlProcessUpdateLock.release() 
         return True
 
     def streamData(self):
@@ -278,7 +324,7 @@ class Server:
             variable["name"] = r.find("./default:name", ns).text
             variable["variableId"] = variable["name"]
             variable["description"] = r.find("./default:description", ns).text
-            variable["permissions"] = []
+            variable["permissions"] = ["experts-1"]
             valuesXml = r.findall(".//default:value", ns)
             values = []
             for v in valuesXml:
@@ -291,10 +337,12 @@ class Server:
 
 
     def getPlantInfo(self, request):
-        tree = ElementTree.parse('/tmp/Plant55A0.xml')
+        tree = cElementTree.parse('/tmp/Plant55A0.xml')
         root = tree.getroot()
         toReturn = ""
-        plantRootXml = root.find("./default:plantSystems/default:plantSystem/default:plantRecords", ns)
+        #this will have to be retrieved per plant system
+        plantSystemName = 'psps-dummy1'
+        plantRootXml = root.find("./default:plantSystems/default:plantSystem[default:name='{0}']/default:plantRecords".format(plantSystemName), ns)
        
         if (not self.isTokenValid(request)):
             toReturn = "InvalidToken"
@@ -338,6 +386,15 @@ class Server:
             #caput(k, request.args[k])
         return toReturn
 
+    def getAllFiles(self, pageId):
+        matches = []
+        directory = "{0}/{1}".format(SCHEDULES_MAIN_DIR, pageId)
+        print directory
+        for root, dirnames, filenames in os.walk(directory):
+            for filename in fnmatch.filter(filenames, '*.xml'):
+                matches.append(os.path.join(root, filename))
+        return matches
+
     def getSchedules(self, request):
         db = self.getDB()
         userId = ""
@@ -349,16 +406,31 @@ class Server:
             pageId = request.form["pageId"]
             if "userId" in request.form:
                 userId = request.form["userId"]
-
-            tableSchedules = db["schedules"]
-            if (len(userId) == 0):
-                schedulesAllUsers = tableSchedules.find(page_id=pageId)
-                for s in schedulesAllUsers:
-                    schedules.append(s);
             else:
-                schedulesUser = tableSchedules.find(page_id=pageId, user_id=userId)
-                for s in schedulesUser:
-                    schedules.append(s);
+                userId = ""
+
+            allSchedulesXML = self.getAllFiles(pageId)
+
+            for xmlFile in allSchedulesXML:
+                filePath = xmlFile.split("/")
+                schedule = {
+                    "id": xmlFile,
+                    "name": filePath[-1],
+                    "user_id": userId,
+                    "description": "TBD",
+                    "page_id": pageId
+                }
+                schedules.append(schedule);
+
+            #tableSchedules = db["schedules"]
+            #if (len(userId) == 0):
+            #    schedulesAllUsers = tableSchedules.find(page_id=pageId)
+            #    for s in schedulesAllUsers:
+            #        schedules.append(s);
+            #else:
+            #    schedulesUser = tableSchedules.find(page_id=pageId, user_id=userId)
+            #    for s in schedulesUser:
+            #        schedules.append(s);
             toReturn = json.dumps(schedules)
         return toReturn
 
@@ -423,15 +495,41 @@ class Server:
         if (not self.isTokenValid(request)):
             toReturn = "InvalidToken"
         else: 
-            scheduleVariablesTable = db["schedule_variables"]
+            #scheduleVariablesTable = db["schedule_variables"]
             requestedSchedule = request.form["scheduleId"]
-            scheduleVariables = scheduleVariablesTable.find(schedule_id=requestedSchedule)
-            for v in scheduleVariables:
-                vp = {
-                    "variableId": v["variable_id"],
-                    "value": pickle.loads(v["value"])
-                } 
-                variables.append(vp)
+            tree = cElementTree.parse(requestedSchedule)
+            root = tree.getroot()
+            #This will have to be retrieved per plant system
+            plantSystemName = 'psps-dummy1'
+            plantRootXml = root.find("./default:plantSystems", ns)
+            #For the time being I am assuming that the variable id is fully defined in the record, but this means redundant information
+            #The alternative to get the full path to the node for each variable also seems to be too heavy
+            #Another option is to ask for the variables from the page as we already do for getPlantInfo
+            for ps in plantRootXml:
+                plantRecordsXml = ps.find("./default:plantRecords", ns)
+                print ps
+                print plantRootXml
+                print plantRecordsXml
+                for pr in plantRecordsXml:
+                    records = pr.findall(".//default:record", ns)
+                    for r in records:
+                        vp = {
+                            "variableId": r.find("./default:name", ns).text,
+                            "value": []
+                        } 
+                        valuesXml = r.findall(".//default:value", ns)
+                        values = []
+                        for v in valuesXml:
+                            values.append(v.text)
+                        vp["value"] = values
+                        variables.append(vp)
+                    
+            #for v in scheduleVariables:
+            #    vp = {
+            #        "variableId": v["variable_id"],
+            #        "value": pickle.loads(v["value"])
+            #    } 
+            #    variables.append(vp)
             toReturn = json.dumps(variables)
         return toReturn
 
