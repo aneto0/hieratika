@@ -54,7 +54,7 @@
                             $.ajax({
                                 type: "post",
                                 url: "/login",
-                                data: "userId=" + username,
+                                data: "username=" + username,
                                 success: function (response) {
                                     var user = $.parseJSON(response);
                                     if (user.id !== "") {

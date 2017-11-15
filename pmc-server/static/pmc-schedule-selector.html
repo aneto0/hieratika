@@ -83,7 +83,7 @@
                         var root = this.createShadowRoot();
                         root.appendChild(clone);
                   
-                        this.pageId = ""; 
+                        this.pageName = ""; 
                         this.diag = this.shadowRoot.querySelector("#dscheduleselector");
                         this.userSelect = this.shadowRoot.querySelector("#userselect");
                         this.userSelect.onclick = function() {
@@ -129,10 +129,10 @@
                             this.newSchedulesSelect.appendChild(option1);
                             
                             if ((this.userSelect.selectedIndex >= 0) && (this.scheduleSelect.selectedIndex >= 0)) {
-                                var userId = this.userSelect[this.userSelect.selectedIndex].value;
+                                var username = this.userSelect[this.userSelect.selectedIndex].value;
                                 var schedule = this.scheduleSelect[this.scheduleSelect.selectedIndex].scheduleInfo;
                                 option1 = document.createElement("option");
-                                scheduleName = schedule.name + " (owner: " + userId + ")";
+                                scheduleName = schedule.name + " (owner: " + username + ")";
                                 option1.text = scheduleName;
                                 option1.value = schedule.id;
                                 this.newSchedulesSelect.appendChild(option1);
@@ -152,10 +152,10 @@
                                 id: this.newScheduleName.value,
                                 name: this.newScheduleName.value,
                                 description: this.newScheduleDescription.value,
-                                pageId: this.pageId
+                                pageName: this.pageName
                             }
                             var user = JSON.parse(localStorage.user);
-                            schedule["userId"] = user.id;
+                            schedule["username"] = user.username;
                             if (this.newSchedulesSelect.selectedIndex > 0) {
                                 schedule["sourceSchedule"] = this.newSchedulesSelect[this.newSchedulesSelect.selectedIndex].value;
                             }
@@ -186,10 +186,10 @@
 
                 updateScheduleDescription() {
                     if (this.userSelect.selectedIndex >= 0) {
-                        var userId = this.userSelect[this.userSelect.selectedIndex].value;
+                        var username = this.userSelect[this.userSelect.selectedIndex].value;
                         if (this.scheduleSelect.selectedIndex >= 0) {
-                            if (this.currentUserId !== undefined) {
-                                this.okButton.disabled = (this.currentUserId !== userId);
+                            if (this.currentUsername !== undefined) {
+                                this.okButton.disabled = (this.currentUsername !== username);
                             }
                             else {
                                 this.okButton.disabled = false;
@@ -202,14 +202,14 @@
 
                 updateUserSchedules() {
                     if (this.userSelect.selectedIndex >= 0) {
-                        var userId = this.userSelect[this.userSelect.selectedIndex].value;
+                        var username = this.userSelect[this.userSelect.selectedIndex].value;
                         $.ajax({
                             type: "post",
                             url: "/getschedules",
                             data: {
                                 token: parent._currentToken,
-                                userId: userId,
-                                pageId: this.pageId
+                                username : username,
+                                pageName: this.pageName
                             },
                             success: function (response) {
                                 var availableSchedules = $.parseJSON(response);
@@ -242,11 +242,11 @@
                 }
 
                 pageChanged(page) {
-                    this.pageId = page.id;
+                    this.pageName = page.name;
                 }
 
-                show(okCallbackFun, currentUserId = undefined) {
-                    this.currentUserId = currentUserId;
+                show(okCallbackFun, currentUsername = undefined) {
+                    this.currentUsername = currentUsername;
                     this.okCallbackFunction = okCallbackFun;
                     this.okButton.disabled = true;
                     this.scheduleSelect.disabled = true;
@@ -266,9 +266,9 @@
                             this.scheduleSelect.appendChild(option1);
                             for (var u in usersJSon) {
                                 option1 = document.createElement("option");
-                                var userId = usersJSon[u].id;
-                                option1.text = userId;
-                                option1.value = userId;
+                                var username = usersJSon[u].username;
+                                option1.text = username;
+                                option1.value = username;
                                 this.userSelect.appendChild(option1);
                             }
                             this.diag.showModal();

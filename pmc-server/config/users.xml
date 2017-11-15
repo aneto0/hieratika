@@ -1,0 +1,21 @@
+<users xmlns="http://www.iter.org/CODAC/PlantSystemConfig/2014">
+    <user>
+        <name>codac-dev-1</name>
+        <groups>
+            <group>
+                <name>experts-1</name>
+            </group>
+            <group>
+                <name>experts-2</name>
+            </group>
+        </groups>
+    </user>
+    <user>
+        <name>codac-dev-2</name>
+        <groups>
+            <group>
+                <name>experts-1</name>
+            </group>
+        </groups>
+    </user>
+</users>

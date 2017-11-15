@@ -62,7 +62,7 @@
                                 data: {
                                     token: parent._currentToken,
                                     variableId: this.owner.id, 
-                                    userId: user.id, 
+                                    username: user.username, 
                                     libraryName: libraryName 
                                 },
                                 success: successFn.bind(this),
@@ -199,7 +199,7 @@
                                     url: "/savelibrary",
                                     data: {
                                         token: parent._currentToken,
-                                        userId: user.id, 
+                                        username: user.username, 
                                         variableId : this.owner.id, 
                                         libraryName : saveAsName,
                                         libraryDescription: description,

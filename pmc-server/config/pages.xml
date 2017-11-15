@@ -1,0 +1,28 @@
+<pages xmlns="http://www.iter.org/CODAC/PlantSystemConfig/2014">
+    <page>
+        <name>ps-example-1</name>
+        <url>ps-example-1</url>
+        <description>One example of a page</description>
+    </page>
+    <page>
+        <name>ps-example-2</name>
+        <url>ps-example-2</url>
+        <description>Another example of a page</description>
+    </page>
+    <page>
+        <name>55A0-discrete-coils</name>
+        <url>55A0-discrete-coils</url>
+        <description>Parameters related to the 55A0 discrete coils</description>
+    </page>
+    <page>
+        <name>55A0-loop-coils</name>
+        <url>55A0-loop-coils</url>
+        <description>Parameters related to the 55A0 loop coils</description>
+    </page>
+    <page>
+        <name>55A0-embedded</name>
+        <url>55A0-embedded</url>
+        <description>Parameters related to the embedded parameters of the 55A0 system</description>
+    </page>
+</pages>
+

@@ -233,13 +233,13 @@
                 }
 
                 getSelectedPage() {
-                    var pgId = this.pageSelect[this.pageSelect.selectedIndex].value;
+                    var selectedPageName = this.pageSelect[this.pageSelect.selectedIndex].value;
                     $.ajax({
                         type: "post",
                         url: "/getpage",
                         data: {
                             token: parent._currentToken,
-                            pageId: pgId
+                            pageName: selectedPageName
                         },
                         success: function (response) {
                             var pageJson = $.parseJSON(response);
@@ -266,9 +266,9 @@
                             this.pageSelect.innerHTML = "";
                             for (var p in pagesJson) {
                                 var option1 = document.createElement("option");
-                                var pageId = pagesJson[p].id;
-                                option1.text = pageId;
-                                option1.value = pageId;
+                                var pageName = pagesJson[p].name;
+                                option1.text = pageName;
+                                option1.value = pageName;
                                 this.pageSelect.appendChild(option1);
                             }
                         }.bind(this),

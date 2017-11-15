@@ -1,22 +1,24 @@
 #!/usr/bin/python
 
+##
+#Standard imports
+##
 import argparse
-import threading
-import multiprocessing 
-import os
 import epics
 from epics import caget, caput, camonitor
-import time
-import json
-import uuid
-import numpy
 from flask import Flask, Response, request, send_from_directory
-from broadcastqueue import *
+import json
+import multiprocessing 
+import numpy
+import threading
+import os
+import time
+import uuid
 
 #Only log errors
 import logging
-log = logging.getLogger('werkzeug')
-#log.setLevel(logging.ERROR)
+logging.basicConfig(level=logging.DEBUG)
+log = logging.getLogger("psps-{0}".format(__name__))
 
 #Manage easy integration with SQLAlchemy
 import dataset
@@ -32,6 +34,19 @@ from lxml import etree
 import os
 import fnmatch
 
+##
+# Project imports
+##
+from broadcastqueue import BroacastQueue
+from loginmanager import LoginManager 
+from pagemanager import PageManager 
+from page import Page
+from user import User
+from usergroup import UserGroup
+
+##
+# Defines
+##
 #Maximum time that a user is allowed to be logged in without interacting with the database
 LOGIN_TIMEOUT = 3600
 UDP_BROADCAST_PORT = 23450
@@ -39,15 +54,25 @@ UDP_BROADCAST_PORT = 23450
 #The schedule main dir
 SCHEDULES_MAIN_DIR="/tmp"
 
+##
+# Global variables to be shared by all the processes schedule by gunicorn
+# Note that gunicorn must be run with --preload, otherwise there will be a global variable instance for every process, which beats the purpose.
+##
 #XML namespaces
 ns = {"default": "http://www.iter.org/CODAC/PlantSystemConfig/2014",
       "xsi": "http://www.w3.org/2001/XMLSchema-instance"}
 
 #Global variable which disallows multiple connections from updating the same XML file
-#Note that gunicorn must be run with --preload, otherwise there will be an xmlProcessUpdateLock for every process, which beats the purpose
 #Allows to process in parallel schedules with different ids
 xmlProcessUpdateLockCheck = multiprocessing.Lock()
 xmlProcessUpdatingLocks = {}
+
+#The global managers
+loginManager = LoginManager()
+pageManager = PageManager()
+#TODO this path shall be loaded from the command line or from a configuration file
+loginManager.load("config/users.xml")
+pageManager.load("config/pages.xml")
 
 class Server:
     #A DB access cannot be shared between different threads.
@@ -133,11 +158,11 @@ class Server:
             ok = ("token" in request.args)
             if (ok):
                 tokenId = request.args["token"]
+        log.debug("Checking token: {0}".format(tokenId))
+        log.debug("{0}".format(str(loginManager.getUsers())))
         if (ok): 
-            db = self.getDB()
-            loginsTable = db["logins"]
-            row = loginsTable.find_one(token_id=tokenId)
-            ok = (row is not None)
+            ok = loginManager.isTokenValid(tokenId)
+        log.debug("{3} {2} Token: {0} is {1}".format(tokenId, str(ok), self.getTid(), id(loginManager)))
         return ok
 
     #see http://cars9.uchicago.edu/software/python/pyepics3/pv.html#pv-callbacks-label for other arguments that could be retrieved
@@ -468,30 +493,37 @@ class Server:
         return toReturn
 
     def getPages(self, request):
-        db = self.getDB()
-        userId = ""
-        pages = []
+        """
+        Returns:
+            All the pages that are available.
+        """
         toReturn = ""
         if (not self.isTokenValid(request)):
             toReturn = "InvalidToken"
         else:
-            tablePages = db["pages"]
-            for p in tablePages:
-                pages.append(p);
-            toReturn = json.dumps(pages)
+            pages = pageManager.getPages()
+            pagesStr = [p.__dict__ for p in pages]
+            log.debug("Returning pages: {0}".format(pagesStr))
+            toReturn = json.dumps(pagesStr)
         return toReturn
 
     def getPage(self, request):
+        """
+        Args:
+           request.form["pageName"]: shall contain the page name.
+        Returns:
+            A page with a given name or InvalidToken if the token is not valid.
+        """
+
         toReturn = ""
-        variables = []
-        db = self.getDB()
         if (not self.isTokenValid(request)):
             toReturn = "InvalidToken"
         else: 
-            pageId = request.form["pageId"]
-            pages = db["pages"]
-            page = pages.find_one(id=pageId)
-            toReturn = json.dumps(page)
+            pageName = request.form["pageName"]
+            log.debug("Looking for page: {0}".format(pageName))
+            page = pageManager.getPage(pageName)
+            log.debug("Returning page: {0}".format(str(page)))
+            toReturn = json.dumps(page.__dict__)
         return toReturn
 
     def getSchedule(self, request):
@@ -640,31 +672,28 @@ class Server:
         return toReturn
 
     def login(self):
-        db = self.getDB()
-        usersTable = db["users"]
-        groupMembersTable = db["group_members"]
-        user = {}
-        requestedUserId = request.form["userId"]
-        user = usersTable.find_one(id=requestedUserId)
-        if (user is not None): 
-            user["password"] = ""
-            user["token"] = "" + uuid.uuid4().hex
-            user["groups"] = []
-            groups = groupMembersTable.find(user_id=requestedUserId)
-            for group in groups:
-                user["groups"].append(group["group_id"])
-
-            loginsTable = db["logins"]
-            login = {
-                "token_id": user["token"],
-                "user_id": user["id"],
-                "last_interaction_time": int(time.time())
-            }
-            loginsTable.insert(login)
-        else:
-            user = {
-                "id": ""
-            }
+        """Logs an user into the system.
+           Note that the same user might be logged from different locations. One authentication token will 
+           be generate for each login.
+           
+           Args:
+               request.form["username"]: shall contain the username.
+    
+           Returns:
+               A json representation of the User.
+        """
+        user = {
+            "username": ""
+        }
+        requestedUsername = request.form["username"]
+        log.debug("Logging in: {0}".format(requestedUsername))
+        token = loginManager.login(requestedUsername)
+        if (len(token) != 0):
+            user = loginManager.getUser(token)
+            user = user.asSerializableDict()
+            user["token"] = token
+            
+        log.debug("{0}".format(str(user)))
         return json.dumps(user)
 
     def updateSchedule(self, request):
