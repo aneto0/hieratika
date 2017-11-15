@@ -43,8 +43,11 @@ SCHEDULES_MAIN_DIR="/tmp"
 ns = {"default": "http://www.iter.org/CODAC/PlantSystemConfig/2014",
       "xsi": "http://www.w3.org/2001/XMLSchema-instance"}
 
+#Global variable which disallows multiple connections from updating the same XML file
 #Note that gunicorn must be run with --preload, otherwise there will be an xmlProcessUpdateLock for every process, which beats the purpose
-xmlProcessUpdateLock = multiprocessing.Lock()
+#Allows to process in parallel schedules with different ids
+xmlProcessUpdateLockCheck = multiprocessing.Lock()
+xmlProcessUpdatingLocks = {}
 
 class Server:
     #A DB access cannot be shared between different threads.
@@ -64,7 +67,6 @@ class Server:
     udpQueue = BroacastQueue(UDP_BROADCAST_PORT) 
 
     def __init__(self):
-        self.xmlThreadUpdateLock = threading.Lock()
         self.openedSchedules = {}
         epics.ca.find_libca()
         db = self.getDB()
@@ -143,6 +145,13 @@ class Server:
         for k, q in self.threadPlantQueues.iteritems():
             q.put((pvName, value), True)
 
+    def getScheduleXmlTree(self, scheduleId):
+        #TODO must make sure that this has house keeping and that this is cleaned when the user logout
+        #Also, the number of opened schedules per user shall be limited
+        if (scheduleId not in self.openedSchedules):
+            self.openedSchedules[scheduleId] = cElementTree.parse(scheduleId)
+        return self.openedSchedules[scheduleId]
+
     def updatePlantVariablesDB(self, variableId, variableValue):
         db = self.getDB()
         variables = db["variables"]
@@ -153,21 +162,21 @@ class Server:
         return True
 
     def updateScheduleVariablesDB(self, variableId, scheduleId, variableValue):
-        #db = self.getDB()
-        #scheduleVariables = db["schedule_variables"]
-        #row = {
-        #    "variable_id": variableId,
-        #    "schedule_id": scheduleId,
-        #    "value": pickle.dumps(variableValue)
-        #}
-        #scheduleVariables.upsert(row, ["variable_id", "schedule_id"])
-        xmlProcessUpdateLock.acquire() 
-        self.xmlThreadUpdateLock.acquire() 
-        print "IN@ " + self.getTid() + " @ " + str(id(xmlProcessUpdateLock))
-        if (scheduleId not in self.openedSchedules):
-            self.openedSchedules[scheduleId] = cElementTree.parse(scheduleId)
+        #Allow only one process to interact with a given xml at the time
+        #Make sure that this is both multi-processing and multi-threading safe
+        xmlProcessUpdateLockCheck.acquire()
+        scheduleIdBeingProcessed = (scheduleId in xmlProcessUpdatingLocks)
+        if (not scheduleIdBeingProcessed):
+            xmlProcessUpdatingLocks[scheduleId] = {"plock": multiprocessing.Lock(), "tlock": threading.Lock(), "counter": 1}
+        else:
+            xmlProcessUpdatingLocks[scheduleId]["counter"] = xmlProcessUpdatingLocks[scheduleId]["counter"] + 1
+        xmlProcessUpdateLockCheck.release()
+        xmlProcessUpdatingLocks[scheduleId]["plock"].acquire()
+        xmlProcessUpdatingLocks[scheduleId]["tlock"].acquire()
 
-        tree = self.openedSchedules[scheduleId]
+        #Work on memory as opposed to working on file. TODO this must properly managed so that memory consumption does not ramp to infinity
+        #Update the XML
+        tree = self.getScheduleXmlTree(scheduleId)
         root = tree.getroot()
         #This will have to be retrieved per plant system
         plantSystemName = 'psps-dummy1'
@@ -190,11 +199,20 @@ class Server:
             #Assume that it is not an array
             valueXml = r.find("./default:values/default:value", ns)
             valueXml.text = str(variableValue)
+
         #Dump the xml file back to disk again...this will have to be optimised!
         #tree.write(scheduleId)
-        print "OUT@ " + self.getTid()
-        self.xmlThreadUpdateLock.release() 
-        xmlProcessUpdateLock.release() 
+        xmlProcessUpdateLockCheck.acquire()
+        xmlProcessUpdatingLocks[scheduleId]["counter"] = xmlProcessUpdatingLocks[scheduleId]["counter"] - 1
+        if (xmlProcessUpdatingLocks[scheduleId]["counter"] == 0):
+            xmlProcessUpdatingLocks[scheduleId].pop("plock")
+            xmlProcessUpdatingLocks[scheduleId].pop("tlock")
+            xmlProcessUpdatingLocks.pop(scheduleId)
+        else:
+            xmlProcessUpdatingLocks[scheduleId]["plock"].release()
+            xmlProcessUpdatingLocks[scheduleId]["tlock"].release()
+        xmlProcessUpdateLockCheck.release()
+
         return True
 
     def streamData(self):
@@ -801,7 +819,7 @@ def tmp(filename):
 
 
 if __name__ == "__main__":
-    #Start with gunicorn -k gevent -w 16 -b 192.168.130.46:80 test
+    #Start with gunicorn --preload -k gevent -w 16 -b 192.168.130.46:80 test
     
     #server.start()
     #parser = argparse.ArgumentParser(description = "Flask http server to prototype ideas for ITER level-1")
