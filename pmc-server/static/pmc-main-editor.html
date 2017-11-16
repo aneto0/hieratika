@@ -59,12 +59,12 @@
                         }
                     }
 
-                    loadPlantInfo() {
+                    loadPlantInfo(pageName) {
                         var allVariableIds = [];
                         for (var k in parent._allPMCComponents) {
                             allVariableIds.push(k)
                         }
-                        getPlantInfo(allVariableIds, function (response) {
+                        getPlantInfo(pageName, allVariableIds, function (response) {
                             var pvInfosJson = $.parseJSON(response);
                             var pvInfos = pvInfosJson["variables"];
                             var user = JSON.parse(localStorage.user);
@@ -83,8 +83,8 @@
                         );
                     }
 
-                    iFrameLoaded() {
-                        this.loadPlantInfo(); 
+                    iFrameLoaded(pageName) {
+                        this.loadPlantInfo(pageName); 
 
                         $.each(parent._allPMCComponents, function (i, pmcCompArray) {
                             $.each(pmcCompArray, function (j, pmcComp) {
@@ -97,47 +97,12 @@
                         parent._allPMCComponents = {};
                         //Remove all the listeners (apart from this and the pmc-top-nav)
                         this.plantInfoLoadedListeners = this.plantInfoLoadedListeners.slice(0, 2);
-                        var pageUrl = page.id + ".html?" + new Date().getTime(); //new Date... to force reloading with no caching
+                        var pageUrl = page.name + ".html?" + new Date().getTime(); //new Date... to force reloading with no caching
                         var templateDiv = this.shadowRoot.querySelector("#dmaineditor");
                         templateDiv.onload = function(evt) {
-                            this.iFrameLoaded();
+                            this.iFrameLoaded(page.name);
                         }.bind(this);
                         templateDiv.src = pageUrl;
-                        
-                        /*
-                        if (pageUrl !== undefined) {
-                            $.ajax({
-                                type: "GET",
-                                url: pageUrl,
-                                success: function (response) {
-                                    parent._allPMCComponents = {};
-                                                                        
-                                    templateDiv.innerHTML = response;
-
-                                    //eval to execute any embedded js in the page.
-                                    var htmlJs = templateDiv.getElementsByTagName("script");   
-                                    if (htmlJs !== undefined) {
-                                        for(var i=0;i<htmlJs.length;i++) {  
-                                            eval(htmlJs[i].text);  
-                                        }
-                                    }
-                                    
-
-                                    this.loadPlantInfo(); 
-
-                                    $.each(parent._allPMCComponents, function (i, pmcCompArray) {
-                                        $.each(pmcCompArray, function (j, pmcComp) {
-                                            pmcComp.domLoaded();
-                                        });
-                                    });
-
-                                }.bind(this),
-                                error: function (response) {
-                                    console.log(response);
-                                    alert(response);
-                                }
-                            });
-                        }*/
                     }
    
                     plantInfoLoaded() {

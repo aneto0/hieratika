@@ -4,8 +4,6 @@
 #Standard imports
 ##
 import argparse
-import epics
-from epics import caget, caput, camonitor
 from flask import Flask, Response, request, send_from_directory
 import json
 import multiprocessing 
@@ -13,6 +11,7 @@ import numpy
 import threading
 import os
 import time
+import timeit
 import uuid
 
 #Only log errors
@@ -40,6 +39,7 @@ import fnmatch
 from broadcastqueue import BroacastQueue
 from loginmanager import LoginManager 
 from pagemanager import PageManager 
+from xmlmanager import XmlManager 
 from page import Page
 from user import User
 from usergroup import UserGroup
@@ -51,25 +51,23 @@ from usergroup import UserGroup
 LOGIN_TIMEOUT = 3600
 UDP_BROADCAST_PORT = 23450
 
-#The schedule main dir
-SCHEDULES_MAIN_DIR="/tmp"
+##
+# The application base directory (i.e. where it expects to find the psps configuration files)
+##
+PSPS_BASE_DIR = "demo"
 
 ##
 # Global variables to be shared by all the processes schedule by gunicorn
 # Note that gunicorn must be run with --preload, otherwise there will be a global variable instance for every process, which beats the purpose.
 ##
 #XML namespaces
-ns = {"default": "http://www.iter.org/CODAC/PlantSystemConfig/2014",
+ns = {"ns0": "http://www.iter.org/CODAC/PlantSystemConfig/2014",
       "xsi": "http://www.w3.org/2001/XMLSchema-instance"}
-
-#Global variable which disallows multiple connections from updating the same XML file
-#Allows to process in parallel schedules with different ids
-xmlProcessUpdateLockCheck = multiprocessing.Lock()
-xmlProcessUpdatingLocks = {}
 
 #The global managers
 loginManager = LoginManager()
 pageManager = PageManager()
+xmlManager = XmlManager()
 #TODO this path shall be loaded from the command line or from a configuration file
 loginManager.load("config/users.xml")
 pageManager.load("config/pages.xml")
@@ -92,15 +90,6 @@ class Server:
     udpQueue = BroacastQueue(UDP_BROADCAST_PORT) 
 
     def __init__(self):
-        self.openedSchedules = {}
-        epics.ca.find_libca()
-        db = self.getDB()
-        variables = db["variables"]
-        for variable in variables:
-            if variable["isLiveVariable"] == 1:
-                pvName = variable["id"]
-                camonitor(pvName, None, pvValueChanged)
-
         #Clean dead threads
         self.monitorThread = threading.Thread(target=self.threadCleaner)
 
@@ -158,87 +147,20 @@ class Server:
             ok = ("token" in request.args)
             if (ok):
                 tokenId = request.args["token"]
-        log.debug("Checking token: {0}".format(tokenId))
-        log.debug("{0}".format(str(loginManager.getUsers())))
         if (ok): 
             ok = loginManager.isTokenValid(tokenId)
-        log.debug("{3} {2} Token: {0} is {1}".format(tokenId, str(ok), self.getTid(), id(loginManager)))
+        log.debug("Token: {0} is {1}".format(tokenId, str(ok)))
         return ok
 
-    #see http://cars9.uchicago.edu/software/python/pyepics3/pv.html#pv-callbacks-label for other arguments that could be retrieved
-    def pvValueChanged(self, pvname=None, value=None, **kw):
-        for k, q in self.threadPlantQueues.iteritems():
-            q.put((pvName, value), True)
-
-    def getScheduleXmlTree(self, scheduleId):
-        #TODO must make sure that this has house keeping and that this is cleaned when the user logout
-        #Also, the number of opened schedules per user shall be limited
-        if (scheduleId not in self.openedSchedules):
-            self.openedSchedules[scheduleId] = cElementTree.parse(scheduleId)
-        return self.openedSchedules[scheduleId]
-
     def updatePlantVariablesDB(self, variableId, variableValue):
-        db = self.getDB()
-        variables = db["variables"]
-        row = variables.find_one(id=variableId)
-        if (row is not None):
-            row["value"] = pickle.dumps(variableValue);
-            variables.upsert(row, ["id"])
+        #db = self.getDB()
+        #variables = db["variables"]
+        #row = variables.find_one(id=variableId)
+        #if (row is not None):
+        #    row["value"] = pickle.dumps(variableValue);
+        #    variables.upsert(row, ["id"])
         return True
 
-    def updateScheduleVariablesDB(self, variableId, scheduleId, variableValue):
-        #Allow only one process to interact with a given xml at the time
-        #Make sure that this is both multi-processing and multi-threading safe
-        xmlProcessUpdateLockCheck.acquire()
-        scheduleIdBeingProcessed = (scheduleId in xmlProcessUpdatingLocks)
-        if (not scheduleIdBeingProcessed):
-            xmlProcessUpdatingLocks[scheduleId] = {"plock": multiprocessing.Lock(), "tlock": threading.Lock(), "counter": 1}
-        else:
-            xmlProcessUpdatingLocks[scheduleId]["counter"] = xmlProcessUpdatingLocks[scheduleId]["counter"] + 1
-        xmlProcessUpdateLockCheck.release()
-        xmlProcessUpdatingLocks[scheduleId]["plock"].acquire()
-        xmlProcessUpdatingLocks[scheduleId]["tlock"].acquire()
-
-        #Work on memory as opposed to working on file. TODO this must properly managed so that memory consumption does not ramp to infinity
-        #Update the XML
-        tree = self.getScheduleXmlTree(scheduleId)
-        root = tree.getroot()
-        #This will have to be retrieved per plant system
-        plantSystemName = 'psps-dummy1'
-        plantRootXml = root.find("./default:plantSystems/default:plantSystem[default:name='{0}']/default:plantRecords".format(plantSystemName), ns)
-        #For the time being I am assuming that the variable id is fully defined in the record, but this means redundant information
-        #The alternative to get the full path to the node for each variable also seems to be too heavy
-        #Another option is to ask for the variables from the page as we already do for getPlantInfo
-        #The variable value will have to encoded in a single string
-        path = variableId.split("@")
-        r = plantRootXml
-        for p in path[:-1]:
-            r = r.find("./default:folders/default:folder[default:name='{0}']".format(p), ns)
-            if (r == None):
-                break
-        #r = r.find("./default:records/default:record[default:name='{0}']".format(path[-1]), ns)
-        #TODO this will have to be changed to the version above as the final name will only be path[-1] and not the full path
-        variable = {}
-        if (r is not None):
-            r = r.find("./default:records/default:record[default:name='{0}']".format(variableId), ns)
-            #Assume that it is not an array
-            valueXml = r.find("./default:values/default:value", ns)
-            valueXml.text = str(variableValue)
-
-        #Dump the xml file back to disk again...this will have to be optimised!
-        #tree.write(scheduleId)
-        xmlProcessUpdateLockCheck.acquire()
-        xmlProcessUpdatingLocks[scheduleId]["counter"] = xmlProcessUpdatingLocks[scheduleId]["counter"] - 1
-        if (xmlProcessUpdatingLocks[scheduleId]["counter"] == 0):
-            xmlProcessUpdatingLocks[scheduleId].pop("plock")
-            xmlProcessUpdatingLocks[scheduleId].pop("tlock")
-            xmlProcessUpdatingLocks.pop(scheduleId)
-        else:
-            xmlProcessUpdatingLocks[scheduleId]["plock"].release()
-            xmlProcessUpdatingLocks[scheduleId]["tlock"].release()
-        xmlProcessUpdateLockCheck.release()
-
-        return True
 
     def streamData(self):
         tid = None
@@ -269,77 +191,8 @@ class Server:
             #ignore
         print "BYE!!"
 
-    def rowToVariable(self, row, validations, permissions):
-        """Parses an sql row result into a proper variable structure (mostly needed to handle the pickle of value)
-        """
-        variable = row
-        variable["variableId"] = variable["id"]  
-        if (variable["value"] != ""):
-            variable["value"] = pickle.loads(variable["value"])  
-        variable["numberOfElements"] = pickle.loads(variable["numberOfElements"])  
-        variable["validation"] = []  
-        validation = validations.find(variable_id=variable["id"])
-        for v in validation:
-            variable["validation"].append({
-                "description": v["description"],
-                "fun": v["fun"],
-                "parameters": pickle.loads(v["parameters"])
-            })
-
-        variable["permissions"] = []
-        permission = permissions.find(variable_id=variable["id"])
-        for p in permission:
-            variable["permissions"].append(p["group_id"])
-        
-        return variable
-
-    def isArray(self, numberOfElements):
-        """Helper function to check if a given variable is an array
-        """
-        variableIsArray = (len(numberOfElements) > 1)
-        if (not variableIsArray):
-            variableIsArray = (numberOfElements[0] > 1)
-        return variableIsArray
-
-
-    def getMaxLinearIndex(self, numberOfElements):
-        """Computes the maximum index in a multi-dimensional array
-           by multiplying all the dimensions
-        """
-        maxIdx = 1
-        for i,val in enumerate(numberOfElements):
-            maxIdx = maxIdx * numberOfElements[i]
-        return maxIdx
-
-    def getDividers(self, numberOfElements):
-        """Helper function for the transformation of a multi-dimensional
-           array into a linear one dimensional array
-        """
-        numberOfDimensions = len(numberOfElements)
-        dividers = []
-        for i, val in enumerate(numberOfElements):
-            j = i
-            divider = 1
-            while(j < numberOfDimensions):
-                divider = divider * numberOfElements[j]
-                j = j + 1
-            dividers.append(divider)
-        dividers = dividers[1:numberOfDimensions]
-        return dividers
-
-    def setAtArrayIndex(self, ret, variableId, value):
-        """Updates the ret multi-dimensional array with the input value.
-           The index in the multi-dimensional array is retrieved by parsing the variable id
-           e.g. VAR@3,4,2,3 => [3][4][2][3] in a 4-dim array
-        """
-        idxs = variableId.split("@")[-1].split(",")
-        for k, idx in enumerate(idxs):
-            if (k < (len(idxs) - 1)):
-                ret = ret[int(idx)]
-            else:
-                ret[int(idx)] = value
-
     def convertVariableTypeFromXML(self, xmlVariableType):
+        #TODO move to helper module
         toReturn = "string"
         if (xmlVariableType == "recordDouble"):
             toReturn = "float64" 
@@ -350,57 +203,46 @@ class Server:
         return toReturn
 
 
-    def getVariableInfo(self, variableId, plantRootXml):
-        path = variableId.split("@")
-        r = plantRootXml
-        for p in path[:-1]:
-            r = r.find("./default:folders/default:folder[default:name='{0}']".format(p), ns)
-            if (r == None):
-                break
-        #r = r.find("./default:records/default:record[default:name='{0}']".format(path[-1]), ns)
-        #TODO this will have to be changed to the version above as the final name will only be path[-1] and not the full path
-        variable = {}
-        if (r is not None):
-            r = r.find("./default:records/default:record[default:name='{0}']".format(variableId), ns)
-            variable["type"] = self.convertVariableTypeFromXML(r.attrib["{" + ns["xsi"] + "}type"])
-            variable["numberOfElements"] = "[" + r.attrib["size"] + "]"
-            variable["name"] = r.find("./default:name", ns).text
-            variable["variableId"] = variable["name"]
-            variable["description"] = r.find("./default:description", ns).text
-            variable["permissions"] = ["experts-1"]
-            valuesXml = r.findall(".//default:value", ns)
-            values = []
-            for v in valuesXml:
-                values.append(v.text)
-            variable["value"] = values
-        else:
-            print "Could not find " + variableId
-
-        return variable
-
-
     def getPlantInfo(self, request):
-        tree = cElementTree.parse('/tmp/Plant55A0.xml')
-        root = tree.getroot()
-        toReturn = ""
-        #this will have to be retrieved per plant system
-        plantSystemName = 'psps-dummy1'
-        plantRootXml = root.find("./default:plantSystems/default:plantSystem[default:name='{0}']/default:plantRecords".format(plantSystemName), ns)
-       
-        if (not self.isTokenValid(request)):
-            toReturn = "InvalidToken"
-        elif ("variables" not in request.form):
-            toReturn = "InvalidParameters"
-        else: 
-            requestedVariables = request.form["variables"]
-            jSonRequestedVariables = json.loads(requestedVariables)
-            encodedPy = {"variables": [] }
-            for variableId in jSonRequestedVariables:
-                variable = self.getVariableInfo(variableId, plantRootXml)
-                if (variable is not None):
-                    encodedPy["variables"].append(variable) 
+        """ Returns all the variables information related to any set of plants.
+            See getVariableInfo for details about the variable information.  
+
+        Args:
+           request.form["pageName"]: name of the page (which corresponds to the name of the configuration).
+           request.form["variables"]: identifiers of the variables to be queried.
+        Returns:
+            A json encoded list of variables or InvalidToken if the token is not valid.
+        """
+
+        toReturn = "InvalidParameters"
+        if ("pageName" not in request.form):
+            log.critical("No page name was set for getPlantInfo")
+        else:
+            pageName = request.form["pageName"]
+            xmlFileLocation = "{0}/psps/configurations/{1}/000/plant.xml".format(PSPS_BASE_DIR, pageName)
+            log.debug("Loading plant configuration from {0}".format(xmlFileLocation))
+            perfStartTime = timeit.default_timer()
+            toReturn = ""
+           
+            if (not self.isTokenValid(request)):
+                toReturn = "InvalidToken"
+            elif ("variables" not in request.form):
+                toReturn = "InvalidParameters"
+            else: 
+                requestedVariables = request.form["variables"]
+                jSonRequestedVariables = json.loads(requestedVariables)
+                encodedPy = {"variables": [] }
+                xmlManager.acquire(xmlFileLocation)
+                for variableName in jSonRequestedVariables:
+                    variable = xmlManager.getVariableInfo(variableName, xmlFileLocation)
+                    if (variable is not None):
+                        encodedPy["variables"].append(variable) 
+                
+                xmlManager.release(xmlFileLocation)
+                perfElapsedTime = timeit.default_timer() - perfStartTime
+                log.debug("Took {0} s to get the information for all the variables in the plant".format(perfElapsedTime))
+                toReturn = json.dumps(encodedPy)
             
-            toReturn = json.dumps(encodedPy)
         return toReturn 
 
     def submit(self, request):
@@ -426,20 +268,20 @@ class Server:
             #TODO must check what values were actually updated
             #TODO take care of security
             self.udpQueue.put(json.dumps(toStream))
-            #caput(k, request.args[k])
         return toReturn
 
     def getAllFiles(self, pageId):
+        #TODO move to helper module
         matches = []
-        directory = "{0}/{1}".format(SCHEDULES_MAIN_DIR, pageId)
+        directory = "{0}/{1}".format(PSPS_BASE_DIR, pageId)
         print directory
         for root, dirnames, filenames in os.walk(directory):
             for filename in fnmatch.filter(filenames, '*.xml'):
-                matches.append(os.path.join(root, filename))
+                if (filename != "plant.xml"):
+                    matches.append(os.path.join(root, filename))
         return matches
 
     def getSchedules(self, request):
-        db = self.getDB()
         userId = ""
         schedules = []
         toReturn = ""
@@ -465,31 +307,22 @@ class Server:
                 }
                 schedules.append(schedule);
 
-            #tableSchedules = db["schedules"]
-            #if (len(userId) == 0):
-            #    schedulesAllUsers = tableSchedules.find(page_id=pageId)
-            #    for s in schedulesAllUsers:
-            #        schedules.append(s);
-            #else:
-            #    schedulesUser = tableSchedules.find(page_id=pageId, user_id=userId)
-            #    for s in schedulesUser:
-            #        schedules.append(s);
             toReturn = json.dumps(schedules)
         return toReturn
 
     def getUsers(self, request):
-        db = self.getDB()
-        userId = ""
-        users = []
+        """
+        Returns:
+            All the system users.
+        """
         toReturn = ""
         if (not self.isTokenValid(request)):
             toReturn = "InvalidToken"
         else:
-            allUsers = db["users"]
-            for u in allUsers:
-                u["password"] = ""
-                users.append(u);
-            toReturn = json.dumps(users)
+            users = loginManager.getUsers()
+            usersStr = [u.asSerializableDict() for u in users]
+            log.debug("Returning users: {0}".format(usersStr))
+            toReturn = json.dumps(usersStr)
         return toReturn
 
     def getPages(self, request):
@@ -539,47 +372,24 @@ class Server:
         return toReturn
 
     def getScheduleVariables(self, request):
+        """ Gets all the variables values for a given schedule (identified by its id which is the path to the file).
+        
+        Args:
+            request.form["scheduleId"]: the schedule identifier.
+    
+        Returns:
+            A json array with a variable:value pair for each schedule variable.
+        """
         toReturn = ""
         variables = []
         db = self.getDB()
         if (not self.isTokenValid(request)):
             toReturn = "InvalidToken"
         else: 
-            #scheduleVariablesTable = db["schedule_variables"]
             requestedSchedule = request.form["scheduleId"]
-            tree = cElementTree.parse(requestedSchedule)
-            root = tree.getroot()
-            #This will have to be retrieved per plant system
-            plantSystemName = 'psps-dummy1'
-            plantRootXml = root.find("./default:plantSystems", ns)
-            #For the time being I am assuming that the variable id is fully defined in the record, but this means redundant information
-            #The alternative to get the full path to the node for each variable also seems to be too heavy
-            #Another option is to ask for the variables from the page as we already do for getPlantInfo
-            for ps in plantRootXml:
-                plantRecordsXml = ps.find("./default:plantRecords", ns)
-                print ps
-                print plantRootXml
-                print plantRecordsXml
-                for pr in plantRecordsXml:
-                    records = pr.findall(".//default:record", ns)
-                    for r in records:
-                        vp = {
-                            "variableId": r.find("./default:name", ns).text,
-                            "value": []
-                        } 
-                        valuesXml = r.findall(".//default:value", ns)
-                        values = []
-                        for v in valuesXml:
-                            values.append(v.text)
-                        vp["value"] = values
-                        variables.append(vp)
-                    
-            #for v in scheduleVariables:
-            #    vp = {
-            #        "variableId": v["variable_id"],
-            #        "value": pickle.loads(v["value"])
-            #    } 
-            #    variables.append(vp)
+            self.xmlManager.acquire(requestedSchedule)
+            variables = self.xmlManager.getAllVariablesValue(requestedSchedule)
+            self.xmlManager.release(requestedSchedule)
             toReturn = json.dumps(variables)
         return toReturn
 
@@ -697,6 +507,14 @@ class Server:
         return json.dumps(user)
 
     def updateSchedule(self, request):
+        """ Updates the variable values for a given schedule. Note that these changes are not sync into the disk.
+    
+        Args:
+            request.form["update"] (json): containing {scheduleId: pathToXmlFile, values = [{id:val, ...}]}
+
+        Returns:
+            ok if the schedule is successfully updated or an empty string otherwise.
+        """
         toReturn = ""
         if (not self.isTokenValid(request)):
             toReturn = "InvalidToken"
@@ -711,16 +529,14 @@ class Server:
                 "scheduleId": jSonUpdateSchedule["scheduleId"],
                 "variables": []
             }
+            xmlManager.acquire(scheduleId)
             for v in values:
                 variableId = v["id"]
                 value = v["value"]
-                if(self.updateScheduleVariablesDB(variableId, scheduleId, value)):
+                if(xmlManager.updateVariable(variableName, scheduleId, variableValue)):
                     toStream["variables"].append({"variableId" : variableId, "value" : value})
                     
-                #Warn (only the!) others that the scheduler values have changed!
-                #for k, q in threadScheduleQueues.iteritems():
-                #    if (k != requesterTid):
-                #        q.put((variableId, scheduleId, value), True)
+            xmlManager.release(scheduleId)
             self.udpQueue.put(json.dumps(toStream))
             
             toReturn = "ok"
@@ -852,7 +668,7 @@ if __name__ == "__main__":
     
     #server.start()
     #parser = argparse.ArgumentParser(description = "Flask http server to prototype ideas for ITER level-1")
-    #parser.add_argument("-H", "--host", default="127.0.0.1", help="Server port")
+    #parser.add_argument("-H", "--host", vt="127.0.0.1", help="Server port")
     #parser.add_argument("-p", "--port", type=int, default=5000, help="Server IP")
 
     #args = parser.parse_args()

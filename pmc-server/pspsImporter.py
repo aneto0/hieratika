@@ -118,7 +118,9 @@ def importVariable(variableJSon, xmlParent, fullVariableName = "", idx = "", dim
             xmlRecordName = ElementTree.SubElement(xmlRecord, "name")
             if (fullVariableName == ""):
                 fullVariableName = variable["name"]
-            xmlRecordName.text = fullVariableName 
+            xmlRecordName.text = variable["name"]
+            xmlRecordPVName = ElementTree.SubElement(xmlRecord, "pvName")
+            xmlRecordPVName.text = fullVariableName
             xmlRecordAlias = ElementTree.SubElement(xmlRecord, "alias")
             xmlRecordAlias.text = variable["description"]
             xmlRecordDescription = ElementTree.SubElement(xmlRecord, "description")

@@ -1,9 +1,11 @@
 import logging
-from xml.etree import cElementTree
+#Several workers (i.e. processes) will need to interact with this LoginManager
+from multiprocessing import Manager
 import time
 import uuid
 from user import User
 from usergroup import UserGroup
+from xml.etree import cElementTree
 
 log = logging.getLogger("psps-{0}".format(__name__))
 
@@ -15,8 +17,11 @@ class LoginManager(object):
     def __init__(self):
         """Creates an empty dictionary where the keys are tokens and the values are the Users (identified by the username).
         """
-        self.users = []
-        self.tokens = {}
+        #The tokens are potentially managed by different processes. Given that the token is unique there is no real need to 
+        #protect access.
+        manager = Manager()
+        self.users = manager.list()
+        self.tokens = manager.dict()
         log.info("Created LoginManager")
         self.xmlns = {"ns0": "http://www.iter.org/CODAC/PlantSystemConfig/2014"}
 
@@ -63,10 +68,8 @@ class LoginManager(object):
                True if the token is valid.
         """
         ok = (tokenId in self.tokens)
-        print self.tokens
         if (ok):
             self.tokens[tokenId]["lastInteraction"] = int(time.time())
-        print self.tokens
         return ok
       
     def login(self, username):
@@ -94,7 +97,6 @@ class LoginManager(object):
     def logout(self, token):
         """Removes the current token from the list of valid tokens, which is equivalent to logging out the user from the system.
         """
-        print "\n\n\n\n\n\n\n\n WHAT????\n\n\n\n"
         return self.tokens.pop(token, None)
 
     def getUser(self, token):
