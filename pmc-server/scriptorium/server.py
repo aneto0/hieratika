@@ -10,6 +10,7 @@ import timeit
 # Project imports
 ##
 class ScriptoriumServer():
+    
     __metaclass__ = ABCMeta
 
     def __init__(self):
@@ -65,18 +66,23 @@ class ScriptoriumServer():
         """
         pass
 
-
-
     @abstractmethod
     def getPlantInfo(self, pageName, requestedVariables):
         """ Returns all the variables information related to any set of plants.
-            See getVariableInfo for details about the variable information.  
 
         Args:
            pageName (str): name of the page (which corresponds to the name of the configuration).
            variables ([str]): identifiers of the variables to be queried.
         Returns:
             A list with information about all the plant variables 
+            The following information is retrieved for any given variable:
+            - type as one of: uint8, int8, uint16, int16, uint32, int32, uint64, int64, string;
+            - numberOfElements: as an array where each entry contains the number of elements on any given direction; 
+            - name: the full variable name (containing any structure naming information);
+            - variableId: same as name. TODO: deprecate;
+            - description: one-line description of the variable;
+            - permissions: user groups that are allowed to change this variable;
+            - value: string encoded variable value.
         """
         pass
 
@@ -154,6 +160,13 @@ class ScriptoriumServer():
 
         Returns:
             The list of variables that were updated in the form [{id:value}]
+        """
+        pass
+
+    @abstractmethod
+    def updatePlant(self, variables):
+        """TODO and use same interface as updateSchedule for the variables definition (could be a dict directly... does not have to be
+            an array of dicts...) and shall return the variables which were actually updated
         """
         pass
 

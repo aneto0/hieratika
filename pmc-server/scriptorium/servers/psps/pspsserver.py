@@ -11,22 +11,23 @@ from xml.dom import minidom
 # Project imports
 ##
 from scriptorium.server import ScriptoriumServer
+from scriptorium.page import Page
+from scriptorium.user import User
+from scriptorium.usergroup import UserGroup 
 from scriptorium.util.lockpool import LockPool
 
 ##
 # Global definitions
 ##
-
-#XML namespaces
-ns = {"ns0": "http://www.iter.org/CODAC/PlantSystemConfig/2014",
-      "xsi": "http://www.w3.org/2001/XMLSchema-instance"}
-
-log = logging.getLogger("scriptorium-{0}".format(__name__))
+log = logging.getLogger("{0}".format(__name__))
 
 class PSPSServer(ScriptoriumServer):
     """ Access must be multiprocess and multithread safe.
     """
 
+    #XML namespaces
+    xmlns = {"ns0": "http://www.iter.org/CODAC/PlantSystemConfig/2014",
+             "xsi": "http://www.w3.org/2001/XMLSchema-instance"}
     def __init__(self):
         self.xmlIds = {}
         manager = multiprocessing.Manager()
@@ -42,11 +43,11 @@ class PSPSServer(ScriptoriumServer):
     def load(self, config):
         ok = True
         try:
+            numberOfLocks = int(config["numberOfLocks"])
+            usersXmlFilePath = config["usersXmlFilePath"]
+            pagesXmlFilePath = config["pagesXmlFilePath"]
             self.baseDir = config["baseDir"]
-            self.numberOfLocks = int(config["numberOfLocks"])
-            self.lockPool = LockPool(self.numberOfLocks)
-            self.usersXmlFilePath = config["usersXmlFilePath"]
-            self.pagesXmlFilePath = config["pagesXmlFilePath"]
+            self.lockPool = LockPool(numberOfLocks)
         except KeyError as e:
             log.critical(str(e))
             ok = False 
@@ -201,10 +202,26 @@ class PSPSServer(ScriptoriumServer):
         self.xmlManager.release(xmlId)
         return updatedVariables 
 
+    def updatePlant(self, variables):
+        """TODO
+        """
+        return False
+
     def createSchedule(self, name, description, username, pageName):
         """ Creates a new schedule. TODO
         """
         pass
+
+    def convertVariableTypeFromXML(self, xmlVariableType):
+        #TODO move to helper module
+        toReturn = "string"
+        if (xmlVariableType == "recordDouble"):
+            toReturn = "float64" 
+        elif (xmlVariableType == "recordFloat"):
+            toReturn = "float32" 
+        elif (xmlVariableType == "recordString"):
+            toReturn = "string" 
+        return toReturn
 
     def getAllFiles(self, pageName):
         """ TODO

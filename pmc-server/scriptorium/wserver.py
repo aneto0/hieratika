@@ -28,13 +28,11 @@ import fnmatch
 ##
 # Project imports
 ##
-from util.broadcastqueue import BroacastQueue
-from loginmanager import LoginManager 
-from pagemanager import PageManager 
-from xmlmanager import XmlManager 
-from page import Page
-from user import User
-from usergroup import UserGroup
+from scriptorium.util.broadcastqueue import BroacastQueue
+from scriptorium.page import Page
+from scriptorium.user import User
+from scriptorium.usergroup import UserGroup
+from scriptorium.servers.psps.pspsserver import PSPSServer
 
 ##
 # Defines
@@ -43,30 +41,9 @@ from usergroup import UserGroup
 LOGIN_TIMEOUT = 3600
 UDP_BROADCAST_PORT = 23450
 
-##
-# The application base directory (i.e. where it expects to find the scriptorium configuration files)
-##
-PSPS_BASE_DIR = "demo"
-
-##
-# Global variables to be shared by all the processes schedule by gunicorn
-# Note that gunicorn must be run with --preload, otherwise there will be a global variable instance for every process, which beats the purpose.
-##
-#XML namespaces
-ns = {"ns0": "http://www.iter.org/CODAC/PlantSystemConfig/2014",
-      "xsi": "http://www.w3.org/2001/XMLSchema-instance"}
-
-#The global managers
-loginManager = LoginManager()
-pageManager = PageManager()
-xmlManager = XmlManager()
-#TODO this path shall be loaded from the command line or from a configuration file
-loginManager.load("config/users.xml")
-pageManager.load("config/pages.xml")
-
 #Logger configuration
 logging.basicConfig(level=logging.DEBUG)
-log = logging.getLogger("scriptorium-{0}".format(__name__))
+log = logging.getLogger("{0}".format(__name__))
 
 #The web app which is a Flask standard application
 app = Flask(__name__, static_url_path="")
@@ -76,12 +53,10 @@ app.debug = True
 #self.app.run(host='0.0.0.0')
 #self.alive = False
 
-class Server:
+class WServer:
     #A DB access cannot be shared between different threads.
     #This function allocates a DB instance for any given thread
-    threadDBs = {}
     allThreads = []
-
     alive = True
 
     #Synchronised queue between the SSE stream_data and stream_schedule_data functions. One queue per consumer thread. Should be further protected with semaphores
@@ -91,9 +66,10 @@ class Server:
     #IPC using UDP sockets
     udpQueue = BroacastQueue(UDP_BROADCAST_PORT) 
 
-    def __init__(self):
+    def __init__(self, serverImpl):
         #Clean dead threads
         self.monitorThread = threading.Thread(target=self.threadCleaner)
+        self.serverImpl = serverImpl
 
     def start(self):
         #To force the killing of the threadCleaner thread with Ctrl+C
@@ -101,25 +77,8 @@ class Server:
         self.monitorThread.start()
 
 
-    def getDB(self):
-        ct = threading.current_thread()
-        tid = self.getTid()
-        if tid not in self.threadDBs:
-            self.threadDBs[tid] = dataset.connect('sqlite:////tmp/pmc-server.db')
-            if (ct not in self.allThreads):
-                self.allThreads.append(threading.current_thread())
-
-        return self.threadDBs[tid]
-
-    def getTid(self):
-        tid = str(os.getpid())
-        tid += "_"
-        tid += str(threading.current_thread().ident) 
-        return tid
-
-    #Cleans the threadDBs, threadPlantQueues and threadScheduleQueues 
+    #Cleans the threadPlantQueues and threadScheduleQueues 
     def threadCleaner(self):
-        db = self.getDB()
         while self.alive:
             time.sleep(5)
             for t in self.allThreads:
@@ -128,12 +87,12 @@ class Server:
                     self.allThreads.remove(t)
                     #Do not delete the MainThread!
                     if ("MainThread" not in tid):
-                        self.threadDBs.pop(tid, None)
                         self.threadPlantQueues.pop(tid, None)
                         self.threadScheduleQueues.pop(tid, None)
             #Clean all the users that have not interacted with the server for a while
             currentTime = int(time.time())
             #db.query("DELETE FROM logins WHERE (" + str(currentTime) + " - last_interaction_time) > " + str(LOGIN_TIMEOUT));
+            #TODO call the server implementation to logout user
        
     def isTokenValid(self, request):
         if (request.method == "POST"):
@@ -145,19 +104,9 @@ class Server:
             if (ok):
                 tokenId = request.args["token"]
         if (ok): 
-            ok = loginManager.isTokenValid(tokenId)
+            ok = self.serverImpl.isTokenValid(tokenId)
         log.debug("Token: {0} is {1}".format(tokenId, str(ok)))
         return ok
-
-    def updatePlantVariablesDB(self, variableId, variableValue):
-        #db = self.getDB()
-        #variables = db["variables"]
-        #row = variables.find_one(id=variableId)
-        #if (row is not None):
-        #    row["value"] = pickle.dumps(variableValue);
-        #    variables.upsert(row, ["id"])
-        return True
-
 
     def streamData(self):
         tid = None
@@ -188,18 +137,7 @@ class Server:
             #ignore
         print "BYE!!"
 
-    def convertVariableTypeFromXML(self, xmlVariableType):
-        #TODO move to helper module
-        toReturn = "string"
-        if (xmlVariableType == "recordDouble"):
-            toReturn = "float64" 
-        elif (xmlVariableType == "recordFloat"):
-            toReturn = "float32" 
-        elif (xmlVariableType == "recordString"):
-            toReturn = "string" 
-        return toReturn
-
-
+    
     def getPlantInfo(self, request):
         """ Returns all the variables information related to any set of plants.
             See getVariableInfo for details about the variable information.  
@@ -209,74 +147,45 @@ class Server:
            request.form["variables"]: identifiers of the variables to be queried.
         Returns:
             A json encoded list of variables or InvalidToken if the token is not valid.
+            The following information is retrieved for any given variable:
+            - type as one of: uint8, int8, uint16, int16, uint32, int32, uint64, int64, string;
+            - numberOfElements: as an array where each entry contains the number of elements on any given direction; 
+            - name: the full variable name (containing any structure naming information);
+            - variableId: same as name. TODO: deprecate;
+            - description: one-line description of the variable;
+            - permissions: user groups that are allowed to change this variable;
+            - value: string encoded variable value.
         """
-
-        toReturn = "InvalidParameters"
-        if ("pageName" not in request.form):
-            log.critical("No page name was set for getPlantInfo")
-        else:
+       
+        toReturn = ""
+        try: 
             pageName = request.form["pageName"]
-            xmlFileLocation = "{0}/psps/configurations/{1}/000/plant.xml".format(PSPS_BASE_DIR, pageName)
-            log.debug("Loading plant configuration from {0}".format(xmlFileLocation))
-            perfStartTime = timeit.default_timer()
-            toReturn = ""
-           
-            if (not self.isTokenValid(request)):
-                toReturn = "InvalidToken"
-            elif ("variables" not in request.form):
-                toReturn = "InvalidParameters"
-            else: 
-                requestedVariables = request.form["variables"]
-                jSonRequestedVariables = json.loads(requestedVariables)
-                encodedPy = {"variables": [] }
-                xmlManager.acquire(xmlFileLocation)
-                for variableName in jSonRequestedVariables:
-                    variable = xmlManager.getVariableInfo(variableName, xmlFileLocation)
-                    if (variable is not None):
-                        encodedPy["variables"].append(variable) 
-                
-                xmlManager.release(xmlFileLocation)
-                perfElapsedTime = timeit.default_timer() - perfStartTime
-                log.debug("Took {0} s to get the information for all the variables in the plant".format(perfElapsedTime))
-                toReturn = json.dumps(encodedPy)
-            
+            requestedVariables = json.loads(request.form["variables"])
+            variables = self.serverImpl.getPlantInfo(requestedVariables)
+            toReturn = json.dumps({"variables": variables})
+        except KeyError as e:
+            log.critical(str(e))
+            toReturn = "InvalidParameters"
+
         return toReturn 
 
     def submit(self, request):
         toReturn = "done"
-        if (not self.isTokenValid(request)):
-            toReturn = "InvalidToken"
-        elif ("update" not in request.form):
-            toReturn = "InvalidParameters"
-        else: 
-            updateJSon = request.form["update"]
-            jSonUpdateVariables = json.loads(updateJSon)
+        try:
+            update = request.form["update"]
+            variablesToUpdate = json.loads(update)
             toStream = {
                 "tid": request.form["tid"],
                 "variables": []
             }
-            for variableId in jSonUpdateVariables.keys():
-                newValue = jSonUpdateVariables[variableId]
-                if(self.updatePlantVariablesDB(variableId, newValue)):
-                    toStream["variables"].append({"variableId" : variableId, "value" : newValue})
-                #Warn others that the plant values have changed!
-                #for k, q in threadPlantQueues.iteritems():
-                #    jsonToSend = json.dumps("variables": [ {"variableId" : variableId, "value" : newValue}]) 
-            #TODO must check what values were actually updated
+            variablesToStream = self.serverImpl.updatePlant(variablesToUpdate)
             #TODO take care of security
+            toStream["variables"] = variablesToUpdate
             self.udpQueue.put(json.dumps(toStream))
+        except KeyError as e:
+            log.critical(str(e))
+            toReturn = "InvalidParameters"
         return toReturn
-
-    def getAllFiles(self, pageId):
-        #TODO move to helper module
-        matches = []
-        directory = "{0}/{1}".format(PSPS_BASE_DIR, pageId)
-        print directory
-        for root, dirnames, filenames in os.walk(directory):
-            for filename in fnmatch.filter(filenames, '*.xml'):
-                if (filename != "plant.xml"):
-                    matches.append(os.path.join(root, filename))
-        return matches
 
     def getSchedules(self, request):
         userId = ""
@@ -578,12 +487,18 @@ application = server.app
 #Gets all the pv information
 @application.route("/getplantinfo", methods=["POST", "GET"])
 def getplantinfo():
-    return server.getPlantInfo(request)
+    if (server.isTokenValid(request)):
+        return server.getPlantInfo(request)
+    else:
+        return "InvalidToken"
   
 #Try to update the values in the plant
 @application.route("/submit", methods=["POST", "GET"])
 def submit():
-    return server.submit(request)
+    if (server.isTokenValid(request)):
+        return server.submit(request)
+    else:
+        return "InvalidToken"
     
 #Return the available schedules
 @application.route("/getschedules", methods=["POST", "GET"])
