@@ -1,8 +1,9 @@
 #!/usr/bin/python
 
 ##
-#Standard imports
+# Standard imports
 ##
+#TODO Clean imports
 import argparse
 from flask import Flask, Response, request, send_from_directory
 import json
@@ -13,30 +14,21 @@ import os
 import time
 import timeit
 import uuid
-
-#Only log errors
 import logging
-logging.basicConfig(level=logging.DEBUG)
-log = logging.getLogger("psps-{0}".format(__name__))
-
-#Manage easy integration with SQLAlchemy
 import dataset
-#To serialize arrays into the database
 import pickle
 
-#XML interaction
 from xml.etree import cElementTree
 from xml.dom import minidom
 from lxml import etree
 
-#To search for the files
 import os
 import fnmatch
 
 ##
 # Project imports
 ##
-from broadcastqueue import BroacastQueue
+from util.broadcastqueue import BroacastQueue
 from loginmanager import LoginManager 
 from pagemanager import PageManager 
 from xmlmanager import XmlManager 
@@ -52,7 +44,7 @@ LOGIN_TIMEOUT = 3600
 UDP_BROADCAST_PORT = 23450
 
 ##
-# The application base directory (i.e. where it expects to find the psps configuration files)
+# The application base directory (i.e. where it expects to find the scriptorium configuration files)
 ##
 PSPS_BASE_DIR = "demo"
 
@@ -72,14 +64,24 @@ xmlManager = XmlManager()
 loginManager.load("config/users.xml")
 pageManager.load("config/pages.xml")
 
+#Logger configuration
+logging.basicConfig(level=logging.DEBUG)
+log = logging.getLogger("scriptorium-{0}".format(__name__))
+
+#The web app which is a Flask standard application
+app = Flask(__name__, static_url_path="")
+app.debug = True
+#Running a threaded Flask is ok only for debugging
+#app.run(threaded=False, host=args.host, port=args.port)
+#self.app.run(host='0.0.0.0')
+#self.alive = False
+
 class Server:
     #A DB access cannot be shared between different threads.
     #This function allocates a DB instance for any given thread
     threadDBs = {}
     allThreads = []
 
-    #The web app which is a Flask standard application
-    app = Flask(__name__, static_url_path="")
     alive = True
 
     #Synchronised queue between the SSE stream_data and stream_schedule_data functions. One queue per consumer thread. Should be further protected with semaphores
@@ -98,11 +100,6 @@ class Server:
         self.monitorThread.daemon = True
         self.monitorThread.start()
 
-        self.app.debug = True
-        #Running a threaded Flask is ok only for debugging
-        #app.run(threaded=False, host=args.host, port=args.port)
-        #self.app.run(host='0.0.0.0')
-        #self.alive = False
 
     def getDB(self):
         ct = threading.current_thread()

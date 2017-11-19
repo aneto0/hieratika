@@ -62,10 +62,10 @@ class PageManager(object):
            Returns:
                The Page or None if the name is not found.
         """
-        page = None
-        idx = self.pages.index(name)
-        if (idx >= 0):
-            page = self.pages[idx]
+        try:
+            page = self.pages.index(name)
+        except KeyError: 
+            page = None
         return page
  
     def __str__(self):
