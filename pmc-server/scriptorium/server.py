@@ -4,11 +4,19 @@
 # Standard imports
 ##
 from abc import ABCMeta, abstractmethod
-import timeit
+import logging
+import time
+import uuid
 
 ##
 # Project imports
 ##
+
+##
+# Logger configuration
+##
+log = logging.getLogger("{0}".format(__name__))
+
 class ScriptoriumServer():
     
     __metaclass__ = ABCMeta
@@ -38,18 +46,28 @@ class ScriptoriumServer():
            isTokenValid, with this token, will return True.
 
            Returns:
-              A token described as a 32-character hexadecimal string or an empty string if the login fails.
+              A User instance associated to a token described as a 32-character hexadecimal string or None if the login fails.
         """
-        ok = authenticate(username)
+        ok = self.authenticate(username)
+        user = None
+        if (ok):
+            user = self.getUser(username) 
+            ok = (user is not None)
         if (ok):
             log.info("{0} logged in successfully".format(username))
             loginToken = uuid.uuid4().hex
             self.tokens[loginToken] = {"user": username, "lastInteraction": int(time.time())}
+            user.setToken(loginToken)
         else:
             log.warning("{0} is not registered as a valid user".format(username))
-            loginToken = ""
            
-        return loginToken
+        return user
+
+    @abstractmethod
+    def getUser(self, username):
+        """ TODO
+        """
+        pass
 
     @abstractmethod
     def load(self, config):
@@ -128,34 +146,34 @@ class ScriptoriumServer():
         pass
 
     @abstractmethod
-    def getSchedule(self, scheduleId):
+    def getSchedule(self, scheduleName):
         """ TODO define schedule structure
 
         Args:
-            scheduleId (str): unique schedule identifier.
+            scheduleName (str): unique schedule identifier.
         Returns:
             Information about the requested schedule.
         """
         pass
 
     @abstractmethod
-    def getScheduleVariables(self, scheduleId):
+    def getScheduleVariables(self, scheduleName):
         """ Gets all the variables values associated to a given schedule.
         
         Args:
-            scheduleId(str): unique schedule identifier.
+            scheduleName(str): unique schedule identifier.
         Returns:
             An array of {variableId:variableValue} pairs  
         pass
         """
 
     @abstractmethod
-    def updateSchedule(self, tid, scheduleId, variables):
+    def updateSchedule(self, tid, scheduleName, variables):
         """ Updates the variable values for a given schedule. Note that these changes are not to be sync into the storage medium.
     
         Args:
             tid (str): unique identifier of the calling thread/process
-            scheduleId (str): unique schedule identifier
+            scheduleName (str): unique schedule identifier
             variables [{variableId:theVariableId, value:theVariableValue}]:  list of variables to be updated.
 
         Returns:

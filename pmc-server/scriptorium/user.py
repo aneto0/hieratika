@@ -2,7 +2,7 @@ class User(object):
     """ Describes a psps user.
     """
 
-    def __init__(self, username, groups = []):
+    def __init__(self, username, groups = [], token = None):
         """ Constructs a User object against a given username.
         
         Args:
@@ -11,6 +11,7 @@ class User(object):
         """
         self.username = username
         self.groups = groups
+        self.token = token
 
     def getUsername(self):
         """ Returns the username
@@ -27,6 +28,22 @@ class User(object):
             The groups that this user belongs to.
         """
         return self.groups 
+
+    def getToken(self):
+        """ Returns the token associated to a login instance of this user (i.e. to a session).
+        
+        Returns:
+            The user session token.
+        """
+        return self.token
+
+    def setToken(self, token):
+        """ Sets the token associated to a login instance of this user (i.e. to a session).
+            
+            Args:
+                token (str): the token which univocally identifies a user in a given session.
+        """
+        self.token = token
 
     def __eq__(self, another):
         """ Two users are equal if they have the same username.
@@ -65,6 +82,7 @@ class User(object):
         user = {
             "username": self.getUsername(),
             "groups": map(str, self.getGroups())
+            "token": self.token
         }
         return user
 
@@ -79,4 +97,4 @@ class User(object):
             groups += g.getName() + "," 
         groups += self.groups[-1].getName() + "]" 
          
-        return self.username + " : " + groups
+        return "{0} @ ({1}) : {2}".format(self.username, self.token, self.groups) 

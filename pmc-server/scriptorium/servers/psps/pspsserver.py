@@ -153,13 +153,20 @@ class PSPSServer(ScriptoriumServer):
             schedule = {
                 "id": xmlFile,
                 "name": filePath[-1],
-                "user_id": userId,
+                "user_id": username,
                 "description": "TBD",
-                "page_id": pageId
+                "page_id": pageName
             }
             schedules.append(schedule);
 
         return schedules
+
+    def getUser(self, username):
+        user = None
+        idx = self.users.index(username)
+        if (idx >= 0):
+            user = self.users[idx]
+        return user
 
     def getUsers(self, request):
         return self.users
@@ -174,30 +181,30 @@ class PSPSServer(ScriptoriumServer):
             page = self.pages[idx]
         return page
 
-    def getSchedule(self, scheduleId):
+    def getSchedule(self, scheduleName):
         """ TODO define schedule structure
 
         Args:
-            scheduleId (str): unique schedule identifier.
+            scheduleName (str): unique schedule identifier.
         Returns:
             Information about the requested schedule.
         """
         pass
 
-    def getScheduleVariables(self, scheduleId):
-        xmlId = getXmlId(scheduleId)
+    def getScheduleVariables(self, scheduleName):
+        xmlId = getXmlId(scheduleName)
         self.xmlManager.acquire(xmlId)
-        variables = self.xmlManager.getAllVariablesValue(scheduleId)
+        variables = self.xmlManager.getAllVariablesValues(scheduleName)
         self.xmlManager.release(xmlId)
 
-    def updateSchedule(self, tid, scheduleId, variables):
+    def updateSchedule(self, tid, scheduleName, variables):
         updatedVariables = []
-        xmlId = getXmlId(scheduleId)
+        xmlId = getXmlId(scheduleName)
         self.xmlManager.acquire(xmlId)
         for v in variables:
             variableId = v["id"]
             value = v["value"]
-            if(updateVariable(variableName, scheduleId, variableValue)):
+            if(updateVariable(variableName, scheduleName, variableValue)):
                 updatedVariables["variables"].append({"variableId" : variableId, "value" : value})
         self.xmlManager.release(xmlId)
         return updatedVariables 
@@ -369,7 +376,7 @@ class PSPSServer(ScriptoriumServer):
 
         return ok
 
-    def getAllVariablesValue(self, xmlPath):
+    def getAllVariablesValues(self, xmlPath):
         """ Gets the value for all variables in a given xml file.
             This method is not thread-safe and expects the methods acquire and release to be called by the caller.
 
