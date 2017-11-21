@@ -118,7 +118,7 @@ class ScriptoriumServer():
         pass
 
     @abstractmethod
-    def getUsers(self, request):
+    def getUsers(self):
         """
         Returns:
             All the system users.
@@ -126,7 +126,7 @@ class ScriptoriumServer():
         pass
 
     @abstractmethod
-    def getPages(self, request):
+    def getPages(self):
         """
         Returns:
             All the pages that are available.

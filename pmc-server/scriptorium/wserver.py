@@ -98,6 +98,8 @@ class WServer:
             #TODO call the wserver implementation to logout user
        
     def isTokenValid(self, request):
+        """ TODO
+        """
         if (request.method == "POST"):
             ok = ("token" in request.form)
             if (ok):
@@ -111,7 +113,19 @@ class WServer:
             log.debug("Token: {0} is {1}".format(tokenId, str(ok)))
         return ok
 
+    def getTid(self):
+        """
+            Returns:
+                A keyword which univocally identifies both the process and the thread.
+        """
+        tid = str(os.getpid())
+        tid += "_"
+        tid += str(threading.current_thread().ident) 
+        return tid
+
     def streamData(self):
+        """ TODO
+        """
         tid = None
         try:
             while True:
@@ -471,6 +485,7 @@ def stream():
 
 @application.route("/")
 def index():
+    print "YEO"
     return wserver.app.send_static_file("index.html")
 
 @application.route("/tmp/<filename>")

@@ -81,7 +81,7 @@ class User(object):
         """
         user = {
             "username": self.getUsername(),
-            "groups": map(str, self.getGroups())
+            "groups": map(str, self.getGroups()),
             "token": self.token
         }
         return user

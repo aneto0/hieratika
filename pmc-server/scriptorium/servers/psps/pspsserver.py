@@ -168,11 +168,11 @@ class PSPSServer(ScriptoriumServer):
             user = self.users[idx]
         return user
 
-    def getUsers(self, request):
+    def getUsers(self):
         return self.users
 
-    def getPages(self, request):
-        return self.pages()
+    def getPages(self):
+        return self.pages
 
     def getPage(self, pageName):
         page = None
