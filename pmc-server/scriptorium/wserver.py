@@ -69,10 +69,10 @@ class WServer:
     #IPC using UDP sockets
     udpQueue = BroacastQueue(UDP_BROADCAST_PORT) 
 
-    def __init__(self, wserverImpl):
+    def __init__(self, serverImpl):
         #Clean dead threads
         self.monitorThread = threading.Thread(target=self.threadCleaner)
-        self.wserverImpl = wserverImpl
+        self.serverImpl = serverImpl
 
     def start(self):
         #To force the killing of the threadCleaner thread with Ctrl+C
@@ -109,7 +109,7 @@ class WServer:
             if (ok):
                 tokenId = request.args["token"]
         if (ok): 
-            ok = self.wserverImpl.isTokenValid(tokenId)
+            ok = self.serverImpl.isTokenValid(tokenId)
             log.debug("Token: {0} is {1}".format(tokenId, str(ok)))
         return ok
 
@@ -178,7 +178,7 @@ class WServer:
         try: 
             pageName = request.form["pageName"]
             requestedVariables = json.loads(request.form["variables"])
-            variables = self.wserverImpl.getPlantInfo(requestedVariables)
+            variables = self.serverImpl.getPlantInfo(pageName, requestedVariables)
             toReturn = json.dumps({"variables": variables})
         except KeyError as e:
             log.critical(str(e))
@@ -197,7 +197,7 @@ class WServer:
                 "tid": request.form["tid"],
                 "variables": []
             }
-            variablesToStream = self.wserverImpl.updatePlant(variablesToUpdate)
+            variablesToStream = self.serverImpl.updatePlant(variablesToUpdate)
             #TODO take care of security
             toStream["variables"] = variablesToUpdate
             self.udpQueue.put(json.dumps(toStream))
@@ -223,7 +223,7 @@ class WServer:
             else:
                 username = ""
             
-            schedules = self.wserverImpl.getSchedules(username, pageName)
+            schedules = self.serverImpl.getSchedules(username, pageName)
             toReturn = json.dumps(schedules)
         except KeyError as e:
             log.critical(str(e))
@@ -235,7 +235,7 @@ class WServer:
         Returns:
             All the system users.
         """
-        users = self.wserverImpl.getUsers()
+        users = self.serverImpl.getUsers()
         usersStr = [u.asSerializableDict() for u in users]
         log.debug("Returning users: {0}".format(usersStr))
         toReturn = json.dumps(usersStr)
@@ -246,7 +246,7 @@ class WServer:
         Returns:
             All the pages that are available.
         """
-        pages = self.wserverImpl.getPages()
+        pages = self.serverImpl.getPages()
         pagesStr = [p.__dict__ for p in pages]
         log.debug("Returning pages: {0}".format(pagesStr))
         toReturn = json.dumps(pagesStr)
@@ -263,7 +263,7 @@ class WServer:
         try: 
             pageName = request.form["pageName"]
             log.debug("Looking for page: {0}".format(pageName))
-            page = pageManager.getPage(pageName)
+            page = self.serverImpl.getPage(pageName)
             log.debug("Returning page: {0}".format(str(page)))
             toReturn = json.dumps(page.__dict__)
         except KeyError as e:
@@ -299,7 +299,7 @@ class WServer:
         try: 
             variables = []
             requestedSchedule = request.form["scheduleName"]
-            variables = self.wserverImpl.getScheduleVariables(requestedSchedule)
+            variables = self.serverImpl.getScheduleVariables(requestedSchedule)
             toReturn = json.dumps(variables)
         except KeyError as e:
             log.critical(str(e))
@@ -320,7 +320,7 @@ class WServer:
         try: 
             username = request.form["username"]
             log.debug("Logging in: {0}".format(username))
-            user = self.wserverImpl.login(username)
+            user = self.serverImpl.login(username)
             if (user is not None):
                 user = user.asSerializableDict()
             else:
@@ -352,7 +352,7 @@ class WServer:
             toStream = {
                 "tid": tid,
                 "scheduleName": scheduleName,
-                "variables": self.wserverImpl.updateSchedule(tid, scheduleName, variables)
+                "variables": self.serverImpl.updateSchedule(tid, scheduleName, variables)
             }
             self.udpQueue.put(json.dumps(toStream))
             toReturn = "ok"
@@ -369,7 +369,7 @@ class WServer:
             description = request.form["description"]
             username = request.form["username"]
             pageName = request.form["pageName"]
-            self.wserverImpl.createSchedule(name, description, username, pageName) 
+            self.serverImpl.createSchedule(name, description, username, pageName) 
         except KeyError as e:
             log.critical(str(e))
             toReturn = "InvalidParameters"

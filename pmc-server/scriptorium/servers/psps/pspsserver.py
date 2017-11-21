@@ -4,6 +4,8 @@
 ##
 import logging
 import multiprocessing
+import time
+import timeit
 from xml.etree import cElementTree
 from xml.dom import minidom
 
@@ -73,8 +75,8 @@ class PSPSServer(ScriptoriumServer):
         
     def getPlantInfo(self, pageName, requestedVariables):
         xmlFileLocation = "{0}/psps/configurations/{1}/000/plant.xml".format(self.baseDir, pageName)
-        xmlId = self.getXmlId(xmlFileLocation)
         log.debug("Loading plant configuration from {0}".format(xmlFileLocation))
+        xmlId = self.getXmlId(xmlFileLocation)
         perfStartTime = timeit.default_timer()
         variables = []
         self.lockPool.acquire(xmlId)
@@ -176,7 +178,7 @@ class PSPSServer(ScriptoriumServer):
 
     def getPage(self, pageName):
         page = None
-        idx = self.pages.index(name)
+        idx = self.pages.index(pageName)
         if (idx >= 0):
             page = self.pages[idx]
         return page
@@ -304,6 +306,7 @@ class PSPSServer(ScriptoriumServer):
 
     def getCachedXmlTree(self, xmlPath):
         """ Parses the xml defined by the xmlPath and caches it in memory.
+            This method is not thread-safe and expects the methods acquire and release to be called by the caller.
             
             Args:
                 xmlPath (str): path to the xml file to be parsed.
@@ -313,7 +316,6 @@ class PSPSServer(ScriptoriumServer):
         #TODO must make sure that this has house keeping and that this is cleaned when the user logout
         #Also, the number of opened schedules per user shall be limited
         xmlId = self.getXmlId(xmlPath)
-        self.lockPool.acquire(xmlId)
         try:
             ret = self.openXmls[xmlPath]
         except Exception as e:
@@ -323,7 +325,6 @@ class PSPSServer(ScriptoriumServer):
             except Exception as e:
                 log.critical("Error loading xml file {0}".format(xmlPath))
                 ret = None
-        self.lockPool.release(xmlId)
         return ret
 
     def updateVariable(self, variableName, xmlPath, variableValue):
