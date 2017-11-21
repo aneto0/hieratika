@@ -1,0 +1,346 @@
+<configurationContainer xmlns="http://www.iter.org/CODAC/PlantSystemConfig/2014" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <schemaVersion>1.2</schemaVersion>
+  <version>00.00</version>
+  <sddVersion>1</sddVersion>
+  <name>TEST0</name>
+  <description>Test configuration</description>
+  <plantSystems>
+    <plantSystem>
+     <name>AA</name>
+      <version>1.0</version>
+      <description></description>
+      <plantRecords>
+        <folders>
+          <folder>
+            <name>AA</name>
+            <folders>
+              <folder>
+                <name>AA</name>
+                <folders>
+                  <folder>
+                    <name>AA</name>
+                    <folders/>
+                    <records>
+                      <record size="1" xsi:type="recordDouble">
+                        <name>AA</name>
+                        <pvName>AA-AA-AA:AA-AA</pvName>
+                        <alias>A test name</alias>
+                        <description>A test description</description>
+                        <origin/>
+                        <values>
+                          <value>1</value>
+                        </values>
+                      </record>
+                      <record size="1" xsi:type="recordDouble">
+                        <name>BB</name>
+                        <pvName>AA-AA-AA:AA-BB</pvName>
+                        <alias>A test name</alias>
+                        <description>A test description</description>
+                        <origin/>
+                        <values>
+                          <value>2</value>
+                        </values>
+                      </record>
+                      <record size="1" xsi:type="recordDouble">
+                        <name>CC</name>
+                        <pvName>AA-AA-AA:AA-CC</pvName>
+                        <alias>A test name</alias>
+                        <description>A test description</description>
+                        <origin/>
+                        <values>
+                          <value>3</value>
+                        </values>
+                      </record>
+                    </records>
+                  </folder>
+                  <folder>
+                    <name>BB</name>
+                    <folders/>
+                    <records>
+                      <record size="1" xsi:type="recordDouble">
+                        <name>AA</name>
+                        <pvName>AA-AA-AA:BB-AA</pvName>
+                        <alias>A test name</alias>
+                        <description>A test description</description>
+                        <origin/>
+                        <values>
+                          <value>4</value>
+                        </values>
+                      </record>
+                      <record size="1" xsi:type="recordDouble">
+                        <name>BB</name>
+                        <pvName>AA-AA-AA:BB-BB</pvName>
+                        <alias>A test name</alias>
+                        <description>A test description</description>
+                        <origin/>
+                        <values>
+                          <value>5</value>
+                        </values>
+                      </record>
+                      <record size="1" xsi:type="recordDouble">
+                        <name>CC</name>
+                        <pvName>AA-AA-AA:BB-CC</pvName>
+                        <alias>A test name</alias>
+                        <description>A test description</description>
+                        <origin/>
+                        <values>
+                          <value>6</value>
+                        </values>
+                      </record>
+                    </records>
+                  </folder>
+                </folders>
+              </folder>
+              <folder>
+                <name>BB</name>
+                <folders>
+                  <folder>
+                    <name>AA</name>
+                    <folders/>
+                    <records>
+                      <record size="1" xsi:type="recordDouble">
+                        <name>AA</name>
+                        <pvName>AA-AA-BB:AA-AA</pvName>
+                        <alias>A test name</alias>
+                        <description>A test description</description>
+                        <origin/>
+                        <values>
+                          <value>7</value>
+                        </values>
+                      </record>
+                      <record size="1" xsi:type="recordDouble">
+                        <name>BB</name>
+                        <pvName>AA-AA-BB:AA-BB</pvName>
+                        <alias>A test name</alias>
+                        <description>A test description</description>
+                        <origin/>
+                        <values>
+                          <value>8</value>
+                        </values>
+                      </record>
+                      <record size="1" xsi:type="recordDouble">
+                        <name>CC</name>
+                        <pvName>AA-AA-BB:AA-CC</pvName>
+                        <alias>A test name</alias>
+                        <description>A test description</description>
+                        <origin/>
+                        <values>
+                          <value>9</value>
+                        </values>
+                      </record>
+                    </records>
+                  </folder>
+                  <folder>
+                    <name>BB</name>
+                    <folders/>
+                    <records>
+                      <record size="1" xsi:type="recordDouble">
+                        <name>AA</name>
+                        <pvName>AA-AA-BB:BB-AA</pvName>
+                        <alias>A test name</alias>
+                        <description>A test description</description>
+                        <origin/>
+                        <values>
+                          <value>10</value>
+                        </values>
+                      </record>
+                      <record size="1" xsi:type="recordDouble">
+                        <name>BB</name>
+                        <pvName>AA-AA-BB:BB-BB</pvName>
+                        <alias>A test name</alias>
+                        <description>A test description</description>
+                        <origin/>
+                        <values>
+                          <value>11</value>
+                        </values>
+                      </record>
+                      <record size="1" xsi:type="recordDouble">
+                        <name>CC</name>
+                        <pvName>AA-AA-BB:BB-CC</pvName>
+                        <alias>A test name</alias>
+                        <description>A test description</description>
+                        <origin/>
+                        <values>
+                          <value>12</value>
+                        </values>
+                      </record>
+                    </records>
+                  </folder>
+                </folders>
+              </folder>
+            </folders>
+          </folder>
+        </folders>
+      </plantRecords>
+    </plantSystem>
+    <plantSystem>
+      <name>BB</name>
+      <version>1.0</version>
+      <description></description>
+      <plantRecords>
+        <folders>
+          <folder>
+            <name>AA</name>
+            <folders>
+              <folder>
+                <name>AA</name>
+                <folders>
+                  <folder>
+                    <name>AA</name>
+                    <folders/>
+                    <records>
+                      <record size="1" xsi:type="recordDouble">
+                        <name>AA</name>
+                        <pvName>BB-AA-AA:AA-AA</pvName>
+                        <alias>A test name</alias>
+                        <description>A test description</description>
+                        <origin/>
+                        <values>
+                          <value>-1</value>
+                        </values>
+                      </record>
+                      <record size="1" xsi:type="recordDouble">
+                        <name>BB</name>
+                        <pvName>BB-AA-AA:AA-BB</pvName>
+                        <alias>A test name</alias>
+                        <description>A test description</description>
+                        <origin/>
+                        <values>
+                          <value>-2</value>
+                        </values>
+                      </record>
+                      <record size="1" xsi:type="recordDouble">
+                        <name>CC</name>
+                        <pvName>BB-AA-AA:AA-CC</pvName>
+                        <alias>A test name</alias>
+                        <description>A test description</description>
+                        <origin/>
+                        <values>
+                          <value>-3</value>
+                        </values>
+                      </record>
+                    </records>
+                  </folder>
+                  <folder>
+                    <name>BB</name>
+                    <folders/>
+                    <records>
+                      <record size="1" xsi:type="recordDouble">
+                        <name>AA</name>
+                        <pvName>BB-AA-AA:BB-AA</pvName>
+                        <alias>A test name</alias>
+                        <description>A test description</description>
+                        <origin/>
+                        <values>
+                          <value>-4</value>
+                        </values>
+                      </record>
+                      <record size="1" xsi:type="recordDouble">
+                        <name>BB</name>
+                        <pvName>BB-AA-AA:BB-BB</pvName>
+                        <alias>A test name</alias>
+                        <description>A test description</description>
+                        <origin/>
+                        <values>
+                          <value>-5</value>
+                        </values>
+                      </record>
+                      <record size="1" xsi:type="recordDouble">
+                        <name>CC</name>
+                        <pvName>BB-AA-AA:BB-CC</pvName>
+                        <alias>A test name</alias>
+                        <description>A test description</description>
+                        <origin/>
+                        <values>
+                          <value>-6</value>
+                        </values>
+                      </record>
+                    </records>
+                  </folder>
+                </folders>
+              </folder>
+              <folder>
+                <name>BB</name>
+                <folders>
+                  <folder>
+                    <name>AA</name>
+                    <folders/>
+                    <records>
+                      <record size="1" xsi:type="recordDouble">
+                        <name>AA</name>
+                        <pvName>BB-AA-BB:AA-AA</pvName>
+                        <alias>A test name</alias>
+                        <description>A test description</description>
+                        <origin/>
+                        <values>
+                          <value>-7</value>
+                        </values>
+                      </record>
+                      <record size="1" xsi:type="recordDouble">
+                        <name>BB</name>
+                        <pvName>BB-AA-BB:AA-BB</pvName>
+                        <alias>A test name</alias>
+                        <description>A test description</description>
+                        <origin/>
+                        <values>
+                          <value>-8</value>
+                        </values>
+                      </record>
+                      <record size="1" xsi:type="recordDouble">
+                        <name>CC</name>
+                        <pvName>BB-AA-BB:AA-CC</pvName>
+                        <alias>A test name</alias>
+                        <description>A test description</description>
+                        <origin/>
+                        <values>
+                          <value>-9</value>
+                        </values>
+                      </record>
+                    </records>
+                  </folder>
+                  <folder>
+                    <name>BB</name>
+                    <folders/>
+                    <records>
+                      <record size="1" xsi:type="recordDouble">
+                        <name>AA</name>
+                        <pvName>BB-AA-BB:BB-AA</pvName>
+                        <alias>A test name</alias>
+                        <description>A test description</description>
+                        <origin/>
+                        <values>
+                          <value>-10</value>
+                        </values>
+                      </record>
+                      <record size="1" xsi:type="recordDouble">
+                        <name>BB</name>
+                        <pvName>BB-AA-BB:BB-BB</pvName>
+                        <alias>A test name</alias>
+                        <description>A test description</description>
+                        <origin/>
+                        <values>
+                          <value>-11</value>
+                        </values>
+                      </record>
+                      <record size="1" xsi:type="recordDouble">
+                        <name>CC</name>
+                        <pvName>BB-AA-BB:BB-CC</pvName>
+                        <alias>A test name</alias>
+                        <description>A test description</description>
+                        <origin/>
+                        <values>
+                          <value>-12</value>
+                        </values>
+                      </record>
+                    </records>
+                  </folder>
+                </folders>
+              </folder>
+            </folders>
+          </folder>
+        </folders>
+      </plantRecords>
+    </plantSystem>
+  </plantSystems>
+  <plantConstraints/>
+</configurationContainer>

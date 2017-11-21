@@ -13,7 +13,7 @@ class TestPSPSServer(unittest.TestCase):
 
     def test_constructor(self):
         pspsServer = PSPSServer()
-        return True
+        self.assertTrue(True)
 
     def test_load(self):
         pspsServer = PSPSServer()
@@ -23,7 +23,7 @@ class TestPSPSServer(unittest.TestCase):
             "usersXmlFilePath": "test/servers/psps/users.xml",
             "pagesXmlFilePath": "test/servers/psps/pages.xml"
         }
-        return pspsServer.load(config)
+        self.assertTrue(pspsServer.load(config))
 
 if __name__ == '__main__':
     unittest.main()

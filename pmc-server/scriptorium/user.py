@@ -1,5 +1,5 @@
 class User(object):
-    """ Describes a psps user.
+    """ Describes a scriptorium user.
     """
 
     def __init__(self, username, groups = [], token = None):

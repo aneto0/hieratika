@@ -134,7 +134,7 @@
                                 option1 = document.createElement("option");
                                 scheduleName = schedule.name + " (owner: " + username + ")";
                                 option1.text = scheduleName;
-                                option1.value = schedule.id;
+                                option1.value = schedule.uid;
                                 this.newSchedulesSelect.appendChild(option1);
                             }
                         }.bind(this); 
@@ -149,7 +149,7 @@
                         okNewScheduleButton.onclick = function() {
                             var schedule = {
                                 token: parent._currentToken,
-                                id: this.newScheduleName.value,
+                                uid: this.newScheduleName.value,
                                 name: this.newScheduleName.value,
                                 description: this.newScheduleDescription.value,
                                 pageName: this.pageName

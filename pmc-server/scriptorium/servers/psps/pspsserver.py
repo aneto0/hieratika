@@ -2,8 +2,10 @@
 ##
 # Standard imports
 ##
+import fnmatch
 import logging
 import multiprocessing
+import os
 import time
 import timeit
 from xml.etree import cElementTree
@@ -14,6 +16,7 @@ from xml.dom import minidom
 ##
 from scriptorium.server import ScriptoriumServer
 from scriptorium.page import Page
+from scriptorium.schedule import Schedule
 from scriptorium.user import User
 from scriptorium.usergroup import UserGroup 
 from scriptorium.util.lockpool import LockPool
@@ -37,6 +40,7 @@ class PSPSServer(ScriptoriumServer):
         self.users = manager.list()
         self.pages = manager.list()
         self.tokens = manager.dict()
+        self.openXmls = {}
 
     def authenticate(self, username):
         #TODO
@@ -76,18 +80,18 @@ class PSPSServer(ScriptoriumServer):
     def getPlantInfo(self, pageName, requestedVariables):
         xmlFileLocation = "{0}/psps/configurations/{1}/000/plant.xml".format(self.baseDir, pageName)
         log.debug("Loading plant configuration from {0}".format(xmlFileLocation))
-        xmlId = self.getXmlId(xmlFileLocation)
         perfStartTime = timeit.default_timer()
         variables = []
+        xmlId = self.getXmlId(xmlFileLocation)
         self.lockPool.acquire(xmlId)
         for variableName in requestedVariables:
             variable = self.getVariableInfo(variableName, xmlFileLocation)
             if (variable is not None):
                 variables.append(variable) 
             
-        self.lockPool.xmlManager.release(xmlId)
+        self.lockPool.release(xmlId)
         perfElapsedTime = timeit.default_timer() - perfStartTime
-        log.debug("Took {0} s to get the information for all the variables in the plant".format(perfElapsedTime))
+        log.debug("Took {0} s to get the information for all the {1} variables in the plant for page {2}".format(perfElapsedTime, len(requestedVariables), pageName))
         return variables 
 
     def getVariableInfo(self, variableName, xmlPath):
@@ -121,47 +125,33 @@ class PSPSServer(ScriptoriumServer):
                 
                 plantRootXml = xmlRoot.find("./ns0:plantSystems/ns0:plantSystem[ns0:name='{0}']/ns0:plantRecords".format(plantSystemName), self.xmlns)
                 r = plantRootXml
-                for p in path[:-1]:
-                    r = r.find("./ns0:folders/ns0:folder[ns0:name='{0}']".format(p), self.xmlns)
-                    if (r == None):
-                        log.critical("Could not find {0} . Failed while looking for {1}".format(variableName, p))
-                        break
                 if (r is not None):
-                    r = r.find("./ns0:records/ns0:record[ns0:name='{0}']".format(path[-1]), self.xmlns)
-                    variable["type"] = self.convertVariableTypeFromXML(r.attrib["{" + ns["xsi"] + "}type"])
-                    variable["numberOfElements"] = "[" + r.attrib["size"] + "]"
-                    variable["name"] = plantSystemName + "@" + variableName
-                    #TODO deprecate variableId
-                    variable["variableId"] = variable["name"]
-                    variable["description"] = r.find("./ns0:description", self.xmlns).text
-                    variable["permissions"] = ["experts-1"]
-                    valuesXml = r.findall(".//ns0:value", self.xmlns)
-                    values = []
-                    for v in valuesXml:
-                        values.append(v.text)
-                    variable["value"] = values
-                    log.debug("Loaded variable {0}".format(variable["name"]))
+                    for p in path[:-1]:
+                        r = r.find("./ns0:folders/ns0:folder[ns0:name='{0}']".format(p), self.xmlns)
+                        if (r is None):
+                            log.critical("Could not find {0} . Failed while looking for {1}".format(variableName, p))
+                            break
+                    if (r is not None):
+                        r = r.find("./ns0:records/ns0:record[ns0:name='{0}']".format(path[-1]), self.xmlns)
+                        variable["type"] = self.convertVariableTypeFromXML(r.attrib["{" + self.xmlns["xsi"] + "}type"])
+                        variable["numberOfElements"] = "[" + r.attrib["size"] + "]"
+                        variable["name"] = plantSystemName + "@" + variableName
+                        #TODO deprecate variableId
+                        variable["variableId"] = variable["name"]
+                        variable["description"] = r.find("./ns0:description", self.xmlns).text
+                        variable["permissions"] = ["experts-1"]
+                        valuesXml = r.findall("./ns0:value", self.xmlns)
+                        values = []
+                        for v in valuesXml:
+                            values.append(v.text)
+                        variable["value"] = values
+                        log.debug("Loaded variable {0}".format(variable["name"]))
+                    else:
+                        log.critical("No record defined for variable {0}".format(variableName))
                 else:
-                    log.critical("No plant system defined for variable {0}".format(variableId))
+                    log.critical("No plant system defined for variable {0}".format(plantSystemName + "@" + variableName))
 
         return variable
-
-    def getSchedules(self, username, pageName):
-        schedules = []
-        allSchedulesXML = self.getAllFiles(pageName)
-
-        for xmlFile in allSchedulesXML:
-            filePath = xmlFile.split("/")
-            schedule = {
-                "id": xmlFile,
-                "name": filePath[-1],
-                "user_id": username,
-                "description": "TBD",
-                "page_id": pageName
-            }
-            schedules.append(schedule);
-
-        return schedules
 
     def getUser(self, username):
         user = None
@@ -183,6 +173,27 @@ class PSPSServer(ScriptoriumServer):
             page = self.pages[idx]
         return page
 
+    def getSchedules(self, username, pageName):
+        schedules = []
+        allSchedulesXML = self.getAllFiles(username, pageName)
+
+        for xmlFile in allSchedulesXML:
+            description = ""
+            xmlId = self.getXmlId(xmlFile)
+            self.lockPool.acquire(xmlId)
+            tree = self.getCachedXmlTree(xmlFile)
+            if (tree is not None):
+                xmlRoot = tree.getroot()
+                description = xmlRoot.find("./ns0:description", self.xmlns)
+                if (description is not None):
+                    description = description.text
+            self.lockPool.release(xmlId)
+            filePath = xmlFile.split("/")
+            schedule = Schedule(xmlFile, filePath[-1], pageName, username, description)
+            schedules.append(schedule);
+
+        return schedules
+
     def getSchedule(self, scheduleName):
         """ TODO define schedule structure
 
@@ -193,22 +204,23 @@ class PSPSServer(ScriptoriumServer):
         """
         pass
 
-    def getScheduleVariables(self, scheduleName):
-        xmlId = getXmlId(scheduleName)
-        self.xmlManager.acquire(xmlId)
-        variables = self.xmlManager.getAllVariablesValues(scheduleName)
-        self.xmlManager.release(xmlId)
+    def getScheduleVariablesValues(self, scheduleUID):
+        xmlId = self.getXmlId(scheduleUID)
+        self.lockPool.acquire(xmlId)
+        variables = self.getAllVariablesValues(scheduleUID)
+        self.lockPool.release(xmlId)
+        return variables
 
     def updateSchedule(self, tid, scheduleName, variables):
         updatedVariables = []
         xmlId = getXmlId(scheduleName)
-        self.xmlManager.acquire(xmlId)
+        self.lockPool.acquire(xmlId)
         for v in variables:
             variableId = v["id"]
             value = v["value"]
             if(updateVariable(variableName, scheduleName, variableValue)):
                 updatedVariables["variables"].append({"variableId" : variableId, "value" : value})
-        self.xmlManager.release(xmlId)
+        self.lockPool.release(xmlId)
         return updatedVariables 
 
     def updatePlant(self, variables):
@@ -232,12 +244,11 @@ class PSPSServer(ScriptoriumServer):
             toReturn = "string" 
         return toReturn
 
-    def getAllFiles(self, pageName):
+    def getAllFiles(self, username, pageName):
         """ TODO
         """
         matches = []
-        directory = "{0}/{1}".format(self.config.baseDir, pageName)
-        print directory
+        directory = "{0}/users/{1}/configurations/{2}".format(self.baseDir, username, pageName)
         for root, dirnames, filenames in os.walk(directory):
             for filename in fnmatch.filter(filenames, '*.xml'):
                 if (filename != "plant.xml"):
@@ -261,7 +272,7 @@ class PSPSServer(ScriptoriumServer):
             for userXml in usersXml:
                 groups = []
                 #For each user load the groups
-                groupsXml = userXml.findall(".//ns0:group", self.xmlns)
+                groupsXml = userXml.findall("./ns0:group", self.xmlns)
                 for groupXml in groupsXml:
                     groupNameXml= groupXml.find("./ns0:name", self.xmlns)
                     groups.append(UserGroup(groupNameXml.text)) 
@@ -323,7 +334,7 @@ class PSPSServer(ScriptoriumServer):
                 self.openXmls[xmlPath] = cElementTree.parse(xmlPath)
                 ret = self.openXmls[xmlPath]
             except Exception as e:
-                log.critical("Error loading xml file {0}".format(xmlPath))
+                log.critical("Error loading xml file {0}: {1}".format(xmlPath, str(e)))
                 ret = None
         return ret
 
@@ -377,84 +388,60 @@ class PSPSServer(ScriptoriumServer):
 
         return ok
 
-    def getAllVariablesValues(self, xmlPath):
-        """ Gets the value for all variables in a given xml file.
-            This method is not thread-safe and expects the methods acquire and release to be called by the caller.
-
-        Args:
-            The xml containing the variables.
-
-        Returns:
-            An array with variable:value pairs.
+    def getVariableValue(self, r, variableName, variables):
+        """ Recursively gets all the variable values for a given plantSystem node in the xml.
+            
+            Args:
+                r (xmlElement): walks the xml Tree. The first time this function is called it shall point at the plantRecords.
+                variableName (str): the name of the variable. It is constructed as the function recursively walks the tree. The separator is the @ symbol.
+                variables (__dict__): dictionary where the value of the variable is stored.
         """
-        variables = []
-        tree = self.getCachedXmlTree(xmlPath)
-        if (tree is not None):
-            plantRootXml = root.find("./ns0:plantSystems", self.xmlns)
-            if (plantRootXml != None):
-                for ps in plantRootXml:
-                    plantSystemNameXml = r.find("./ns0:name", self.xmlns)
-                    if (plantSystemNameXml != None):
-                        plantSystemName = plantSystemNameXml.text
-                        plantRecordsXml = ps.find("./ns0:plantRecords", self.xmlns)
-                        for pr in plantRecordsXml:
-                            records = pr.findall(".//ns0:record", self.xmlns)
-                            for r in records:
-                                recordNameXml = r.find("./ns0:name", self.xmlns)
-                                if (recordNameXml != None):
-                                    vp = {
-                                        "variable": plantSystemName + "@" + recordNameXml.text,
-                                        "value": []
-                                    } 
-                                    valuesXml = r.findall(".//ns0:value", self.xmlns)
-                                    values = []
-                                    for v in valuesXml:
-                                        values.append(v.text)
-                                    vp["value"] = values
-                                    variables.append(vp)
-                                else:
-                                    log.critical("No record name defined in {0}".format(xmlPath))
-                    else:
-                        log.critical("No plantSystem name defined in {0}".format(xmlPath))
+        records = r.find("./ns0:records", self.xmlns)
+        if (records is None):
+            r = r.find("./ns0:folders", self.xmlns)
+            if (r is None):
+                log.critical("Wrong xml structure. ns0:folders is missing")
+                return None
             else:
-                log.critical("No plantSystems defined in {0}".format(xmlPath))
+                folders = r.findall("./ns0:folder", self.xmlns)
+                variableNameBeforeFolders = variableName
+                for f in folders:
+                    n = f.find("./ns0:name")
+                    if (n is not None):
+                        variableName = variableNameBeforeFolders + "@" + n.text
+                        self.getVariableValueR(f, variableName, variables)
+                    else:
+                        log.critical("Wrong xml structure. ns0:name is missing in folder")
+        else:
+            records = records.findall("./ns0:record", self.xmlns)
+            variableNameBeforeRecord = variableName
+            for rec in records:
+                n = rec.find("./ns0:name")
+                if (n is not None):
+                    variableName = variableNameBeforeRecord + "@" + n.text
+                    valuesXml = rec.find("./ns0:values", self.xmlns)
+                    if (valuesXml is not None):
+                        valueXml = valuesXml.findall("./ns0:value", self.xmlns)
+                        values = []
+                        for v in valueXml:
+                            values.append(v.text)
+                        variables[variableName] = values
+                else:
+                    log.critical("Wrong xml structure. ns0:name is missing in record")
+                log.debug("Retrieved value for variable [{0}]".format(variableName))
 
-        return variables
-
-    def getVariableValue(self, variableName, xmlPath):
-        """ Gets the value for a given variable in a given xml file.
-            This method is not thread-safe and expects the methods acquire and release to be called by the caller.
-
-        Args:
-            The xml containing the variables.
-
-        Returns:
-            An array with the value of the variable.
-        """
-
-        value = []
+    def getAllVariablesValues(self, xmlPath):
+        variables = {}
         tree = self.getCachedXmlTree(xmlPath)
         if (tree is not None):
             xmlRoot = tree.getroot()
             #TODO for the time being I will encode the plant system name as the first @ token. This needs discussion at some stage
-            idx = variableName.find("@")
-            if (idx != -1):
-                plantSystemName = variableName[:idx]
-                variableName = variableName[idx + 1:]
-                path = variableName.split("@")
-                plantRootXml = xmlRoot.find("./ns0:plantSystems/ns0:plantSystem[ns0:name='{0}']/ns0:plantRecords".format(plantSystemName), self.xmlns)
-                r = plantRootXml
-                for p in path[:-1]:
-                    r = r.find("./ns0:folders/ns0:folder[ns0:name='{0}']".format(p), self.xmlns)
-                    if (r == None):
-                        log.critical("Could not find {0} . Failed while looking for {1}".format(variableName, p))
-                        break
-                if (r is not None):
-                    r = r.find("./ns0:records/ns0:record[ns0:name='{0}']".format(path[-1]), self.xmlns)
-                    for v in valuesXml:
-                        value.append(v.text)
-            else:
-                log.critical("No plant system defined for variable {0}".format(variableId))
+            #For every plant system
+            plantSystemsRootXml = xmlRoot.findall(".//ns0:plantSystem", self.xmlns)
+            for plantSystemXml in plantSystemsRootXml:
+                plantSystemName = plantSystemXml.find("./ns0:name", self.xmlns).text
+                plantRecordsXml = plantSystemXml.find("./ns0:plantRecords", self.xmlns)
+                self.getVariableValueR(plantRecordsXml, plantSystemName, variables)
+        return variables
 
-        return value
 

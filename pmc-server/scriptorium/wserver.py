@@ -3,26 +3,15 @@
 ##
 # Standard imports
 ##
-#TODO Clean imports
 import argparse
 from flask import Flask, Response, request, send_from_directory
 import json
+import logging
 import multiprocessing 
-import numpy
-import threading
 import os
 import time
 import timeit
-import logging
-import dataset
-import pickle
-
-from xml.etree import cElementTree
-from xml.dom import minidom
-from lxml import etree
-
-import os
-import fnmatch
+import threading
 
 ##
 # Project imports
@@ -31,7 +20,6 @@ from scriptorium.util.broadcastqueue import BroacastQueue
 from scriptorium.page import Page
 from scriptorium.user import User
 from scriptorium.usergroup import UserGroup
-from scriptorium.servers.psps.pspsserver import PSPSServer
 
 ##
 # Defines
@@ -40,23 +28,12 @@ from scriptorium.servers.psps.pspsserver import PSPSServer
 LOGIN_TIMEOUT = 3600
 UDP_BROADCAST_PORT = 23450
 
-#Logger configuration
-logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger("{0}".format(__name__))
 
-#Running a threaded Flask is ok only for debugging
-#app.run(threaded=False, host=args.host, port=args.port)
-#self.app.run(host='0.0.0.0')
-#self.alive = False
-
 class WServer:
+    """ TODO
+    """
 
-    #The web app which is a Flask standard application
-    #Static folder to read from cfg file
-    app = Flask(__name__, static_folder="../static", static_url_path="")
-    app.debug = True
-
-    #A DB access cannot be shared between different threads.
     # TODO CLEAN
     #This function allocates a DB instance for any given thread
     allThreads = []
@@ -69,12 +46,20 @@ class WServer:
     #IPC using UDP sockets
     udpQueue = BroacastQueue(UDP_BROADCAST_PORT) 
 
-    def __init__(self, serverImpl):
+    def __init__(self, serverImpl, staticFolder, debug = False):
+        """ TODO
+        """
+        #The web app which is a Flask standard application
+        self.app = Flask(__name__, static_folder=staticFolder, static_url_path="")
+        self.app.debug = debug
+
         #Clean dead threads
         self.monitorThread = threading.Thread(target=self.threadCleaner)
         self.serverImpl = serverImpl
 
     def start(self):
+        """ TODO
+        """
         #To force the killing of the threadCleaner thread with Ctrl+C
         self.monitorThread.daemon = True
         self.monitorThread.start()
@@ -179,7 +164,7 @@ class WServer:
             pageName = request.form["pageName"]
             requestedVariables = json.loads(request.form["variables"])
             variables = self.serverImpl.getPlantInfo(pageName, requestedVariables)
-            toReturn = json.dumps({"variables": variables})
+            toReturn = json.dumps(variables)
         except KeyError as e:
             log.critical(str(e))
             toReturn = "InvalidParameters"
@@ -207,14 +192,15 @@ class WServer:
         return toReturn
 
     def getSchedules(self, request):
-        """ TODO 
-        Args:
-           request.form["username"]: TODO 
-           request.form["pageName"]: TODO.
-        Returns:
-            TODO
-        """
+        """ Gets all the schedules that are avaiable for a given user in a given page.
 
+        Args:
+           request.form["username"]: the username to which the returned schedules belong to. 
+           request.form["pageName"]: the name of the page associated to the schedule.
+        Returns:
+            A json representation of all the schedules that are available for the requested user in the 
+            specified page.
+        """
         toReturn = ""
         try:
             pageName = request.form["pageName"]
@@ -224,7 +210,10 @@ class WServer:
                 username = ""
             
             schedules = self.serverImpl.getSchedules(username, pageName)
-            toReturn = json.dumps(schedules)
+            print schedules
+            schedulesStr = [s.__dict__ for s in schedules]
+            toReturn = json.dumps(schedulesStr)
+            log.debug("For {0} in {1} returning: {2}".format(username, pageName, toReturn))
         except KeyError as e:
             log.critical(str(e))
             toReturn = "InvalidParameters"
@@ -287,19 +276,19 @@ class WServer:
             toReturn = "InvalidParameters"
         return toReturn
 
-    def getScheduleVariables(self, request):
+    def getScheduleVariablesValues(self, request):
         """ Gets all the variables values for a given schedule (identified by its id which is the path to the file).
         
         Args:
-            request.form["scheduleName"]: the schedule identifier.
+            request.form["scheduleUID"]: the schedule identifier.
     
         Returns:
             A json array with a variable:value pair for each schedule variable.
         """
         try: 
             variables = []
-            requestedSchedule = request.form["scheduleName"]
-            variables = self.serverImpl.getScheduleVariables(requestedSchedule)
+            scheduleUID = request.form["scheduleUID"]
+            variables = self.serverImpl.getScheduleVariablesValues(scheduleUID)
             toReturn = json.dumps(variables)
         except KeyError as e:
             log.critical(str(e))
@@ -378,128 +367,3 @@ class WServer:
     def info(self):
         print "TODO ADD info (console and http)"
 
-pspsServer = PSPSServer()
-config = {
-    "baseDir": "/tmp",
-    "numberOfLocks": 8,
-    "usersXmlFilePath": "test/servers/psps/users.xml",
-    "pagesXmlFilePath": "test/servers/psps/pages.xml"
-}
-pspsServer.load(config)
-
-wserver = WServer(pspsServer)
-wserver.start()
-application = wserver.app
-
-#Gets all the pv information
-@application.route("/getplantinfo", methods=["POST", "GET"])
-def getplantinfo():
-    if (wserver.isTokenValid(request)):
-        return wserver.getPlantInfo(request)
-    else:
-        return "InvalidToken"
-  
-#Try to update the values in the plant
-@application.route("/submit", methods=["POST", "GET"])
-def submit():
-    if (wserver.isTokenValid(request)):
-        return wserver.submit(request)
-    else:
-        return "InvalidToken"
-    
-#Return the available schedules
-@application.route("/getschedules", methods=["POST", "GET"])
-def getschedules():
-    if (wserver.isTokenValid(request)):
-        return wserver.getSchedules(request) 
-    else:
-        return "InvalidToken"
-
-#Return the available users
-@application.route("/getusers", methods=["POST", "GET"])
-def getusers():
-    if (wserver.isTokenValid(request)):
-        return wserver.getUsers(request) 
-    else:
-        return "InvalidToken"
-
-#Return the available pages
-@application.route("/getpages", methods=["POST", "GET"])
-def getpages():
-    if (wserver.isTokenValid(request)):
-        return wserver.getPages(request) 
-    else:
-        return "InvalidToken"
-
-#Returns the properties of a given page 
-@application.route("/getpage", methods=["POST", "GET"])
-def getpage():
-    if (wserver.isTokenValid(request)):
-        return wserver.getPage(request) 
-    else:
-        return "InvalidToken"
-
-#Returns the properties of a given schedule
-@application.route("/getschedule", methods=["POST", "GET"])
-def getschedule():
-    if (wserver.isTokenValid(request)):
-        return wserver.getSchedule(request)    
-    else:
-        return "InvalidToken"
-
-#Returns the variables associated to a given schedule
-@application.route("/getschedulevariables", methods=["POST", "GET"])
-def getschedulevariables():
-    if (wserver.isTokenValid(request)):
-        return wserver.getScheduleVariables(request)
-    else:
-        return "InvalidToken"
-
-#Tries to login the current user
-@application.route("/login", methods=["POST", "GET"])
-def login():
-    return wserver.login(request) 
-
-#Updates a schedule variable
-@application.route("/updateschedule", methods=["POST", "GET"])
-def updateschedule():
-    if (wserver.isTokenValid(request)):
-        return wserver.updateSchedule(request)    
-    else:
-        return "InvalidToken"
-
-#Creates a new schedule
-@application.route("/createschedule", methods=["POST", "GET"])
-def createschedule():
-    if (wserver.isTokenValid(request)):
-        return wserver.createSchedule(request)
-    else:
-        return "InvalidToken"
-    
-@application.route("/stream", methods=["POST", "GET"])
-def stream():
-    if (wserver.isTokenValid(request)):
-        return Response(wserver.streamData(), mimetype="text/event-stream")
-    else:
-        return "InvalidToken"
-
-@application.route("/")
-def index():
-    print "YEO"
-    return wserver.app.send_static_file("index.html")
-
-@application.route("/tmp/<filename>")
-def tmp(filename):
-    return send_from_directory('tmp', filename)
-
-
-if __name__ == "__main__":
-    #Start with gunicorn --preload -k gevent -w 16 -b 192.168.130.46:80 test
-    
-    #wserver.start()
-    #parser = argparse.ArgumentParser(description = "Flask http wserver to prototype ideas for ITER level-1")
-    #parser.add_argument("-H", "--host", vt="127.0.0.1", help="Server port")
-    #parser.add_argument("-p", "--port", type=int, default=5000, help="Server IP")
-
-    #args = parser.parse_args()
-    wserver.info()    

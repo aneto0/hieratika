@@ -106,14 +106,14 @@ class ScriptoriumServer():
 
     @abstractmethod
     def getSchedules(self, username, pageName):
-        """ TODO
-        
-        Args:
-            username(str): TODO
-            pageName(str): TODO
+        """ Gets all the schedules that are avaiable for a given user in a given page.
 
+        Args:
+           username: the username to which the returned schedules belong to. 
+           pageName: the name of the page associated to the schedule.
         Returns:
-            TODO
+            An array with all the schedules that are available for the requested user in the 
+            specified page.
         """
         pass
 
@@ -157,13 +157,13 @@ class ScriptoriumServer():
         pass
 
     @abstractmethod
-    def getScheduleVariables(self, scheduleName):
+    def getScheduleVariablesValues(self, scheduleUID):
         """ Gets all the variables values associated to a given schedule.
         
         Args:
-            scheduleName(str): unique schedule identifier.
+            scheduleUID(str): unique schedule identifier.
         Returns:
-            An array of {variableId:variableValue} pairs  
+            A dictionary of variableId:variableValue pairs  
         pass
         """
 

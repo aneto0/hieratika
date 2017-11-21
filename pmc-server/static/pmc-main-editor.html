@@ -65,8 +65,7 @@
                             allVariableIds.push(k)
                         }
                         getPlantInfo(pageName, allVariableIds, function (response) {
-                            var pvInfosJson = $.parseJSON(response);
-                            var pvInfos = pvInfosJson["variables"];
+                            var pvInfos = $.parseJSON(response);
                             var user = JSON.parse(localStorage.user);
                             for (var i in pvInfos) {
                                 var pvInfo = pvInfos[i];

@@ -137,19 +137,21 @@
             else {
                 $.ajax({
                     type: "post",
-                    url: "/getschedulevariables",
+                    url: "/getschedulevariablesvalues",
                     data: {
                         token: parent._currentToken,
-                        scheduleId: currentReference
+                        scheduleUID: currentReference
                     },
                     success: function (response) {
                         var variables = $.parseJSON(response);
-                        var variable;
-                        $.each(variables, function(i, variable) {
-                            var targetElements = parent._allPMCComponents[variable.variableId];
+                        var keys = Object.keys(variables);
+                        for (var i in keys) { 
+                            var variableName = keys[i];
+                            var variableValue = variables[keys[i]];
+                            var targetElements = parent._allPMCComponents[variableName];
                             if (targetElements != null) {
                                 $.each(targetElements, function (i, targetElement) {
-                                    targetElement.setReferenceValue(variable.value);
+                                    targetElement.setReferenceValue(variableValue);
                                     targetElement.setReference(currentReference);
                                 });
                             }
@@ -163,24 +165,27 @@
             }
         }
 
-        function copyFromSchedule(schId, resetValue, updateRemote, setReadOnly) {
+        function copyFromSchedule(schName, resetValue, updateRemote, setReadOnly) {
             $.ajax({
                 type: "post",
-                url: "/getschedulevariables",
+                url: "/getschedulevariablesvalues",
                 data: {
                     token: parent._currentToken,
-                    scheduleId: schId
+                    scheduleUID: schName
                 },
                 success: function (response) {
                     variables = $.parseJSON(response);
-                    $.each(variables, function(i, variable) {
-                        var targetElements = parent._allPMCComponents[variable.variableId];
+                    var keys = Object.keys(variables);
+                    for (var i in keys) { 
+                        var variableName = keys[i];
+                        var variableValue = variables[keys[i]];
+                        var targetElements = parent._allPMCComponents[variableName];
                         if (targetElements != null) {
                             $.each(targetElements, function (i, targetElement) {
                                 if (resetValue) {
-                                    targetElement.setInitialValue(variable.value);
+                                    targetElement.setInitialValue(variableValue);
                                 }
-                                targetElement.setValue(variable.value, updateRemote);
+                                targetElement.setValue(variableValue, updateRemote);
                                 targetElement.setReadOnly(setReadOnly);
                             });
                         }
@@ -210,12 +215,12 @@
         }
 
         function synchroniseRemote() {
-            if (parent._currentScheduleId !== undefined) {
+            if (parent._currentScheduleUID !== undefined) {
                 var toPop = parent._valuesToSynchroniseRemote.length;
                 if (toPop > 0) {
                     var scheduleToUpdate = {
                         tid: parent._remoteServerTid,
-                        scheduleId:parent._currentScheduleId,
+                        scheduleUID:parent._currentScheduleUID,
                         values:parent._valuesToSynchroniseRemote
                     }
                     var jSonData = {
@@ -253,7 +258,7 @@
         var _valuesToSynchroniseRemote = [];
         //The same component id in the dictionary can be used to store multiple instances, i.e. id : []
         var _allPMCComponents = {};
-        var _currentScheduleId = undefined;
+        var _currentScheduleUID = undefined;
         var _currentToken = undefined;
         //This reference to the main editor can be used to listen to page events for components that e.g. do not inherit from PMCComponent
         var _pmcMainEditor = undefined;

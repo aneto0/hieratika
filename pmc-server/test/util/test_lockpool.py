@@ -81,31 +81,31 @@ class TestLockPool(unittest.TestCase):
         pass
 
     def test_oneKeyOneProcessOneThread(self):
-        self.assertEqual(testOneKey(1, 1), True)
+        self.assertTrue(testOneKey(1, 1))
     
     def test_oneKeyManyProcessesOneThread(self):
-        self.assertEqual(testOneKey(5, 1), True)
+        self.assertTrue(testOneKey(5, 1))
 
     def test_oneKeyOneProcessManyThreads(self):
-        self.assertEqual(testOneKey(1, 5), True)
+        self.assertTrue(testOneKey(1, 5))
 
     def test_oneKeyManyProcessesManyThreads(self):
-        self.assertEqual(testOneKey(5, 5), True)
+        self.assertTrue(testOneKey(5, 5))
 
     def test_manyKeysOneProcessOneThread(self):
-        self.assertEqual(testManyKeys(1, 1), True)
+        self.assertTrue(testManyKeys(1, 1))
     
     def test_manyKeysManyProcessesOneThread(self):
-        self.assertEqual(testManyKeys(5, 1), True)
+        self.assertTrue(testManyKeys(5, 1))
 
     def test_manyKeysOneProcessManyThreads(self):
-        self.assertEqual(testManyKeys(1, 5), True)
+        self.assertTrue(testManyKeys(1, 5))
 
     def test_manyKeysManyProcessesManyThreads(self):
-        self.assertEqual(testManyKeys(5, 5), True)
+        self.assertTrue(testManyKeys(5, 5))
 
     def test_manyKeysManyProcessesManyThreadsUnderResourced(self):
-        self.assertEqual(testManyKeys(5, 5, 4), True)
+        self.assertTrue(testManyKeys(5, 5, 4))
 
 if __name__ == '__main__':
     unittest.main()

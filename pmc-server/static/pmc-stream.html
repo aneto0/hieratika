@@ -17,12 +17,12 @@
                     }
                     else {
                         var variables = jsonData["variables"];
-                        var scheduleId = jsonData["scheduleId"];
+                        var scheduleUID = jsonData["scheduleUID"];
                         var updateSchedule = false;
-                        if (scheduleId !== undefined) {
+                        if (scheduleUID !== undefined) {
                             updateSchedule = true;
                         }
-                        if ((!updateSchedule) || (scheduleId === parent._currentScheduleId)) {
+                        if ((!updateSchedule) || (scheduleUID === parent._currentScheduleUID)) {
                             for (var i in variables) {
                                 var pv = variables[i];
                                 var targetElements = parent._allPMCComponents[pv.variableId];
