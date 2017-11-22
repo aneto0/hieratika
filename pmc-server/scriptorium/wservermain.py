@@ -27,14 +27,13 @@ pspsServer = PSPSServer()
 config = {
     "baseDir": "demo",
     "numberOfLocks": 8,
-    "usersXmlFilePath": "test/servers/psps/users.xml",
-    "pagesXmlFilePath": "test/servers/psps/pages.xml"
+    "usersXmlFilePath": "test/servers/psps/deploy/users.xml",
+    "pagesXmlFilePath": "test/servers/psps/deploy/pages.xml"
 }
-pspsServer.load(config)
-
-wserver = WServer(pspsServer, "../static", True)
-wserver.start()
-application = wserver.app
+if(pspsServer.load(config)):
+    wserver = WServer(pspsServer, "../static", True)
+    wserver.start()
+    application = wserver.app
 
 #Gets all the pv information
 @application.route("/getvariablesinfo", methods=["POST", "GET"])
