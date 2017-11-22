@@ -1,12 +1,7 @@
-import httplib
 import json
 import logging
-import multiprocessing
 import time
 import unittest
-import urllib
-
-from flask import request
 
 from scriptorium.wserver import WServer
 from scriptorium.servers.psps.pspsserver import PSPSServer
