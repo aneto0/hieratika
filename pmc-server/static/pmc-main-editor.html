@@ -64,12 +64,12 @@
                         for (var k in parent._allPMCComponents) {
                             allVariableIds.push(k)
                         }
-                        getPlantInfo(pageName, allVariableIds, function (response) {
+                        getVariablesInfo(pageName, allVariableIds, function (response) {
                             var pvInfos = $.parseJSON(response);
                             var user = JSON.parse(localStorage.user);
                             for (var i in pvInfos) {
                                 var pvInfo = pvInfos[i];
-                                var targetElements = parent._allPMCComponents[pvInfo.variableId];
+                                var targetElements = parent._allPMCComponents[pvInfo.name];
                                 if (targetElements != null) {
                                     for (var j in targetElements) {
                                         populateComponentInfo(targetElements[j], pvInfo, user);                    

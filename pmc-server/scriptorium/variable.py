@@ -1,30 +1,67 @@
-class Variable(dict):
+#!/usr/bin/env python
+
+__copyright__ = """
+    Copyright 2017 F4E | European Joint Undertaking for ITER and
+    the Development of Fusion Energy ('Fusion for Energy').
+    Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+    by the European Commission - subsequent versions of the EUPL (the "Licence")
+    You may not use this work except in compliance with the Licence.
+    You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+ 
+    Unless required by applicable law or agreed to in writing, 
+    software distributed under the Licence is distributed on an "AS IS"
+    basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+    or implied. See the Licence permissions and limitations under the Licence.
+"""
+__license__ = "EUPL"
+__author__ = "Andre' Neto"
+__date__ = "22/11/2017"
+
+##
+# Standard imports
+##
+import logging
+
+##
+# Project imports
+##
+
+##
+# Logger configuration
+##
+log = logging.getLogger("{0}".format(__name__))
+
+##
+# Class definition
+##
+class Variable(object):
     """ Describes a scriptorium variable.
         Variables may contain other variables (i.e. they can represent a member of a structure), where their name is the key of a __dict__ representation of the Variable object.
     """
 
-    def __init__(self, name, alias, vtype, numberOfElements, description, parent = None, permissions = [], value = "", *args, **kwargs):
+    def __init__(self, name, alias, vtype, description, permissions = [], numberOfElements = [], value = []):
         """ Constructs a new Variable object.
         
         Args:
             name (str): the variable name. This name can either encode a @ separated path of a name which univocally identifies the variable in the system; or it can be the relative name of the variable when it represents a member of another variable.
             alias (str): free format text which provides a meaningful name to the variable.
             vtype (str): the variable type as one of: uint8, int8, uint16, int16, uint32, int32, uint64, int64, string;
-            numberOfElements ([str]): as an array where each entry contains the number of elements on any given direction; 
+            numberOfElements ([int]): as an array where each entry contains the number of elements on any given direction; 
             description (str): one-line description of the variable;
             permissions (str): user groups that are allowed to change this variable;
             value (str): string encoded variable value.
-            parent (Variable): the Variable which holds this Variable instance (only used when representing structured types).
         """
         self.name = name
         self.alias = alias 
         self.vtype = vtype 
-        self.numberOfElements = numberOfElements
         self.description = description
-        self.parent = parent
         self.permissions = permissions
+        self.numberOfElements = numberOfElements
         self.value = value
-        self.update(*args, **kwargs)
+        self.parent = None
+        self.members = {}
+        #TODO
+        self.validation = []
 
     def getName(self):
         """ 
@@ -32,6 +69,13 @@ class Variable(dict):
             The variable name (see __init__).
         """
         return self.name
+
+    def setName(self, name):
+        """ Sets the variable name.
+        Args:
+            name(str): the new variable name.
+        """
+        self.name = name
 
     def getAlias(self):
         """ 
@@ -64,7 +108,7 @@ class Variable(dict):
     def getParent(self):
         """
         Returns:
-            The variable parent(see __init__)
+            The variable parent (i.e. in the case of structure, the variable which is owner of this member variable"
         """
         return self.parent
 
@@ -74,6 +118,14 @@ class Variable(dict):
             The variable permissions(see __init__)
         """
         return self.permissions
+
+    def getValidations(self):
+        """
+        Returns:
+            The variable validations(see __init__)
+        """
+        return self.permissions
+
 
     def getValue(self):
         """
@@ -94,19 +146,48 @@ class Variable(dict):
             p = p.getParent()
         return varName
 
+    def setParent(self, parent):
+        """ Sets the parent variable of this variable, i.e. the structured variable only this member variable.
+            Args:
+                parent (Variable): the parent variable.
+        """
+        self.parent = parent
+
+    def addMember(self, variable):
+        """ Adds a variable a member of this variable.
+            Args:
+                variable (Variable): the member variable.
+        """
+        variable.setParent(self)
+        self.members[variable.getName()] = variable
+
+    def getMember(self, memberName):
+        """ Gets a member variable of this variable.
+            Args:
+                memberName (str): the name of the member variable to be retrieved.
+            Returns:
+                The member variable or None if it does not exist.
+        """
+        try:
+            member = self.members[memberName]
+        except KeyError as e:
+            log.critical("Could not retrieve member {0}".format(e))
+            member = None
+        return member
+
     def __eq__(self, another):
         """ Two Variables are equal if they have the same absolute name.
            
         Args:
-            self (User): this variable instance.
-            another (User or str): another Variable or a string. 
+            self (Variable): this variable instance.
+            another (Variable or str): another Variable or a string. 
         Returns:
             True if self and another Variable are equal or if another is a string whose value is the self.getAbsoluteName().
         """
         if isinstance(self, another.__class__):
             areEqual = (self.getAbsoluteName() == another.getAbsoluteName())
         else:
-            areEqual = (self.getUsername() == str(another))
+            areEqual = (self.getAbsoluteName() == str(another))
         return areEqual
 
     def __cmp__(self, another):
@@ -129,3 +210,26 @@ class Variable(dict):
                 A string representation of a Variable which consists of the absolute name followed by the value.
         """
         return "{0} : {1}".format(self.getAbsoluteName(), self.getValue()) 
+
+    def asSerializableDict(self):
+        """ 
+        Returns:
+            A recursive json serializable representation of the Variable which serialises all of its properties and Variable members.
+            Note that if a Variable contains members, then it is considered to a structure holder and thus it will not contain a value nor a numberOfElements.
+        """
+        variable = {
+            "name": self.getName(),
+            "alias": self.getAlias(),
+            "type": self.getType(),
+            "description": self.getDescription(),
+            "permissions": map(str, self.getPermissions()),
+            "validations": map(str, self.getValidations()),
+        }
+        if (len(self.members) == 0):
+            variable["numberOfElements"] = self.getNumberOfElements()
+            variable["value"] = self.getValue()
+
+        for memberName in self.members:
+            variable[memberName] = self.members[memberName].asSerializableDict()
+        return variable
+

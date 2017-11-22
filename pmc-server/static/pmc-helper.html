@@ -46,10 +46,10 @@
             });
         }
 
-        function getPlantInfo(pgName, variableIds, successFn) {
+        function getVariablesInfo(pgName, variableIds, successFn) {
             $.ajax({
                 type: "post",
-                url: "/getplantinfo",
+                url: "/getvariablesinfo",
                 data: {
                     token: parent._currentToken,
                     pageName: pgName,
@@ -69,7 +69,7 @@
             component.setReference("none");
             component.setInitialValue(pvInfo.value);
             component.setPlantValue(pvInfo.value);
-            component.setValidations(pvInfo.validation);
+            component.setValidations(pvInfo.validations);
             component.setPermissionGroups(pvInfo.permissions);
             var userAllowed = false;
             for (var g in user.groups) {
@@ -80,20 +80,18 @@
             }
             component.setUserAllowedToWrite(userAllowed);
             //Loop through all the elements
-            component.isStruct = false;
             var keys = Object.keys(pvInfo); 
             for (var keyIdx in keys) { 
-                var memberId = keys[keyIdx];
-                var memberPVInfo = pvInfo[memberId];
-                var memberVariableId = memberPVInfo["variableId"];
-                if (memberVariableId === undefined) {
+                var memberName = keys[keyIdx];
+                var memberPVInfo = pvInfo[memberName];
+                var memberVariableName = memberPVInfo["name"];
+                if (memberVariableName === undefined) {
                     if (Array.isArray(memberPVInfo)) {
-                        component[memberId] = memberPVInfo;
+                        component[memberName] = memberPVInfo;
                     }
-                    component.isStruct = true;
                 }
                 else {
-                    component[memberId] = memberPVInfo;
+                    component[memberName] = memberPVInfo;
                 }
             }
             component.setValue(component.value);

@@ -27,13 +27,20 @@ import multiprocessing
 import os
 import time
 import threading
-log = logging.getLogger("psps-{0}".format(__name__))
 
 ##
 # Project imports
 ##
 
-class LockPool:
+##
+# Logger configuration
+##
+log = logging.getLogger("{0}".format(__name__))
+
+##
+# Class definition
+##
+class LockPool(object):
     """ A multiprocessing, multithreading, pool of named semaphores.
 
         Semaphores are identified by a key at the time of acquire and release.

@@ -37,10 +37,10 @@ wserver.start()
 application = wserver.app
 
 #Gets all the pv information
-@application.route("/getplantinfo", methods=["POST", "GET"])
+@application.route("/getvariablesinfo", methods=["POST", "GET"])
 def getplantinfo():
     if (wserver.isTokenValid(request)):
-        return wserver.getPlantInfo(request)
+        return wserver.getVariablesInfo(request)
     else:
         return "InvalidToken"
   

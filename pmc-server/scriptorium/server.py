@@ -1,4 +1,20 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+__copyright__ = """
+    Copyright 2017 F4E | European Joint Undertaking for ITER and
+    the Development of Fusion Energy ('Fusion for Energy').
+    Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+    by the European Commission - subsequent versions of the EUPL (the "Licence")
+    You may not use this work except in compliance with the Licence.
+    You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+ 
+    Unless required by applicable law or agreed to in writing, 
+    software distributed under the Licence is distributed on an "AS IS"
+    basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+    or implied. See the Licence permissions and limitations under the Licence.
+"""
+__license__ = "EUPL"
+__author__ = "Andre' Neto"
+__date__ = "17/11/2017"
 
 ##
 # Standard imports
@@ -17,7 +33,10 @@ import uuid
 ##
 log = logging.getLogger("{0}".format(__name__))
 
-class ScriptoriumServer():
+##
+# Class definition
+##
+class ScriptoriumServer(object):
     
     __metaclass__ = ABCMeta
 
@@ -85,22 +104,14 @@ class ScriptoriumServer():
         pass
 
     @abstractmethod
-    def getPlantInfo(self, pageName, requestedVariables):
-        """ Returns all the variables information related to any set of plants.
+    def getVariablesInfo(self, pageName, requestedVariables):
+        """ Returns the all the available information for any of the requestedVariables.
 
         Args:
            pageName (str): name of the page (which corresponds to the name of the configuration).
            variables ([str]): identifiers of the variables to be queried.
         Returns:
-            A list with information about all the plant variables 
-            The following information is retrieved for any given variable:
-            - type as one of: uint8, int8, uint16, int16, uint32, int32, uint64, int64, string;
-            - numberOfElements: as an array where each entry contains the number of elements on any given direction; 
-            - name: the full variable name (containing any structure naming information);
-            - variableId: same as name. TODO: deprecate;
-            - description: one-line description of the variable;
-            - permissions: user groups that are allowed to change this variable;
-            - value: string encoded variable value.
+            A list of Variables ([Variable]) with all the information available for each of the request variables 
         """
         pass
 
