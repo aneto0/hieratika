@@ -163,7 +163,7 @@ class WServer:
         try: 
             pageName = request.form["pageName"]
             requestedVariables = json.loads(request.form["variables"])
-            variables = self.serverImpl.getPlantInfo(pageName, requestedVariables)
+            variables = self.serverImpl.getVariablesInfo(pageName, requestedVariables)
             variablesStr = [v.asSerializableDict() for v in variables]
             toReturn = json.dumps(variablesStr)
         except KeyError as e:

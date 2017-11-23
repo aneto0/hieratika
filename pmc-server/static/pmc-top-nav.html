@@ -338,18 +338,18 @@
                 refererenceScheduleChanged(schedule) {
                     this.currentReference.innerHTML = schedule.name; 
                     this.currentReference.style.color = REFERENCE_COLOR; 
-                    setReference(schedule.id);
+                    setReference(schedule.uid);
                 }
 
                 copyFromScheduleChanged(schedule) {
-                    copyFromSchedule(schedule.id, false, true, false);
+                    copyFromSchedule(schedule.uid, false, true, false);
                 }
 
                 editScheduleChanged(schedule) {
                     this.currentDisplay.innerHTML = schedule.name; 
                     this.currentDisplay.style.color = REFERENCE_COLOR; 
-                    copyFromSchedule(schedule.id, true, false, false);
-                    parent._currentScheduleId = schedule.id;
+                    copyFromSchedule(schedule.uid, true, false, false);
+                    parent._currentScheduleId = schedule.uid;
                     this.loadPlantButton.disabled = false;
                     this.copyFromReferenceScheduleButton.disabled = false;
                     this.copyFromReferencePlantButton.disabled = false;
@@ -360,8 +360,8 @@
                 viewScheduleChanged(schedule) {
                     this.currentDisplay.innerHTML = schedule.name; 
                     this.currentDisplay.style.color = REFERENCE_COLOR; 
-                    copyFromSchedule(schedule.id, true, false, true);
-                    parent._currentScheduleId = schedule.id;
+                    copyFromSchedule(schedule.uid, true, false, true);
+                    parent._currentScheduleId = schedule.uid;
                     this.loadPlantButton.disabled = false;
                     this.copyFromReferenceScheduleButton.disabled = true;
                     this.copyFromReferencePlantButton.disabled = true;

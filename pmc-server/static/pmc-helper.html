@@ -65,10 +65,7 @@
 
         function populateComponentInfo(component, pvInfo, user) {
             component.setTypeValue(pvInfo.type);
-            component.setNumberOfElements(pvInfo.numberOfElements);
             component.setReference("none");
-            component.setInitialValue(pvInfo.value);
-            component.setPlantValue(pvInfo.value);
             component.setValidations(pvInfo.validations);
             component.setPermissionGroups(pvInfo.permissions);
             var userAllowed = false;
@@ -94,7 +91,13 @@
                     component[memberName] = memberPVInfo;
                 }
             }
-            component.setValue(component.value);
+            //Structures do not have numberOfElements nor value
+            if ("numberOfElements" in pvInfo) {
+                component.setNumberOfElements(pvInfo.numberOfElements);
+                component.setInitialValue(pvInfo.value);
+                component.setPlantValue(pvInfo.value);
+                component.setValue(pvInfo.value);
+            }
             component.infoLoaded();
         }
 
@@ -163,13 +166,13 @@
             }
         }
 
-        function copyFromSchedule(schName, resetValue, updateRemote, setReadOnly) {
+        function copyFromSchedule(schUID, resetValue, updateRemote, setReadOnly) {
             $.ajax({
                 type: "post",
                 url: "/getschedulevariablesvalues",
                 data: {
                     token: parent._currentToken,
-                    scheduleUID: schName
+                    scheduleUID: schUID
                 },
                 success: function (response) {
                     variables = $.parseJSON(response);
