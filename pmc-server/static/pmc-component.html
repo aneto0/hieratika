@@ -143,17 +143,17 @@
         }
 
         updateRemote (valueToUpdate) {
-            var valueToUpdate = {
+            var valueToUpdateR = {
                 id:this.id,
                 value:valueToUpdate
             }
             var othersSameId = parent.parent._allPMCComponents[this.id];
             var otherPMCComp;
             $.each(othersSameId, function (j, otherPMCComp) {
-                otherPMCComp.setValue(valueToUpdate.value, false);
+                otherPMCComp.setValue(valueToUpdate, false);
             });
-            if (parent._currentScheduleId !== undefined) {
-                parent._valuesToSynchroniseRemote.push(valueToUpdate);
+            if (parent._currentScheduleUID !== undefined) {
+                parent._valuesToSynchroniseRemote.push(valueToUpdateR);
             }
         }
 

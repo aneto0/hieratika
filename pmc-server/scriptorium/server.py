@@ -37,6 +37,9 @@ log = logging.getLogger("{0}".format(__name__))
 # Class definition
 ##
 class ScriptoriumServer(object):
+    """ TODO 
+        TODO will have to decouple login management from parameter management. The same backend might be used in two places with different user authentication strategies.
+    """
     
     __metaclass__ = ABCMeta
 
@@ -45,27 +48,34 @@ class ScriptoriumServer(object):
         self.tokens = {}
 
     def isTokenValid(self, tokenId):
-        """Returns true if the token is valid (i.e. if it was created against a valid login).
-           If the token is valid the last time at which this token was checked is updated.
+        """ Returns true if the token is valid (i.e. if it was created against a valid login).
+            If the token is valid the last time at which this token was checked is updated.
 
-           Args:
-               tokenId (str): the token to verify.           
+        Args:
+            tokenId (str): the token to verify.           
  
-           Returns:
-               True if the token is valid.
+        Returns:
+            True if the token is valid.
         """
         ok = (tokenId in self.tokens)
         if (ok):
             self.tokens[tokenId]["lastInteraction"] = int(time.time())
         return ok
 
-    def login(self, username):
-        """Tries to log a new user into the system.
-           If successful a token will be associated to this user and registered into the system, so a subsequent call to
-           isTokenValid, with this token, will return True.
+    def getTokens(self):
+        """
+        Returns:
+            The latest token table (dictionary of {tokenId: {user:username, lastInteraction: lastInteractionTime}})
+        """
+        return self.tokens
 
-           Returns:
-              A User instance associated to a token described as a 32-character hexadecimal string or None if the login fails.
+    def login(self, username):
+        """ Tries to log a new user into the system.
+            If successful a token will be associated to this user and registered into the system, so a subsequent call to
+            isTokenValid, with this token, will return True.
+
+        Returns:
+            A User instance associated to a token described as a 32-character hexadecimal string or None if the login fails.
         """
         ok = self.authenticate(username)
         user = None
@@ -81,6 +91,13 @@ class ScriptoriumServer(object):
             log.warning("{0} is not registered as a valid user".format(username))
            
         return user
+
+    def logout(self, token):
+        """ TODO 
+        """
+          asda 
+        return user
+
 
     @abstractmethod
     def getUser(self, username):
@@ -157,11 +174,11 @@ class ScriptoriumServer(object):
         pass
 
     @abstractmethod
-    def getSchedule(self, scheduleName):
+    def getSchedule(self, scheduleUID):
         """ TODO define schedule structure
 
         Args:
-            scheduleName (str): unique schedule identifier.
+            scheduleUID (str): unique schedule identifier.
         Returns:
             Information about the requested schedule.
         """
@@ -179,23 +196,30 @@ class ScriptoriumServer(object):
         """
 
     @abstractmethod
-    def updateSchedule(self, tid, scheduleName, variables):
-        """ Updates the variable values for a given schedule. Note that these changes are not to be sync into the storage medium.
+    def commitSchedule(self, tid, scheduleUID, variables):
+        """ Permanently updates the requested variable values for a given schedule. 
     
         Args:
             tid (str): unique identifier of the calling thread/process
-            scheduleName (str): unique schedule identifier
-            variables [{variableId:theVariableId, value:theVariableValue}]:  list of variables to be updated.
+            scheduleUID (str): unique schedule identifier
+            variables ({variableName1:value1, variableName2:value2, ...}):  dictionary with variables to be updated.
 
         Returns:
-            The list of variables that were updated in the form [{id:value}]
+            The list of variables that were updated in the form of a dictionary {variableName1:value1, variableName2:value2, ...}
         """
         pass
 
+
     @abstractmethod
-    def updatePlant(self, variables):
-        """TODO and use same interface as updateSchedule for the variables definition (could be a dict directly... does not have to be
-            an array of dicts...) and shall return the variables which were actually updated
+    def updatePlant(self, pageName, variables):
+        """ Updates the variable values of the plant (associated to a given page).
+    
+        Args:
+            pageName (str): name of the page holding these variables.
+            variables ({variableName1:value1, variableName2:value2, ...}):  dictionary with variables to be updated.
+
+        Returns:
+            The list of variables that were updated in the form of a dictionary {variableName1:value1, variableName2:value2, ...}
         """
         pass
 

@@ -1,7 +1,9 @@
 class Page(object):
-    """ Describes a psps page.
+    """ Describes a scriptorium page.
+
+        A page is a container for a list of Variables.
        
-        A page is an html user-interface which contains widgets that are identified by a unique key (which in turn corresponds to a given variable).
+        Typically a page is also an html user-interface which contains widgets that are identified by a unique key (which in turn corresponds to a given variable).
     """
 
     def __init__(self, name, url, description):

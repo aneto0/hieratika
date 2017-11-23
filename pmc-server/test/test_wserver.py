@@ -72,11 +72,11 @@ class TestWServer(unittest.TestCase):
             log.critical(e)
             self.assertTrue(False)
 
-    def test_getPlantInfo(self):
+    def test_getVariablesInfo(self):
         variables = ["AA", "BB", "AA@AA@AA@AA@AA", "BB@AA@AA@BB@CC"]
 #, "AA@AA", "AA@AA@AA@AA", "BB", "BB@AA", "BB@AA@AA", "AA@AA@AA@AA@AA", "AA@AA@AA@AA@BB", "AA@AA@AA@AA@CC", "AA@AA@AA@BB@AA", "AA@AA@AA@BB@BB", "AA@AA@AA@BB@CC", "BB@AA@AA@AA@AA", "BB@AA@AA@AA@BB", "BB@AA@AA@AA@CC", "BB@AA@AA@BB@AA", "BB@AA@AA@BB@BB", "BB@AA@AA@BB@CC"]
         request = TestRequest({"token": self.token, "pageName": "test0", "variables": json.dumps(variables)})
-        jsonReply = self.wserver.getPlantInfo(request)
+        jsonReply = self.wserver.getVariablesInfo(request)
         variablesInfo = json.loads(jsonReply)
         print variablesInfo
         for i, variableInfo in enumerate(variablesInfo):
@@ -90,6 +90,25 @@ class TestWServer(unittest.TestCase):
             #print json.dumps(varAAAAAAAABB, indent=4, sort_keys=True)
             #print json.dumps(varAAAAAABBAA, indent=4, sort_keys=True)
 
+    def test_commitSchedule(self):
+        request = TestRequest({"token": self.token, "pageName": "test0", "username": "codac-dev-1"})
+        schedules = json.loads(self.wserver.getSchedules(request))
+        request = TestRequest({"token": self.token, "scheduleUID": schedules[0]["uid"], "tid": "", "variables":json.dumps({"AA@AA@AA@AA@AA": 7})})
+        ok = self.wserver.commitSchedule(request)
+        self.assertEqual(ok, "ok")
+
+    def test_updateSchedule(self):
+        request = TestRequest({"token": self.token, "pageName": "test0", "username": "codac-dev-1"})
+        schedules = json.loads(self.wserver.getSchedules(request))
+        request = TestRequest({"token": self.token, "scheduleUID": schedules[0]["uid"], "tid": "", "variables":json.dumps({"AA@AA@AA@AA@AA": 4})})
+        ok = self.wserver.updateSchedule(request)
+        self.assertEqual(ok, "ok")
+
+    def test_updatePlant(self):
+        request = TestRequest({"token": self.token, "pageName": "test0", "tid": "", "variables":json.dumps({"AA@AA@AA@AA@AA": 4})})
+        ok = self.wserver.updatePlant(request)
+        self.assertEqual(ok, "ok")
+
     def test_getSchedules(self):
         request = TestRequest({"token": self.token, "pageName": "test0", "username": "codac-dev-1"})
         schedules = self.wserver.getSchedules(request)
@@ -100,9 +119,8 @@ class TestWServer(unittest.TestCase):
         request = TestRequest({"token": self.token, "pageName": "test0", "username": "codac-dev-1"})
         schedules = json.loads(self.wserver.getSchedules(request))
         request = TestRequest({"token": self.token, "scheduleUID": schedules[0]["uid"]})
-        schedules = self.wserver.getScheduleVariablesValues(request)
-        self.assertNotEqual(schedules, None)
-        print schedules
+        variablesValues = self.wserver.getScheduleVariablesValues(request)
+        self.assertNotEqual(variablesValues, None)
 
        
 if __name__ == '__main__':

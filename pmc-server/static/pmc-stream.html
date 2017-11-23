@@ -23,16 +23,19 @@
                             updateSchedule = true;
                         }
                         if ((!updateSchedule) || (scheduleUID === parent._currentScheduleUID)) {
-                            for (var i in variables) {
-                                var pv = variables[i];
-                                var targetElements = parent._allPMCComponents[pv.variableId];
+                            //variables is a dictionary with name:value pairs
+                            for (var name in variables) {
+                                var targetElements = parent._allPMCComponents[name];
+                                var value = variables[name];
                                 if (targetElements  !== undefined) {
                                     $.each(targetElements, function (i, targetElement) {
                                         if (updateSchedule) {
-                                            targetElement.setValue(pv.value, false);
+                                            targetElement.setValue(value, false);
+                                            //Someone else changed but might not have commited!
+                                            parent._scheduleValuesToCommit[name] = value;
                                         }
                                         else {
-                                            targetElement.setPlantValue(pv.value);
+                                            targetElement.setPlantValue(value);
                                         }
                                     });
                                 }

@@ -1,4 +1,20 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+__copyright__ = """
+    Copyright 2017 F4E | European Joint Undertaking for ITER and
+    the Development of Fusion Energy ('Fusion for Energy').
+    Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+    by the European Commission - subsequent versions of the EUPL (the "Licence")
+    You may not use this work except in compliance with the Licence.
+    You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+ 
+    Unless required by applicable law or agreed to in writing, 
+    software distributed under the Licence is distributed on an "AS IS"
+    basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+    or implied. See the Licence permissions and limitations under the Licence.
+"""
+__license__ = "EUPL"
+__author__ = "Andre' Neto"
+__date__ = "17/11/2017"
 
 ##
 # Standard imports
@@ -7,7 +23,6 @@ import argparse
 from flask import Flask, Response, request, send_from_directory
 import json
 import logging
-import multiprocessing 
 import os
 import time
 import timeit
@@ -22,28 +37,23 @@ from scriptorium.user import User
 from scriptorium.usergroup import UserGroup
 
 ##
-# Defines
+# Logger configuration
 ##
-#Maximum time that a user is allowed to be logged in without interacting with the database
-LOGIN_TIMEOUT = 3600
-UDP_BROADCAST_PORT = 23450
-
 log = logging.getLogger("{0}".format(__name__))
 
+##
+# Class definition
+##
 class WServer:
     """ TODO
     """
-
-    # TODO CLEAN
-    #This function allocates a DB instance for any given thread
-    allThreads = []
-    alive = True
 
     #Synchronised queue between the SSE stream_data and stream_schedule_data functions. One queue per consumer thread. Should be further protected with semaphores
     threadPlantQueues = {}
     threadScheduleQueues = {}
 
     #IPC using UDP sockets
+    UDP_BROADCAST_PORT = 23450
     udpQueue = BroacastQueue(UDP_BROADCAST_PORT) 
 
     def __init__(self, serverImpl, staticFolder, debug = False):
@@ -53,37 +63,36 @@ class WServer:
         self.app = Flask(__name__, static_folder=staticFolder, static_url_path="")
         self.app.debug = debug
 
+        self.LOGIN_TIMEOUT = 3600
         #Clean dead threads
-        self.monitorThread = threading.Thread(target=self.threadCleaner)
+        self.alive = True
+        self.loginMonitorThread = threading.Thread(target=self.loginMonitor)
         self.serverImpl = serverImpl
 
     def start(self):
         """ TODO
         """
         #To force the killing of the threadCleaner thread with Ctrl+C
-        self.monitorThread.daemon = True
-        self.monitorThread.start()
+        self.loginMonitorThread.daemon = True
+        self.loginMonitorThread.start()
 
-
-    #Cleans the threadPlantQueues and threadScheduleQueues 
     def threadCleaner(self):
+        """ TODO
+        """
         while self.alive:
             time.sleep(5)
-            for t in self.allThreads:
-                if (not t.isAlive()):
-                    tid = str(t)
-                    self.allThreads.remove(t)
-                    #Do not delete the MainThread!
-                    if ("MainThread" not in tid):
-                        self.threadPlantQueues.pop(tid, None)
-                        self.threadScheduleQueues.pop(tid, None)
-            #Clean all the users that have not interacted with the wserver for a while
+            #Logout all the users that have not interacted with the server for a while
             currentTime = int(time.time())
             #db.query("DELETE FROM logins WHERE (" + str(currentTime) + " - last_interaction_time) > " + str(LOGIN_TIMEOUT));
             #TODO call the wserver implementation to logout user
        
     def isTokenValid(self, request):
-        """ TODO
+        """ Verifies if a given token is valid.
+            A token is valid iff a user has been properly validated.
+        Args:
+            request.form["token"]: a token generated after a successful user login.
+        Returns:
+            True if the token is valid.
         """
         if (request.method == "POST"):
             ok = ("token" in request.form)
@@ -100,8 +109,8 @@ class WServer:
 
     def getTid(self):
         """
-            Returns:
-                A keyword which univocally identifies both the process and the thread.
+        Returns:
+            A keyword which univocally identifies both the process and the thread.
         """
         tid = str(os.getpid())
         tid += "_"
@@ -109,7 +118,9 @@ class WServer:
         return tid
 
     def streamData(self):
-        """ TODO
+        """ Streams data back to the client using SSE.
+            The inferface is provided by a broadcastqueue.
+            TODO encode mechanism to stop streaming @ user logout
         """
         tid = None
         try:
@@ -129,15 +140,13 @@ class WServer:
                         encodedPy = json.loads(encodedJson)
                         # Only trigger if the source was not from this tid. If it an update from 
                         # the plant, always trigger as some of the parameters might have failed to load
-                        if ("scheduleName" in encodedPy):
+                        if ("scheduleUID" in encodedPy):
                             if (encodedPy["tid"] == tid):
                                 encodedJson = ""
                 yield "data: {0}\n\n".format(encodedJson)
         except Exception as e:
-            print "Exception ignored"
-            print e
-            #ignore
-        print "BYE!!"
+            log.critical("streamData failed {0}".format(e))
+            self.streamData()
 
     
     def getVariablesInfo(self, request):
@@ -172,20 +181,28 @@ class WServer:
 
         return toReturn 
 
-    def submit(self, request):
-        """ TODO
+    def updatePlant(self, request):
+        """ Updates the values of the requested variables in the plant.
+            All the variables that are successfully updated will be streamed to all the clients.
+
+        Args:
+            request.form["pageName"]: name of the page (which corresponds to the name of the configuration).
+            request.form["tid"]: the unique thread (and process) identifier which was returned to the client when registered to the data stream (see streamData).
+            request.form["variables"]: a dictionary with the list of variables to be updated in the form {variableName1:variableValue1, ...}
+        Returns:
+            The string ok if the values are successfully updated.
         """
-        toReturn = "done"
+        toReturn = "ok"
         try:
-            update = request.form["update"]
-            variablesToUpdate = json.loads(update)
+            pageName = request.form["pageName"]
+            variables = request.form["variables"]
+            variablesToUpdate = json.loads(variables)
             toStream = {
                 "tid": request.form["tid"],
                 "variables": []
             }
-            variablesToStream = self.serverImpl.updatePlant(variablesToUpdate)
-            #TODO take care of security
-            toStream["variables"] = variablesToUpdate
+            variablesToStream = self.serverImpl.updatePlant(pageName, variablesToUpdate)
+            toStream["variables"] = variablesToStream
             self.udpQueue.put(json.dumps(toStream))
         except KeyError as e:
             log.critical(str(e))
@@ -264,13 +281,13 @@ class WServer:
     def getSchedule(self, request):
         """ TODO 
         Args:
-           request.form["scheduleName"]: TODO 
+           request.form["scheduleUID"]: TODO 
         Returns:
             TODO
         """
         toReturn = ""
         try: 
-            scheduleName = request.form["scheduleName"]
+            scheduleUID = request.form["scheduleUID"]
             toReturn = json.dumps(schedule)
         except KeyError as e:
             log.critical(str(e))
@@ -284,7 +301,7 @@ class WServer:
             request.form["scheduleUID"]: the schedule identifier.
     
         Returns:
-            A json array with a variable:value pair for each schedule variable.
+            A json dictionary in the form  {variableName1:variableValue1, ...} with each schedule variable.
         """
         try: 
             variables = []
@@ -297,15 +314,15 @@ class WServer:
         return toReturn
 
     def login(self, request):
-        """Logs an user into the system.
+        """Logs a user into the system.
            Note that the same user might be logged from different locations. One authentication token will 
            be generate for each login.
            
-           Args:
-               request.form["username"]: shall contain the username.
-    
-           Returns:
-               A json representation of the User.
+       Args:
+           request.form["username"]: shall contain the username.
+
+       Returns:
+           A json representation of the User.
         """
         try: 
             username = request.form["username"]
@@ -322,27 +339,80 @@ class WServer:
             toReturn = "InvalidParameters"
         return toReturn
 
-    def updateSchedule(self, request):
-        """ Updates the variable values for a given schedule. Note that these changes are not sync into the disk.
-    
+    def logout(self, request):
+        """ Logs out a user from the system.
+       
         Args:
-            request.form["update"] (json): containing {scheduleName: pathToXmlFile, values = [{id:val, ...}]}
+           request.form["token"]: the token associated to the user being logged out.
+        Returns:
+            ok if the user is successfully logged out
+        """
+        token = request.form["token"]
+            username = request.form["username"]
+            log.debug("Logging out user with token: {0}".format(token))
+            user = self.serverImpl.login(username)
+            if (user is not None):
+                user = user.asSerializableDict()
+            else:
+                user = {"username":""}
+            toReturn = json.dumps(user)
+            log.debug("{0}".format(str(user)))
+        except KeyError as e:
+            log.critical("Missing username ({0})".format(e))
+            toReturn = "InvalidParameters"
+        return toReturn
+
+
+    def updateSchedule(self, request):
+        """ Updates other users of the same schedule that the variable values have changed. Note that these changes are not sync into the disk.
+   
+        Args:
+            request.form["scheduleUID"]: unique schedule identifier.
+            request.form["tid"]: the unique thread (and process) identifier which was returned to the client when registered to the data stream (see streamData).
+            request.form["variables"]: a dictionary with the list of variables to be updated in the form {variableName1:variableValue1, ...}
 
         Returns:
             ok if the schedule is successfully updated or an empty string otherwise.
         """
         toReturn = ""
         try: 
-            update = request.form["update"]
-            update = json.loads(update)
-            scheduleName = update["scheduleName"]
-            variables = update["variables"]
-            tid = update["tid"]
+            tid = request.form["tid"]
+            scheduleUID = request.form["scheduleUID"]
+            variables = json.loads(request.form["variables"])
 
             toStream = {
                 "tid": tid,
-                "scheduleName": scheduleName,
-                "variables": self.serverImpl.updateSchedule(tid, scheduleName, variables)
+                "scheduleUID": scheduleUID,
+                "variables": variables 
+            }
+            self.udpQueue.put(json.dumps(toStream))
+            toReturn = "ok"
+        except KeyError as e:
+            log.critical(str(e))
+            toReturn = "InvalidParameters"
+        return toReturn
+
+    def commitSchedule(self, request):
+        """ Updates the variable values for a given schedule. Note that these changes are not sync into the disk.
+   
+        Args:
+            request.form["scheduleUID"]: unique schedule identifier.
+            request.form["tid"]: the unique thread (and process) identifier which was returned to the client when registered to the data stream (see streamData).
+            request.form["variables"]: a dictionary with the list of variables to be updated in the form {variableName1:variableValue1, ...}
+
+        Returns:
+            ok if the schedule is successfully updated or an empty string otherwise.
+        """
+        toReturn = ""
+        try: 
+            tid = request.form["tid"]
+            scheduleUID = request.form["scheduleUID"]
+            variables = json.loads(request.form["variables"])
+
+            toStream = {
+                "tid": tid,
+                "scheduleUID": scheduleUID,
+                "variables": self.serverImpl.commitSchedule(tid, scheduleUID, variables)
             }
             self.udpQueue.put(json.dumps(toStream))
             toReturn = "ok"
@@ -364,7 +434,4 @@ class WServer:
             log.critical(str(e))
             toReturn = "InvalidParameters"
         return toReturn
-
-    def info(self):
-        print "TODO ADD info (console and http)"
 

@@ -11,18 +11,19 @@
             return CU_UNITS_TO_INCHES * INCHES_TO_PX * units;
         } 
 
-        function loadIntoPlant() {
+        function loadIntoPlant(pgName) {
             var allPMCDataJSon = {};
             $.each(parent._allPMCComponents, function (i, pmcComp) {
                 allPMCDataJSon[pmcComp[0].id] = pmcComp[0].getValue();
             });
             $.ajax({
                 type: "post",
-                url: "/submit",
+                url: "/updateplant",
                 data: {
                     token: parent._currentToken,
                     tid: parent._remoteServerTid,
-                    update: JSON.stringify(allPMCDataJSon)
+                    pageName: pgName,
+                    variables: JSON.stringify(allPMCDataJSon)
                 },
                 success: function (response) {
                     if (response == "done") {
@@ -200,10 +201,26 @@
         }
 
         function commitAllChangesToSchedule() {
-            $.each(parent._allPMCComponents, function (i, pmcCompArray) {
-                $.each(pmcCompArray, function (j, pmcComp) {
-                    pmcComp.setInitialValue(pmcComp.getValue());
-                });
+            $.ajax({
+                type: "post",
+                url: "/commitschedule",
+                data: {
+                    token: parent._currentToken,
+                    tid: parent._remoteServerTid,
+                    scheduleUID:parent._currentScheduleUID,
+                    variables:JSON.stringify(parent._scheduleValuesToCommit)
+                },
+                success: function (response) {
+                    $.each(parent._allPMCComponents, function (i, pmcCompArray) {
+                        $.each(pmcCompArray, function (j, pmcComp) {
+                            pmcComp.setInitialValue(pmcComp.getValue());
+                        });
+                    });
+                }.bind(this),
+                error: function (response) {
+                    console.log(response);
+                    alert(response);
+                }.bind(this)
             });
         }
 
@@ -219,25 +236,24 @@
             if (parent._currentScheduleUID !== undefined) {
                 var toPop = parent._valuesToSynchroniseRemote.length;
                 if (toPop > 0) {
-                    var scheduleToUpdate = {
-                        tid: parent._remoteServerTid,
-                        scheduleUID:parent._currentScheduleUID,
-                        values:parent._valuesToSynchroniseRemote
-                    }
-                    var jSonData = {
-                        token: parent._currentToken,
-                        update: JSON.stringify(scheduleToUpdate)
-                    }
-                    var i = 0;
+                    var variablesToSend = {};
                     //Not perfectly safe, but worst comes to the worst I send twice the same thing from time to time
+                    var i = 0;
                     while (i < toPop) {
-                        parent._valuesToSynchroniseRemote.pop();
+                        var valueToSynch = parent._valuesToSynchroniseRemote.pop();
+                        variablesToSend[valueToSynch.id] = valueToSynch.value;
+                        parent._scheduleValuesToCommit[valueToSynch.id] = valueToSynch.value;
                         i++;
                     }
                     $.ajax({
                         type: "post",
                         url: "/updateschedule",
-                        data: jSonData,
+                        data: {
+                            token: parent._currentToken,
+                            tid: parent._remoteServerTid,
+                            scheduleUID:parent._currentScheduleUID,
+                            variables:JSON.stringify(variablesToSend)
+                        },
                         success: function (response) {
                             setTimeout(synchroniseRemote, 2000);
                         }.bind(this),
@@ -252,11 +268,12 @@
             setTimeout(synchroniseRemote, 2000);
         }
 
-        //TODO re-write this has a class, e.g. singleton
+        //TODO re-write this as a class, e.g. singleton
         //IMPORTANT! Remember when accessing to these global variables to prefix with parent. so that they can be accessed from an iframe
         //The thread identifier on the remote server which is sending events through the SSE. This is to avoid receiving updates from ourselves.
         var _remoteServerTid = "";
         var _valuesToSynchroniseRemote = [];
+        var _scheduleValuesToCommit = {};
         //The same component id in the dictionary can be used to store multiple instances, i.e. id : []
         var _allPMCComponents = {};
         var _currentScheduleUID = undefined;

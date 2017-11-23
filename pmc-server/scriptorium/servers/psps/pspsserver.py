@@ -323,11 +323,11 @@ class PSPSServer(ScriptoriumServer):
 
         return schedules
 
-    def getSchedule(self, scheduleName):
+    def getSchedule(self, scheduleUID):
         """ TODO define schedule structure
 
         Args:
-            scheduleName (str): unique schedule identifier.
+            scheduleNUID(str): unique schedule identifier.
         Returns:
             Information about the requested schedule.
         """
@@ -340,22 +340,34 @@ class PSPSServer(ScriptoriumServer):
         self.lockPool.release(xmlId)
         return variables
 
-    def updateSchedule(self, tid, scheduleName, variables):
-        updatedVariables = []
-        xmlId = getXmlId(scheduleName)
+    def commitSchedule(self, tid, scheduleUID, variables):
+        updatedVariables = {}
+        xmlId = self.getXmlId(scheduleUID)
         self.lockPool.acquire(xmlId)
-        for v in variables:
-            variableId = v["id"]
-            value = v["value"]
-            if(updateVariable(variableName, scheduleName, variableValue)):
-                updatedVariables["variables"].append({"variableId" : variableId, "value" : value})
+        for name in variables:
+            value = variables[name]
+            if(self.updateVariable(name, scheduleUID, value)):
+                updatedVariables[name] = value
+
+        tree = self.getCachedXmlTree(scheduleUID)
+        tree.write(scheduleUID)
         self.lockPool.release(xmlId)
         return updatedVariables 
 
-    def updatePlant(self, variables):
-        """TODO
-        """
-        return False
+
+    def updatePlant(self, pageName, variables):
+        updatedVariables = {}
+        xmlPath = "{0}/psps/configurations/{1}/000/plant.xml".format(self.baseDir, pageName)
+        xmlId = self.getXmlId(xmlPath)
+        self.lockPool.acquire(xmlId)
+        for name in variables:
+            value = variables[name]
+            if(self.updateVariable(name, xmlPath, value)):
+                updatedVariables[name] = value
+        tree = self.getCachedXmlTree(xmlPath)
+        tree.write(xmlPath)
+        self.lockPool.release(xmlId)
+        return updatedVariables 
 
     def createSchedule(self, name, description, username, pageName):
         """ Creates a new schedule. TODO
@@ -506,10 +518,13 @@ class PSPSServer(ScriptoriumServer):
                 variable = {}
                 if (r is not None):
                     r = r.find("./ns0:records/ns0:record[ns0:name='{0}']".format(path[-1]), self.xmlns)
-                    #Assume that it is not an array. TODO change ASAP!
-                    valueXml = r.find("./ns0:values/ns0:value", self.xmlns)
-                    valueXml.text = str(variableValue)
-                    ok = True
+                    if (r != None):
+                        #Assume that it is not an array. TODO change ASAP!
+                        valueXml = r.find("./ns0:values/ns0:value", self.xmlns)
+                        valueXml.text = str(variableValue)
+                        ok = True
+                    else:
+                        log.critical("Could not find the record for variable {0}".format(variableName))
             else:
                 log.critical("No plant system defined for variable {0}".format(variableName))
 

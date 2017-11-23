@@ -44,10 +44,10 @@ def getplantinfo():
         return "InvalidToken"
   
 #Try to update the values in the plant
-@application.route("/submit", methods=["POST", "GET"])
-def submit():
+@application.route("/updateplant", methods=["POST", "GET"])
+def updatePlant():
     if (wserver.isTokenValid(request)):
-        return wserver.submit(request)
+        return wserver.updatePlant(request)
     else:
         return "InvalidToken"
     
@@ -99,16 +99,32 @@ def getschedulevariablesValues():
     else:
         return "InvalidToken"
 
-#Tries to login the current user
+#Tries to login a user
 @application.route("/login", methods=["POST", "GET"])
 def login():
     return wserver.login(request) 
 
-#Updates a schedule variable
+#Logout a user
+@application.route("/logout", methods=["POST", "GET"])
+def logout():
+    if (wserver.isTokenValid(request)):
+        return wserver.logout(request) 
+    else:
+        return "InvalidToken"
+
+#Updates a group of schedule variables
 @application.route("/updateschedule", methods=["POST", "GET"])
 def updateschedule():
     if (wserver.isTokenValid(request)):
         return wserver.updateSchedule(request)    
+    else:
+        return "InvalidToken"
+
+#Commits a group of schedule variables
+@application.route("/commitschedule", methods=["POST", "GET"])
+def commitschedule():
+    if (wserver.isTokenValid(request)):
+        return wserver.commitSchedule(request)    
     else:
         return "InvalidToken"
 

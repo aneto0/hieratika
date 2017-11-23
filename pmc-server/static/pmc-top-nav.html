@@ -112,7 +112,7 @@
 
                         this.loadPlantButton = this.shadowRoot.querySelector("#loadplantbtn");
                         this.loadPlantButton.onclick = function() {
-                            loadIntoPlant();
+                            loadIntoPlant(this.selectedPage.name);
                         }.bind(this); 
 
                         this.pageSelectButton = this.shadowRoot.querySelector("#pageselectbtn");
@@ -129,7 +129,7 @@
                         }.bind(this);
 
                         this.pageSelectButton.onclick = function() {
-                            parent._currentScheduleId = undefined;
+                            parent._currentScheduleUID = undefined;
                             this.pageSelectButton.disabled = true;
                             this.getSelectedPage();     
                         }.bind(this);
@@ -147,7 +147,7 @@
 
                         this.viewPlantButton = this.shadowRoot.querySelector("#viewplantbtn");
                         this.viewPlantButton.onclick = function() {
-                            parent._currentScheduleId = undefined;
+                            parent._currentScheduleUID = undefined;
                             this.currentDisplay.innerHTML = PLANT_NAME;
                             this.currentDisplay.style.color = PLANT_COLOR;
                             this.loadPlantButton.disabled = true;
@@ -291,8 +291,6 @@
                     this.pageSelectButton.disabled = false;
                 }
                 
-                
-
                 firePageChanged(page) {
                     for(var l in this.pageListeners) {
                         this.pageListeners[l].pageChanged(page);
@@ -327,6 +325,7 @@
                 }
 
                 pageChanged(page) {
+                    this.selectedPage = page;
                     this.editScheduleButton.disabled = false;
                     this.viewScheduleButton.disabled = false;
                     this.viewPlantButton.disabled = false;
@@ -349,7 +348,7 @@
                     this.currentDisplay.innerHTML = schedule.name; 
                     this.currentDisplay.style.color = REFERENCE_COLOR; 
                     copyFromSchedule(schedule.uid, true, false, false);
-                    parent._currentScheduleId = schedule.uid;
+                    parent._currentScheduleUID = schedule.uid;
                     this.loadPlantButton.disabled = false;
                     this.copyFromReferenceScheduleButton.disabled = false;
                     this.copyFromReferencePlantButton.disabled = false;
@@ -361,7 +360,7 @@
                     this.currentDisplay.innerHTML = schedule.name; 
                     this.currentDisplay.style.color = REFERENCE_COLOR; 
                     copyFromSchedule(schedule.uid, true, false, true);
-                    parent._currentScheduleId = schedule.uid;
+                    parent._currentScheduleUID = schedule.uid;
                     this.loadPlantButton.disabled = false;
                     this.copyFromReferenceScheduleButton.disabled = true;
                     this.copyFromReferencePlantButton.disabled = true;
