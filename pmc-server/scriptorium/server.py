@@ -20,13 +20,19 @@ __date__ = "17/11/2017"
 # Standard imports
 ##
 from abc import ABCMeta, abstractmethod
+import datetime
+import json
 import logging
+import multiprocessing
+import os
 import time
+import threading
 import uuid
 
 ##
 # Project imports
 ##
+from scriptorium.util.broadcastqueue import BroacastQueue
 
 ##
 # Logger configuration
@@ -44,8 +50,18 @@ class ScriptoriumServer(object):
     __metaclass__ = ABCMeta
 
     def __init__(self):
-        super().__init__()
-        self.tokens = {}
+        #Must be multiprocessing safe
+        self.manager = multiprocessing.Manager()
+        self.tokens = self.manager.dict()
+        #IPC using UDP sockets
+        UDP_BROADCAST_PORT = 23450
+        self.udpQueue = BroacastQueue(UDP_BROADCAST_PORT) 
+        #For monitoring user login state
+        self.loginMonitorThread = threading.Thread(target=self.loginMonitor)
+        self.loginMonitorUpdateRate = 5
+        self.loginMonitorMaxInactivityTime = 30
+        #This allow to interrupt the sleep
+        self.loginMonitorEvent = threading.Event()
 
     def isTokenValid(self, tokenId):
         """ Returns true if the token is valid (i.e. if it was created against a valid login).
@@ -62,12 +78,22 @@ class ScriptoriumServer(object):
             self.tokens[tokenId]["lastInteraction"] = int(time.time())
         return ok
 
-    def getTokens(self):
+    def loginMonitor(self):
+        """ Monitors login state of users and logsout users that have not interacted with the system for a while
         """
-        Returns:
-            The latest token table (dictionary of {tokenId: {user:username, lastInteraction: lastInteractionTime}})
-        """
-        return self.tokens
+        while (not self.loginMonitorEvent.is_set()):
+            self.loginMonitorEvent.wait(self.loginMonitorUpdateRate)
+            #Logout all the users that have not interacted with the server for a while
+            currentTime = int(time.time())
+            #Dict proxys cannot be iterated like a normal dict
+            keys = self.tokens.keys()
+            for k in keys:
+                if ((currentTime - self.tokens[k]["lastInteraction"])  > self.loginMonitorMaxInactivityTime):
+                    log.info("User {0} was not activite for the last {1} seconds. User will be logout".format(self.tokens[k]["user"], self.loginMonitorMaxInactivityTime))
+                    self.logout(k) 
+            #Print current server info
+            self.printInfo()
+
 
     def login(self, username):
         """ Tries to log a new user into the system.
@@ -92,11 +118,95 @@ class ScriptoriumServer(object):
            
         return user
 
-    def logout(self, token):
-        """ TODO 
+    def getTid(self):
         """
-          asda 
-        return user
+        Returns:
+            A keyword which univocally identifies both the process and the thread.
+        """
+        tid = str(os.getpid())
+        tid += "_"
+        tid += str(threading.current_thread().ident) 
+        return tid
+ 
+    def printInfo(self):
+        """ Prints information about the server state into the log.
+        """
+        serverInfo = "Server information\n"
+        serverInfo = serverInfo + "Logged users\n"
+        serverInfo = serverInfo + "{0:40}|{1:40}\n".format("user", "Last interaction")
+        keys = self.tokens.keys()
+        for k in keys:
+            user = self.tokens[k]["user"]
+            interactionTime = str(datetime.datetime.fromtimestamp(self.tokens[k]["lastInteraction"]))
+            serverInfo = serverInfo + "{0:40}|{1:40}\n".format(user, interactionTime)
+        log.info(serverInfo)
+
+    def streamData(self):
+        """ Streams data back to the client using SSE.
+            The inferface is provided by a broadcastqueue.
+            TODO encode mechanism to stop streaming @ user logout
+        """
+        tid = None
+        try:
+            while True:
+                if (tid == None):
+                    # The first time just register the Queue and send back the TID so that updates from this client are not sent back to itself (see updateschedule)
+                    tid = self.getTid()
+                    encodedPy = {"reset": True, "tid": tid}
+                    encodedJson = json.dumps(encodedPy)
+                else:
+                    # Monitor on change
+                    encodedJson = self.udpQueue.get()
+                    if (encodedJson == None):
+                        encodedJson = ""
+                        time.sleep(0.01)
+                    else:
+                        encodedPy = json.loads(encodedJson)
+                        # Only trigger if the source was not from this tid. If it an update from 
+                        # the plant, always trigger as some of the parameters might have failed to load
+                        if ("scheduleUID" in encodedPy):
+                            if (encodedPy["tid"] == tid):
+                                encodedJson = ""
+                yield "data: {0}\n\n".format(encodedJson)
+        except Exception as e:
+            log.critical("streamData failed {0}".format(e))
+            self.streamData()
+
+    def queueStreamData(self, jSonData):
+        """ Streams the input jSonData to all the SSE registered clients. This data contains the id of the client thread (received the first time the client registered in streamData), the scheduleUID related to the update and a dictionary with the list of variables that were update. If the update is from the plant the tid and scheduleUID parameters are ignored.
+        
+        Args 
+            jSonData (json): the data to be streamed in the format {tid: threadIdWhichTriggeredTheUpdate, scheduleUID:idOfScheduleWhichTriggeredTheUpdate, variables:{varibleName1:variableValue1, ...}}
+        """
+        self.udpQueue.put(jSonData)
+
+    def start(self):
+        """ Starts the login monitoring thread.
+        """
+        #To force the killing of the threadCleaner thread with Ctrl+C
+        log.info("Starting login monitoring thread")
+        self.loginMonitorThread.daemon = True
+        self.loginMonitorThread.start()
+
+    def stop(self):
+        log.info("Stopping login monitoring thread")
+        self.loginMonitorEvent.set()
+        self.loginMonitorThread.join()
+        log.info("Stopped login monitoring thread")
+
+
+    def logout(self, token):
+        """ Logsout the user identified with the given token from the system.
+
+        Args:
+            token (str): token that was provided to the user when was logged in
+        """
+        try:
+            user = self.tokens[token]["user"]
+            log.info("Logging out {0} with token {1}".format(user, token))
+            del(self.tokens[token])
+        except KeyError as e:
+            log.critical("Failed to logout user with token {0} : {1}".format(token, e))
 
 
     @abstractmethod
@@ -208,7 +318,6 @@ class ScriptoriumServer(object):
             The list of variables that were updated in the form of a dictionary {variableName1:value1, variableName2:value2, ...}
         """
         pass
-
 
     @abstractmethod
     def updatePlant(self, pageName, variables):

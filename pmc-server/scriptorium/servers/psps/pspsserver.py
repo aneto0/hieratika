@@ -21,7 +21,6 @@ __date__ = "17/11/2017"
 ##
 import fnmatch
 import logging
-import multiprocessing
 import os
 import time
 import timeit
@@ -54,13 +53,12 @@ class PSPSServer(ScriptoriumServer):
     #XML namespaces
     xmlns = {"ns0": "http://www.iter.org/CODAC/PlantSystemConfig/2014",
              "xsi": "http://www.w3.org/2001/XMLSchema-instance"}
+
     def __init__(self):
+        super(PSPSServer, self).__init__()
         self.xmlIds = {}
-        manager = multiprocessing.Manager()
-        #Must be multiprocessing safe
-        self.users = manager.list()
-        self.pages = manager.list()
-        self.tokens = manager.dict()
+        self.users = self.manager.list()
+        self.pages = self.manager.list()
         self.openXmls = {}
         self.recordTag = "{{{0}}}record".format(self.xmlns["ns0"])
 

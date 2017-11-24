@@ -304,6 +304,11 @@
                 }
 
                 userLogout() {
+                    $.ajax({
+                        type: "post",
+                        url: "/logout",
+                        data: "token=" + parent._currentToken
+                    });
                     localStorage.removeItem("user");
                     localStorage.removeItem("schedule");
                     this.usernameTd.innerHTML = "...";
