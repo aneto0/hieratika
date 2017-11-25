@@ -30,9 +30,9 @@ import threading
 ##
 # Project imports
 ##
-from scriptorium.page import Page
-from scriptorium.user import User
-from scriptorium.usergroup import UserGroup
+from hieratika.page import Page
+from hieratika.user import User
+from hieratika.usergroup import UserGroup
 
 ##
 # Logger configuration
@@ -43,9 +43,9 @@ log = logging.getLogger("{0}".format(__name__))
 # Class definition
 ##
 class WServer:
-    """ Provides an interface point between the specific server implementation (see ScriptoriumServer)
+    """ Provides an interface point between the specific server implementation (see HieratikaServer)
         and the webserver. In particular this class parses and transforms the web form parameters into 
-        the list of the parameters that are expected by the ScriptoriumServer implementation.
+        the list of the parameters that are expected by the HieratikaServer implementation.
     """
 
     def __init__(self):
@@ -75,16 +75,16 @@ class WServer:
         return ok
    
     def setServer(self, serverImpl):
-        """ Sets the ScriptoriumServer implementation to be used.
+        """ Sets the HieratikaServer implementation to be used.
         Args:
-            serverImpl (ScriptoriumServer): the ScriptoriumServer final implementation to be used.
+            serverImpl (HieratikaServer): the HieratikaServer final implementation to be used.
         """
         self.serverImpl = serverImpl
 
     def getServer(self):
         """ 
         Returns:
-            The ScriptoriumServer final implementation being used.
+            The HieratikaServer final implementation being used.
         """
         return self.serverImpl 
 

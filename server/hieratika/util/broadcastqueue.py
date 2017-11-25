@@ -6,10 +6,10 @@ import threading
 
 class BroacastQueue:
     
-    def __init__(self, port, timeout=10, group="239.0.79.55"):
+    def __init__(self, group, port, timeout=10):
+        self.group = group
         self.port = port
         self.timeout = timeout
-        self.group = group
         self.sockets = {}
 
     def __del__(self):

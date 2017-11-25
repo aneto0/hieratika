@@ -20,6 +20,7 @@ __date__ = "17/11/2017"
 # Standard imports
 ##
 from abc import ABCMeta, abstractmethod
+import ConfigParser
 import datetime
 import json
 import logging
@@ -32,7 +33,7 @@ import uuid
 ##
 # Project imports
 ##
-from scriptorium.util.broadcastqueue import BroacastQueue
+from hieratika.util.broadcastqueue import BroacastQueue
 
 ##
 # Logger configuration
@@ -42,7 +43,7 @@ log = logging.getLogger("{0}".format(__name__))
 ##
 # Class definition
 ##
-class ScriptoriumServer(object):
+class HieratikaServer(object):
     """ TODO 
         TODO will have to decouple login management from parameter management. The same backend might be used in two places with different user authentication strategies.
     """
@@ -53,15 +54,36 @@ class ScriptoriumServer(object):
         #Must be multiprocessing safe
         self.manager = multiprocessing.Manager()
         self.tokens = self.manager.dict()
-        #IPC using UDP sockets
-        UDP_BROADCAST_PORT = 23450
-        self.udpQueue = BroacastQueue(UDP_BROADCAST_PORT) 
-        #For monitoring user login state
-        self.loginMonitorThread = threading.Thread(target=self.loginMonitor)
-        self.loginMonitorUpdateRate = 5
-        self.loginMonitorMaxInactivityTime = 30
-        #This allow to interrupt the sleep
-        self.loginMonitorEvent = threading.Event()
+        
+
+    def loadCommon(self, config):
+        """ Loads parameters that are common to all server implementations.
+        
+        Args:
+            config (ConfigParser): parameters that are common to all server implementations:
+            - udpBroadcastPort (int): the port that is used by the broadcastqueue.
+            - loginMonitorUpdateRate (int): the time interval in seconds at which the state of logged in users is to be checked. 
+            - loginMonitorMaxInactivityTime (int): maximum time that a given user can stay logged in without interacting with the server.
+            - loginMaxUsers (int): maximum number of users that can be logged in at any time.
+        Returns:
+            True if all the parameters are successfully loaded.
+        """
+        try:
+            #IPC using UDP sockets
+            udpGroup = config.get("hieratika", "udpBroadcastGroup")
+            udpPort = config.getint("hieratika", "udpBroadcastPort")
+            self.udpQueue = BroacastQueue(udpGroup, udpPort)
+            #For monitoring user login state
+            self.loginMonitorThread = threading.Thread(target=self.loginMonitor)
+            self.loginMonitorUpdateRate = config.getint("hieratika", "loginMonitorUpdateRate")
+            self.loginMonitorMaxInactivityTime = config.getint("hieratika", "loginMonitorMaxInactivityTime")
+            self.loginMaxUsers = config.getint("hieratika", "loginMaxUsers")
+            #This allow to interrupt the sleep
+            self.loginMonitorEvent = threading.Event()
+        except (KeyError, ValueError, ConfigParser.Error) as e:
+            log.critical("Failed to load configuration parameters {0}".format(e))
+            return False
+        return True
 
     def isTokenValid(self, tokenId):
         """ Returns true if the token is valid (i.e. if it was created against a valid login).
@@ -103,18 +125,23 @@ class ScriptoriumServer(object):
         Returns:
             A User instance associated to a token described as a 32-character hexadecimal string or None if the login fails.
         """
-        ok = self.authenticate(username)
-        user = None
+        ok = (len(self.tokens) < self.loginMaxUsers)
         if (ok):
-            user = self.getUser(username) 
-            ok = (user is not None)
-        if (ok):
-            log.info("{0} logged in successfully".format(username))
-            loginToken = uuid.uuid4().hex
-            self.tokens[loginToken] = {"user": username, "lastInteraction": int(time.time())}
-            user.setToken(loginToken)
+            ok = self.authenticate(username)
+            user = None
+            if (ok):
+                user = self.getUser(username) 
+                ok = (user is not None)
+            if (ok):
+                log.info("{0} logged in successfully".format(username))
+                loginToken = uuid.uuid4().hex
+                self.tokens[loginToken] = {"user": username, "lastInteraction": int(time.time())}
+                user.setToken(loginToken)
+            else:
+                log.warning("{0} is not registered as a valid user".format(username))
         else:
-            log.warning("{0} is not registered as a valid user".format(username))
+            log.critical("Could not register {0} . No more users allowed to register into the system (max number is: {1})".format(username, self.loginMaxUsers))
+            self.printInfo()
            
         return user
 
@@ -217,8 +244,11 @@ class ScriptoriumServer(object):
 
     @abstractmethod
     def load(self, config):
-        """ Configures the server.
-            TODO
+        """ Configures the server against a set of parameters. This set of parameters is specific for each server implementation.
+        Args:
+            config(ConfigParser): the server specific implementation parameters are in the section "server-impl".
+        Returns:
+            True if the server is successfully configured.
         """
         pass
 

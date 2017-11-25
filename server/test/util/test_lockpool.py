@@ -6,7 +6,7 @@ import time
 import threading
 import unittest
 
-from scriptorium.util.lockpool import LockPool
+from hieratika.util.lockpool import LockPool
 logging.basicConfig(level=logging.DEBUG)
 
 def threadedFunction(lockPool, key, variableToProtect, sleepTime, numberOfRepeats):

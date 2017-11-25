@@ -1,5 +1,5 @@
 class Schedule(object):
-    """ Describes a scriptorium parameter schedule.
+    """ Describes a hieratika parameter schedule.
     """
 
     def __init__(self, uid, name, pageName, owner, description = ""):

@@ -26,7 +26,7 @@ import unittest
 ##
 # Project imports
 ##
-from scriptorium.variable import Variable
+from hieratika.variable import Variable
 
 ##
 # Logger configuration

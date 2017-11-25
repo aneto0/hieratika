@@ -27,8 +27,8 @@ import unittest
 ##
 # Project imports
 ##
-from scriptorium.wserver import WServer
-from scriptorium.servers.psps.pspsserver import PSPSServer
+from hieratika.wserver import WServer
+from hieratika.servers.psps.pspsserver import PSPSServer
 
 ##
 # Logger configuration

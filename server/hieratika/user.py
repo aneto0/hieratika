@@ -32,7 +32,7 @@ __date__ = "17/11/2017"
 # Class definition
 ##
 class User(object):
-    """ Describes a scriptorium user.
+    """ Describes a hieratika user.
     """
 
     def __init__(self, username, groups = [], token = None):

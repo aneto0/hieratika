@@ -35,7 +35,7 @@ log = logging.getLogger("{0}".format(__name__))
 # Class definition
 ##
 class Variable(object):
-    """ Describes a scriptorium variable.
+    """ Describes a hieratika variable.
         Variables may contain other variables (i.e. they can represent a member of a structure), where their name is the key of a __dict__ representation of the Variable object.
     """
 

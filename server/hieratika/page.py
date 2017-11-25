@@ -1,5 +1,5 @@
 class Page(object):
-    """ Describes a scriptorium page.
+    """ Describes a hieratika page.
 
         A page is a container for a list of Variables.
        

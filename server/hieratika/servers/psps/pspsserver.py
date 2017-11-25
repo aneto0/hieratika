@@ -19,6 +19,7 @@ __date__ = "17/11/2017"
 ##
 # Standard imports
 ##
+import ConfigParser
 import fnmatch
 import logging
 import os
@@ -30,13 +31,13 @@ from xml.dom import minidom
 ##
 # Project imports
 ##
-from scriptorium.server import ScriptoriumServer
-from scriptorium.page import Page
-from scriptorium.schedule import Schedule
-from scriptorium.user import User
-from scriptorium.usergroup import UserGroup 
-from scriptorium.util.lockpool import LockPool
-from scriptorium.variable import Variable
+from hieratika.server import HieratikaServer
+from hieratika.page import Page
+from hieratika.schedule import Schedule
+from hieratika.user import User
+from hieratika.usergroup import UserGroup 
+from hieratika.util.lockpool import LockPool
+from hieratika.variable import Variable
 
 ##
 # Logger configuration
@@ -46,7 +47,7 @@ log = logging.getLogger("{0}".format(__name__))
 ##
 # Class definition
 ##
-class PSPSServer(ScriptoriumServer):
+class PSPSServer(HieratikaServer):
     """ Access must be multiprocess and multithread safe.
     """
 
@@ -69,12 +70,12 @@ class PSPSServer(ScriptoriumServer):
     def load(self, config):
         ok = True
         try:
-            numberOfLocks = int(config["numberOfLocks"])
-            usersXmlFilePath = config["usersXmlFilePath"]
-            pagesXmlFilePath = config["pagesXmlFilePath"]
-            self.baseDir = config["baseDir"]
+            numberOfLocks = config.getint("server-impl", "numberOfLocks")
+            usersXmlFilePath = config.get("server-impl", "usersXmlFilePath")
+            pagesXmlFilePath = config.get("server-impl", "pagesXmlFilePath")
+            self.baseDir = config.get("server-impl", "baseDir")
             self.lockPool = LockPool(numberOfLocks)
-        except KeyError as e:
+        except (ConfigParser.Error, KeyError) as e:
             log.critical(str(e))
             ok = False 
     

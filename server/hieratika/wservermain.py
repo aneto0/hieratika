@@ -20,15 +20,16 @@ __date__ = "17/11/2017"
 # Standard imports
 ##
 import argparse
+import ConfigParser
 import importlib
-import json
 import logging
+import os
 from flask import Flask, Response, request, send_from_directory
 
 ##
 # Project imports
 ##
-from scriptorium.wserver import WServer
+from hieratika.wserver import WServer
 
 ##
 # Logger configuration
@@ -43,23 +44,30 @@ application = Flask(__name__, static_url_path="")
 wserver = WServer()
 def start(*args, **kwargs):
     log.info("Starting webserver")
-    configFile = kwargs["config"]
+    configFilePath = kwargs["config"]
     try:
-        with open(configFile, "r") as jsonConfigFile:
-            config = json.load(jsonConfigFile)
+        with open(configFilePath, "r") as configFile:
+            config = ConfigParser.ConfigParser()
+            config.readfp(configFile)
 
-            serverModule = importlib.import_module(config["serverModule"])
-            serverClass = getattr(serverModule, config["serverClass"])
+            serverModuleName = config.get("hieratika", "module")
+            log.info("Server module is {0}".format(serverModuleName))
+            serverModule = importlib.import_module(serverModuleName)
+
+            serverClassName = config.get("hieratika", "class")
+            log.info("Server class is {0}".format(serverClassName))
+            serverClass = getattr(serverModule, serverClassName)
+            application.static_folder = config.get("hieratika", "staticFolder")
+            application.debug = True
+            application.logger.setLevel(logging.DEBUG)
             server = serverClass()
-            if(server.load(config)):
-                #The web app which is a Flask standard application
-                server.start()
-                wserver.setServer(server)
-                application.static_folder = config["staticFolder"]
-                application.debug = True
-                application.logger.setLevel(logging.DEBUG)
-                return application
-    except (IOError, KeyError, ValueError) as e:
+            if (server.loadCommon(config)):
+                if(server.load(config)):
+                    #The web app which is a Flask standard application
+                    server.start()
+                    wserver.setServer(server)
+                    return application
+    except (IOError, KeyError, ValueError, ConfigParser.Error) as e:
         #Trap both IOError 
         log.critical("Failed to load configuration file {0} : {1}".format(configFile, e))
         exit()
@@ -200,7 +208,7 @@ def tmp(filename):
 
 
 if __name__ == "__main__":
-    print "Start with gunicorn --preload --log-file=- -k gevent -w 16 -b 192.168.130.46:80 'scriptorium.wservermain:start(config=\"path_to_config_file.json\")'"
+    print "Start with gunicorn --preload --log-file=- -k gevent -w 16 -b 192.168.130.46:80 'hieratika.wservermain:start(config=\"path_to_config_file.ini\")'"
     
     #wserver.start()
     #parser = argparse.ArgumentParser(description = "Flask http wserver to prototype ideas for ITER level-1")
