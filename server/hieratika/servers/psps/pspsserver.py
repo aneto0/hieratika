@@ -23,6 +23,7 @@ import ConfigParser
 import fnmatch
 import logging
 import os
+import shutil
 import time
 import timeit
 from xml.etree import cElementTree
@@ -64,7 +65,7 @@ class PSPSServer(HieratikaServer):
         self.recordTag = "{{{0}}}record".format(self.xmlns["ns0"])
 
     def authenticate(self, username):
-        #TODO
+        #TODO move away from this module.
         return True
 
     def load(self, config):
@@ -323,14 +324,19 @@ class PSPSServer(HieratikaServer):
         return schedules
 
     def getSchedule(self, scheduleUID):
-        """ TODO define schedule structure
-
-        Args:
-            scheduleNUID(str): unique schedule identifier.
-        Returns:
-            Information about the requested schedule.
-        """
-        pass
+        schedule = None
+        xmlId = self.getXmlId(xmlFile)
+        self.lockPool.acquire(xmlId)
+        tree = self.getCachedXmlTree(xmlFile)
+        if (tree is not None):
+            xmlRoot = tree.getroot()
+            description = xmlRoot.find("./ns0:description", self.xmlns)
+            if (description is not None):
+                description = description.text
+            filePath = xmlFile.split("/")
+            schedule = Schedule(xmlFile, filePath[-1], pageName, username, description)
+        self.lockPool.release(xmlId)
+        return schedule
 
     def getScheduleVariablesValues(self, scheduleUID):
         xmlId = self.getXmlId(scheduleUID)
@@ -353,7 +359,6 @@ class PSPSServer(HieratikaServer):
         self.lockPool.release(xmlId)
         return updatedVariables 
 
-
     def updatePlant(self, pageName, variables):
         updatedVariables = {}
         xmlPath = "{0}/psps/configurations/{1}/000/plant.xml".format(self.baseDir, pageName)
@@ -368,13 +373,54 @@ class PSPSServer(HieratikaServer):
         self.lockPool.release(xmlId)
         return updatedVariables 
 
-    def createSchedule(self, name, description, username, pageName):
-        """ Creates a new schedule. TODO
-        """
-        pass
+    def createSchedule(self, name, description, username, pageName, sourceScheduleUID):
+        ok = True
+        log.info("Creating a new schedule for user: {0} for page: {1} with name: {2}".format(username, pageName, name))
+        if (sourceScheduleUID is None):
+            sourceScheduleUID = "{0}/psps/configurations/{1}/000/plant.xml".format(self.baseDir, pageName)
+            destFolderNumber = "000"
+        else: 
+            filePath = sourceScheduleUID.split("/")
+            if (len(filePath) < 2):
+                log.critical("Could not parse the sourceScheduleUID {0} to find the last folder name (which should be a number)".format(sourceScheduleUID))
+                ok = False
+            destFolderNumber = filePath[-2]
+
+        if (ok):
+            destScheduleUID = "{0}/users/{1}/configurations/{2}/{3}/{4}".format(self.baseDir, username, pageName, destFolderNumber, name)
+            try:
+                shutil.copy2(sourceScheduleUID, destScheduleUID) 
+            except IOError as e:
+                log.critical("Failed to create schedule {0}".format(e))
+                ok = False
+
+        if (ok):
+            xmlId = self.getXmlId(destScheduleUID)
+            self.lockPool.acquire(xmlId)
+            tree = self.getCachedXmlTree(destScheduleUID)
+            if (tree is not None):
+                xmlRoot = tree.getroot()
+                nameXml = xmlRoot.find("./ns0:name", self.xmlns)
+                if (nameXml is not None):
+                    nameXml.text = name 
+                descriptionXml = xmlRoot.find("./ns0:description", self.xmlns)
+                if (descriptionXml is not None):
+                    descriptionXml.text = description
+                tree.write(destScheduleUID)
+                log.info("Created schedule with uid {0}".format(destScheduleUID))
+            else:
+                log.critical("Failed to create schedule with uid {0}".format(destScheduleUID))
+            self.lockPool.release(xmlId)
+        return destScheduleUID
 
     def convertVariableTypeFromXML(self, xmlVariableType):
-        #TODO move to helper module
+        """ Helper function which converts a psps record type to a hieratika type.
+        
+        Args:
+            xmlVariableType(str): the psps record type to convert.
+        Returns:
+            The hieratika converted type.
+        """
         toReturn = "string"
         if (xmlVariableType == "recordDouble"):
             toReturn = "float64" 
@@ -382,10 +428,18 @@ class PSPSServer(HieratikaServer):
             toReturn = "float32" 
         elif (xmlVariableType == "recordString"):
             toReturn = "string" 
+        else:
+            log.critical("Could not convert type {0}".format(xmlVariableType))
         return toReturn
 
     def getAllFiles(self, username, pageName):
-        """ TODO
+        """ Helper function which gets all psps configurations associated to a given page for a given user.
+       
+        Args:
+            username (str): the username to search.
+            pageName (str): the configuration to search.
+        Returns:
+            All the schedules files found for a given configuration.
         """
         matches = []
         directory = "{0}/users/{1}/configurations/{2}".format(self.baseDir, username, pageName)

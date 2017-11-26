@@ -149,7 +149,6 @@
                         okNewScheduleButton.onclick = function() {
                             var schedule = {
                                 token: parent._currentToken,
-                                uid: this.newScheduleName.value,
                                 name: this.newScheduleName.value,
                                 description: this.newScheduleDescription.value,
                                 pageName: this.pageName
@@ -157,14 +156,7 @@
                             var user = JSON.parse(localStorage.user);
                             schedule["username"] = user.username;
                             if (this.newSchedulesSelect.selectedIndex > 0) {
-                                schedule["sourceSchedule"] = this.newSchedulesSelect[this.newSchedulesSelect.selectedIndex].value;
-                            }
-                            else {
-                                var allVariableIds = [];
-                                for (var k in parent._allPMCComponents) {
-                                    allVariableIds.push(k)
-                                }
-                                schedule["variables"] = JSON.stringify(allVariableIds);
+                                schedule["sourceScheduleUID"] = this.newSchedulesSelect[this.newSchedulesSelect.selectedIndex].value;
                             }
                             $.ajax({
                                 type: "post",

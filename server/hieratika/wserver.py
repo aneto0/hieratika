@@ -178,16 +178,20 @@ class WServer:
         return toReturn
 
     def getSchedule(self, request):
-        """ TODO 
+        """
         Args:
-           request.form["scheduleUID"]: TODO 
+            request.form["scheduleUID"]: the unique identifier of the schedule to get.
+
         Returns:
-            TODO
+            A json representation of the Schedule or an empty string if the schedule is not found.
         """
         toReturn = ""
         try: 
             scheduleUID = request.form["scheduleUID"]
-            toReturn = json.dumps(schedule)
+            schedule = self.serverImpl.getSchedule(scheduleUID)
+            if (schedule is not None):
+                toReturn = json.dumps(schedule)
+                log.debug("Returning schedule: {0}".format(toReturn))
         except KeyError as e:
             log.critical(str(e))
             toReturn = "InvalidParameters"
@@ -241,16 +245,32 @@ class WServer:
         return toReturn
 
     def createSchedule(self, request):
-        """ TODO
+        """ Creates a new schedule either based on a existing schedule (if sourceSchedule is available on the request.form) or from the plant. 
+
+        Args:
+            request.form["name"]: the name of the schedule to create.
+            request.form["description"]: the description of the schedule to create.
+            request.form["username"]: the owner of the schedule.
+            request.form["pageName"]: name of the page to which the schedule belongs to.
+            request.form["sourceScheduleUID"]: create the schedule by copying from the schedule with the unique identifier given by sourceScheduleUID. If sourceSchedule is not set, copy from the plant.
+
+        Returns:
+            The unique identifier of the created schedule or InvalidParameters if the schedule could not be created.
         """
         try:
             name = request.form["name"]
             description = request.form["description"]
             username = request.form["username"]
             pageName = request.form["pageName"]
-            self.serverImpl.createSchedule(name, description, username, pageName) 
+            sourceScheduleUID = None
+            if "sourceScheduleUID" in request.form:
+                sourceScheduleUID = request.form["sourceScheduleUID"]
+            log.critical("{0}".format(request.form))
+            toReturn = self.serverImpl.createSchedule(name, description, username, pageName, sourceScheduleUID) 
+            if (toReturn == None):
+                toReturn = "InvalidParameters"
         except KeyError as e:
-            log.critical(str(e))
+            log.critical(e)
             toReturn = "InvalidParameters"
         return toReturn
 
@@ -263,6 +283,26 @@ class WServer:
         usersStr = [u.asSerializableDict() for u in users]
         log.debug("Returning users: {0}".format(usersStr))
         toReturn = json.dumps(usersStr)
+        return toReturn
+
+    def getUser(self, request):
+        """
+        Args:
+            request.form["username"]: the username of the user to get.
+
+        Returns:
+            A json representation of the User or an empty string if the user is not found.
+        """
+        toReturn = ""
+        try: 
+            username = request.form["username"]
+            user = self.serverImpl.getUser(username)
+            if (user is not None):
+                toReturn = json.dumps(user)
+                log.debug("Returning user: {0}".format(toReturn))
+        except KeyError as e:
+            log.critical(str(e))
+            toReturn = "InvalidParameters"
         return toReturn
 
     def getPages(self, request):

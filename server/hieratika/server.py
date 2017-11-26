@@ -238,7 +238,11 @@ class HieratikaServer(object):
 
     @abstractmethod
     def getUser(self, username):
-        """ TODO
+        """ 
+        Args:
+            username(str): the username of the user to get.
+        Returns:
+            The user associated to the given username or None if not found.
         """
         pass
 
@@ -363,9 +367,18 @@ class HieratikaServer(object):
         pass
 
     @abstractmethod
-    def createSchedule(self, name, description, username, pageName):
-        """ Creates a new schedule.
-            TODO
+    def createSchedule(self, name, description, username, pageName, sourceScheduleUID = None):
+        """ Creates a new schedule either based on a existing schedule (if sourceSchedule is not None) or from the plant. 
+
+        Args:
+            name (str): the name of the schedule to create.
+            description (str): the description of the schedule to create.
+            username (str): the owner of the schedule.
+            pageName (str): name of the page to which the schedule belongs to.
+            sourceScheduleUID (str): create the schedule by copying from the schedule with this unique identifier. If sourceScheduleUID is None, copy from the plant.
+
+        Returns:
+            The unique identifier of the created schedule or None if the schedule could not be created.
         """
         pass
 

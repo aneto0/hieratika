@@ -109,6 +109,16 @@ def getusers():
     else:
         return "InvalidToken"
 
+#Returns the information about a given user
+@application.route("/getuser", methods=["POST", "GET"])
+def getuser():
+    log.debug("/getuser")
+    if (wserver.isTokenValid(request)):
+        return wserver.getUser(request) 
+    else:
+        return "InvalidToken"
+
+
 #Return the available pages
 @application.route("/getpages", methods=["POST", "GET"])
 def getpages():
