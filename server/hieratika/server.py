@@ -45,7 +45,7 @@ log = logging.getLogger("{0}".format(__name__))
 ##
 class HieratikaServer(object):
     """ TODO 
-        TODO will have to decouple login management from parameter management. The same backend might be used in two places with different user authentication strategies.
+        TODO
     """
     
     __metaclass__ = ABCMeta
@@ -67,6 +67,7 @@ class HieratikaServer(object):
             #IPC using UDP sockets
             udpGroup = config.get("hieratika", "udpBroadcastGroup")
             udpPort = config.getint("hieratika", "udpBroadcastPort")
+            self.streamUsers = manager.dict()
             self.udpQueue = BroacastQueue(udpGroup, udpPort)
         except (KeyError, ValueError, ConfigParser.Error) as e:
             log.critical("Failed to load configuration parameters {0}".format(e))
@@ -83,13 +84,16 @@ class HieratikaServer(object):
         tid += str(threading.current_thread().ident) 
         return tid
  
-    def streamData(self):
+    def streamData(self, username):
         """ Streams data back to the client using SSE.
             The inferface is provided by a broadcastqueue.
-            TODO encode mechanism to stop streaming @ user logout
+         
+        Args:
+            username (str): username of the user requesting for data to be streamed.
         """
         tid = None
         try:
+            log.info("Streaming data for user {0}".format(username))
             while True:
                 if (tid == None):
                     # The first time just register the Queue and send back the TID so that updates from this client are not sent back to itself (see updateschedule)
@@ -104,6 +108,13 @@ class HieratikaServer(object):
                         time.sleep(0.01)
                     else:
                         encodedPy = json.loads(encodedJson)
+                        if ("logout" in encodedPy):
+                            if (encodedPy["logout"] == username):
+                                log.info("Stopping streamData as user {0} logged out".format(username))
+                                break
+                            else:
+                                encodedJson = ""
+                                time.sleep(0.01)
                         # Only trigger if the source was not from this tid. If it an update from 
                         # the plant, always trigger as some of the parameters might have failed to load
                         if ("scheduleUID" in encodedPy):
@@ -113,6 +124,7 @@ class HieratikaServer(object):
         except Exception as e:
             log.critical("streamData failed {0}".format(e))
             self.streamData()
+        log.info("Stopped streamData for user {0}".format(username))
 
     def queueStreamData(self, jSonData):
         """ Streams the input jSonData to all the SSE registered clients. This data contains the id of the client thread (received the first time the client registered in streamData), the scheduleUID related to the update and a dictionary with the list of variables that were update. If the update is from the plant the tid and scheduleUID parameters are ignored.
@@ -134,7 +146,7 @@ class HieratikaServer(object):
         Args:
             username (str): the username of the user.
         """
-        pass
+        self.udpQueue.put(json.dumps({"logout": username}))
 
     @abstractmethod
     def load(self, manager, config):

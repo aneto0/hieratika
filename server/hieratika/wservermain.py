@@ -227,8 +227,15 @@ def createschedule():
 def stream():
     log.debug("/stream")
     if (wserver.isTokenValid(request)):
-        #Note that this cannot be interfaced through the wserver (otherwise the yield reply will not work properly)
-        return Response(wserver.getServer().streamData(), mimetype="text/event-stream")
+        if (request.method == "POST"):
+            tokenId = request.form["token"]
+        else:
+            tokenId = request.args["token"]
+
+        username = wserver.getAuth().getUsernameFromToken(tokenId)
+        if (username is not None): 
+            #Note that this cannot be interfaced through the wserver (otherwise the yield reply will not work properly)
+            return Response(wserver.getServer().streamData(username), mimetype="text/event-stream")
     else:
         return "InvalidToken"
 

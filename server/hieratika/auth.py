@@ -160,16 +160,6 @@ class HieratikaAuth(object):
            
         return user
 
-    def getTid(self):
-        """
-        Returns:
-            A keyword which univocally identifies both the process and the thread.
-        """
-        tid = str(os.getpid())
-        tid += "_"
-        tid += str(threading.current_thread().ident) 
-        return tid
- 
     def printInfo(self):
         """ Prints information about the server state into the log.
         """
@@ -182,6 +172,16 @@ class HieratikaAuth(object):
             interactionTime = str(datetime.datetime.fromtimestamp(self.tokens[k]["lastInteraction"]))
             info = info + "{0:40}|{1:40}\n".format(user, interactionTime)
         log.info(info)
+
+    def getUsernameFromToken(self, token):
+        """ Returns the username associated to a given token.
+        """
+        try:
+            username = self.tokens[token]["user"]
+        except KeyError as e:
+            log.critical("Failed to get user with token {0}".format(token))
+            username = None
+        return username
 
 
     def logout(self, token):
