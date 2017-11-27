@@ -51,20 +51,15 @@ class HieratikaServer(object):
     __metaclass__ = ABCMeta
 
     def __init__(self):
-        #Must be multiprocessing safe
-        self.manager = multiprocessing.Manager()
-        self.tokens = self.manager.dict()
+        pass
         
-
-    def loadCommon(self, config):
+    def loadCommon(self, manager, config):
         """ Loads parameters that are common to all server implementations.
         
         Args:
+            manager(multiprocessing.Manager): A multiprocessing Manager instance to allocate objects that are to be shared by different processes.
             config (ConfigParser): parameters that are common to all server implementations:
             - udpBroadcastPort (int): the port that is used by the broadcastqueue.
-            - loginMonitorUpdateRate (int): the time interval in seconds at which the state of logged in users is to be checked. 
-            - loginMonitorMaxInactivityTime (int): maximum time that a given user can stay logged in without interacting with the server.
-            - loginMaxUsers (int): maximum number of users that can be logged in at any time.
         Returns:
             True if all the parameters are successfully loaded.
         """
@@ -73,77 +68,10 @@ class HieratikaServer(object):
             udpGroup = config.get("hieratika", "udpBroadcastGroup")
             udpPort = config.getint("hieratika", "udpBroadcastPort")
             self.udpQueue = BroacastQueue(udpGroup, udpPort)
-            #For monitoring user login state
-            self.loginMonitorThread = threading.Thread(target=self.loginMonitor)
-            self.loginMonitorUpdateRate = config.getint("hieratika", "loginMonitorUpdateRate")
-            self.loginMonitorMaxInactivityTime = config.getint("hieratika", "loginMonitorMaxInactivityTime")
-            self.loginMaxUsers = config.getint("hieratika", "loginMaxUsers")
-            #This allow to interrupt the sleep
-            self.loginMonitorEvent = threading.Event()
         except (KeyError, ValueError, ConfigParser.Error) as e:
             log.critical("Failed to load configuration parameters {0}".format(e))
             return False
         return True
-
-    def isTokenValid(self, tokenId):
-        """ Returns true if the token is valid (i.e. if it was created against a valid login).
-            If the token is valid the last time at which this token was checked is updated.
-
-        Args:
-            tokenId (str): the token to verify.           
- 
-        Returns:
-            True if the token is valid.
-        """
-        ok = (tokenId in self.tokens)
-        if (ok):
-            self.tokens[tokenId]["lastInteraction"] = int(time.time())
-        return ok
-
-    def loginMonitor(self):
-        """ Monitors login state of users and logsout users that have not interacted with the system for a while
-        """
-        while (not self.loginMonitorEvent.is_set()):
-            self.loginMonitorEvent.wait(self.loginMonitorUpdateRate)
-            #Logout all the users that have not interacted with the server for a while
-            currentTime = int(time.time())
-            #Dict proxys cannot be iterated like a normal dict
-            keys = self.tokens.keys()
-            for k in keys:
-                if ((currentTime - self.tokens[k]["lastInteraction"])  > self.loginMonitorMaxInactivityTime):
-                    log.info("User {0} was not activite for the last {1} seconds. User will be logout".format(self.tokens[k]["user"], self.loginMonitorMaxInactivityTime))
-                    self.logout(k) 
-            #Print current server info
-            self.printInfo()
-
-
-    def login(self, username):
-        """ Tries to log a new user into the system.
-            If successful a token will be associated to this user and registered into the system, so a subsequent call to
-            isTokenValid, with this token, will return True.
-
-        Returns:
-            A User instance associated to a token described as a 32-character hexadecimal string or None if the login fails.
-        """
-        ok = (len(self.tokens) < self.loginMaxUsers)
-        if (ok):
-            ok = self.authenticate(username)
-            user = None
-            if (ok):
-                user = self.getUser(username) 
-                ok = (user is not None)
-            if (ok):
-                log.info("{0} logged in successfully".format(username))
-                loginToken = uuid.uuid4().hex
-                self.tokens[loginToken] = {"user": username, "lastInteraction": int(time.time())}
-                user.setToken(loginToken)
-            else:
-                log.warning("{0} is not registered as a valid user".format(username))
-        else:
-            log.critical("Could not register {0} . No more users allowed to register into the system (max number is: {1})".format(username, self.loginMaxUsers))
-            self.printInfo()
-           
-        return user
 
     def getTid(self):
         """
@@ -155,19 +83,6 @@ class HieratikaServer(object):
         tid += str(threading.current_thread().ident) 
         return tid
  
-    def printInfo(self):
-        """ Prints information about the server state into the log.
-        """
-        serverInfo = "Server information\n"
-        serverInfo = serverInfo + "Logged users\n"
-        serverInfo = serverInfo + "{0:40}|{1:40}\n".format("user", "Last interaction")
-        keys = self.tokens.keys()
-        for k in keys:
-            user = self.tokens[k]["user"]
-            interactionTime = str(datetime.datetime.fromtimestamp(self.tokens[k]["lastInteraction"]))
-            serverInfo = serverInfo + "{0:40}|{1:40}\n".format(user, interactionTime)
-        log.info(serverInfo)
-
     def streamData(self):
         """ Streams data back to the client using SSE.
             The inferface is provided by a broadcastqueue.
@@ -207,60 +122,28 @@ class HieratikaServer(object):
         """
         self.udpQueue.put(jSonData)
 
-    def start(self):
-        """ Starts the login monitoring thread.
-        """
-        #To force the killing of the threadCleaner thread with Ctrl+C
-        log.info("Starting login monitoring thread")
-        self.loginMonitorThread.daemon = True
-        self.loginMonitorThread.start()
-
-    def stop(self):
-        log.info("Stopping login monitoring thread")
-        self.loginMonitorEvent.set()
-        self.loginMonitorThread.join()
-        log.info("Stopped login monitoring thread")
-
-
-    def logout(self, token):
-        """ Logsout the user identified with the given token from the system.
-
+    def userLoggedIn(self, username):
+        """ Called everytime a user is logged in into the system.
         Args:
-            token (str): token that was provided to the user when was logged in
+            username (str): the username of the user.
         """
-        try:
-            user = self.tokens[token]["user"]
-            log.info("Logging out {0} with token {1}".format(user, token))
-            del(self.tokens[token])
-        except KeyError as e:
-            log.critical("Failed to logout user with token {0} : {1}".format(token, e))
+        pass
 
-
-    @abstractmethod
-    def getUser(self, username):
-        """ 
+    def userLoggedOut(self, username):
+        """ Called everytime a user is logged in into the system.
         Args:
-            username(str): the username of the user to get.
-        Returns:
-            The user associated to the given username or None if not found.
+            username (str): the username of the user.
         """
         pass
 
     @abstractmethod
-    def load(self, config):
+    def load(self, manager, config):
         """ Configures the server against a set of parameters. This set of parameters is specific for each server implementation.
         Args:
+            manager(multiprocessing.Manager): A multiprocessing Manager instance to allocate objects that are to be shared by different processes.
             config(ConfigParser): the server specific implementation parameters are in the section "server-impl".
         Returns:
             True if the server is successfully configured.
-        """
-        pass
-
-    @abstractmethod 
-    def authenticate(self, username):
-        """ Authenticates a user into the system.
-            Returns:
-                True if the user is successfully authenticated.
         """
         pass
 
@@ -290,14 +173,6 @@ class HieratikaServer(object):
         pass
 
     @abstractmethod
-    def getUsers(self):
-        """
-        Returns:
-            All the system users.
-        """
-        pass
-
-    @abstractmethod
     def getPages(self):
         """
         Returns:
@@ -310,7 +185,7 @@ class HieratikaServer(object):
         """Gets the page associated to a given name
 
            Args:
-               token (str): the page name to query.
+               pageName (str): the page name to query.
 
            Returns:
                The Page or None if the name is not found.

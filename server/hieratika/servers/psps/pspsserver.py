@@ -35,8 +35,6 @@ from xml.dom import minidom
 from hieratika.server import HieratikaServer
 from hieratika.page import Page
 from hieratika.schedule import Schedule
-from hieratika.user import User
-from hieratika.usergroup import UserGroup 
 from hieratika.util.lockpool import LockPool
 from hieratika.variable import Variable
 
@@ -59,20 +57,14 @@ class PSPSServer(HieratikaServer):
     def __init__(self):
         super(PSPSServer, self).__init__()
         self.xmlIds = {}
-        self.users = self.manager.list()
-        self.pages = self.manager.list()
         self.openXmls = {}
         self.recordTag = "{{{0}}}record".format(self.xmlns["ns0"])
 
-    def authenticate(self, username):
-        #TODO move away from this module.
-        return True
-
-    def load(self, config):
+    def load(self, manager, config):
         ok = True
         try:
+            self.pages = manager.list()
             numberOfLocks = config.getint("server-impl", "numberOfLocks")
-            usersXmlFilePath = config.get("server-impl", "usersXmlFilePath")
             pagesXmlFilePath = config.get("server-impl", "pagesXmlFilePath")
             self.baseDir = config.get("server-impl", "baseDir")
             self.lockPool = LockPool(numberOfLocks)
@@ -80,9 +72,6 @@ class PSPSServer(HieratikaServer):
             log.critical(str(e))
             ok = False 
     
-        if (ok):
-            ok = self.loadUsers(usersXmlFilePath)
-
         if (ok):
             ok = self.loadPages(pagesXmlFilePath)
 
@@ -282,22 +271,16 @@ class PSPSServer(HieratikaServer):
         log.debug("Took {0} s to get the information for all the {1} variables in the plant for page {2}".format(perfElapsedTime, len(requestedVariables), pageName))
         return variables 
 
-    def getUser(self, username):
-        user = None
-        idx = self.users.index(username)
-        if (idx >= 0):
-            user = self.users[idx]
-        return user
-
-    def getUsers(self):
-        return self.users
-
     def getPages(self):
         return self.pages
 
     def getPage(self, pageName):
         page = None
-        idx = self.pages.index(pageName)
+        try:
+            idx = self.pages.index(pageName)
+        except ValueError as e:
+            log.critical("Failed to get page {0}".format(e))
+            idx = -1
         if (idx >= 0):
             page = self.pages[idx]
         return page

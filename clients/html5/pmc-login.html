@@ -50,11 +50,16 @@
                         var loginButton = this.shadowRoot.querySelector("#loginbtn");
                         loginButton.onclick = function() {
                             var usernameTxt = this.shadowRoot.querySelector("#username");
-                            var username = usernameTxt.value; 
+                            var usernameToSend = usernameTxt.value; 
+                            var passwordTxt = this.shadowRoot.querySelector("#password");
+                            var passwordToSend = passwordTxt.value; 
                             $.ajax({
                                 type: "post",
                                 url: "/login",
-                                data: "username=" + username,
+                                data: {
+                                    username: usernameToSend,
+                                    password: passwordToSend
+                                },
                                 success: function (response) {
                                     var user = $.parseJSON(response);
                                     if (user.id !== "") {

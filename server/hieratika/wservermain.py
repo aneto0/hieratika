@@ -23,6 +23,7 @@ import argparse
 import ConfigParser
 import importlib
 import logging
+import multiprocessing
 import os
 from flask import Flask, Response, request, send_from_directory
 
@@ -50,23 +51,47 @@ def start(*args, **kwargs):
             config = ConfigParser.ConfigParser()
             config.readfp(configFile)
 
-            serverModuleName = config.get("hieratika", "module")
+            serverModuleName = config.get("hieratika", "serverModule")
             log.info("Server module is {0}".format(serverModuleName))
             serverModule = importlib.import_module(serverModuleName)
 
-            serverClassName = config.get("hieratika", "class")
+            serverClassName = config.get("hieratika", "serverClass")
             log.info("Server class is {0}".format(serverClassName))
             serverClass = getattr(serverModule, serverClassName)
+
+            authModuleName = config.get("hieratika", "authModule")
+            log.info("Auth module is {0}".format(authModuleName))
+            authModule = importlib.import_module(authModuleName)
+
+            authClassName = config.get("hieratika", "authClass")
+            log.info("Auth class is {0}".format(authClassName))
+            authClass = getattr(authModule, authClassName)
+
             application.static_folder = config.get("hieratika", "staticFolder")
             application.debug = True
             application.logger.setLevel(logging.DEBUG)
             server = serverClass()
-            if (server.loadCommon(config)):
-                if(server.load(config)):
-                    #The web app which is a Flask standard application
-                    server.start()
-                    wserver.setServer(server)
-                    return application
+            auth = authClass()
+
+            manager = multiprocessing.Manager()
+            ok = server.loadCommon(manager, config)
+            if (ok):
+                ok = server.load(manager, config)
+            if (ok):
+                ok = auth.loadCommon(manager, config)
+            if (ok):
+                ok = auth.load(manager, config)
+            if (ok):
+                auth.addLogListener(server)
+                ok = auth.start()
+
+            if (ok):
+                #The web app which is a Flask standard application
+                wserver.setServer(server)
+                wserver.setAuth(auth)
+                return application
+            else:
+                log.critical("Failed to load either the server or the auth service") 
     except (IOError, KeyError, ValueError, ConfigParser.Error) as e:
         #Trap both IOError 
         log.critical("Failed to load configuration file {0} : {1}".format(configFile, e))

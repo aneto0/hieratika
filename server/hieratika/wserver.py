@@ -70,7 +70,7 @@ class WServer:
             if (ok):
                 tokenId = request.args["token"]
         if (ok): 
-            ok = self.serverImpl.isTokenValid(tokenId)
+            ok = self.authImpl.isTokenValid(tokenId)
             log.debug("Token: {0} is {1}".format(tokenId, str(ok)))
         return ok
    
@@ -88,6 +88,19 @@ class WServer:
         """
         return self.serverImpl 
 
+    def setAuth(self, authImpl):
+        """ Sets the HieratikaAuth implementation to be used.
+        Args:
+            authImpl (HieratikaAuth): the HieratikaAuth final implementation to be used.
+        """
+        self.authImpl = authImpl
+
+    def getAuth(self):
+        """ 
+        Returns:
+            The HieratikaAuth final implementation being used.
+        """
+        return self.authImpl 
 
     def getVariablesInfo(self, request):
         """ Returns the all the available information for any of the requestedVariables.
@@ -168,7 +181,6 @@ class WServer:
                 username = ""
             
             schedules = self.serverImpl.getSchedules(username, pageName)
-            print schedules
             schedulesStr = [s.__dict__ for s in schedules]
             toReturn = json.dumps(schedulesStr)
             log.debug("For {0} in {1} returning: {2}".format(username, pageName, toReturn))
@@ -279,7 +291,7 @@ class WServer:
         Returns:
             All the system users.
         """
-        users = self.serverImpl.getUsers()
+        users = self.authImpl.getUsers()
         usersStr = [u.asSerializableDict() for u in users]
         log.debug("Returning users: {0}".format(usersStr))
         toReturn = json.dumps(usersStr)
@@ -296,7 +308,7 @@ class WServer:
         toReturn = ""
         try: 
             username = request.form["username"]
-            user = self.serverImpl.getUser(username)
+            user = self.authImpl.getUser(username)
             if (user is not None):
                 toReturn = json.dumps(user)
                 log.debug("Returning user: {0}".format(toReturn))
@@ -335,8 +347,6 @@ class WServer:
             toReturn = "InvalidParameters"
         return toReturn
 
-
-
     def login(self, request):
         """Logs a user into the system.
            Note that the same user might be logged from different locations. One authentication token will 
@@ -344,14 +354,16 @@ class WServer:
            
        Args:
            request.form["username"]: shall contain the username.
+           request.form["password"]: shall contain the user password.
 
        Returns:
            A json representation of the User.
         """
         try: 
             username = request.form["username"]
+            password = request.form["password"]
             log.debug("Logging in: {0}".format(username))
-            user = self.serverImpl.login(username)
+            user = self.authImpl.login(username, password)
             if (user is not None):
                 user = user.asSerializableDict()
             else:
@@ -371,7 +383,7 @@ class WServer:
         """
         try:
             token = request.form["token"]
-            self.serverImpl.logout(token)
+            self.authImpl.logout(token)
         except KeyError as e:
             log.critical("Tried to logout without specifying a token")
 
