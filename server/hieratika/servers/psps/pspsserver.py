@@ -318,7 +318,11 @@ class PSPSServer(HieratikaServer):
                     description = description.text
             self.lockPool.release(xmlId)
             filePath = xmlFile.split("/")
-            schedule = Schedule(xmlFile, filePath[-1], pageName, username, description)
+            name = filePath[-1]
+            name = name.split(".xml")
+            if (len(name) > 1):
+                name = name[-2]
+            schedule = Schedule(xmlFile, name, pageName, username, description)
             schedules.append(schedule);
 
         return schedules
@@ -387,6 +391,8 @@ class PSPSServer(HieratikaServer):
             destFolderNumber = filePath[-2]
 
         if (ok):
+            if (not name.endswith(".xml")):
+                name = name + ".xml"
             destScheduleUID = "{0}/users/{1}/configurations/{2}/{3}/{4}".format(self.baseDir, username, pageName, destFolderNumber, name)
             try:
                 shutil.copy2(sourceScheduleUID, destScheduleUID) 
