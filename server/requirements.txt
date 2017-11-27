@@ -1,0 +1,6 @@
+#Webserver
+flask
+
+#PAM authetication
+python-pam
+
