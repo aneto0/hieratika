@@ -66,8 +66,9 @@ class PSPSServer(HieratikaServer):
             self.pages = manager.list()
             numberOfLocks = config.getint("server-impl", "numberOfLocks")
             pagesXmlFilePath = config.get("server-impl", "pagesXmlFilePath")
+            self.maxXmlIds = config.getint("server-impl", "maxXmlIds")
             self.baseDir = config.get("server-impl", "baseDir")
-            self.lockPool = LockPool(numberOfLocks)
+            self.lockPool = LockPool(numberOfLocks, manager)
         except (ConfigParser.Error, KeyError) as e:
             log.critical(str(e))
             ok = False 
@@ -84,7 +85,16 @@ class PSPSServer(HieratikaServer):
             Returns:
                 A key which univocally identifies this xml path. 
         """
-        #TODO housekeeping
+        if (len(self.xmlIds) > self.maxXmlIds):
+            log.info("Reached maximum number of cached xmlIds :{0}".format(self.maxXmlIds))
+            iteritems = self.xmlIds.iteritems()
+            RuntimeError: dictionary changed size during iteration
+
+            for k, v in iteritems:
+                if (not self.lockPool.isKeyInUse(v)):
+                    del(self.xmlIds[k])
+            log.info("After cleaning the number of cached xmlIds is {0}".format(len(self.xmlIds)))
+
         try:
             ret = self.xmlIds[xmlPath]
         except KeyError:
@@ -181,17 +191,20 @@ class PSPSServer(HieratikaServer):
                 values.append(v.text)
             variable = Variable(nameXml.text, aliasXml.text, typeFromXml, descriptionXml.text, ["experts-1"], [rec.attrib["size"]], values)
         except Exception as e:
-            #Not very elegant to catch all the possible exceptions... TODO
+            #Not very elegant to catch all the possible exceptions...
             log.critical("Wrong xml structure. {0}".format(e))
             variable = None
         return variable
 
     def getVariableInfo(self, r, parent):
-        """ TODO Recursively gets all the variable information, including information of any member variables.
+        """ Recursively gets all the variable information, including information of any member variables.
             
             Args:
                 r (xmlElement): points at the current the xml Element in the tree. 
                 parent (Variable): the Variable to which this variable should be added as a member.
+
+            Returns:
+                The fully populated (including any member substructures) parent Variable.
         """
         #At this point the xml can only be pointing at a set of records or at a list of folders (the case where it is pointing at the record must be trapped before)
         records = r.find("./ns0:records", self.xmlns)
@@ -538,7 +551,6 @@ class PSPSServer(HieratikaServer):
         log.debug("Updating {0} in {1} with value {2}".format(variableName, xmlPath, variableValue))
 
         ok = False
-        #Work on memory as opposed to working on file. TODO this must properly managed so that memory consumption does not ramp to infinity
         #Update the XML
         tree = self.getCachedXmlTree(xmlPath)
         if (tree is not None):

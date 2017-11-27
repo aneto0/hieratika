@@ -54,18 +54,17 @@ class LockPool(object):
         When a key is released, if no more threads or processes are waiting on that key, the semaphore is returned to the pool.
     """
 
-    def __init__(self, numberOfProcessLocks):
+    def __init__(self, numberOfProcessLocks, manager = multiprocessing.Manager()):
         #Global mux to protect access to shared counter
         self.mux = multiprocessing.RLock()
-        self.manager = multiprocessing.Manager()
         #Counts the number of locks that were allocated to a given key. Note that this has to be done this way as no multiprocessing semaphores nor multiprocessing dicts can be created after the child processes are forked (given that these will have a local copy of all the variables)
-        self.allocatedLocksC = self.manager.dict()
+        self.allocatedLocksC = manager.dict()
         #Stores the self.sharedLocks array index that is assigned to a given key
-        self.allocatedLocksI = self.manager.dict()
+        self.allocatedLocksI = manager.dict()
         #The pool of semaphores. One different semaphore will be allocated for each key
         self.sharedLocks = []
         #Stores True in all the indexes that are not being used by any key
-        self.sharedLocksFreeState = self.manager.list()
+        self.sharedLocksFreeState = manager.list()
         for i in range(numberOfProcessLocks):
             self.sharedLocks.append(multiprocessing.Lock())
             self.sharedLocksFreeState.append(True)
@@ -168,4 +167,15 @@ class LockPool(object):
             self.allocatedLocksI.pop(key)
             self.processThreads.pop(key)
         self.mux.release()
-                
+               
+
+    def isKeyInUse(self, key): 
+        """ Checks if a given key is currently being used.
+        Returns:
+            True if the key currently being used to lock a semaphore in the pool.
+        """
+        self.mux.acquire()
+        ret = (key in self.allocatedLocksC)
+        self.mux.release()
+        return ret
+
