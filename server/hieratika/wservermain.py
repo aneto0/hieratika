@@ -35,16 +35,21 @@ from hieratika.wserver import WServer
 ##
 # Logger configuration
 ##
-logging.basicConfig(level=logging.DEBUG, format='[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)d] %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+#TODO change to fileConfig (see https://docs.python.org/2/howto/logging.html)
+logging.basicConfig(level=logging.INFO, format='[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)d] %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 log = logging.getLogger("{0}".format(__name__))
 
 ##
 # Class definition
 ##
+
+# The Flask application
 application = Flask(__name__, static_url_path="")
+
+# The WServer implementation
 wserver = WServer()
+
 def start(*args, **kwargs):
-    log.info("Starting webserver")
     configFilePath = kwargs["config"]
     try:
         with open(configFilePath, "r") as configFile:
@@ -67,6 +72,7 @@ def start(*args, **kwargs):
             log.info("Auth class is {0}".format(authClassName))
             authClass = getattr(authModule, authClassName)
 
+            pagesFolder = config.get("hieratika", "pagesFolder")
             application.static_folder = config.get("hieratika", "staticFolder")
             application.debug = True
             application.logger.setLevel(logging.DEBUG)
@@ -89,6 +95,7 @@ def start(*args, **kwargs):
                 #The web app which is a Flask standard application
                 wserver.setServer(server)
                 wserver.setAuth(auth)
+                wserver.setPagesFolder(pagesFolder)
                 return application
             else:
                 log.critical("Failed to load either the server or the auth service") 
@@ -244,13 +251,16 @@ def index():
     log.debug("/")
     return application.send_static_file("index.html")
 
+@application.route("/pages/<filename>")
+def pages(filename):
+    return send_from_directory(wserver.getPagesFolder(), filename)
+
 @application.route("/tmp/<filename>")
 def tmp(filename):
     return send_from_directory('tmp', filename)
 
-
 if __name__ == "__main__":
-    print "Start with gunicorn --preload --log-file=- -k gevent -w 16 -b 192.168.130.46:80 'hieratika.wservermain:start(config=\"path_to_config_file.ini\")'"
+    print "Start with gunicorn --preload --log-file=- -k gevent -w 16 -b 0.0.0.0:80 'hieratika.wservermain:start(config=\"path_to_config_file.ini\")'"
     
     #wserver.start()
     #parser = argparse.ArgumentParser(description = "Flask http wserver to prototype ideas for ITER level-1")

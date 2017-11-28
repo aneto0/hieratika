@@ -96,7 +96,7 @@
                         parent._allPMCComponents = {};
                         //Remove all the listeners (apart from this and the pmc-top-nav)
                         this.plantInfoLoadedListeners = this.plantInfoLoadedListeners.slice(0, 2);
-                        var pageUrl = page.name + ".html?" + new Date().getTime(); //new Date... to force reloading with no caching
+                        var pageUrl = "pages/" + page.url + ".html?" + new Date().getTime(); //new Date... to force reloading with no caching
                         var templateDiv = this.shadowRoot.querySelector("#dmaineditor");
                         templateDiv.onload = function(evt) {
                             this.iFrameLoaded(page.name);

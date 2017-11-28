@@ -209,7 +209,7 @@ class Variable(object):
             Returns:
                 A string representation of a Variable which consists of the absolute name followed by the value.
         """
-        return "{0} : {1}".format(self.getAbsoluteName(), self.getValue()) 
+        return "{0} [{1}] : {2}".format(self.getAbsoluteName(), self.getNumberOfElements(), self.getValue()) 
 
     def asSerializableDict(self):
         """ 

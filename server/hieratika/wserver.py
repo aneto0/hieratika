@@ -51,7 +51,7 @@ class WServer:
     def __init__(self):
         """ NOOP
         """
-        pass
+        self.pagesFolder = ""
 
     def isTokenValid(self, request):
         """ Verifies if a given token is valid.
@@ -346,6 +346,20 @@ class WServer:
             log.critical(str(e))
             toReturn = "InvalidParameters"
         return toReturn
+
+    def setPagesFolder(self, pagesFolder):
+        """ Sets the pages folder
+        Args:
+            pagesFolder (str): folder which holds the html pages with the user-interfaces.
+        """
+        self.pagesFolder = pagesFolder
+
+    def getPagesFolder(self):
+        """ Gets the pages folder
+        Returns:
+            The folder which holds the html pages with the user-interfaces.
+        """
+        return self.pagesFolder
 
     def login(self, request):
         """Logs a user into the system.

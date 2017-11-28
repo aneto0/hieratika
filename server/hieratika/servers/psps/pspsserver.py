@@ -19,6 +19,7 @@ __date__ = "17/11/2017"
 ##
 # Standard imports
 ##
+import ast
 import ConfigParser
 import fnmatch
 import logging
@@ -51,7 +52,7 @@ class PSPSServer(HieratikaServer):
     """ Access must be multiprocess and multithread safe.
     """
 
-    #XML namespaces
+    #Xml namespaces
     xmlns = {"ns0": "http://www.iter.org/CODAC/PlantSystemConfig/2014",
              "xsi": "http://www.w3.org/2001/XMLSchema-instance"}
 
@@ -67,20 +68,19 @@ class PSPSServer(HieratikaServer):
         try:
             self.pages = manager.list()
             numberOfLocks = config.getint("server-impl", "numberOfLocks")
-            pagesXmlFilePath = config.get("server-impl", "pagesXmlFilePath")
             self.maxXmlIds = config.getint("server-impl", "maxXmlIds")
             self.maxXmlCachedTrees = config.getint("server-impl", "maxXmlCachedTrees")
             self.baseDir = config.get("server-impl", "baseDir")
+            self.standalone = config.getboolean("server-impl", "standalone")
+            self.defaultExperts = ast.literal_eval(config.get("server-impl", "defaultExperts"))
             self.lockPool = LockPool(numberOfLocks, manager)
             #This is to protect the local resources cachedXmls and xmlIds (which are local to the process)
             self.mux = threading.Lock() 
+            self.loadPages()
         except (ConfigParser.Error, KeyError) as e:
             log.critical(str(e))
             ok = False 
     
-        if (ok):
-            ok = self.loadPages(pagesXmlFilePath)
-
         return ok
 
     def getXmlId(self, xmlPath):
@@ -109,7 +109,6 @@ class PSPSServer(HieratikaServer):
 
     def findVariableInXml(self, xmlRoot, variableName):       
         """ Walks the xml tree and finds a given variable.
-            #TODO for the time being I will encode the plant system name as the first @ token. This needs discussion at some stage
             Args:
                 xmlRoot (xmlElement): xml element pointing at the root of the psps file.
             Returns:
@@ -186,15 +185,19 @@ class PSPSServer(HieratikaServer):
         try:
             nameXml = rec.find("./ns0:name", self.xmlns)
             aliasXml = rec.find("./ns0:alias", self.xmlns)
-            typeFromXml = self.convertVariableTypeFromXML(rec.attrib["{" + self.xmlns["xsi"] + "}type"])
+            typeFromXml = self.convertVariableTypeFromXml(rec.attrib["{" + self.xmlns["xsi"] + "}type"])
             descriptionXml = rec.find("./ns0:description", self.xmlns)
-            #TODO handle permissions
             valuesXml = rec.find("./ns0:values", self.xmlns)
-            valueXml = valuesXml.findall("./ns0:value", self.xmlns)
-            values = []
-            for v in valueXml:
-                values.append(v.text)
-            variable = Variable(nameXml.text, aliasXml.text, typeFromXml, descriptionXml.text, ["experts-1"], [rec.attrib["size"]], values)
+            valueXml = valuesXml.find("./ns0:value", self.xmlns)
+            value = []
+            if (valueXml is not None):
+                value = ast.literal_eval(valueXml.text)
+            if (not isinstance(value, list)):
+                value = [value]
+            numberOfElements = ast.literal_eval(rec.attrib["size"])
+            #TODO handle permissions in xml (currently only the default ones are supported)
+            variable = Variable(nameXml.text, aliasXml.text, typeFromXml, descriptionXml.text, self.defaultExperts, numberOfElements, value)
+            log.debug("Loaded {0}".format(variable))
         except Exception as e:
             #Not very elegant to catch all the possible exceptions...
             log.critical("Wrong xml structure. {0}".format(e))
@@ -305,9 +308,9 @@ class PSPSServer(HieratikaServer):
 
     def getSchedules(self, username, pageName):
         schedules = []
-        allSchedulesXML = self.getAllFiles(username, pageName)
+        allSchedulesXml = self.getAllSchedulesXmls(username, pageName)
 
-        for xmlFile in allSchedulesXML:
+        for xmlFile in allSchedulesXml:
             description = ""
             xmlId = self.getXmlId(xmlFile)
             self.lockPool.acquire(xmlId)
@@ -394,7 +397,10 @@ class PSPSServer(HieratikaServer):
         if (ok):
             if (not name.endswith(".xml")):
                 name = name + ".xml"
-            destScheduleUID = "{0}/users/{1}/configurations/{2}/{3}/{4}".format(self.baseDir, username, pageName, destFolderNumber, name)
+            if (self.standalone):
+                destScheduleUID = "{0}/psps/configurations/{1}/{2}/{3}".format(self.baseDir, pageName, destFolderNumber, name)
+            else:
+                destScheduleUID = "{0}/users/{1}/configurations/{2}/{3}/{4}".format(self.baseDir, username, pageName, destFolderNumber, name)
             try:
                 shutil.copy2(sourceScheduleUID, destScheduleUID) 
             except IOError as e:
@@ -420,7 +426,7 @@ class PSPSServer(HieratikaServer):
             self.lockPool.release(xmlId)
         return destScheduleUID
 
-    def convertVariableTypeFromXML(self, xmlVariableType):
+    def convertVariableTypeFromXml(self, xmlVariableType):
         """ Helper function which converts a psps record type to a hieratika type.
         
         Args:
@@ -439,7 +445,7 @@ class PSPSServer(HieratikaServer):
             log.critical("Could not convert type {0}".format(xmlVariableType))
         return toReturn
 
-    def getAllFiles(self, username, pageName):
+    def getAllSchedulesXmls(self, username, pageName):
         """ Helper function which gets all psps configurations associated to a given page for a given user.
        
         Args:
@@ -449,72 +455,27 @@ class PSPSServer(HieratikaServer):
             All the schedules files found for a given configuration.
         """
         matches = []
-        directory = "{0}/users/{1}/configurations/{2}".format(self.baseDir, username, pageName)
+        if (self.standalone):
+            directory = "{0}/psps/configurations/{1}".format(self.baseDir, pageName)
+        else:
+            directory = "{0}/users/{1}/configurations/{2}".format(self.baseDir, username, pageName)
         for root, dirnames, filenames in os.walk(directory):
             for filename in fnmatch.filter(filenames, '*.xml'):
                 if (filename != "plant.xml"):
                     matches.append(os.path.join(root, filename))
         return matches
 
-    def loadUsers(self, userXml):
-        """Loads a list of users from an xml file.
-           Args:
-               userXml (string): path to the file which contains the user definitions.
-
-           Returns:
-               True if the file can be sucessfully loaded.
+    def loadPages(self):
+        """ Loads the list of available pages (which corresponds to the number of different configurations)
         """
-        ok = True
-        log.info("Loading xml: {0}".format(userXml))
-        try:
-            root = cElementTree.parse(userXml)
-            #Get all users
-            usersXml = root.findall("./ns0:user", self.xmlns)
-            for userXml in usersXml:
-                groups = []
-                #For each user load the groups
-                groupsXml = userXml.findall("./ns0:groups/ns0:group", self.xmlns)
-                for groupXml in groupsXml:
-                    groupNameXml= groupXml.find("./ns0:name", self.xmlns)
-                    groups.append(UserGroup(groupNameXml.text)) 
-                usernameXml = userXml.find("./ns0:name", self.xmlns)
-                user = User(usernameXml.text, groups) 
-                self.users.append(user)
-                log.info("Registered user: {0}".format(user))
-        except Exception as e:
-            log.critical("Error loading xml file {0} : {1}".format(userXml, str(e)))
-            ok = False 
-
-        return ok
-
-    def loadPages(self, pagesXmlFilePath):
-        """Loads a list of pages from an xml file.
-           Args:
-               pageXml (string): path to the file which contains the page definitions.
-
-           Returns:
-               True if the file can be sucessfully loaded.
-        """
-        ok = True
-        log.info("Loading xml: {0}".format(pagesXmlFilePath))
-        try:
-            root = cElementTree.parse(pagesXmlFilePath)
-            #Get all pages
-            pagesXml = root.findall(".//ns0:page", self.xmlns)
-            for pageXml in pagesXml:
-                pageName = pageXml.find("./ns0:name", self.xmlns).text
-                pageUrl = pageXml.find("./ns0:url", self.xmlns).text
-                pageDescription = pageXml.find("./ns0:description", self.xmlns).text
-                page = Page(pageName, pageUrl, pageDescription)
-                self.pages.append(page) 
-
-                log.info("Registered page: {0}".format(page))
-        except Exception as e:
-            log.critical("Error loading xml file {0} : {1}".format(pageXml, str(e)))
-            ok = False 
-
-        return ok
-
+        directory = "{0}/psps/configurations/".format(self.baseDir)
+        for root, dirnames, filenames in os.walk(directory):
+            for dirname in dirnames:
+                page = Page(dirname, dirname, dirname)
+                self.pages.append(page)
+                log.info("Registered page {0}".format(page))
+            #Only want the first sub level
+            break
     def getCachedXmlTree(self, xmlPath):
         """ Parses the xml defined by the xmlPath and caches it in memory.
             This method is not thread-safe and expects the methods acquire and release to be called by the caller.
@@ -571,7 +532,7 @@ class PSPSServer(HieratikaServer):
         log.debug("Updating {0} in {1} with value {2}".format(variableName, xmlPath, variableValue))
 
         ok = False
-        #Update the XML
+        #Update the Xml
         tree = self.getCachedXmlTree(xmlPath)
         if (tree is not None):
             root = tree.getroot()
@@ -593,7 +554,6 @@ class PSPSServer(HieratikaServer):
                 if (r is not None):
                     r = r.find("./ns0:records/ns0:record[ns0:name='{0}']".format(path[-1]), self.xmlns)
                     if (r != None):
-                        #Assume that it is not an array. TODO change ASAP!
                         valueXml = r.find("./ns0:values/ns0:value", self.xmlns)
                         valueXml.text = str(variableValue)
                         ok = True
@@ -637,11 +597,12 @@ class PSPSServer(HieratikaServer):
                     variableName = variableNameBeforeRecord + "@" + n.text
                     valuesXml = rec.find("./ns0:values", self.xmlns)
                     if (valuesXml is not None):
-                        valueXml = valuesXml.findall("./ns0:value", self.xmlns)
-                        values = []
-                        for v in valueXml:
-                            values.append(v.text)
-                        variables[variableName] = values
+                        valueXml = valuesXml.find("./ns0:value", self.xmlns)
+                        try:
+                            value = ast.literal_eval(valueXml.text)
+                        except Exception as e:
+                            log.critical("Could not evaluate the value for variable with name {0}".format(variableName))
+                        variables[variableName] = value
                 else:
                     log.critical("Wrong xml structure. ns0:name is missing in record")
                 log.debug("Retrieved value for variable [{0}]".format(variableName))

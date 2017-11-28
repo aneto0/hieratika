@@ -44,8 +44,9 @@ log = logging.getLogger("{0}".format(__name__))
 # Class definition
 ##
 class HieratikaServer(object):
-    """ TODO 
-        TODO
+    """ Abstract class for any server implementation.
+        It implements the inter-client SSE streaming mechanism which allows to notify all the registered clients
+        about changes in the schedule or in the plant.
     """
     
     __metaclass__ = ABCMeta
@@ -196,22 +197,22 @@ class HieratikaServer(object):
     def getPage(self, pageName):
         """Gets the page associated to a given name
 
-           Args:
-               pageName (str): the page name to query.
+       Args:
+           pageName (str): the page name to query.
 
-           Returns:
-               The Page or None if the name is not found.
+       Returns:
+           The Page or None if the name is not found.
         """
         pass
 
     @abstractmethod
     def getSchedule(self, scheduleUID):
-        """ TODO define schedule structure
+        """ Gets the schedule associated to a given unique identifier.
 
         Args:
             scheduleUID (str): unique schedule identifier.
         Returns:
-            Information about the requested schedule.
+           The Schedule or None if the scheduleUID is not found.
         """
         pass
 
