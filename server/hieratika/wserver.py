@@ -250,7 +250,7 @@ class WServer:
                 "scheduleUID": scheduleUID,
                 "variables": variables 
             }
-            self.queueStreamData(json.dumps(toStream))
+            self.serverImpl.queueStreamData(json.dumps(toStream))
         except KeyError as e:
             log.critical(str(e))
             toReturn = "InvalidParameters"
@@ -423,7 +423,7 @@ class WServer:
                 "scheduleUID": scheduleUID,
                 "variables": self.serverImpl.commitSchedule(tid, scheduleUID, variables)
             }
-            self.queueStreamData(json.dumps(toStream))
+            self.serverImpl.queueStreamData(json.dumps(toStream))
             toReturn = "ok"
         except KeyError as e:
             log.critical(str(e))

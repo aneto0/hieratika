@@ -188,12 +188,17 @@ class PSPSServer(HieratikaServer):
             typeFromXml = self.convertVariableTypeFromXml(rec.attrib["{" + self.xmlns["xsi"] + "}type"])
             descriptionXml = rec.find("./ns0:description", self.xmlns)
             valuesXml = rec.find("./ns0:values", self.xmlns)
-            valueXml = valuesXml.find("./ns0:value", self.xmlns)
             value = []
-            if (valueXml is not None):
-                value = ast.literal_eval(valueXml.text)
-            if (not isinstance(value, list)):
-                value = [value]
+            if (valuesXml is not None):
+                valueXml = valuesXml.find("./ns0:value", self.xmlns)
+                if (valueXml is not None):
+                    value = ast.literal_eval(valueXml.text)
+                    if (not isinstance(value, list)):
+                        value = [value]
+                else:
+                    log.critical("./ns0:value is missing for variable with name {0}".format(variableName))
+            else:
+                log.critical("./ns0:values is missing for variable with name {0}".format(variableName))
             numberOfElements = ast.literal_eval(rec.attrib["size"])
             #TODO handle permissions in xml (currently only the default ones are supported)
             variable = Variable(nameXml.text, aliasXml.text, typeFromXml, descriptionXml.text, self.defaultExperts, numberOfElements, value)
@@ -357,12 +362,13 @@ class PSPSServer(HieratikaServer):
         updatedVariables = {}
         xmlId = self.getXmlId(scheduleUID)
         self.lockPool.acquire(xmlId)
-        for name in variables:
-            value = variables[name]
-            if(self.updateVariable(name, scheduleUID, value)):
-                updatedVariables[name] = value
-
         tree = self.getCachedXmlTree(scheduleUID)
+        if (tree is not None):
+            root = tree.getroot()
+            for name in variables:
+                value = variables[name]
+                if(self.updateVariable(name, root, value)):
+                    updatedVariables[name] = value
         tree.write(scheduleUID)
         self.lockPool.release(xmlId)
         return updatedVariables 
@@ -372,11 +378,13 @@ class PSPSServer(HieratikaServer):
         xmlPath = "{0}/psps/configurations/{1}/000/plant.xml".format(self.baseDir, pageName)
         xmlId = self.getXmlId(xmlPath)
         self.lockPool.acquire(xmlId)
-        for name in variables:
-            value = variables[name]
-            if(self.updateVariable(name, xmlPath, value)):
-                updatedVariables[name] = value
         tree = self.getCachedXmlTree(xmlPath)
+        if (tree is not None):
+            root = tree.getroot()
+            for name in variables:
+                value = variables[name]
+                if(self.updateVariable(name, root, value)):
+                    updatedVariables[name] = value
         tree.write(xmlPath)
         self.lockPool.release(xmlId)
         return updatedVariables 
@@ -513,14 +521,14 @@ class PSPSServer(HieratikaServer):
         self.mux.release()
         return ret
 
-    def updateVariable(self, variableName, xmlPath, variableValue):
+    def updateVariable(self, variableName, root, variableValue):
         """ Updates the value of the a variable in a given xml (plant or schedule).
             This method is not thread-safe and expects the methods acquire and release to be called by the caller.
             Note that this change is not sinked to disk.
     
         Args:
             variableName (str): the name of the variable to update.
-            xmlPath (str): the xml to be updated (identified with the path to the original file).
+            root (cElementTree node): the root of the xml to be updated.
             variableValue (str): the value of the variable to be updated.
 
         Returns:
@@ -529,38 +537,31 @@ class PSPSServer(HieratikaServer):
 
         #Allow only one process to interact with a given xml at the time
         #Makes sure that this is both multi-processing and multi-threading safe
-        log.debug("Updating {0} in {1} with value {2}".format(variableName, xmlPath, variableValue))
+        log.debug("Updating {0} with value {1}".format(variableName, variableValue))
 
         ok = False
-        #Update the Xml
-        tree = self.getCachedXmlTree(xmlPath)
-        if (tree is not None):
-            root = tree.getroot()
-            #TODO for the time being I will encode the plant system name as the first @ token. This needs discussion at some stage
-            idx = variableName.find("@")
-            if (idx != -1):
-                plantSystemName = variableName[:idx]
-                variableName = variableName[idx + 1:]
-                path = variableName.split("@")
-               
-                r = root.find("./ns0:plantSystems/ns0:plantSystem[ns0:name='{0}']/ns0:plantRecords".format(plantSystemName), self.xmlns)
-                for p in path[:-1]:
-                    r = r.find("./ns0:folders/ns0:folder[ns0:name='{0}']".format(p), self.xmlns)
-                    if (r == None):
-                        log.critical("Could not find {0} . Failed while looking for {1}".format(variableName, p))
-                        break
+        #TODO for the time being I will encode the plant system name as the first @ token. This needs discussion at some stage
+        idx = variableName.find("@")
+        if (idx != -1):
+            plantSystemName = variableName[:idx]
+            variableName = variableName[idx + 1:]
+            path = variableName.split("@")
+           
+            r = root.find("./ns0:plantSystems/ns0:plantSystem[ns0:name='{0}']/ns0:plantRecords".format(plantSystemName), self.xmlns)
+            fullVariablePath = "." 
+            for p in path[:-1]:
+                fullVariablePath = fullVariablePath + "/ns0:folders/ns0:folder[ns0:name='{0}']".format(p)
 
+            fullVariablePath = fullVariablePath + "/ns0:records/ns0:record[ns0:name='{0}']/ns0:values/ns0:value".format(path[-1])
+            valueXml = r.find(fullVariablePath, self.xmlns)
+            if (valueXml is not None):
                 variable = {}
-                if (r is not None):
-                    r = r.find("./ns0:records/ns0:record[ns0:name='{0}']".format(path[-1]), self.xmlns)
-                    if (r != None):
-                        valueXml = r.find("./ns0:values/ns0:value", self.xmlns)
-                        valueXml.text = str(variableValue)
-                        ok = True
-                    else:
-                        log.critical("Could not find the record for variable {0}".format(variableName))
+                valueXml.text = str(variableValue)
+                ok = True
             else:
-                log.critical("No plant system defined for variable {0}".format(variableName))
+                log.critical("Could not find {0} . Failed while looking for {1}".format(variableName, fullVariablePath))
+        else:
+            log.critical("No plant system defined for variable {0}".format(variableName))
 
         return ok
 
@@ -597,12 +598,17 @@ class PSPSServer(HieratikaServer):
                     variableName = variableNameBeforeRecord + "@" + n.text
                     valuesXml = rec.find("./ns0:values", self.xmlns)
                     if (valuesXml is not None):
+                        value = []
                         valueXml = valuesXml.find("./ns0:value", self.xmlns)
-                        try:
+                        if (valueXml is not None):
                             value = ast.literal_eval(valueXml.text)
-                        except Exception as e:
-                            log.critical("Could not evaluate the value for variable with name {0}".format(variableName))
-                        variables[variableName] = value
+                            if (not isinstance(value, list)):
+                                value = [value]
+                            variables[variableName] = value
+                        else:
+                            log.critical("./ns0:value is missing for variable with name {0}".format(variableName))
+                    else:
+                        log.critical("./ns0:values is missing for variable with name {0}".format(variableName))
                 else:
                     log.critical("Wrong xml structure. ns0:name is missing in record")
                 log.debug("Retrieved value for variable [{0}]".format(variableName))

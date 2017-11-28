@@ -35,8 +35,8 @@ from hieratika.wserver import WServer
 ##
 # Logger configuration
 ##
-#TODO change to fileConfig (see https://docs.python.org/2/howto/logging.html)
-logging.basicConfig(level=logging.INFO, format='[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)d] %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+#TODO change to fileConfig (see https://docs.python.org/2/howto/logging.html). This can be input to gunicorn using --log-config (TBC)
+logging.basicConfig(level=logging.DEBUG, format='[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)d] %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 log = logging.getLogger("{0}".format(__name__))
 
 ##
