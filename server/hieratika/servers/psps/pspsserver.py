@@ -26,6 +26,7 @@ import os
 import shutil
 import time
 import timeit
+import threading
 from xml.etree import cElementTree
 from xml.dom import minidom
 
@@ -57,7 +58,8 @@ class PSPSServer(HieratikaServer):
     def __init__(self):
         super(PSPSServer, self).__init__()
         self.xmlIds = {}
-        self.openXmls = {}
+        #cachedXmls is local to each process since cElementTree cannot be pickled by the multiprocessing Manager
+        self.cachedXmls = {}
         self.recordTag = "{{{0}}}record".format(self.xmlns["ns0"])
 
     def load(self, manager, config):
@@ -67,8 +69,11 @@ class PSPSServer(HieratikaServer):
             numberOfLocks = config.getint("server-impl", "numberOfLocks")
             pagesXmlFilePath = config.get("server-impl", "pagesXmlFilePath")
             self.maxXmlIds = config.getint("server-impl", "maxXmlIds")
+            self.maxXmlCachedTrees = config.getint("server-impl", "maxXmlCachedTrees")
             self.baseDir = config.get("server-impl", "baseDir")
             self.lockPool = LockPool(numberOfLocks, manager)
+            #This is to protect the local resources cachedXmls and xmlIds (which are local to the process)
+            self.mux = threading.Lock() 
         except (ConfigParser.Error, KeyError) as e:
             log.critical(str(e))
             ok = False 
@@ -85,13 +90,12 @@ class PSPSServer(HieratikaServer):
             Returns:
                 A key which univocally identifies this xml path. 
         """
+        self.mux.acquire()
         if (len(self.xmlIds) > self.maxXmlIds):
             log.info("Reached maximum number of cached xmlIds :{0}".format(self.maxXmlIds))
-            iteritems = self.xmlIds.iteritems()
-            RuntimeError: dictionary changed size during iteration
-
-            for k, v in iteritems:
-                if (not self.lockPool.isKeyInUse(v)):
+            keys = self.xmlIds.keys()
+            for k in keys:
+                if (not self.lockPool.isKeyInUse(self.xmlIds[k])):
                     del(self.xmlIds[k])
             log.info("After cleaning the number of cached xmlIds is {0}".format(len(self.xmlIds)))
 
@@ -100,6 +104,7 @@ class PSPSServer(HieratikaServer):
         except KeyError:
             ret = str(time.time())
             self.xmlIds[xmlPath] = ret
+        self.mux.release()
         return ret
 
     def findVariableInXml(self, xmlRoot, variableName):       
@@ -519,17 +524,32 @@ class PSPSServer(HieratikaServer):
             Returns:
                 The parsed Xml file or None if an error occurs.
         """
-        #TODO must make sure that this has house keeping and that this is cleaned when the user logout
-        #Also, the number of opened schedules per user shall be limited
+        self.mux.acquire()
+        if (len(self.cachedXmls) > self.maxXmlCachedTrees):
+            log.info("Reached maximum number of cached xml trees :{0} > {1}".format(len(self.cachedXmls), self.maxXmlCachedTrees))
+            toDeleteMaxSize = (len(self.cachedXmls) / 2) + 1
+            #Sort by access time. Remember that the values of cachedXmls are tupples containing the path, the parsed cElementTree and the last access time
+            sortedByTime = sorted(self.cachedXmls.values(), key=lambda tup:tup[2])
+            i = 0
+            while i < toDeleteMaxSize:
+                log.debug("Deleting xml (from memory) with key {0}".format(sortedByTime[i][0]))
+                del(self.cachedXmls[sortedByTime[i][0]])
+                i = i + 1
+            log.info("After cleaning the number of cached xml is {0}".format(len(self.cachedXmls)))
+
+
         try:
-            ret = self.openXmls[xmlPath]
+            ret = self.cachedXmls[xmlPath][1]
+            self.cachedXmls[xmlPath][2] = time.time()
         except Exception as e:
             try:
-                self.openXmls[xmlPath] = cElementTree.parse(xmlPath)
-                ret = self.openXmls[xmlPath]
+                #The xmlPath is also stored as value in order to accelerate the cleaning above
+                self.cachedXmls[xmlPath] = (xmlPath, cElementTree.parse(xmlPath), time.time())
+                ret = self.cachedXmls[xmlPath][1]
             except Exception as e:
                 log.critical("Error loading xml file {0}: {1}".format(xmlPath, str(e)))
                 ret = None
+        self.mux.release()
         return ret
 
     def updateVariable(self, variableName, xmlPath, variableValue):
