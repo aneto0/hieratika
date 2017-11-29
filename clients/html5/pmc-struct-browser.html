@@ -45,7 +45,7 @@
                         super.createdCallback();
                         this.mainDiv = this.shadowRoot.querySelector("#dstructbrowser");
                         this.treeHTML = "";
-                        this.privateStructIds = ["numberOfElements", "validations", "validation", "permissions", "valueChangedListeners", "permissionGroups", "privateStructIds", "initValue", "plantValue", "value"];
+                        this.privateStructIds = ["alias", "numberOfElements", "validations", "validation", "permissions", "valueChangedListeners", "permissionGroups", "privateStructIds", "initValue", "plantValue", "value", "userAllowedToWrite", "typeValue", "reference", "library"];
                     }
                     
                     getTemplate() {
@@ -77,8 +77,7 @@
                             else {
                                 var memberId = member["variableId"];
                                 if (memberId !== undefined) {
-                                    var isStruct = member["isStruct"];
-                                    if (isStruct === true) {
+                                    if (member.getTypeValue() === "struct") {
                                         var membersIds = Object.keys(member);
                                         if (memberId !== this.id) {
                                             this.treeHTML += "<ul>\n";
@@ -138,8 +137,7 @@
                             else {
                                 var memberId = member["variableId"];
                                 if (memberId !== undefined) {
-                                    var isStruct = member["isStruct"];
-                                    if (isStruct === true) {
+                                    if (member.getTypeValue() === "struct") {
                                         var membersIds = Object.keys(member);
                                         for (var i in membersIds) {
                                             var subMemberId = membersIds[i];
@@ -152,7 +150,7 @@
                                         var memberIdValidCSS = ".P" + memberId.replace(/[|&;$%@"<>()+,]/g, "");
                                         memberIdValidCSS = memberIdValidCSS.replace(/:/g, "");
                                         var compMember = this.shadowRoot.querySelector(memberIdValidCSS);
-                                        compMember.setTypeValue(member.type);
+                                        compMember.setTypeValue(member.getTypeValue());
                                         compMember.setNumberOfElements(member.numberOfElements);
                                         compMember.setReference("none");
                                         compMember.setInitialValue(member.value);

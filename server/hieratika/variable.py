@@ -39,29 +39,29 @@ class Variable(object):
         Variables may contain other variables (i.e. they can represent a member of a structure), where their name is the key of a __dict__ representation of the Variable object.
     """
 
-    def __init__(self, name, alias, vtype, description, permissions = [], numberOfElements = [], value = []):
+    def __init__(self, name, alias, description = "", vtype = "struct", permissions = [], numberOfElements = [], value = []):
         """ Constructs a new Variable object.
         
         Args:
             name (str): the variable name. This name can either encode a @ separated path of a name which univocally identifies the variable in the system; or it can be the relative name of the variable when it represents a member of another variable.
             alias (str): free format text which provides a meaningful name to the variable.
+            description (str): one-line description of the variable;
             vtype (str): the variable type as one of: uint8, int8, uint16, int16, uint32, int32, uint64, int64, string;
             numberOfElements ([int]): as an array where each entry contains the number of elements on any given direction; 
-            description (str): one-line description of the variable;
             permissions (str): user groups that are allowed to change this variable;
             value (str): string encoded variable value.
         """
         self.name = name
         self.alias = alias 
-        self.vtype = vtype 
         self.description = description
+        self.vtype = vtype 
         self.permissions = permissions
         self.numberOfElements = numberOfElements
         self.value = value
         self.parent = None
         self.members = {}
         #TODO
-        self.validation = []
+        self.validations = []
 
     def getName(self):
         """ 
@@ -124,7 +124,7 @@ class Variable(object):
         Returns:
             The variable validations(see __init__)
         """
-        return self.permissions
+        return self.validations
 
 
     def getValue(self):
