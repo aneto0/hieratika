@@ -29,7 +29,6 @@ import time
 import timeit
 import threading
 from xml.etree import cElementTree
-from xml.dom import minidom
 
 ##
 # Project imports
@@ -259,6 +258,39 @@ class PSPSServer(HieratikaServer):
                     return None
         return parent
 
+    def getValidation(self, functionTxt, descriptionTxt):
+        """ TODO
+        """
+        validation = {}
+        functionTxt = functionTxt.split("'")
+        if (len(functionTxt) == 3):
+            variable = functionTxt[1]
+            parameters = functionTxt[2]
+             
+        else: 
+            log.critical("Could not parse {0}".format(functionTxt))
+
+    def getConstraints(self, xmlRoot):
+        """ TODO
+        """
+        log.debug("Loading constraints")
+        plantSystemsRootXml = xmlRoot.findall(".//ns0:plantSystem", self.xmlns)
+        for plantSystemXml in plantSystemsRootXml:
+            plantSystemName = plantSystemXml.find("./ns0:name", self.xmlns).text
+            log.debug("Getting constraints for plant system {0}".format(plantSystemName))
+            r = plantSystemXml.find("./ns0:plantConstraints", self.xmlns)
+            if (r is not None):
+                constraintsXml = r.findall("./ns0:folders/ns0:folder/ns0:constraints//ns0:constraint", self.xmlns)
+            else:
+                log.warning("No plantConstraints for plant system {0}".format(plantSystemName))
+            if (constraintsXml is not None):
+                for constraintXml in constraintsXml:
+                    constraintDescriptionXml = constraintDescriptionXml.find("./ns0:description", self.xmlns)
+                    constraintFunctionXml = constraintXml.find("./ns0:function", self.xmlns)
+                    log.debug("Loading function {0}".format(constraintFunctionXml.text))
+            else:
+                log.warning("No folders/folder/constraints for plant system {0}".format(plantSystemName))
+
     def getVariablesInfo(self, pageName, requestedVariables):
         xmlFileLocation = "{0}/psps/configuration/{1}/000/plant.xml".format(self.baseDir, pageName)
         log.debug("Loading plant configuration from {0}".format(xmlFileLocation))
@@ -270,6 +302,7 @@ class PSPSServer(HieratikaServer):
 
         if (tree is not None):
             xmlRoot = tree.getroot()
+            self.getConstraints(xmlRoot)
             for variableName in requestedVariables:
                 variable = None
                 r = self.findVariableInXml(xmlRoot, variableName)
