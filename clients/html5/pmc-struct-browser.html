@@ -8,17 +8,17 @@
         <template id="tstructbrowser">
             <style>
                 .collapsibleList li{
-                    list-style-image : url('icons/tree-item-8.png');
+                    list-style-image : url('/icons/tree-item-8.png');
                     cursor           : auto;
                 }
 
                 li.collapsibleListOpen{
-                    list-style-image : url('icons/tree-close-8.png');
+                    list-style-image : url('/icons/tree-close-8.png');
                     cursor           : pointer;
                 }
                 
                 li.collapsibleListClosed{
-                    list-style-image : url('icons/tree-open-8.png');
+                    list-style-image : url('/icons/tree-open-8.png');
                     cursor           : pointer;
                 }
 
@@ -45,7 +45,6 @@
                         super.createdCallback();
                         this.mainDiv = this.shadowRoot.querySelector("#dstructbrowser");
                         this.treeHTML = "";
-                        this.privateStructIds = ["alias", "numberOfElements", "validations", "validation", "permissions", "valueChangedListeners", "permissionGroups", "privateStructIds", "initValue", "plantValue", "value", "userAllowedToWrite", "typeValue", "reference", "library"];
                     }
                     
                     getTemplate() {
@@ -53,13 +52,13 @@
                         return template;
                     }
 
-                    addMember(member, callerMemberId = undefined) {
+                    addMember(member, callerMemberName = undefined) {
                         if (member !== undefined) {
                             if (Array.isArray(member)) {
-                                if ((callerMemberId !== undefined) && (callerMemberId !== "_private_vec_")) {
+                                if ((callerMemberName !== undefined) && (callerMemberName !== "_private_vec_")) {
                                     this.treeHTML += "<ul>\n";
                                     this.treeHTML += "<li>\n";
-                                    this.treeHTML += callerMemberId;
+                                    this.treeHTML += callerMemberName;
                                 }
                                 this.treeHTML += "<ul>\n";
                                 for (var i in member) {
@@ -69,34 +68,43 @@
                                     this.treeHTML += "</li>\n";
                                 }
                                 this.treeHTML += "</ul>\n";
-                                if ((callerMemberId !== undefined) && (callerMemberId !== "_private_vec_")) {
+                                if ((callerMemberName !== undefined) && (callerMemberName !== "_private_vec_")) {
                                     this.treeHTML += "</li>\n";
                                     this.treeHTML += "</ul>\n";
                                 }
                             }
                             else {
-                                var memberId = member["variableId"];
-                                if (memberId !== undefined) {
-                                    if (member.getTypeValue() === "struct") {
-                                        var membersIds = Object.keys(member);
-                                        if (memberId !== this.id) {
+                                var memberName = member["name"];
+                                if (memberName !== undefined) {
+                                    var memberIsStruct = member["isStruct"]
+                                    if (memberIsStruct !== undefined) {
+                                        memberIsStruct = (memberIsStruct === true);
+                                    }
+                                    if (memberIsStruct) {
+                                        if (memberName !== this.id) {
                                             this.treeHTML += "<ul>\n";
                                             this.treeHTML += "<li>\n";
-                                            if (callerMemberId !== undefined) {
-                                                this.treeHTML += callerMemberId;
+                                            if (callerMemberName !== undefined) {
+                                                this.treeHTML += callerMemberName;
                                             }
                                             else {
-                                                this.treeHTML += memberId;
+                                                this.treeHTML += memberName;
                                             }
                                             this.treeHTML += "<ul>\n";
                                         }
-                                        for (var i in membersIds) {
-                                            var subMemberId = membersIds[i];
-                                            if (!this.privateStructIds.includes(subMemberId)) {
-                                                this.addMember(member[subMemberId], subMemberId);
+                                        var memberVariables = Object.keys(member);
+                                        for (var i in memberVariables) {
+                                            var subMemberName = memberVariables[i];
+                                            //Check if it is a variable (which will have to have the isStruct field defined)
+                                            var isVariable = (member[subMemberName] !== undefined);
+                                            if (isVariable) {
+                                                isVariable = (member[subMemberName]["isStruct"] !== undefined);
+                                            }
+                                            if (isVariable) {
+                                                this.addMember(member[subMemberName], subMemberName);
                                             }
                                         } 
-                                        if (memberId !== this.id) {
+                                        if (memberName !== this.id) {
                                             this.treeHTML += "</ul>\n";
                                             this.treeHTML += "</li>\n";
                                             this.treeHTML += "</ul>\n";
@@ -105,8 +113,8 @@
                                     else {
                                         this.treeHTML += "<ul>\n";
                                         this.treeHTML += "<li><div>\n";
-                                        var memberIdValidCSS = "P" + memberId.replace(/[|&;$%@"<>()+,]/g, "");
-                                        memberIdValidCSS = memberIdValidCSS.replace(/:/g, "");
+                                        var memberNameValidCSS = "P" + memberName.replace(/[|&;$%@"<>()+,]/g, "");
+                                        memberNameValidCSS = memberNameValidCSS.replace(/:/g, "");
                                         var memberIsArray = false;
                                         if (member.numberOfElements.length > 0) {
                                             if ((member.numberOfElements[0] > 1) || (member.numberOfElements[0].length > 0)) {
@@ -114,10 +122,10 @@
                                             }
                                         }
                                         if (memberIsArray) {
-                                            this.treeHTML += callerMemberId + ": <pmc-array-editor id=\"" + memberId + "\" name=\"" + memberId + "\" class=\"" + memberIdValidCSS + "\"></pmc-array-editor>\n";
+                                            this.treeHTML += callerMemberName + ": <pmc-array-editor id=\"" + memberName + "\" name=\"" + memberName + "\" class=\"" + memberNameValidCSS + "\"></pmc-array-editor>\n";
                                         }
                                         else {
-                                            this.treeHTML += callerMemberId + ": <pmc-input id=\"" + memberId + "\" name=\"" + memberId + "\" class=\"" + memberIdValidCSS + "\"></pmc-input>\n";
+                                            this.treeHTML += callerMemberName + ": <pmc-input id=\"" + memberName + "\" name=\"" + memberName + "\" class=\"" + memberNameValidCSS + "\"></pmc-input>\n";
                                         }
                                         this.treeHTML += "</div></li>\n";
                                         this.treeHTML += "</ul>\n";
@@ -135,27 +143,35 @@
                                 }
                             }
                             else {
-                                var memberId = member["variableId"];
-                                if (memberId !== undefined) {
-                                    if (member.getTypeValue() === "struct") {
-                                        var membersIds = Object.keys(member);
-                                        for (var i in membersIds) {
-                                            var subMemberId = membersIds[i];
-                                            if (!this.privateStructIds.includes(subMemberId)) {
-                                                this.populateComponentInfo(member[subMemberId], user);
+                                var memberName = member["name"];
+                                if (memberName !== undefined) {
+                                    var memberIsStruct = member["isStruct"]
+                                    if (memberIsStruct !== undefined) {
+                                        memberIsStruct = (memberIsStruct === true);
+                                    }
+                                    if (memberIsStruct) {
+                                        var membersNames = Object.keys(member);
+                                        for (var i in membersNames) {
+                                            var subMemberName = membersNames[i];
+                                            var isVariable = (member[subMemberName] !== undefined);
+                                            if (isVariable) {
+                                                isVariable = (member[subMemberName]["isStruct"] !== undefined);
+                                            }
+                                            if (isVariable) {
+                                                this.populateComponentInfo(member[subMemberName], user);
                                             }
                                         } 
                                     }
                                     else {
-                                        var memberIdValidCSS = ".P" + memberId.replace(/[|&;$%@"<>()+,]/g, "");
-                                        memberIdValidCSS = memberIdValidCSS.replace(/:/g, "");
-                                        var compMember = this.shadowRoot.querySelector(memberIdValidCSS);
-                                        compMember.setTypeValue(member.getTypeValue());
+                                        var memberNameValidCSS = ".P" + memberName.replace(/[|&;$%@"<>()+,]/g, "");
+                                        memberNameValidCSS = memberNameValidCSS.replace(/:/g, "");
+                                        var compMember = this.shadowRoot.querySelector(memberNameValidCSS);
+                                        compMember.setTypeValue(member.type);
                                         compMember.setNumberOfElements(member.numberOfElements);
                                         compMember.setReference("none");
                                         compMember.setInitialValue(member.value);
                                         compMember.setPlantValue(member.value);
-                                        compMember.setValidations(member.validation);
+                                        compMember.setValidations(member.validations);
                                         compMember.setPermissionGroups(member.permissions);
                                         var userAllowed = false;
                                         for (var g in user.groups) {
@@ -172,7 +188,8 @@
                     }
 
                     infoLoaded () {
-                        this.variableId = this.id;
+                        this.name = this.id;
+                        this.isStruct = this.isStruct();
                         this.mainDiv.innerHTML = "Loading structure, please wait";
                         this.treeHTML = "<ul class=\"collapsibleList\" id=\"struct-tree\">";
                         this.addMember(this);

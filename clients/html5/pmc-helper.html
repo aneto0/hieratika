@@ -47,14 +47,14 @@
             });
         }
 
-        function getVariablesInfo(pgName, variableIds, successFn) {
+        function getVariablesInfo(pgName, variablesNames, successFn) {
             $.ajax({
                 type: "post",
                 url: "/getvariablesinfo",
                 data: {
                     token: parent._currentToken,
                     pageName: pgName,
-                    variables: JSON.stringify(variableIds)
+                    variables: JSON.stringify(variablesNames)
                 },
                 success: successFn,
                 error: function (response) {
@@ -69,6 +69,7 @@
             component.setReference("none");
             component.setValidations(pvInfo.validations);
             component.setPermissionGroups(pvInfo.permissions);
+            component.setIsStruct(pvInfo.isStruct);
             var userAllowed = false;
             for (var g in user.groups) {
                 userAllowed = pvInfo.permissions.includes(user.groups[g]); 

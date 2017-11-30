@@ -147,7 +147,7 @@
                 id:this.id,
                 value:valueToUpdate
             }
-            var othersSameId = parent.parent._allPMCComponents[this.id];
+            var othersSameId = parent._allPMCComponents[this.id];
             var otherPMCComp;
             $.each(othersSameId, function (j, otherPMCComp) {
                 otherPMCComp.setValue(valueToUpdate, false);
@@ -163,6 +163,14 @@
 
         getValidations () {
             return this.validations;
+        }
+
+        setIsStruct (struct) {
+            this.struct = struct;
+        }
+
+        isStruct() {
+            return this.struct;
         }
 
         domLoaded () {
@@ -196,11 +204,11 @@
                 root.appendChild(clone);
                 if (this.id !== undefined) {
                     if (this.id.length > 0) {
-                        if(parent.parent._allPMCComponents[this.id] === undefined) {
-                            parent.parent._allPMCComponents[this.id] = [this];
+                        if(parent._allPMCComponents[this.id] === undefined) {
+                            parent._allPMCComponents[this.id] = [this];
                         }
                         else {
-                            parent.parent._allPMCComponents[this.id].push(this);
+                            parent._allPMCComponents[this.id].push(this);
                         }
                     }
                 }
@@ -217,6 +225,7 @@
             this.numberOfElements = 0;
             this.library = undefined;
             this.validations = undefined;
+            this.struct = false;
             this.readOnly = false;
         }
 

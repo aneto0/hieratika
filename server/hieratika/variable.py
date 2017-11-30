@@ -39,7 +39,7 @@ class Variable(object):
         Variables may contain other variables (i.e. they can represent a member of a structure), where their name is the key of a __dict__ representation of the Variable object.
     """
 
-    def __init__(self, name, alias, description = "", vtype = "struct", permissions = [], numberOfElements = [], value = []):
+    def __init__(self, name, alias, description = "", vtype = "", permissions = [], numberOfElements = [], value = []):
         """ Constructs a new Variable object.
         
         Args:
@@ -59,6 +59,7 @@ class Variable(object):
         self.numberOfElements = numberOfElements
         self.value = value
         self.parent = None
+        self.isStruct = False
         self.members = {}
         #TODO
         self.validations = []
@@ -154,12 +155,20 @@ class Variable(object):
         self.parent = parent
 
     def addMember(self, variable):
-        """ Adds a variable a member of this variable.
+        """ Adds a variable a member of this variable. IsStruct() will return True
             Args:
                 variable (Variable): the member variable.
         """
         variable.setParent(self)
         self.members[variable.getName()] = variable
+        self.isStruct = True
+
+    def IsStruct(self):
+        """ 
+        Returns:
+            True if this variable is a struct (or a substruct).
+        """
+        return self.isStruct
 
     def getMember(self, memberName):
         """ Gets a member variable of this variable.
@@ -224,6 +233,7 @@ class Variable(object):
             "description": self.getDescription(),
             "permissions": map(str, self.getPermissions()),
             "validations": map(str, self.getValidations()),
+            "isStruct": self.isStruct
         }
         if (len(self.members) == 0):
             variable["numberOfElements"] = self.getNumberOfElements()

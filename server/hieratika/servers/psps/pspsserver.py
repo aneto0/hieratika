@@ -135,7 +135,7 @@ class PSPSServer(HieratikaServer):
                 memberFound = False
                 #Check if it is pointing at records
                 records = r.find("./ns0:records", self.xmlns)
-                if (records is None):
+                if (not self.containsRecords(records)):
                     #Then must have a folder with this member name
                     r = r.find("./ns0:folders", self.xmlns)
                     if (r is None):
@@ -232,10 +232,7 @@ class PSPSServer(HieratikaServer):
         """
         #At this point the xml can only be pointing at a set of records or at a list of folders (the case where it is pointing at the record must be trapped before)
         records = r.find("./ns0:records", self.xmlns)
-        hasRecords = (records is not None)
-        if (hasRecords):
-            hasRecords = (len(records) > 0)
-        if (not hasRecords):
+        if (not self.containsRecords(records)):
             r = r.find("./ns0:folders", self.xmlns)
             if (r is not None):
                 folders = r.findall("./ns0:folder", self.xmlns)
@@ -365,10 +362,12 @@ class PSPSServer(HieratikaServer):
         return schedule
 
     def getScheduleVariablesValues(self, scheduleUID):
+        log.debug("Return schedule variables values for UID: {0}".format(scheduleUID))
         xmlId = self.getXmlId(scheduleUID)
         self.lockPool.acquire(xmlId)
         variables = self.getAllVariablesValues(scheduleUID)
         self.lockPool.release(xmlId)
+        log.debug("Returning variables: {0}".format(variables))
         return variables
 
     def commitSchedule(self, tid, scheduleUID, variables):
@@ -531,6 +530,7 @@ class PSPSServer(HieratikaServer):
                     
             #Only want the first sub level
             break
+
     def getCachedXmlTree(self, xmlPath):
         """ Parses the xml defined by the xmlPath and caches it in memory.
             This method is not thread-safe and expects the methods acquire and release to be called by the caller.
@@ -621,7 +621,7 @@ class PSPSServer(HieratikaServer):
                 variables (__dict__): dictionary where the value of the variable is stored.
         """
         records = r.find("./ns0:records", self.xmlns)
-        if (records is None):
+        if (not self.containsRecords(records)):
             r = r.find("./ns0:folders", self.xmlns)
             if (r is None):
                 log.critical("Wrong xml structure. ns0:folders is missing")
@@ -673,7 +673,20 @@ class PSPSServer(HieratikaServer):
             for plantSystemXml in plantSystemsRootXml:
                 plantSystemName = plantSystemXml.find("./ns0:name", self.xmlns).text
                 plantRecordsXml = plantSystemXml.find("./ns0:plantRecords", self.xmlns)
+                log.debug("Getting variables values for plant system name {0}".format(plantSystemName))
                 self.getVariableValue(plantRecordsXml, plantSystemName, variables)
+        else:
+            log.critical("Could not find the xml tree for {0}".format(xmlPath))
         return variables
 
+
+    def containsRecords(self, records):
+        """ 
+        Returns:
+            True if the xml node r is non-empty node of type records.
+        """
+        hasRecords = (records is not None)
+        if (hasRecords):
+            hasRecords = (len(records) > 0)
+        return hasRecords
 
