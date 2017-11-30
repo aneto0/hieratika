@@ -71,7 +71,7 @@ class WServer:
                 tokenId = request.args["token"]
         if (ok): 
             ok = self.authImpl.isTokenValid(tokenId)
-            log.debug("Token: {0} is {1}".format(tokenId, str(ok)))
+            log.debug("Token: {0} is valid? {1}".format(tokenId, str(ok)))
         return ok
    
     def setServer(self, serverImpl):

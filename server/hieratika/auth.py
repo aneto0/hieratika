@@ -108,8 +108,8 @@ class HieratikaAuth(object):
             #Dict proxys cannot be iterated like a normal dict
             keys = self.tokens.keys()
             for k in keys:
-                if ((currentTime - self.tokens[k]["lastInteraction"])  > self.loginMonitorMaxInactivityTime):
-                    log.info("User {0} was not activite for the last {1} seconds. User will be logout".format(self.tokens[k]["user"], self.loginMonitorMaxInactivityTime))
+                if ((currentTime - self.tokens[k][1])  > self.loginMonitorMaxInactivityTime):
+                    log.info("User {0} was not active for the last {1} seconds. User will be logout".format(self.tokens[k][0], self.loginMonitorMaxInactivityTime))
                     self.logout(k) 
             #Print current server info
             self.printInfo()
@@ -126,7 +126,8 @@ class HieratikaAuth(object):
         """
         ok = (tokenId in self.tokens)
         if (ok):
-            self.tokens[tokenId]["lastInteraction"] = int(time.time())
+            self.tokens[tokenId] = (self.tokens[tokenId][0], int(time.time()))
+            log.debug("Updated: {0} ({1}) : {2}".format(self.tokens[tokenId][0], tokenId, self.tokens[tokenId][1]))
         return ok
 
     def login(self, username, password):
@@ -148,7 +149,7 @@ class HieratikaAuth(object):
             if (ok):
                 log.info("{0} logged in successfully".format(username))
                 loginToken = uuid.uuid4().hex
-                self.tokens[loginToken] = {"user": username, "lastInteraction": int(time.time())}
+                self.tokens[loginToken] = (username, int(time.time()))
                 user.setToken(loginToken)
                 for l in self.logListeners:
                     l.userLoggedIn(username)
@@ -168,8 +169,8 @@ class HieratikaAuth(object):
         info = info + "{0:40}|{1:40}\n".format("user", "Last interaction")
         keys = self.tokens.keys()
         for k in keys:
-            user = self.tokens[k]["user"]
-            interactionTime = str(datetime.datetime.fromtimestamp(self.tokens[k]["lastInteraction"]))
+            user = self.tokens[k][0]
+            interactionTime = str(datetime.datetime.fromtimestamp(self.tokens[k][1]))
             info = info + "{0:40}|{1:40}\n".format(user, interactionTime)
         log.info(info)
 
@@ -177,7 +178,7 @@ class HieratikaAuth(object):
         """ Returns the username associated to a given token.
         """
         try:
-            username = self.tokens[token]["user"]
+            username = self.tokens[token][0]
         except KeyError as e:
             log.critical("Failed to get user with token {0}".format(token))
             username = None
@@ -191,7 +192,7 @@ class HieratikaAuth(object):
             token (str): token that was provided to the user when was logged in
         """
         try:
-            user = self.tokens[token]["user"]
+            user = self.tokens[token][0]
             log.info("Logging out {0} with token {1}".format(user, token))
             del(self.tokens[token])
             for l in self.logListeners:
