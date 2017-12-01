@@ -273,7 +273,7 @@ def pages(filename):
 
 @application.route("/tmp/<filename>")
 def tmp(filename):
-    return send_from_directory('tmp', filename)
+    return send_from_directory('../../tmp', filename)
 
 if __name__ == "__main__":
    
