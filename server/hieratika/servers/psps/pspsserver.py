@@ -258,22 +258,13 @@ class PSPSServer(HieratikaServer):
                     return None
         return parent
 
-    def getValidation(self, functionTxt, descriptionTxt):
-        """ TODO
-        """
-        validation = {}
-        functionTxt = functionTxt.split("'")
-        if (len(functionTxt) == 3):
-            variable = functionTxt[1]
-            parameters = functionTxt[2]
-             
-        else: 
-            log.critical("Could not parse {0}".format(functionTxt))
-
     def getConstraints(self, xmlRoot):
         """ TODO
         """
+        xml.findall('.//child[@id="123"]...')
+
         log.debug("Loading constraints")
+        constraints = {}
         plantSystemsRootXml = xmlRoot.findall(".//ns0:plantSystem", self.xmlns)
         for plantSystemXml in plantSystemsRootXml:
             plantSystemName = plantSystemXml.find("./ns0:name", self.xmlns).text
@@ -285,11 +276,42 @@ class PSPSServer(HieratikaServer):
                 log.warning("No plantConstraints for plant system {0}".format(plantSystemName))
             if (constraintsXml is not None):
                 for constraintXml in constraintsXml:
-                    constraintDescriptionXml = constraintDescriptionXml.find("./ns0:description", self.xmlns)
+                    constraintDescriptionXml = constraintXml.find("./ns0:description", self.xmlns)
                     constraintFunctionXml = constraintXml.find("./ns0:function", self.xmlns)
-                    log.debug("Loading function {0}".format(constraintFunctionXml.text))
+                    if (constraintFunctionXml is not None):
+                        constraintFunction = constraintFunctionXml.text
+                        #Remove the leading = 
+                        constraintFunction = constraintFunction[1:]
+                        log.debug("Loading function {0}".format(constraintFunction))
+                        #Store all the variables related to this constraint (identified by being between single quotes '')
+                        variablesInConstraints = constraintFunction.split("'")[1::2]
+                        for variableInConstraint in variablesInConstraints:
+                            try:
+                                constraints[variableInConstraint].append(constraintFunction)
+                                log.debug("Appending {0} for function {1}".format(variableInConstraint, constraintFunction))
+                            except KeyError as e:
+                                constraints[variableInConstraint] = [constraintFunction]
+                                log.debug("Registering {0} for function {1}".format(variableInConstraint, constraintFunction))
+                    else:
+                        log.warning("No constraint function defined in plant system {0}".format(plantSystemName))
             else:
                 log.warning("No folders/folder/constraints for plant system {0}".format(plantSystemName))
+
+        return constraints
+
+    def attachVariableConstraints(self, variable, parentName, globalConstraints):
+        #Check if the variable is in the constraints list
+        if (variable.getName() in globalConstraints):
+            log.debug("Attaching {0} to variable {1}".format(globalConstraints[variable.getName()], variable.getName()))
+            variable.setValidations(globalConstraints[variable.getName()])
+        members = variable.getMembers()
+        for memberName, memberVariable in members.iteritems():
+            if (parentName is not None):
+                memberFullName = parentName + "@" + memberName
+                if (memberFullName in globalConstraints):
+                    memberVariable.setValidations(globalConstraints[memberFullName])
+                    log.debug("Attaching {0} to variable {1}".format(globalConstraints[memberFullName], memberFullName))
+            self.attachVariableConstraints(memberVariable, variable.getName(), globalConstraints)
 
     def getVariablesInfo(self, pageName, requestedVariables):
         xmlFileLocation = "{0}/psps/configuration/{1}/000/plant.xml".format(self.baseDir, pageName)
@@ -302,7 +324,7 @@ class PSPSServer(HieratikaServer):
 
         if (tree is not None):
             xmlRoot = tree.getroot()
-            self.getConstraints(xmlRoot)
+            constraints = self.getConstraints(xmlRoot)
             for variableName in requestedVariables:
                 variable = None
                 r = self.findVariableInXml(xmlRoot, variableName)
@@ -332,6 +354,7 @@ class PSPSServer(HieratikaServer):
                         r = pr
                     #Recursively add all the variables information
                     variable = self.getVariableInfo(r, parent)
+                    self.attachVariableConstraints(variable, None, constraints)
                     
                 if (variable is not None):
                     variables.append(variable)

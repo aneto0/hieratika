@@ -127,6 +127,13 @@ class Variable(object):
         """
         return self.validations
 
+    def setValidations(self, validations):
+        """ Sets the validations functions for the variable (see __init__)
+        Args:
+            validations ([str]): array of validation functions that are associated to this variable.
+        """
+        self.validations = validations
+
 
     def getValue(self):
         """
@@ -183,6 +190,13 @@ class Variable(object):
             log.critical("Could not retrieve member {0}".format(e))
             member = None
         return member
+
+    def getMembers(self):
+        """
+        Returns:
+            All the member variables from this variable (in the format of a dictionary [memberName][Variable]
+        """
+        return self.members
 
     def __eq__(self, another):
         """ Two Variables are equal if they have the same absolute name.

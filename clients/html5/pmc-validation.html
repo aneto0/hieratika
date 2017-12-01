@@ -1,8 +1,29 @@
 <html>
     <head>
         <link rel="import" href="pmc-constants.html">
+        <link rel="import" href="libraries.html">
     </head>
     <script>
+        class PMCValidation {
+
+            constructor(validationFunction) {
+                this.validationFunction = validationFunction;
+                this.parser = math.parser();
+                this.parser.set('getValue', function (variableName) {
+                    return parent._allPMCComponents[variableName].getValue();
+                });
+                //Replace all the variables, identified between '' by the expression getValue
+                while(this.validationFunction.indexOf("'") !== -1) {
+                    this.validationFunction = this.validationFunction.replace("'", "getValue(\"").replace("'", "\")");
+                }
+            }
+
+            test() {
+                return this.parser.eval(this.validationFunction);
+            }
+        }
+
+
         function checkMax(component, max) {
             //Allow to compare each element of a given array with the corresponding element of a max array
             //Or to compare each element of a given array against a single max value

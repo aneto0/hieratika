@@ -32,17 +32,9 @@
 
             var error = false;
             var fun;
-            var validation;
             if (this.validations !== undefined) {
                 for (var i=0; (i<this.validations.length) && (!error); i++) {
-                    validation = this.validations[i];
-                    fun = eval(validation.fun);
-                    if (fun !== undefined) {
-                        if (validation.parameters === undefined) {
-                            validation.parameters = [];
-                        }
-                        error = !fun(this, validation.parameters);
-                    }
+                    error = !this.validations[i].test();
                 }
             }
             var titleString = this.toString();
