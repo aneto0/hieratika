@@ -261,7 +261,6 @@ class PSPSServer(HieratikaServer):
     def getConstraints(self, xmlRoot):
         """ TODO
         """
-        xml.findall('.//child[@id="123"]...')
 
         log.debug("Loading constraints")
         constraints = {}
@@ -286,6 +285,13 @@ class PSPSServer(HieratikaServer):
                         #Store all the variables related to this constraint (identified by being between single quotes '')
                         variablesInConstraints = constraintFunction.split("'")[1::2]
                         for variableInConstraint in variablesInConstraints:
+                            #If the variable does not contain the struct separator, get the full path for the variable
+                            if (variableInConstraint.find("@") == -1):
+                                nameToFind = ".//record[name='{0}']".format(variableInConstraint)
+                                log.debug("Looking for the variableXmlFullPath {0}".format(nameToFind))
+                                variableXmlFullPath = xmlRoot.find(nameToFind, self.xmlns)
+                                if (variableXmlFullPath is not None):
+                                    log.debug("Found the variableXmlFullPath {0}".format(variableInConstraint))
                             try:
                                 constraints[variableInConstraint].append(constraintFunction)
                                 log.debug("Appending {0} for function {1}".format(variableInConstraint, constraintFunction))

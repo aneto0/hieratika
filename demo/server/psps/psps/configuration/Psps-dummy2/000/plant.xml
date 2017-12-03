@@ -1,0 +1,530 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationContainer
+    xmlns="http://www.iter.org/CODAC/PlantSystemConfig/2014" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <schemaVersion>1.2</schemaVersion>
+    <version>00.00</version>
+    <sddVersion>11</sddVersion>
+    <name>psps-dummy2</name>
+    <description>Created by SDD, version 11</description>
+    <plantSystems>
+        <plantSystem>
+            <name>D1-IA</name>
+            <version>1.0</version>
+            <description>Created at: 2015-05-27T11:52:46.070+02:00</description>
+            <plantRecords>
+                <folders>
+                    <folder>
+                        <name>D1-IA</name>
+                        <folders>
+                            <folder>
+                                <name>TST2</name>
+                                <folders>
+                                    <folder>
+                                    <name>CM</name>
+                                    <folders>
+                                    <folder>
+                                    <name>C1</name>
+                                    <folders>
+                                    <folder>
+                                    <name>CF</name>
+                                    <folders/>
+                                    <records>
+                                    <record
+                                    xsi:type="recordDouble" size="1">
+                                    <name>D1-IA-TST2:CMC1CFBL00-WPS00</name>
+                                    <alias>Sets image black level</alias>
+                                    <description>Sets image black level</description>
+                                    <origin>SDD</origin>
+                                    <units></units>
+
+                                    <definition definition="org.iter.codac.psps.validation.ConstantDouble">20.0</definition>
+                                    <values>
+                                    <value>20.0</value>
+                                    </values>
+                                    </record>
+                                    <record
+                                    xsi:type="recordEnum" size="1">
+                                    <name>D1-IA-TST2:CMC1CFBS00-WPS00</name>
+                                    <alias>Sets bits per sample value</alias>
+                                    <description>Sets bits per sample value</description>
+                                    <origin>SDD</origin>
+                                    <units></units>
+
+                                    <definition definition="org.iter.codac.psps.validation.ConstantEnum">8bits</definition>
+                                    <values>
+                                    <value>8bits</value>
+                                    </values>
+                                    <choices>
+                                    <choice>1bits</choice>
+                                    <choice>2bits</choice>
+                                    <choice>4bits</choice>
+                                    <choice>8bits</choice>
+                                    <choice>16bits</choice>
+                                    <choice>32bits</choice>
+                                    </choices>
+                                    </record>
+                                    <record
+                                    xsi:type="recordDouble" size="1">
+                                    <name>D1-IA-TST2:CMC1CFEX00-WPS00</name>
+                                    <alias>Sets exposure time</alias>
+                                    <description>Sets exposure time</description>
+                                    <origin>SDD</origin>
+                                    <units></units>
+
+                                    <definition definition="org.iter.codac.psps.validation.ConstantDouble">0.5</definition>
+                                    <values>
+                                    <value>0.5</value>
+                                    </values>
+                                    </record>
+                                    <record
+                                    xsi:type="recordDouble" size="1">
+                                    <name>D1-IA-TST2:CMC1CFEX00-WPS00_0</name>
+                                    <alias>Sets exposure time: Persistent</alias>
+                                    <description>Sets exposure time: Persistent</description>
+                                    <origin>SDD</origin>
+                                    <units></units>
+
+                                    <definition definition="org.iter.codac.psps.validation.ConstantDouble">0.5</definition>
+                                    <values>
+                                    <value>0.5</value>
+                                    </values>
+                                    </record>
+                                    <record
+                                    xsi:type="recordDouble" size="1">
+                                    <name>D1-IA-TST2:CMC1CFEX00-WPS00_1</name>
+                                    <alias>Sets exposure time: Static</alias>
+                                    <description>Sets exposure time: Static</description>
+                                    <origin>SDD</origin>
+                                    <units></units>
+
+                                    <definition definition="org.iter.codac.psps.validation.ConstantDouble">0.5</definition>
+                                    <values>
+                                    <value>0.5</value>
+                                    </values>
+                                    </record>
+                                    <record
+                                    xsi:type="recordLong" size="1">
+                                    <name>D1-IA-TST2:CMC1CFHG00-WPS00</name>
+                                    <alias>Sets image height</alias>
+                                    <description>Sets image height</description>
+                                    <origin>SDD</origin>
+                                    <units>Pixels</units>
+
+                                    <definition definition="org.iter.codac.psps.validation.ConstantLong">600</definition>
+                                    <values>
+                                    <value>600</value>
+                                    </values>
+                                    </record>
+                                    <record
+                                    xsi:type="recordLong" size="1">
+                                    <name>D1-IA-TST2:CMC1CFRX00-WPS00</name>
+                                    <alias>Sets X offset of Region of Interest (ROI)</alias>
+                                    <description>Sets X offset of Region of Interest (ROI)</description>
+                                    <origin>SDD</origin>
+                                    <units></units>
+
+                                    <definition definition="org.iter.codac.psps.validation.ConstantLong">10</definition>
+                                    <values>
+                                    <value>10</value>
+                                    </values>
+                                    </record>
+                                    <record
+                                    xsi:type="recordLong" size="1">
+                                    <name>D1-IA-TST2:CMC1CFRY00-WPS00</name>
+                                    <alias>Sets Y offset of Region of Interest (ROI)</alias>
+                                    <description>Sets Y offset of Region of Interest (ROI)</description>
+                                    <origin>SDD</origin>
+                                    <units></units>
+
+                                    <definition definition="org.iter.codac.psps.validation.ConstantLong">10</definition>
+                                    <values>
+                                    <value>10</value>
+                                    </values>
+                                    </record>
+                                    <record
+                                    xsi:type="recordLong" size="1">
+                                    <name>D1-IA-TST2:CMC1CFSP00-WPS00</name>
+                                    <alias>Sets samples per pixel value</alias>
+                                    <description>Sets samples per pixel value</description>
+                                    <origin>SDD</origin>
+                                    <units></units>
+
+                                    <definition definition="org.iter.codac.psps.validation.ConstantLong">1</definition>
+                                    <values>
+                                    <value>1</value>
+                                    </values>
+                                    </record>
+                                    <record
+                                    xsi:type="recordLong" size="1">
+                                    <name>D1-IA-TST2:CMC1CFWD00-WPS00</name>
+                                    <alias>Sets image width</alias>
+                                    <description>Sets image width</description>
+                                    <origin>SDD</origin>
+                                    <units></units>
+
+                                    <definition definition="org.iter.codac.psps.validation.ConstantLong">800</definition>
+                                    <values>
+                                    <value>800</value>
+                                    </values>
+                                    </record>
+                                    <record
+                                    xsi:type="recordLong" size="1">
+                                    <name>D1-IA-TST2:CMC1CFWD00-WPS01</name>
+                                    <alias>Sets image width, dup</alias>
+                                    <description>Sets image width, dup</description>
+                                    <origin>SDD</origin>
+                                    <units></units>
+
+                                    <definition definition="org.iter.codac.psps.validation.ConstantLong">801</definition>
+                                    <values>
+                                    <value>801</value>
+                                    </values>
+                                    </record>
+                                    </records>
+                                    </folder>
+                                    </folders>
+                                    <records/>
+                                    </folder>
+                                    </folders>
+                                    <records/>
+                                    </folder>
+                                    <folder>
+                                    <name>SM</name>
+                                    <folders>
+                                    <folder>
+                                    <name>TM</name>
+                                    <folders>
+                                    <folder>
+                                    <name>CL</name>
+                                    <folders/>
+                                    <records>
+                                    <record
+                                    xsi:type="recordDouble" size="1">
+                                    <name>D1-IA-TST2:SMTMCLRS00-00000</name>
+                                    <alias>Initiate device reset</alias>
+                                    <description>Initiate device reset</description>
+                                    <origin>SDD</origin>
+                                    <units></units>
+
+                                    <definition definition="org.iter.codac.psps.validation.ConstantDouble">3.1415</definition>
+                                    <values>
+                                    <value>3.1415</value>
+                                    </values>
+                                    </record>
+                                    </records>
+                                    </folder>
+                                    <folder>
+                                    <name>ST</name>
+                                    <folders/>
+                                    <records>
+                                    <record
+                                    xsi:type="recordString" size="1">
+                                    <name>D1-IA-TST2:SMTMSTTM00-RSS0S</name>
+                                    <alias>Seconds part of board time</alias>
+                                    <description>Seconds part of board time</description>
+                                    <origin>SDD</origin>
+                                    <units></units>
+
+                                    <definition definition="org.iter.codac.psps.validation.ConstantString">String</definition>
+                                    <values>
+                                    <value>String</value>
+                                    </values>
+                                    </record>
+                                    </records>
+                                    </folder>
+                                    </folders>
+                                    <records/>
+                                    </folder>
+                                    <folder>
+                                    <name>TX</name>
+                                    <folders>
+                                    <folder>
+                                    <name>ST</name>
+                                    <folders/>
+                                    <records>
+                                    <record
+                                    xsi:type="recordDouble" size="20">
+                                    <name>D1-IA-TST2:SMTXSTSD00-WPS00</name>
+                                    <alias>A fake waveform record</alias>
+                                    <description>A fake waveform record</description>
+                                    <origin>SDD</origin>
+                                    <units></units>
+
+                                    <definition definition="org.iter.codac.psps.validation.ConstantDouble">null null null null null null null null null null null null null null null null null null null null</definition>
+                                    <values/>
+                                    </record>
+                                    </records>
+                                    </folder>
+                                    </folders>
+                                    <records/>
+                                    </folder>
+                                    </folders>
+                                    <records/>
+                                    </folder>
+                                </folders>
+                                <records/>
+                            </folder>
+                        </folders>
+                        <records/>
+                    </folder>
+                    <folder>
+                        <name>Default</name>
+                        <folders/>
+                        <records>
+                            <record xsi:type="recordString" size="1">
+                                <name>D1-IA-TST2:VAR001</name>
+                                <alias>New Variable: As plain as possible</alias>
+                                <description>New Variable: As plain as possible</description>
+                                <origin>SDD</origin>
+                                <units></units>
+                                <definition definition="org.iter.codac.psps.validation.ConstantString">String</definition>
+                                <values>
+                                    <value>String</value>
+                                </values>
+                            </record>
+                        </records>
+                    </folder>
+                </folders>
+                <records/>
+            </plantRecords>
+            <plantConstraints>
+                <folders>
+                    <folder>
+                        <name>From SDD</name>
+                        <folders/>
+                        <constraints>
+                            <constraint>
+                                <name>D1-IA-TST2:CMC1CFBL00-WPS00 EPICS HIGH limit</name>
+                                <description>Validates the EPICS HIGH limit for D1-IA-TST2:CMC1CFBL00-WPS00:"Sets image black level"</description>
+                                <hint><![CDATA[Decrease the value of D1-IA-TST2:CMC1CFBL00-WPS00<=120]]></hint>
+                                <function name="schedule.validate"><![CDATA[='D1-IA-TST2:CMC1CFBL00-WPS00'<=120]]></function>
+                                <origin>SDD</origin>
+                            </constraint>
+                            <constraint>
+                                <name>D1-IA-TST2:CMC1CFBL00-WPS00 EPICS HOPR limit</name>
+                                <description>Validates the EPICS HOPR limit for D1-IA-TST2:CMC1CFBL00-WPS00:"Sets image black level"</description>
+                                <hint><![CDATA[Decrease the value of D1-IA-TST2:CMC1CFBL00-WPS00<=128]]></hint>
+                                <function name="schedule.validate"><![CDATA[='D1-IA-TST2:CMC1CFBL00-WPS00'<=128]]></function>
+                                <origin>SDD</origin>
+                            </constraint>
+                            <constraint>
+                                <name>D1-IA-TST2:CMC1CFBL00-WPS00 EPICS LOPR limit</name>
+                                <description>Validates the EPICS LOPR limit for D1-IA-TST2:CMC1CFBL00-WPS00:"Sets image black level"</description>
+                                <hint><![CDATA[Increase the value of D1-IA-TST2:CMC1CFBL00-WPS00>=0]]></hint>
+                                <function name="schedule.validate"><![CDATA[='D1-IA-TST2:CMC1CFBL00-WPS00'>=0]]></function>
+                                <origin>SDD</origin>
+                            </constraint>
+                            <constraint>
+                                <name>D1-IA-TST2:CMC1CFBL00-WPS00 EPICS LOW limit</name>
+                                <description>Validates the EPICS LOW limit for D1-IA-TST2:CMC1CFBL00-WPS00:"Sets image black level"</description>
+                                <hint><![CDATA[Increase the value of D1-IA-TST2:CMC1CFBL00-WPS00>=10]]></hint>
+                                <function name="schedule.validate"><![CDATA[='D1-IA-TST2:CMC1CFBL00-WPS00'>=10]]></function>
+                                <origin>SDD</origin>
+                            </constraint>
+                            <constraint>
+                                <name>D1-IA-TST2:CMC1CFEX00-WPS00 EPICS DRVH limit</name>
+                                <description>Validates the EPICS DRVH limit for D1-IA-TST2:CMC1CFEX00-WPS00:"Sets exposure time"</description>
+                                <hint><![CDATA[Decrease the value of D1-IA-TST2:CMC1CFEX00-WPS00<=1]]></hint>
+                                <function name="schedule.validate"><![CDATA[='D1-IA-TST2:CMC1CFEX00-WPS00'<=1]]></function>
+                                <origin>SDD</origin>
+                            </constraint>
+                            <constraint>
+                                <name>D1-IA-TST2:CMC1CFEX00-WPS00 EPICS DRVL limit</name>
+                                <description>Validates the EPICS DRVL limit for D1-IA-TST2:CMC1CFEX00-WPS00:"Sets exposure time"</description>
+                                <hint><![CDATA[Increase the value of D1-IA-TST2:CMC1CFEX00-WPS00>=0]]></hint>
+                                <function name="schedule.validate"><![CDATA[='D1-IA-TST2:CMC1CFEX00-WPS00'>=0]]></function>
+                                <origin>SDD</origin>
+                            </constraint>
+                            <constraint>
+                                <name>D1-IA-TST2:CMC1CFEX00-WPS00 EPICS HIGH limit</name>
+                                <description>Validates the EPICS HIGH limit for D1-IA-TST2:CMC1CFEX00-WPS00:"Sets exposure time"</description>
+                                <hint><![CDATA[Decrease the value of D1-IA-TST2:CMC1CFEX00-WPS00<=0.95]]></hint>
+                                <function name="schedule.validate"><![CDATA[='D1-IA-TST2:CMC1CFEX00-WPS00'<=0.95]]></function>
+                                <origin>SDD</origin>
+                            </constraint>
+                            <constraint>
+                                <name>D1-IA-TST2:CMC1CFEX00-WPS00 EPICS HOPR limit</name>
+                                <description>Validates the EPICS HOPR limit for D1-IA-TST2:CMC1CFEX00-WPS00:"Sets exposure time"</description>
+                                <hint><![CDATA[Decrease the value of D1-IA-TST2:CMC1CFEX00-WPS00<=1]]></hint>
+                                <function name="schedule.validate"><![CDATA[='D1-IA-TST2:CMC1CFEX00-WPS00'<=1]]></function>
+                                <origin>SDD</origin>
+                            </constraint>
+                            <constraint>
+                                <name>D1-IA-TST2:CMC1CFEX00-WPS00 EPICS LOPR limit</name>
+                                <description>Validates the EPICS LOPR limit for D1-IA-TST2:CMC1CFEX00-WPS00:"Sets exposure time"</description>
+                                <hint><![CDATA[Increase the value of D1-IA-TST2:CMC1CFEX00-WPS00>=0]]></hint>
+                                <function name="schedule.validate"><![CDATA[='D1-IA-TST2:CMC1CFEX00-WPS00'>=0]]></function>
+                                <origin>SDD</origin>
+                            </constraint>
+                            <constraint>
+                                <name>D1-IA-TST2:CMC1CFEX00-WPS00 EPICS LOW limit</name>
+                                <description>Validates the EPICS LOW limit for D1-IA-TST2:CMC1CFEX00-WPS00:"Sets exposure time"</description>
+                                <hint><![CDATA[Increase the value of D1-IA-TST2:CMC1CFEX00-WPS00>=0.1]]></hint>
+                                <function name="schedule.validate"><![CDATA[='D1-IA-TST2:CMC1CFEX00-WPS00'>=0.1]]></function>
+                                <origin>SDD</origin>
+                            </constraint>
+                            <constraint>
+                                <name>D1-IA-TST2:CMC1CFEX00-WPS00_0 EPICS DRVH limit</name>
+                                <description>Validates the EPICS DRVH limit for D1-IA-TST2:CMC1CFEX00-WPS00_0:"Sets exposure time: Persistent"</description>
+                                <hint><![CDATA[Decrease the value of D1-IA-TST2:CMC1CFEX00-WPS00_0<=1]]></hint>
+                                <function name="schedule.validate"><![CDATA[='D1-IA-TST2:CMC1CFEX00-WPS00_0'<=1]]></function>
+                                <origin>SDD</origin>
+                            </constraint>
+                            <constraint>
+                                <name>D1-IA-TST2:CMC1CFEX00-WPS00_0 EPICS DRVL limit</name>
+                                <description>Validates the EPICS DRVL limit for D1-IA-TST2:CMC1CFEX00-WPS00_0:"Sets exposure time: Persistent"</description>
+                                <hint><![CDATA[Increase the value of D1-IA-TST2:CMC1CFEX00-WPS00_0>=0]]></hint>
+                                <function name="schedule.validate"><![CDATA[='D1-IA-TST2:CMC1CFEX00-WPS00_0'>=0]]></function>
+                                <origin>SDD</origin>
+                            </constraint>
+                            <constraint>
+                                <name>D1-IA-TST2:CMC1CFEX00-WPS00_0 EPICS HIGH limit</name>
+                                <description>Validates the EPICS HIGH limit for D1-IA-TST2:CMC1CFEX00-WPS00_0:"Sets exposure time: Persistent"</description>
+                                <hint><![CDATA[Decrease the value of D1-IA-TST2:CMC1CFEX00-WPS00_0<=0.95]]></hint>
+                                <function name="schedule.validate"><![CDATA[='D1-IA-TST2:CMC1CFEX00-WPS00_0'<=0.95]]></function>
+                                <origin>SDD</origin>
+                            </constraint>
+                            <constraint>
+                                <name>D1-IA-TST2:CMC1CFEX00-WPS00_0 EPICS HOPR limit</name>
+                                <description>Validates the EPICS HOPR limit for D1-IA-TST2:CMC1CFEX00-WPS00_0:"Sets exposure time: Persistent"</description>
+                                <hint><![CDATA[Decrease the value of D1-IA-TST2:CMC1CFEX00-WPS00_0<=1]]></hint>
+                                <function name="schedule.validate"><![CDATA[='D1-IA-TST2:CMC1CFEX00-WPS00_0'<=1]]></function>
+                                <origin>SDD</origin>
+                            </constraint>
+                            <constraint>
+                                <name>D1-IA-TST2:CMC1CFEX00-WPS00_0 EPICS LOPR limit</name>
+                                <description>Validates the EPICS LOPR limit for D1-IA-TST2:CMC1CFEX00-WPS00_0:"Sets exposure time: Persistent"</description>
+                                <hint><![CDATA[Increase the value of D1-IA-TST2:CMC1CFEX00-WPS00_0>=0]]></hint>
+                                <function name="schedule.validate"><![CDATA[='D1-IA-TST2:CMC1CFEX00-WPS00_0'>=0]]></function>
+                                <origin>SDD</origin>
+                            </constraint>
+                            <constraint>
+                                <name>D1-IA-TST2:CMC1CFEX00-WPS00_0 EPICS LOW limit</name>
+                                <description>Validates the EPICS LOW limit for D1-IA-TST2:CMC1CFEX00-WPS00_0:"Sets exposure time: Persistent"</description>
+                                <hint><![CDATA[Increase the value of D1-IA-TST2:CMC1CFEX00-WPS00_0>=0.1]]></hint>
+                                <function name="schedule.validate"><![CDATA[='D1-IA-TST2:CMC1CFEX00-WPS00_0'>=0.1]]></function>
+                                <origin>SDD</origin>
+                            </constraint>
+                            <constraint>
+                                <name>D1-IA-TST2:CMC1CFEX00-WPS00_1 EPICS DRVH limit</name>
+                                <description>Validates the EPICS DRVH limit for D1-IA-TST2:CMC1CFEX00-WPS00_1:"Sets exposure time: Static"</description>
+                                <hint><![CDATA[Decrease the value of D1-IA-TST2:CMC1CFEX00-WPS00_1<=1]]></hint>
+                                <function name="schedule.validate"><![CDATA[='D1-IA-TST2:CMC1CFEX00-WPS00_1'<=1]]></function>
+                                <origin>SDD</origin>
+                            </constraint>
+                            <constraint>
+                                <name>D1-IA-TST2:CMC1CFEX00-WPS00_1 EPICS DRVL limit</name>
+                                <description>Validates the EPICS DRVL limit for D1-IA-TST2:CMC1CFEX00-WPS00_1:"Sets exposure time: Static"</description>
+                                <hint><![CDATA[Increase the value of D1-IA-TST2:CMC1CFEX00-WPS00_1>=0]]></hint>
+                                <function name="schedule.validate"><![CDATA[='D1-IA-TST2:CMC1CFEX00-WPS00_1'>=0]]></function>
+                                <origin>SDD</origin>
+                            </constraint>
+                            <constraint>
+                                <name>D1-IA-TST2:CMC1CFEX00-WPS00_1 EPICS HIGH limit</name>
+                                <description>Validates the EPICS HIGH limit for D1-IA-TST2:CMC1CFEX00-WPS00_1:"Sets exposure time: Static"</description>
+                                <hint><![CDATA[Decrease the value of D1-IA-TST2:CMC1CFEX00-WPS00_1<=0.95]]></hint>
+                                <function name="schedule.validate"><![CDATA[='D1-IA-TST2:CMC1CFEX00-WPS00_1'<=0.95]]></function>
+                                <origin>SDD</origin>
+                            </constraint>
+                            <constraint>
+                                <name>D1-IA-TST2:CMC1CFEX00-WPS00_1 EPICS HOPR limit</name>
+                                <description>Validates the EPICS HOPR limit for D1-IA-TST2:CMC1CFEX00-WPS00_1:"Sets exposure time: Static"</description>
+                                <hint><![CDATA[Decrease the value of D1-IA-TST2:CMC1CFEX00-WPS00_1<=1]]></hint>
+                                <function name="schedule.validate"><![CDATA[='D1-IA-TST2:CMC1CFEX00-WPS00_1'<=1]]></function>
+                                <origin>SDD</origin>
+                            </constraint>
+                            <constraint>
+                                <name>D1-IA-TST2:CMC1CFEX00-WPS00_1 EPICS LOPR limit</name>
+                                <description>Validates the EPICS LOPR limit for D1-IA-TST2:CMC1CFEX00-WPS00_1:"Sets exposure time: Static"</description>
+                                <hint><![CDATA[Increase the value of D1-IA-TST2:CMC1CFEX00-WPS00_1>=0]]></hint>
+                                <function name="schedule.validate"><![CDATA[='D1-IA-TST2:CMC1CFEX00-WPS00_1'>=0]]></function>
+                                <origin>SDD</origin>
+                            </constraint>
+                            <constraint>
+                                <name>D1-IA-TST2:CMC1CFEX00-WPS00_1 EPICS LOW limit</name>
+                                <description>Validates the EPICS LOW limit for D1-IA-TST2:CMC1CFEX00-WPS00_1:"Sets exposure time: Static"</description>
+                                <hint><![CDATA[Increase the value of D1-IA-TST2:CMC1CFEX00-WPS00_1>=0.1]]></hint>
+                                <function name="schedule.validate"><![CDATA[='D1-IA-TST2:CMC1CFEX00-WPS00_1'>=0.1]]></function>
+                                <origin>SDD</origin>
+                            </constraint>
+                            <constraint>
+                                <name>D1-IA-TST2:CMC1CFWD00-WPS00 EPICS DRVH limit</name>
+                                <description>Validates the EPICS DRVH limit for D1-IA-TST2:CMC1CFWD00-WPS00:"Sets image width"</description>
+                                <hint><![CDATA[Decrease the value of D1-IA-TST2:CMC1CFWD00-WPS00<=1000]]></hint>
+                                <function name="schedule.validate"><![CDATA[='D1-IA-TST2:CMC1CFWD00-WPS00'<=1000]]></function>
+                                <origin>SDD</origin>
+                            </constraint>
+                            <constraint>
+                                <name>D1-IA-TST2:CMC1CFWD00-WPS00 EPICS DRVL limit</name>
+                                <description>Validates the EPICS DRVL limit for D1-IA-TST2:CMC1CFWD00-WPS00:"Sets image width"</description>
+                                <hint><![CDATA[Increase the value of D1-IA-TST2:CMC1CFWD00-WPS00>=0]]></hint>
+                                <function name="schedule.validate"><![CDATA[='D1-IA-TST2:CMC1CFWD00-WPS00'>=0]]></function>
+                                <origin>SDD</origin>
+                            </constraint>
+                            <constraint>
+                                <name>D1-IA-TST2:CMC1CFWD00-WPS00 EPICS HOPR limit</name>
+                                <description>Validates the EPICS HOPR limit for D1-IA-TST2:CMC1CFWD00-WPS00:"Sets image width"</description>
+                                <hint><![CDATA[Decrease the value of D1-IA-TST2:CMC1CFWD00-WPS00<=900]]></hint>
+                                <function name="schedule.validate"><![CDATA[='D1-IA-TST2:CMC1CFWD00-WPS00'<=900]]></function>
+                                <origin>SDD</origin>
+                            </constraint>
+                            <constraint>
+                                <name>D1-IA-TST2:CMC1CFWD00-WPS00 EPICS LOPR limit</name>
+                                <description>Validates the EPICS LOPR limit for D1-IA-TST2:CMC1CFWD00-WPS00:"Sets image width"</description>
+                                <hint><![CDATA[Increase the value of D1-IA-TST2:CMC1CFWD00-WPS00>=0]]></hint>
+                                <function name="schedule.validate"><![CDATA[='D1-IA-TST2:CMC1CFWD00-WPS00'>=0]]></function>
+                                <origin>SDD</origin>
+                            </constraint>
+                            <constraint>
+                                <name>D1-IA-TST2:SMTMCLRS00-00000 EPICS DRVH limit</name>
+                                <description>Validates the EPICS DRVH limit for D1-IA-TST2:SMTMCLRS00-00000:"Initiate device reset"</description>
+                                <hint><![CDATA[Decrease the value of D1-IA-TST2:SMTMCLRS00-00000<=10]]></hint>
+                                <function name="schedule.validate"><![CDATA[='D1-IA-TST2:SMTMCLRS00-00000'<=10]]></function>
+                                <origin>SDD</origin>
+                            </constraint>
+                            <constraint>
+                                <name>D1-IA-TST2:SMTMCLRS00-00000 EPICS DRVL limit</name>
+                                <description>Validates the EPICS DRVL limit for D1-IA-TST2:SMTMCLRS00-00000:"Initiate device reset"</description>
+                                <hint><![CDATA[Increase the value of D1-IA-TST2:SMTMCLRS00-00000>=0]]></hint>
+                                <function name="schedule.validate"><![CDATA[='D1-IA-TST2:SMTMCLRS00-00000'>=0]]></function>
+                                <origin>SDD</origin>
+                            </constraint>
+                            <constraint>
+                                <name>D1-IA-TST2:SMTMCLRS00-00000 EPICS HIGH limit</name>
+                                <description>Validates the EPICS HIGH limit for D1-IA-TST2:SMTMCLRS00-00000:"Initiate device reset"</description>
+                                <hint><![CDATA[Decrease the value of D1-IA-TST2:SMTMCLRS00-00000<=5]]></hint>
+                                <function name="schedule.validate"><![CDATA[='D1-IA-TST2:SMTMCLRS00-00000'<=5]]></function>
+                                <origin>SDD</origin>
+                            </constraint>
+                            <constraint>
+                                <name>D1-IA-TST2:SMTMCLRS00-00000 EPICS HOPR limit</name>
+                                <description>Validates the EPICS HOPR limit for D1-IA-TST2:SMTMCLRS00-00000:"Initiate device reset"</description>
+                                <hint><![CDATA[Decrease the value of D1-IA-TST2:SMTMCLRS00-00000<=10]]></hint>
+                                <function name="schedule.validate"><![CDATA[='D1-IA-TST2:SMTMCLRS00-00000'<=10]]></function>
+                                <origin>SDD</origin>
+                            </constraint>
+                            <constraint>
+                                <name>D1-IA-TST2:SMTMCLRS00-00000 EPICS LOPR limit</name>
+                                <description>Validates the EPICS LOPR limit for D1-IA-TST2:SMTMCLRS00-00000:"Initiate device reset"</description>
+                                <hint><![CDATA[Increase the value of D1-IA-TST2:SMTMCLRS00-00000>=0]]></hint>
+                                <function name="schedule.validate"><![CDATA[='D1-IA-TST2:SMTMCLRS00-00000'>=0]]></function>
+                                <origin>SDD</origin>
+                            </constraint>
+                            <constraint>
+                                <name>D1-IA-TST2:SMTMCLRS00-00000 EPICS LOW limit</name>
+                                <description>Validates the EPICS LOW limit for D1-IA-TST2:SMTMCLRS00-00000:"Initiate device reset"</description>
+                                <hint><![CDATA[Increase the value of D1-IA-TST2:SMTMCLRS00-00000>=1]]></hint>
+                                <function name="schedule.validate"><![CDATA[='D1-IA-TST2:SMTMCLRS00-00000'>=1]]></function>
+                                <origin>SDD</origin>
+                            </constraint>
+                        </constraints>
+                    </folder>
+                </folders>
+                <constraints/>
+            </plantConstraints>
+            <sdnTopics>
+                <sdnTopics/>
+            </sdnTopics>
+        </plantSystem>
+    </plantSystems>
+</configurationContainer>
