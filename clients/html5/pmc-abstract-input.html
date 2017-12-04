@@ -31,16 +31,17 @@
             }
 
             var error = false;
-            var fun;
+            var errorIdx = 0;
             if (this.validations !== undefined) {
-                for (var i=0; (i<this.validations.length) && (!error); i++) {
-                    error = !this.validations[i].test();
+                for (errorIdx=0; (errorIdx<this.validations.length) && (!error); errorIdx++) {
+                    error = !this.validations[errorIdx].test();
                 }
             }
             var titleString = this.toString();
             if (error) {
+                errorIdx--;
                 newBackgroundColor = ERROR_BCOLOR;
-                titleString = "Failed @ " + fun.name + " (" + validation.parameters + ")" + " [ " + validation.description + " ] ";
+                titleString = "Failed @ " + this.validations[errorIdx].getValidationFunction();
             }
             component.style.backgroundColor = newBackgroundColor;
             component.title = titleString;

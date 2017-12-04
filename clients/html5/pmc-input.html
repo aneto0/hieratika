@@ -37,7 +37,9 @@
                     }
 
                     getValue() {
-                        return this.textInput.value;
+                        var txtValue = this.textInput.value;
+                        var typeValue = this.getTypeValue();
+                        return textToTypeValue(txtValue, typeValue);
                     }
 
                     setReadOnly (isReadOnly) {

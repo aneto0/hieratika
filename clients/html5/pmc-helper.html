@@ -26,7 +26,7 @@
                     variables: JSON.stringify(allPMCDataJSon)
                 },
                 success: function (response) {
-                    if (response == "done") {
+                    if (response == "ok") {
                         alert("Values updated successfully!");
                         var pmcComp;
                         //The same id can be used to store multiple instances
@@ -267,6 +267,33 @@
                 }
             }
             setTimeout(synchroniseRemote, 2000);
+        }
+
+        function textToTypeValue(txtValue, typeValue) {
+            var ret = txtValue;
+            if (typeValue.startsWith("float")) {
+                if(!isNaN(ret)) {
+                    ret = parseFloat(ret);
+                }
+                else {
+                    ret = undefined;
+                }
+            }
+            else if ((typeValue.startsWith("int") || (typeValue.startsWith("uint")))) {
+                if(!isNaN(ret)) {
+                    ret = parseFloat(ret);
+                    if(Number.isInteger(ret)) {
+                        ret = parseInt(ret);
+                    }
+                    else {
+                        ret = undefined;
+                    }
+                }
+                else {
+                    ret = undefined;
+                }
+            }
+            return ret;
         }
 
         //TODO re-write this as a class, e.g. singleton

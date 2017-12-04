@@ -43,7 +43,7 @@ class BroacastQueue:
         The implementation is based on multicast UDP sockets with a ttl of 1 (i.e. blocked to the current network segment).
     """
     
-    def __init__(self, group, port, timeout=10):
+    def __init__(self, group, port, itemSize=8192, timeout=10):
         """ Constructor.
         Args:
             group (str): the multicast group to be used.
@@ -53,6 +53,7 @@ class BroacastQueue:
         self.group = group
         self.port = port
         self.timeout = timeout
+        self.itemSize = itemSize
         self.sockets = {}
 
     def __del__(self):
@@ -98,7 +99,7 @@ class BroacastQueue:
         sock = self.getSocket(False)
         sock.sendto(item, (self.group, self.port))
             
-    def get(self, itemSize=1024):
+    def get(self):
         """ Gets an item from queue.
         
         Args:
@@ -109,7 +110,7 @@ class BroacastQueue:
 
         sock = self.getSocket(True)
         try:
-            item, address =  sock.recvfrom(itemSize)
+            item, address = sock.recvfrom(self.itemSize)
         except timeout:
             item = None 
         return item

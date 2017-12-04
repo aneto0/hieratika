@@ -4,3 +4,6 @@ flask
 #PAM authetication
 python-pam
 
+#lxml for psps server
+lxml
+

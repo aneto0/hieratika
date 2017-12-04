@@ -8,9 +8,31 @@
 
             constructor(validationFunction) {
                 this.validationFunction = validationFunction;
+            }
+
+            getValidationFunction() {
+                return this.validationFunction;
+            }
+
+            test() {
+                return false;
+            }
+        }
+
+        class PMCValidationMath extends PMCValidation {
+
+            constructor(validationFunction) {
+                super(validationFunction);
                 this.parser = math.parser();
                 this.parser.set('getValue', function (variableName) {
-                    return parent._allPMCComponents[variableName].getValue();
+                    var ret = undefined;
+                    var comp = parent._allPMCComponents[variableName];
+                    if (comp !== undefined) {
+                        if (comp.length !== undefined) {
+                            ret = comp[0].getValue();
+                        }
+                    }
+                    return ret;
                 });
                 //Replace all the variables, identified between '' by the expression getValue
                 while(this.validationFunction.indexOf("'") !== -1) {
@@ -19,7 +41,48 @@
             }
 
             test() {
-                return this.parser.eval(this.validationFunction);
+                var ret = this.parser.eval(this.validationFunction);
+                return ret;
+            }
+
+        }
+
+
+        class PMCValidationType extends PMCValidation {
+            
+            constructor(comp) {
+                super("checkType");
+                this.comp = comp;
+            }
+
+            test() {
+                var value = [];
+                var compValue = this.comp.getValue();
+                var ok = (compValue !== undefined);
+                if (ok) {
+                    if (typeof compValue === "string") {
+                        value = [compValue];
+                    }
+                    else if (compValue.length === undefined) {
+                        value = [compValue];
+                    }
+                    else {
+                        value = compValue;
+                    }
+                }
+                for (var i=0; (i<value.length) && (ok); i++) {
+                    var typeValue = this.comp.getTypeValue();
+                    if (typeValue.startsWith("float")) {
+                        ok = !isNaN(value[i]);
+                    }
+                    else if ((typeValue.startsWith("int") || (typeValue.startsWith("uint")))) {
+                        ok = !isNaN(value[i]);
+                        if (ok) {
+                            ok = Number.isInteger(parseFloat(value[i]));
+                        }
+                    }
+                }
+                return ok;
             }
         }
 

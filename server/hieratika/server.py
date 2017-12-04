@@ -108,6 +108,7 @@ class HieratikaServer(object):
                         encodedJson = ""
                         time.sleep(0.01)
                     else:
+                        log.debug("Streaming {0}".format(encodedJson))
                         encodedPy = json.loads(encodedJson)
                         if ("logout" in encodedPy):
                             if (encodedPy["logout"] == username):
@@ -124,7 +125,7 @@ class HieratikaServer(object):
                 yield "data: {0}\n\n".format(encodedJson)
         except Exception as e:
             log.critical("streamData failed {0}".format(e))
-            self.streamData()
+            self.streamData(username)
         log.info("Stopped streamData for user {0}".format(username))
 
     def queueStreamData(self, jSonData):

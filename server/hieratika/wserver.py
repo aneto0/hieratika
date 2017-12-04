@@ -52,6 +52,8 @@ class WServer:
         """ NOOP
         """
         self.pagesFolder = ""
+        #Maximum number of variables that can be streamed for each queue stream. TODO read from configuration
+        self.streamDataMaxVariables = 100
 
     def isTokenValid(self, request):
         """ Verifies if a given token is valid.
@@ -152,11 +154,17 @@ class WServer:
             variablesToUpdate = json.loads(variables)
             toStream = {
                 "tid": request.form["tid"],
-                "variables": []
+                "variables": {}
             }
             variablesToStream = self.serverImpl.updatePlant(pageName, variablesToUpdate)
-            toStream["variables"] = variablesToStream
-            self.serverImpl.queueStreamData(json.dumps(toStream))
+            #Send n variables at the time in order not to overflow the queue size..
+            keys = variablesToStream.keys()
+            n = self.streamDataMaxVariables
+            for i in xrange(0, len(keys), n):
+                toStream["variables"] = {}
+                for k in keys[i: i + n]:
+                    toStream["variables"][k] = variablesToStream[k]
+                self.serverImpl.queueStreamData(json.dumps(toStream))
         except KeyError as e:
             log.critical(str(e))
             toReturn = "InvalidParameters"
@@ -243,14 +251,22 @@ class WServer:
         try: 
             tid = request.form["tid"]
             scheduleUID = request.form["scheduleUID"]
-            variables = json.loads(request.form["variables"])
+            variablesToStream = json.loads(request.form["variables"])
 
             toStream = {
                 "tid": tid,
                 "scheduleUID": scheduleUID,
-                "variables": variables 
+                "variables": {}
             }
-            self.serverImpl.queueStreamData(json.dumps(toStream))
+            #Send 100 variables at the time in order not to overflow the queue size..
+            keys = variablesToStream.keys()
+            n = self.streamDataMaxVariables 
+            for i in xrange(0, len(keys), n):
+                toStream["variables"] = {}
+                for k in keys[i: i + n]:
+                    toStream["variables"][k] = variablesToStream[k]
+                self.serverImpl.queueStreamData(json.dumps(toStream))
+
         except KeyError as e:
             log.critical(str(e))
             toReturn = "InvalidParameters"
@@ -421,9 +437,17 @@ class WServer:
             toStream = {
                 "tid": tid,
                 "scheduleUID": scheduleUID,
-                "variables": self.serverImpl.commitSchedule(tid, scheduleUID, variables)
+                "variables": [] 
             }
-            self.serverImpl.queueStreamData(json.dumps(toStream))
+            variablesToStream = self.serverImpl.commitSchedule(tid, scheduleUID, variables)
+            #Send 100 variables at the time in order not to overflow the queue size..
+            keys = variablesToStream.keys()
+            n = self.streamDataMaxVariables 
+            for i in xrange(0, len(variablesToStream), n):
+                toStream["variables"] = {}
+                for k in keys[i: i + n]:
+                    toStream["variables"][k] = variablesToStream[k]
+                self.serverImpl.queueStreamData(json.dumps(toStream))
             toReturn = "ok"
         except KeyError as e:
             log.critical(str(e))

@@ -160,9 +160,9 @@
         }
 
         setValidations (validationsToSet) {
-            this.validations = [];
+            this.validations = [new PMCValidationType(this)];
             for(var i in validationsToSet) {
-                this.validations.push(new PMCValidation(validationsToSet[i]));
+                this.validations.push(new PMCValidationMath(validationsToSet[i]));
             }
         }
 

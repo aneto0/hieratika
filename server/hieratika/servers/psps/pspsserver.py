@@ -22,13 +22,16 @@ __date__ = "17/11/2017"
 import ast
 import ConfigParser
 import fnmatch
+import json
 import logging
 import os
 import shutil
 import time
 import timeit
 import threading
-from xml.etree import cElementTree
+#from xml.etree import cElementTree
+#xml.etree cElementTree does not support reverse for parents of a given node
+from lxml import etree
 
 ##
 # Project imports
@@ -58,7 +61,7 @@ class PSPSServer(HieratikaServer):
     def __init__(self):
         super(PSPSServer, self).__init__()
         self.xmlIds = {}
-        #cachedXmls is local to each process since cElementTree cannot be pickled by the multiprocessing Manager
+        #cachedXmls is local to each process since the xml Element cannot be pickled by the multiprocessing Manager
         self.cachedXmls = {}
         self.recordTag = "{{{0}}}record".format(self.xmlns["ns0"])
 
@@ -66,6 +69,7 @@ class PSPSServer(HieratikaServer):
         ok = True
         try:
             self.pages = manager.list()
+            self.structSeparator = config.get("hieratika", "structSeparator") 
             numberOfLocks = config.getint("server-impl", "numberOfLocks")
             self.maxXmlIds = config.getint("server-impl", "maxXmlIds")
             self.maxXmlCachedTrees = config.getint("server-impl", "maxXmlCachedTrees")
@@ -111,13 +115,13 @@ class PSPSServer(HieratikaServer):
             Args:
                 xmlRoot (xmlElement): xml element pointing at the root of the psps file.
             Returns:
-                An xmlElement poiting at the variable identified by variableName (using the @ symbol as a separator for folders).
+                An xmlElement poiting at the variable identified by variableName (using the structSeparator symbol as a separator for folders).
         """
-        idx = variableName.find("@")
+        idx = variableName.find(self.structSeparator)
         if (idx != -1):
             plantSystemName = variableName[:idx]
             variableName = variableName[idx + 1:]
-            path = variableName.split("@")
+            path = variableName.split(self.structSeparator)
         else:
             plantSystemName = variableName
             path = []
@@ -186,25 +190,29 @@ class PSPSServer(HieratikaServer):
             aliasXml = rec.find("./ns0:alias", self.xmlns)
             typeFromXml = self.convertVariableTypeFromXml(rec.attrib["{" + self.xmlns["xsi"] + "}type"])
             descriptionXml = rec.find("./ns0:description", self.xmlns)
-            valuesXml = rec.find("./ns0:values", self.xmlns)
             value = []
+            valuesXml = rec.find("./ns0:values", self.xmlns)
             if (valuesXml is not None):
-                valueXml = valuesXml.find("./ns0:value", self.xmlns)
-                if (valueXml is not None):
+                #len(allValuesXml) > 1 should only happen the first time a plant/schedule is read (since the current version of the psps editor stores arrays as lists of <value></value>. In the future these lists should be deprecated. I always serialize the values in a single <value>[]</value> element when I update the plant/schedule.
+                allValuesXml = valuesXml.findall("./ns0:value", self.xmlns)
+                for valueXml in allValuesXml:
                     try:
                         #In order to be able to trap the case where there are strings
-                        value = ast.literal_eval(valueXml.text)
+                        val = json.loads(valueXml.text)
                     except Exception as e:
-                        value = ast.literal_eval("\"" + valueXml.text + "\"")
-                    if (not isinstance(value, list)):
-                        value = [value]
-                else:
-                    log.critical("./ns0:value is missing for record with name {0}".format(nameXml.text))
+                        log.critical("Failed to load json {0}".format(e))
+                        val = []
+                    if (isinstance(val, list)):
+                        if (len(value) == 0):
+                            value = val
+                        else:
+                            value.append(val)
+                    else:
+                        value.append(val)
+                    print val
             else:
-                if (nameXml is not None):
-                    log.critical("./ns0:values is missing for record with name {0}".format(nameXml.text))
-                else:
-                    log.critical("./ns0:values is missing for record with an unknown name") 
+                log.critical("./ns0:values is missing for record with name {0}".format(nameXml.text))
+
             numberOfElements = ast.literal_eval(rec.attrib["size"])
             #TODO handle permissions in xml (currently only the default ones are supported)
             variable = Variable(nameXml.text, aliasXml.text, descriptionXml.text, typeFromXml, self.defaultExperts, numberOfElements, value)
@@ -236,7 +244,7 @@ class PSPSServer(HieratikaServer):
             if (r is not None):
                 folders = r.findall("./ns0:folder", self.xmlns)
                 for f in folders:
-                    n = f.find("./ns0:name")
+                    n = f.find("./ns0:name", self.xmlns)
                     if (n is not None):
                         member = Variable(n.text, n.text)
                         parent.addMember(member)
@@ -257,6 +265,20 @@ class PSPSServer(HieratikaServer):
                 else:
                     return None
         return parent
+
+    def getAbsoluteVariableName(self, xmlRoot, fullVarName):
+        """ TODO
+        """
+        r = xmlRoot.find(".//ns0:record[ns0:name='{0}']".format(fullVarName), self.xmlns)
+        configurationContainerFullPath = "{{{0}}}configurationContainer".format(self.xmlns["ns0"])
+
+        for a in r.iterancestors():
+            n = a.find("./ns0:name", self.xmlns)
+            if (a.tag != configurationContainerFullPath):
+                if n is not None:
+                    fullVarName = n.text + self.structSeparator + fullVarName
+
+        return fullVarName
 
     def getConstraints(self, xmlRoot):
         """ TODO
@@ -282,16 +304,25 @@ class PSPSServer(HieratikaServer):
                         #Remove the leading = 
                         constraintFunction = constraintFunction[1:]
                         log.debug("Loading function {0}".format(constraintFunction))
-                        #Store all the variables related to this constraint (identified by being between single quotes '')
+                        #Store all the variables related to this constraint function (identified by being between single quotes '')
                         variablesInConstraints = constraintFunction.split("'")[1::2]
+                        #Some of the variables in the function might have been registered with a relative path (this shall be deprecated in the future TODO)
+                        allVariablesInConstraintsFullName = []
                         for variableInConstraint in variablesInConstraints:
-                            #If the variable does not contain the struct separator, get the full path for the variable
-                            if (variableInConstraint.find("@") == -1):
-                                nameToFind = ".//record[name='{0}']".format(variableInConstraint)
-                                log.debug("Looking for the variableXmlFullPath {0}".format(nameToFind))
-                                variableXmlFullPath = xmlRoot.find(nameToFind, self.xmlns)
-                                if (variableXmlFullPath is not None):
-                                    log.debug("Found the variableXmlFullPath {0}".format(variableInConstraint))
+                            #If the variable does not contain the struct separator, get the full path for the variable => variable was relative
+                            if (variableInConstraint.find(self.structSeparator) == -1):
+                                log.debug("Looking for the variableXmlFullPath {0}".format(variableInConstraint))
+                                variableInConstraintFullName = self.getAbsoluteVariableName(xmlRoot, variableInConstraint)
+                                if (variableInConstraintFullName is not None):
+                                    log.debug("Found the variableXmlFullPath {0}".format(variableInConstraintFullName))
+                                    #Patch the constraintsFunction to update to the full variable path
+                                    constraintFunction = constraintFunction.replace(variableInConstraint, variableInConstraintFullName)
+                                    allVariablesInConstraintsFullName.append(variableInConstraintFullName)
+                                else:
+                                    log.critical("Could not find absolute path for variable {0}".format(variableInConstraint))
+                            else:
+                                allVariablesInConstraintsFullName.append(variableInConstraint)
+                        for variableInConstraint in allVariablesInConstraintsFullName:
                             try:
                                 constraints[variableInConstraint].append(constraintFunction)
                                 log.debug("Appending {0} for function {1}".format(variableInConstraint, constraintFunction))
@@ -312,12 +343,12 @@ class PSPSServer(HieratikaServer):
             variable.setValidations(globalConstraints[variable.getName()])
         members = variable.getMembers()
         for memberName, memberVariable in members.iteritems():
-            if (parentName is not None):
-                memberFullName = parentName + "@" + memberName
-                if (memberFullName in globalConstraints):
-                    memberVariable.setValidations(globalConstraints[memberFullName])
-                    log.debug("Attaching {0} to variable {1}".format(globalConstraints[memberFullName], memberFullName))
-            self.attachVariableConstraints(memberVariable, variable.getName(), globalConstraints)
+            memberFullName = parentName + self.structSeparator + memberName
+            log.debug("Looking for variable {0}".format(memberFullName))
+            if (memberFullName in globalConstraints):
+                memberVariable.setValidations(globalConstraints[memberFullName])
+                log.debug("Attaching {0} to variable {1}".format(globalConstraints[memberFullName], memberFullName))
+            self.attachVariableConstraints(memberVariable, memberFullName, globalConstraints)
 
     def getVariablesInfo(self, pageName, requestedVariables):
         xmlFileLocation = "{0}/psps/configuration/{1}/000/plant.xml".format(self.baseDir, pageName)
@@ -360,7 +391,7 @@ class PSPSServer(HieratikaServer):
                         r = pr
                     #Recursively add all the variables information
                     variable = self.getVariableInfo(r, parent)
-                    self.attachVariableConstraints(variable, None, constraints)
+                    self.attachVariableConstraints(variable, variable.getName(), constraints)
                     
                 if (variable is not None):
                     variables.append(variable)
@@ -606,7 +637,7 @@ class PSPSServer(HieratikaServer):
         if (len(self.cachedXmls) > self.maxXmlCachedTrees):
             log.info("Reached maximum number of cached xml trees :{0} > {1}".format(len(self.cachedXmls), self.maxXmlCachedTrees))
             toDeleteMaxSize = (len(self.cachedXmls) / 2) + 1
-            #Sort by access time. Remember that the values of cachedXmls are tupples containing the path, the parsed cElementTree and the last access time
+            #Sort by access time. Remember that the values of cachedXmls are tupples containing the path, the parsed Element and the last access time
             sortedByTime = sorted(self.cachedXmls.values(), key=lambda tup:tup[2])
             i = 0
             while i < toDeleteMaxSize:
@@ -622,7 +653,7 @@ class PSPSServer(HieratikaServer):
         except Exception as e:
             try:
                 #The xmlPath is also stored as value in order to accelerate the cleaning above
-                self.cachedXmls[xmlPath] = (xmlPath, cElementTree.parse(xmlPath), time.time())
+                self.cachedXmls[xmlPath] = (xmlPath, etree.parse(xmlPath), time.time())
                 ret = self.cachedXmls[xmlPath][1]
             except Exception as e:
                 log.critical("Error loading xml file {0}: {1}".format(xmlPath, str(e)))
@@ -637,7 +668,7 @@ class PSPSServer(HieratikaServer):
     
         Args:
             variableName (str): the name of the variable to update.
-            root (cElementTree node): the root of the xml to be updated.
+            root (Element node): the root of the xml to be updated.
             variableValue (str): the value of the variable to be updated.
 
         Returns:
@@ -649,23 +680,27 @@ class PSPSServer(HieratikaServer):
         log.debug("Updating {0} with value {1}".format(variableName, variableValue))
 
         ok = False
-        #TODO for the time being I will encode the plant system name as the first @ token. This needs discussion at some stage
-        idx = variableName.find("@")
+        #TODO for the time being I will encode the plant system name as the first structSeparator token. This needs discussion at some stage
+        idx = variableName.find(self.structSeparator)
         if (idx != -1):
             plantSystemName = variableName[:idx]
             variableName = variableName[idx + 1:]
-            path = variableName.split("@")
+            path = variableName.split(self.structSeparator)
            
             r = root.find("./ns0:plantSystems/ns0:plantSystem[ns0:name='{0}']/ns0:plantRecords".format(plantSystemName), self.xmlns)
             fullVariablePath = "." 
             for p in path[:-1]:
                 fullVariablePath = fullVariablePath + "/ns0:folders/ns0:folder[ns0:name='{0}']".format(p)
 
-            fullVariablePath = fullVariablePath + "/ns0:records/ns0:record[ns0:name='{0}']/ns0:values/ns0:value".format(path[-1])
-            valueXml = r.find(fullVariablePath, self.xmlns)
-            if (valueXml is not None):
-                variable = {}
-                valueXml.text = str(variableValue)
+            fullVariablePath = fullVariablePath + "/ns0:records/ns0:record[ns0:name='{0}']".format(path[-1])
+            recordXml = r.find(fullVariablePath, self.xmlns)
+            if (recordXml is not None):
+                valuesXml = recordXml.find("./ns0:values", self.xmlns)
+                if (valuesXml is not None):
+                    recordXml.remove(valuesXml)
+                valuesXml = etree.SubElement(recordXml, "{{{0}}}values".format(self.xmlns["ns0"]))
+                valueXml = etree.SubElement(valuesXml, "{{{0}}}value".format(self.xmlns["ns0"]))
+                valueXml.text = json.dumps(variableValue)
                 ok = True
             else:
                 log.critical("Could not find {0} . Failed while looking for {1}".format(variableName, fullVariablePath))
@@ -679,7 +714,7 @@ class PSPSServer(HieratikaServer):
             
             Args:
                 r (xmlElement): walks the xml Tree. The first time this function is called it shall point at the plantRecords.
-                variableName (str): the name of the variable. It is constructed as the function recursively walks the tree. The separator is the @ symbol.
+                variableName (str): the name of the variable. It is constructed as the function recursively walks the tree. The separator is the structSeparator symbol.
                 variables (__dict__): dictionary where the value of the variable is stored.
         """
         records = r.find("./ns0:records", self.xmlns)
@@ -692,9 +727,9 @@ class PSPSServer(HieratikaServer):
                 folders = r.findall("./ns0:folder", self.xmlns)
                 variableNameBeforeFolders = variableName
                 for f in folders:
-                    n = f.find("./ns0:name")
+                    n = f.find("./ns0:name", self.xmlns)
                     if (n is not None):
-                        variableName = variableNameBeforeFolders + "@" + n.text
+                        variableName = variableNameBeforeFolders + self.structSeparator + n.text
                         self.getVariableValue(f, variableName, variables)
                     else:
                         log.critical("Wrong xml structure. ns0:name is missing in folder")
@@ -702,24 +737,29 @@ class PSPSServer(HieratikaServer):
             records = records.findall("./ns0:record", self.xmlns)
             variableNameBeforeRecord = variableName
             for rec in records:
-                n = rec.find("./ns0:name")
+                n = rec.find("./ns0:name", self.xmlns)
                 if (n is not None):
-                    variableName = variableNameBeforeRecord + "@" + n.text
+                    variableName = variableNameBeforeRecord + self.structSeparator + n.text
                     valuesXml = rec.find("./ns0:values", self.xmlns)
                     if (valuesXml is not None):
                         value = []
-                        valueXml = valuesXml.find("./ns0:value", self.xmlns)
-                        if (valueXml is not None):
+                        #len(allValuesXml) > 1 should only happen the first time a plant/schedule is read (since the current version of the psps editor stores arrays as lists of <value></value>. In the future these lists should be deprecated. I always serialize the values in a single <value>[]</value> element when I update the plant/schedule.
+                        allValuesXml = valuesXml.findall("./ns0:value", self.xmlns)
+                        for valueXml in allValuesXml:
                             try:
                                 #In order to be able to trap the case where there are strings
-                                value = ast.literal_eval(valueXml.text)
+                                val = json.loads(valueXml.text)
                             except Exception as e:
-                                value = ast.literal_eval("\"" + valueXml.text + "\"")
-                            if (not isinstance(value, list)):
-                                value = [value]
-                            variables[variableName] = value
-                        else:
-                            log.critical("./ns0:value is missing for variable with name {0}".format(variableName))
+                                log.critical("Failed to load json {0}".format(e))
+                                val = []
+                            if (isinstance(val, list)):
+                                if (len(value) == 0):
+                                    value = val
+                                else:
+                                    value.append(val)
+                            else:
+                                value.append(val)
+                        variables[variableName] = value
                     else:
                         log.critical("./ns0:values is missing for variable with name {0}".format(variableName))
                 else:

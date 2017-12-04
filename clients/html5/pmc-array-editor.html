@@ -37,12 +37,12 @@
                         var initialValue = this.getInitialValue();
                         var refValue = this.getReferenceValue();
                         var plantValue = this.getPlantValue();
-                       
+                        var typeValue = this.getTypeValue();
                         for (var i=0; (i<this.numberOfElements); i++) { 
                             var cell = row.cells[i];
                             if (cell !== undefined) {
                                 var cellValue = cell.innerHTML;
-                                this.value[i] = cellValue;
+                                this.value[i] = textToTypeValue(cellValue, typeValue);
                                 var cellInitValue = "";
                                 if (initialValue !== undefined) {
                                     cellInitValue = initialValue[i];
@@ -79,22 +79,10 @@
                             this.updateRemote(this.getValue());
                         }
                         var error = false; 
-                        var validations = this.getValidations();
-                        var validation;
+                        var errorIdx = 0;
                         if (this.validations !== undefined) {
-                            for (var i=0; (i<validations.length) && (!error); i++) {
-                                validation = validations[i];
-                                var fun = eval(validation.fun);
-                                if (fun !== undefined) {
-                                    if (validation.parameters === undefined) {
-                                        validation.parameters = [];
-                                    }
-                                    var parameters = [this];
-                                    for (var p in validation.parameters) {
-                                        parameters.push(validation.parameters[p]);
-                                    }
-                                    error = !fun(...parameters);
-                                }
+                            for (errorIdx=0; (errorIdx<this.validations.length) && (!error); errorIdx++) {
+                                error = !this.validations[errorIdx].test();
                             }
                         }
                         if(error) {
@@ -105,8 +93,8 @@
                                     cell.style.backgroundColor = ERROR_BCOLOR;
                                 }
                             }
-
-                            this.title = "Failed @ " + fun.name + " (" + validation.parameters + ")" + " [ " + validation.description + " ] ";
+                            errorIdx--;
+                            this.title = "Failed @ " + this.validations[errorIdx].getValidationFunction();
                         }
                         else {
                             this.title = this.toString();
@@ -172,34 +160,19 @@
 
                     setInitialValue (initialValueToSet) {
                         if (initialValueToSet.length > 0) {
-                            if (initialValueToSet[0].length !== undefined) {
-                                super.setInitialValue(initialValueToSet[0].slice(0));
-                            }
-                            else {
-                                super.setInitialValue(initialValueToSet.slice(0));
-                            }
+                            super.setInitialValue(initialValueToSet.slice(0));
                         }
                     }
 
                     setPlantValue (plantValueToSet) {
                         if (plantValueToSet.length > 0) {
-                            if (plantValueToSet[0].length !== undefined) {
-                                super.setPlantValue(plantValueToSet[0].slice(0));
-                            }
-                            else {
-                                super.setPlantValue(plantValueToSet.slice(0));
-                            }
+                            super.setPlantValue(plantValueToSet.slice(0));
                         }
                     }
         
                     setReferenceValue (referenceValueToSet) {
                         if (referenceValueToSet.length > 0) {
-                            if (referenceValueToSet[0].length !== undefined) {
-                                super.setReferenceValue(referenceValueToSet[0].slice(0));
-                            }
-                            else {
-                                super.setReferenceValue(referenceValueToSet.slice(0));
-                            }
+                            super.setReferenceValue(referenceValueToSet.slice(0));
                         }
                     }
     
