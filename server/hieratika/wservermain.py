@@ -68,6 +68,9 @@ def load(config):
         authClass = getattr(authModule, authClassName)
 
         pagesFolder = config.get("hieratika", "pagesFolder")
+        #Translate into absolute path so that it can be used by other modules (which belong to other directories) as well.
+        pagesFolder = os.path.abspath(pagesFolder)
+        config.set("hieratika", "pagesFolder", pagesFolder)
         application.static_folder = config.get("hieratika", "staticFolder")
         application.debug = True
         application.logger.setLevel(logging.DEBUG)

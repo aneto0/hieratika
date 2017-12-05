@@ -71,6 +71,7 @@ class PSPSServer(HieratikaServer):
             self.pages = manager.list()
             self.structSeparator = config.get("hieratika", "structSeparator") 
             self.standalone = config.getboolean("hieratika", "standalone")
+            self.pagesFolder = config.get("hieratika", "pagesFolder")
             numberOfLocks = config.getint("server-impl", "numberOfLocks")
             self.maxXmlIds = config.getint("server-impl", "maxXmlIds")
             self.maxXmlCachedTrees = config.getint("server-impl", "maxXmlCachedTrees")
@@ -636,6 +637,12 @@ class PSPSServer(HieratikaServer):
                             log.critical("Failed to create the plant.xml {0}".format(e))
                     else:
                         log.warning("No configuration xml was found for {0}".format(page.name))
+
+                #Check if the page html exists
+                self.pageHtmlPath = "{0}/{1}.html".format(self.pagesFolder, page.name)
+                if (not os.path.exists(self.pageHtmlPath)):                
+                    log.warning("The {0} file does not exist".format(self.pageHtmlPath))
+                
                     
             #Only want the first sub level
             break
