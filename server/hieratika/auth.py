@@ -38,13 +38,14 @@ log = logging.getLogger("{0}".format(__name__))
 # Class definition
 ##
 class HieratikaAuth(object):
-    """ TODO 
+    """ Abstract class which manages user authentication.
     """
     
     __metaclass__ = ABCMeta
 
     def __init__(self):
         self.logListeners = []
+        self.stdAloneUsername = None
 
     def addLogListener(self, listener):
         """ Registers a listener which will be notfied everytime a user logs in or out from the system.
@@ -68,13 +69,17 @@ class HieratikaAuth(object):
         """
         try:
             self.tokens = manager.dict()
+            self.standalone = config.getboolean("hieratika", "standalone")
             #For monitoring user login state
-            self.loginMonitorThread = threading.Thread(target=self.loginMonitor)
-            self.loginMonitorUpdateRate = config.getint("hieratika", "loginMonitorUpdateRate")
-            self.loginMonitorMaxInactivityTime = config.getint("hieratika", "loginMonitorMaxInactivityTime")
-            self.loginMaxUsers = config.getint("hieratika", "loginMaxUsers")
-            #This allow to interrupt the sleep
-            self.loginMonitorEvent = threading.Event()
+            if (not self.standalone):
+                self.loginMonitorThread = threading.Thread(target=self.loginMonitor)
+                self.loginMonitorUpdateRate = config.getint("hieratika", "loginMonitorUpdateRate")
+                self.loginMonitorMaxInactivityTime = config.getint("hieratika", "loginMonitorMaxInactivityTime")
+                self.loginMaxUsers = config.getint("hieratika", "loginMaxUsers")
+                #This allow to interrupt the sleep
+                self.loginMonitorEvent = threading.Event()
+            else:
+                log.info("Standalone mode was set and thus no monitoring thread will be started")
         except (KeyError, ValueError, ConfigParser.Error) as e:
             log.critical("Failed to load configuration parameters {0}".format(e))
             return False
@@ -84,18 +89,20 @@ class HieratikaAuth(object):
         """ Starts the login monitoring thread.
         """
         #To force the killing of the threadCleaner thread with Ctrl+C
-        log.info("Starting login monitoring thread")
-        self.loginMonitorThread.daemon = True
-        self.loginMonitorThread.start()
+        if (not self.standalone):
+            log.info("Starting login monitoring thread")
+            self.loginMonitorThread.daemon = True
+            self.loginMonitorThread.start()
         return True
 
     def stop(self):
         """ Stops the login monitoring thread.
         """
-        log.info("Stopping login monitoring thread")
-        self.loginMonitorEvent.set()
-        self.loginMonitorThread.join()
-        log.info("Stopped login monitoring thread")
+        if (not self.standalone):
+            log.info("Stopping login monitoring thread")
+            self.loginMonitorEvent.set()
+            self.loginMonitorThread.join()
+            log.info("Stopped login monitoring thread")
         return True
 
     def loginMonitor(self):
@@ -117,6 +124,7 @@ class HieratikaAuth(object):
     def isTokenValid(self, tokenId):
         """ Returns true if the token is valid (i.e. if it was created against a valid login).
             If the token is valid the last time at which this token was checked is updated.
+            In standalone mode always return True.
 
         Args:
             tokenId (str): the token to verify.           
@@ -124,10 +132,12 @@ class HieratikaAuth(object):
         Returns:
             True if the token is valid.
         """
-        ok = (tokenId in self.tokens)
-        if (ok):
-            self.tokens[tokenId] = (self.tokens[tokenId][0], int(time.time()))
-            log.debug("Updated: {0} ({1}) : {2}".format(self.tokens[tokenId][0], tokenId, self.tokens[tokenId][1]))
+        ok = True
+        if (not self.standalone):
+            ok = (tokenId in self.tokens)
+            if (ok):
+                self.tokens[tokenId] = (self.tokens[tokenId][0], int(time.time()))
+                log.debug("Updated: {0} ({1}) : {2}".format(self.tokens[tokenId][0], tokenId, self.tokens[tokenId][1]))
         return ok
 
     def login(self, username, password):
@@ -138,27 +148,34 @@ class HieratikaAuth(object):
         Returns:
             A User instance associated to a token described as a 32-character hexadecimal string or None if the login fails.
         """
-        numberOfLoggedUsers = len(self.tokens)
-        ok = (numberOfLoggedUsers < self.loginMaxUsers)
-        if (ok):
-            ok = self.authenticate(username, password)
-            user = None
+        user = None
+        if (not self.standalone):
+            numberOfLoggedUsers = len(self.tokens)
+            ok = (numberOfLoggedUsers < self.loginMaxUsers)
             if (ok):
-                user = self.getUser(username) 
-                ok = (user is not None)
-            if (ok):
-                log.info("{0} logged in successfully".format(username))
-                loginToken = uuid.uuid4().hex
-                self.tokens[loginToken] = (username, int(time.time()))
-                user.setToken(loginToken)
-                for l in self.logListeners:
-                    l.userLoggedIn(username)
+                ok = self.authenticate(username, password)
+                if (ok):
+                    user = self.getUser(username) 
             else:
-                log.warning("{0} is not registered as a valid user".format(username))
+                log.critical("Could not register {0} . No more users allowed to register into the system (max number is: {1})".format(username, self.loginMaxUsers))
+                self.printInfo()
         else:
-            log.critical("Could not register {0} . No more users allowed to register into the system (max number is: {1})".format(username, self.loginMaxUsers))
-            self.printInfo()
-           
+            user = self.getUser(username) 
+
+        ok = (user is not None)
+        if (ok):
+            log.info("{0} logged in successfully".format(user.getUsername()))
+            loginToken = uuid.uuid4().hex
+            user.setToken(loginToken)
+            if (not self.standalone):
+                self.tokens[loginToken] = (user.getUsername(), int(time.time()))
+            else:
+                self.stdAloneUsername = user.getUsername()
+
+            for l in self.logListeners:
+                l.userLoggedIn(username)
+        else:
+            log.warning("{0} is not registered as a valid user".format(username))
         return user
 
     def printInfo(self):
@@ -177,11 +194,14 @@ class HieratikaAuth(object):
     def getUsernameFromToken(self, token):
         """ Returns the username associated to a given token.
         """
-        try:
-            username = self.tokens[token][0]
-        except KeyError as e:
-            log.critical("Failed to get user with token {0}".format(token))
-            username = None
+        if (not self.standalone):
+            try:
+                username = self.tokens[token][0]
+            except KeyError as e:
+                log.critical("Failed to get user with token {0}".format(token))
+                username = None
+        else:
+            username = self.stdAloneUsername
         return username
 
 

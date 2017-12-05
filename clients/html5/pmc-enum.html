@@ -1,0 +1,64 @@
+<html>
+    <head>
+        <link rel="import" href="libraries.html">
+        <link rel="import" href="pmc-abstract-input.html">
+    </head>
+    <body>
+        <template id="tenum">
+            <select id="tselect" name="tselect">
+            </select>
+        </template>
+
+        <script>
+            //This is enclosure is required to protect the importDoc
+            (function () {
+                var importDoc = document.currentScript.ownerDocument; // importee
+                //Constructor
+                class PMCEnum extends PMCAbstractInput {
+                    constructor() {
+                        super();
+                    }
+
+                    createdCallback () {
+                        super.createdCallback();
+                        this.select = this.shadowRoot.querySelector("#tselect");
+                        this.select.addEventListener("input", function (e) {
+                            var selectedValue = this.select[this.select.selectedIndex].value;
+                            this.setValue(selectedValue);
+                        }.bind(this));
+                    }
+                    
+                    getTemplate() {
+                        var template = importDoc.querySelector("#tenum");
+                        return template;
+                    }
+
+                    setChoices(choices) {
+                        super.setChoices(choices);
+                        this.select.innerHTML = "";
+                        for (var i=0; i<this.choices.length; i++) {
+                            var option = document.createElement("option");
+                            option.text = choices[i];
+                            option.value = choices[i];
+                            this.select.appendChild(option);
+                        }
+                        this.select.value = this.getValue();
+                    }
+
+                    refresh() {
+                        this.select.value = this.value;
+                        this.checkValues(this.select);
+                    }
+
+                    setReadOnly (isReadOnly) {
+                        super.setReadOnly(isReadOnly);
+                        this.select.disabled = isReadOnly;
+                    }
+                }
+                document.registerElement("pmc-enum", {
+                    prototype: PMCEnum.prototype,
+                });
+            })(); 
+        </script>
+    </body>
+</html>

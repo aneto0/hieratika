@@ -103,6 +103,14 @@
             return this.plantValue;
         }
 
+        setChoices (choices) {
+            this.choices = choices;
+        }
+
+        getChoices () {
+            return this.choices;
+        }
+
         setPlantValue (plantValueToSet) {
             if (plantValueToSet !==  undefined) {
                 this.plantValue = plantValueToSet.slice(0);
@@ -230,6 +238,7 @@
             this.userAllowedToWrite = false;
 
             this.typeValue = "string";
+            this.choices = [];
             this.initValue = undefined;
             this.plantValue = undefined;
             this.referenceValue = undefined;

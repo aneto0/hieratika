@@ -50,34 +50,8 @@
                         var loginButton = this.shadowRoot.querySelector("#loginbtn");
                         loginButton.onclick = function() {
                             var usernameTxt = this.shadowRoot.querySelector("#username");
-                            var usernameToSend = usernameTxt.value; 
                             var passwordTxt = this.shadowRoot.querySelector("#password");
-                            var passwordToSend = passwordTxt.value; 
-                            $.ajax({
-                                type: "post",
-                                url: "/login",
-                                data: {
-                                    username: usernameToSend,
-                                    password: passwordToSend
-                                },
-                                success: function (response) {
-                                    var user = $.parseJSON(response);
-                                    if (user.id !== "") {
-                                        localStorage.user = JSON.stringify(user);
-                                        parent._currentToken = user.token;
-                                        localStorage.currentToken = parent._currentToken;
-                                        this.fireLoginSuccessful(user);
-                                        this.diag.close();
-                                    }
-                                    else {
-                                        alert("Login failed!");
-                                    }
-                                }.bind(this),
-                                error: function (response) {
-                                    console.log(response);
-                                    alert(response);
-                                }
-                            });
+                            this.loginToServer(usernameTxt.value, passwordTxt.value);
                         }.bind(this);
 
                         var cancelButton = this.shadowRoot.querySelector("#cancelbtn");
@@ -90,6 +64,36 @@
                     this.loginListeners = [];
                 }
 
+                loginToServer(usernameToSend, passwordToSend) {
+                    $.ajax({
+                        type: "post",
+                        url: "/login",
+                        data: {
+                            username: usernameToSend,
+                            password: passwordToSend
+                        },
+                        success: function (response) {
+                            var user = $.parseJSON(response);
+                            if (user.id !== "") {
+                                localStorage.user = JSON.stringify(user);
+                                parent._currentToken = user.token;
+                                localStorage.currentToken = parent._currentToken;
+                                this.fireLoginSuccessful(user);
+                                if (this.diag.open) {
+                                    this.diag.close();
+                                }
+                            }
+                            else {
+                                alert("Login failed!");
+                            }
+                        }.bind(this),
+                        error: function (response) {
+                            console.log(response);
+                            alert(response);
+                        }
+                    });
+                }
+                
                 fireLoginSuccessful(user) {
                     for(var l in this.loginListeners) {
                         this.loginListeners[l].loginSuccessful(user);

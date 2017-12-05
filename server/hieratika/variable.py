@@ -61,6 +61,7 @@ class Variable(object):
         self.parent = None
         self.isStruct = False
         self.members = {}
+        self.choices = []
         #TODO
         self.validations = []
 
@@ -198,6 +199,20 @@ class Variable(object):
         """
         return self.members
 
+    def getChoices(self):
+        """ Only meaningful for enum types.
+        Returns:
+            The list of possible enum choices.
+        """
+        return self.choices      
+
+    def setChoices(self, choices):
+        """ Set the available choices (only meaningful for enum types)
+        Args:
+            choices ([str]): the list of available choices for the enum.
+        """
+        self.choices = choices
+
     def __eq__(self, another):
         """ Two Variables are equal if they have the same absolute name.
            
@@ -247,7 +262,8 @@ class Variable(object):
             "description": self.getDescription(),
             "permissions": map(str, self.getPermissions()),
             "validations": map(str, self.getValidations()),
-            "isStruct": self.isStruct
+            "isStruct": self.isStruct,
+            "choices": map(str, self.getChoices())
         }
         if (len(self.members) == 0):
             variable["numberOfElements"] = self.getNumberOfElements()

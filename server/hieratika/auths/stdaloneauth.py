@@ -20,6 +20,7 @@ __date__ = "27/11/2017"
 # Standard imports
 ##
 import ConfigParser
+import getpass
 import logging
 
 ##
@@ -38,63 +39,41 @@ log = logging.getLogger("{0}".format(__name__))
 # Class definition
 ##
 class HieratikaStdAloneAuth(HieratikaAuth):
-    """ An authentication service implementation which reads the list of authorised users from the ini file.
+    """ An authentication service implementation which provides access only to the user which has launched the service.
         Note that the password is not used to validate the user.
     """
     
     def __init__(self):
         super(HieratikaStdAloneAuth, self).__init__()
-        self.allowedUsers = []
+        self.user = None
+        
 
     def load(self, manager, config):
-        """ Loads the list of usernames that are allowed to login into the system.
-        Args:
-            manager(multiprocessing.Manager): noop
-            config(ConfigParser): shall contain the usernames and user groups in the "auth-impl" section inside a parameter named users.
-            The format shall be users:username1;usergroup1;usergroup2,username2;usergroup1,... (i.e. users are separated by , and each user groups separated by ;)
+        """ Loads the list of groups that are to be associated with this user.
         Returns:
-            True if at least one user is specified.
+            True 
         """
         try:
-            users = config.get("auth-impl", "users").split(",")
-            for u in users:
-                groups = []
-                gs = u.split(";")
-                username = gs[0]
-                for g in gs[1:]:
-                    groups.append(UserGroup(g))
-                user = User(username, groups) 
-                self.allowedUsers.append(user)
-                log.info("Registering user {0}".format(user))
-            return True
+            groups = config.get("auth-impl", "groups").split(",")
         except Exception as e:
-            log.critical("Could not read the users parameter {0}".format(e))
+            log.critical("Could not read the groups parameter {0}".format(e))
             return False
-        return (len(self.allowedUsers) > 0)
+        self.user = User(getpass.getuser(), groups)
+        return True
 
     def authenticate(self, username, password):
-        """ 
-            Returns:
-                True if the username was specified in the list of allowed usernames.
+        """ NOOP
         """
-        return (username in self.allowedUsers)
+        return True 
 
     def getUsers(self):
         """
         Returns:
-            All the users specified in the users configuration parameter.
+            The user which has started the hieratika service.
         """
-        return self.allowedUsers
+        return [self.user]
 
     def getUser(self, username):
-        user = None
-        try:
-            idx = self.allowedUsers.index(username)
-        except ValueError as e:
-            log.critical(e)
-            idx = -1
-        if (idx >= 0):
-            user = self.allowedUsers[idx]
-        return user
+        return self.user
 
 

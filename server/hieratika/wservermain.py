@@ -249,23 +249,30 @@ def createschedule():
 @application.route("/stream", methods=["POST", "GET"])
 def stream():
     log.debug("/stream")
-    if (wserver.isTokenValid(request)):
-        if (request.method == "POST"):
-            tokenId = request.form["token"]
-        else:
-            tokenId = request.args["token"]
-
-        username = wserver.getAuth().getUsernameFromToken(tokenId)
-        if (username is not None): 
-            #Note that this cannot be interfaced through the wserver (otherwise the yield reply will not work properly)
-            return Response(wserver.getServer().streamData(username), mimetype="text/event-stream")
+    if (wserver.getServer().isStandalone()):
+        log.critical("No streaming supported in a standalone implementation")
+        return "NotAvailable"
     else:
-        return "InvalidToken"
+        if (wserver.isTokenValid(request)):
+            if (request.method == "POST"):
+                tokenId = request.form["token"]
+            else:
+                tokenId = request.args["token"]
+
+            username = wserver.getAuth().getUsernameFromToken(tokenId)
+            if (username is not None): 
+                #Note that this cannot be interfaced through the wserver (otherwise the yield reply will not work properly)
+                return Response(wserver.getServer().streamData(username), mimetype="text/event-stream")
+        else:
+            return "InvalidToken"
 
 @application.route("/")
 def index():
     log.debug("/")
-    return application.send_static_file("index.html")
+    if (wserver.getServer().isStandalone()):
+        return application.send_static_file("index-standalone.html")
+    else:
+        return application.send_static_file("index.html")
 
 @application.route("/pages/<filename>")
 def pages(filename):
@@ -287,13 +294,15 @@ if __name__ == "__main__":
     parser.add_argument("-ac", "--authClass", type=str, default="HieratikaStdAloneAuth", help="The authentication class implementation to be used")
     parser.add_argument("-pf", "--pagesFolder", type=str, help="The location of the folder with the pages (e.g. ../../demo/server/psps/pages)", required=True)
     parser.add_argument("-sf", "--staticFolder", type=str, help="The location of the flask static folder (e.g. ../../clients/html5)", required=True)
+    parser.add_argument("-sp", "--structSeparator", type=str, help="The character that is used to encode structure members full variable names", default="@")
+    parser.add_argument("-sa", "--standalone", type=bool, help="Run as a standalone, single-user, application?", default=False)
     parser.add_argument("-ub", "--udpBroadcastQueueGroup", type=str, default="239.0.79.55", help="The udp multicast group for the broadcastqueue")
     parser.add_argument("-up", "--udpBroadcastQueuePort", type=int, default=23450, help="The udp multicast port for the broadcastqueue")
     parser.add_argument("-lr", "--loginMonitorUpdateRate", type=int, default=60,  help="How often should the login state should be checked (seconds) ")
     parser.add_argument("-lm", "--loginMonitorMaxInactivityTime", type=int, default=600,  help="Maximum time a user is allowed not to interact with the system before being logged out (seconds)")
     parser.add_argument("-lu", "--loginMaxUsers", type=int, default=4,  help="Maximum number of users that can be logged in at any time")
     parser.add_argument("-au", "--authImplOptions", type=str, nargs='+', help="Space separated list of options for the selected authetication module. Each option is colon separated (e.g. \"users:codac-dev-1;experts-1;experts-2,codac-dev-2;experts-1,codac-dev-3)\"", required=True)
-    parser.add_argument("-si", "--serverImplOptions", type=str, nargs='+', help="Space separated list of options for the selected server implementation. Each option is colon separated (e.g. --serverImplOptions \"baseDir:../demo/server/psps\" numberOfLocks:8 maxXmlIds:8 maxXmlCachedTrees:16 defaultExperts:\"['experts-1','experts-2']\" standalone:False", required=True)
+    parser.add_argument("-si", "--serverImplOptions", type=str, nargs='+', help="Space separated list of options for the selected server implementation. Each option is colon separated (e.g. --serverImplOptions \"baseDir:../demo/server/psps\" numberOfLocks:8 maxXmlIds:8 maxXmlCachedTrees:16 defaultExperts:\"['experts-1','experts-2']\" ", required=True)
 
     args = parser.parse_args()
 
@@ -305,11 +314,13 @@ if __name__ == "__main__":
     config.set("hieratika", "authClass", args.authClass)
     config.set("hieratika", "pagesFolder", args.pagesFolder)
     config.set("hieratika", "staticFolder", args.staticFolder)
+    config.set("hieratika", "structSeparator", args.structSeparator)
     config.set("hieratika", "udpBroadcastQueueGroup", args.udpBroadcastQueueGroup)
     config.set("hieratika", "udpBroadcastQueuePort", args.udpBroadcastQueuePort)
     config.set("hieratika", "loginMonitorUpdateRate", args.loginMonitorUpdateRate)
     config.set("hieratika", "loginMonitorMaxInactivityTime", args.loginMonitorMaxInactivityTime)
     config.set("hieratika", "loginMaxUsers", args.loginMaxUsers)
+    config.set("hieratika", "standalone", args.standalone)
 
     config.add_section("auth-impl")
     for option in args.authImplOptions:

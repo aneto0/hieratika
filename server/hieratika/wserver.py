@@ -113,7 +113,7 @@ class WServer:
         Returns:
             A json encoded list of variables or InvalidToken if the token is not valid.
             The following information is retrieved for any given variable:
-            - name: the full variable name (containing any structure naming information, encoded as a @ separated name);
+            - name: the full variable name (containing any structure naming information, encoded as with a structure separator);
             - alias: a free format text which provides a meaningful name to the variable.
             - type as one of: uint8, int8, uint16, int16, uint32, int32, uint64, int64, string;
             - numberOfElements: as an array where each entry contains the number of elements on any given direction; 

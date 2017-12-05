@@ -3,6 +3,7 @@
         <link rel="import" href="libraries.html">
         <link rel="import" href="pmc-array-editor.html">
         <link rel="import" href="pmc-component.html">
+        <link rel="import" href="pmc-enum.html">
         <link rel="import" href="pmc-input.html">
     </head>
     <body>
@@ -98,7 +99,12 @@
                                         this.treeHTML += callerMemberName + ": <pmc-array-editor id=\"" + fullMemberName + "\" name=\"" + fullMemberName + "\" class=\"" + memberNameValidCSS + "\"></pmc-array-editor>\n";
                                     }
                                     else {
-                                        this.treeHTML += callerMemberName + ": <pmc-input id=\"" + fullMemberName + "\" name=\"" + fullMemberName + "\" class=\"" + memberNameValidCSS + "\"></pmc-input>\n";
+                                        if (member.type === "enum") {
+                                            this.treeHTML += callerMemberName + ": <pmc-enum id=\"" + fullMemberName + "\" name=\"" + fullMemberName + "\" class=\"" + memberNameValidCSS + "\"></pmc-enum>\n";
+                                        }
+                                        else {
+                                            this.treeHTML += callerMemberName + ": <pmc-input id=\"" + fullMemberName + "\" name=\"" + fullMemberName + "\" class=\"" + memberNameValidCSS + "\"></pmc-input>\n";
+                                        }
                                     }
                                     this.treeHTML += "</div></li>\n";
                                     this.treeHTML += "</ul>\n";
@@ -145,6 +151,7 @@
                                         compMember.setPlantValue(member.value);
                                         compMember.setValidations(member.validations);
                                         compMember.setPermissionGroups(member.permissions);
+                                        compMember.setChoices(member.choices);
                                         var userAllowed = false;
                                         for (var g in user.groups) {
                                             userAllowed = member.permissions.includes(user.groups[g]); 

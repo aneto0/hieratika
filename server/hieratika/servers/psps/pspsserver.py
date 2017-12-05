@@ -70,11 +70,11 @@ class PSPSServer(HieratikaServer):
         try:
             self.pages = manager.list()
             self.structSeparator = config.get("hieratika", "structSeparator") 
+            self.standalone = config.getboolean("hieratika", "standalone")
             numberOfLocks = config.getint("server-impl", "numberOfLocks")
             self.maxXmlIds = config.getint("server-impl", "maxXmlIds")
             self.maxXmlCachedTrees = config.getint("server-impl", "maxXmlCachedTrees")
             self.baseDir = config.get("server-impl", "baseDir")
-            self.standalone = config.getboolean("server-impl", "standalone")
             self.defaultExperts = ast.literal_eval(config.get("server-impl", "defaultExperts"))
             self.lockPool = LockPool(numberOfLocks, manager)
             #This is to protect the local resources cachedXmls and xmlIds (which are local to the process)
@@ -200,8 +200,8 @@ class PSPSServer(HieratikaServer):
                         #In order to be able to trap the case where there are strings
                         val = json.loads(valueXml.text)
                     except Exception as e:
-                        log.critical("Failed to load json {0}".format(e))
-                        val = []
+                        val = valueXml.text
+                        log.critical("Failed to load json {0}. Returning the original text.".format(e))
                     if (isinstance(val, list)):
                         if (len(value) == 0):
                             value = val
@@ -209,13 +209,23 @@ class PSPSServer(HieratikaServer):
                             value.append(val)
                     else:
                         value.append(val)
-                    print val
             else:
                 log.critical("./ns0:values is missing for record with name {0}".format(nameXml.text))
 
             numberOfElements = ast.literal_eval(rec.attrib["size"])
             #TODO handle permissions in xml (currently only the default ones are supported)
             variable = Variable(nameXml.text, aliasXml.text, descriptionXml.text, typeFromXml, self.defaultExperts, numberOfElements, value)
+            if (typeFromXml == "enum"):
+                choicesXml = rec.find("./ns0:choices", self.xmlns)
+                if (choicesXml is not None):
+                    choicesXml = choicesXml.findall("./ns0:choice", self.xmlns)
+                    choices = []
+                    for choiceXml in choicesXml:
+                        choices.append(choiceXml.text)
+                    variable.setChoices(choices)
+                    log.debug("Added {0} choices for {1}".format(choices, variable.getName()))
+                else:
+                    log.critical("Could not find ns0:choices for {0}".format(variable.getName()))
             log.debug("Loaded {0}".format(variable))
         except Exception as e:
             #Not very elegant to catch all the possible exceptions...
@@ -267,11 +277,14 @@ class PSPSServer(HieratikaServer):
         return parent
 
     def getAbsoluteVariableName(self, xmlRoot, fullVarName):
-        """ TODO
+        """ 
+        Returns:
+            The absolute variable name with-in the scope of a structure.
         """
         r = xmlRoot.find(".//ns0:record[ns0:name='{0}']".format(fullVarName), self.xmlns)
         configurationContainerFullPath = "{{{0}}}configurationContainer".format(self.xmlns["ns0"])
 
+        #Note that iterancestors is an lxml function
         for a in r.iterancestors():
             n = a.find("./ns0:name", self.xmlns)
             if (a.tag != configurationContainerFullPath):
@@ -280,10 +293,13 @@ class PSPSServer(HieratikaServer):
 
         return fullVarName
 
-    def getConstraints(self, xmlRoot):
-        """ TODO
+    def loadConstraints(self, xmlRoot):
+        """ Loads all the constraints defined in the xml file and (if needed) resets all the variables names to the full structured path name.
+        Args:
+            xmlRoot (Element): pointing at the root of the xml file where to load the constraints from.
+        Returns:
+            A dictionary with {key:[functions], ...}, where key is the variable id and functions are the functions where this variable is an argument.
         """
-
         log.debug("Loading constraints")
         constraints = {}
         plantSystemsRootXml = xmlRoot.findall(".//ns0:plantSystem", self.xmlns)
@@ -306,7 +322,7 @@ class PSPSServer(HieratikaServer):
                         log.debug("Loading function {0}".format(constraintFunction))
                         #Store all the variables related to this constraint function (identified by being between single quotes '')
                         variablesInConstraints = constraintFunction.split("'")[1::2]
-                        #Some of the variables in the function might have been registered with a relative path (this shall be deprecated in the future TODO)
+                        #Some of the variables in the function might have been registered with a relative path (this shall be deprecated in the future)
                         allVariablesInConstraintsFullName = []
                         for variableInConstraint in variablesInConstraints:
                             #If the variable does not contain the struct separator, get the full path for the variable => variable was relative
@@ -361,7 +377,7 @@ class PSPSServer(HieratikaServer):
 
         if (tree is not None):
             xmlRoot = tree.getroot()
-            constraints = self.getConstraints(xmlRoot)
+            constraints = self.loadConstraints(xmlRoot)
             for variableName in requestedVariables:
                 variable = None
                 r = self.findVariableInXml(xmlRoot, variableName)
@@ -557,7 +573,7 @@ class PSPSServer(HieratikaServer):
         elif (xmlVariableType == "recordString"):
             toReturn = "string" 
         elif (xmlVariableType == "recordEnum"):
-            toReturn = "string" 
+            toReturn = "enum" 
         else:
             log.critical("Could not convert type {0}".format(xmlVariableType))
         return toReturn
@@ -750,8 +766,8 @@ class PSPSServer(HieratikaServer):
                                 #In order to be able to trap the case where there are strings
                                 val = json.loads(valueXml.text)
                             except Exception as e:
-                                log.critical("Failed to load json {0}".format(e))
-                                val = []
+                                val = valueXml.text
+                                log.critical("Failed to load json {0}. Returning the original text.".format(e))
                             if (isinstance(val, list)):
                                 if (len(value) == 0):
                                     value = val

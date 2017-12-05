@@ -28,7 +28,6 @@ import multiprocessing
 import os
 import time
 import threading
-import uuid
 
 ##
 # Project imports
@@ -68,6 +67,7 @@ class HieratikaServer(object):
             #IPC using UDP sockets
             udpGroup = config.get("hieratika", "udpBroadcastQueueGroup")
             udpPort = config.getint("hieratika", "udpBroadcastQueuePort")
+            self.standalone = config.getboolean("hieratika", "standalone")
             self.streamUsers = manager.dict()
             self.udpQueue = BroacastQueue(udpGroup, udpPort)
         except (KeyError, ValueError, ConfigParser.Error) as e:
@@ -149,6 +149,13 @@ class HieratikaServer(object):
             username (str): the username of the user.
         """
         self.udpQueue.put(json.dumps({"logout": username}))
+
+    def isStandalone(self):
+        """
+        Returns:
+            True if the server is configured to run standalone (i.e. not distributed and not multi-user).
+        """
+        return self.standalone
 
     @abstractmethod
     def load(self, manager, config):

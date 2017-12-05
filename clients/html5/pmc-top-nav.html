@@ -108,7 +108,7 @@
                         var root = this.createShadowRoot();
                         root.appendChild(clone);
 
-                        this.streamer = new Stream();
+                        
 
                         this.loadPlantButton = this.shadowRoot.querySelector("#loadplantbtn");
                         this.loadPlantButton.onclick = function() {
@@ -117,16 +117,28 @@
 
                         this.pageSelectButton = this.shadowRoot.querySelector("#pageselectbtn");
                         this.loginButton = this.shadowRoot.querySelector("#loginbtn");
-                        var loginDialog = this.shadowRoot.querySelector("#pmclogin");
-                        loginDialog.addLoginListener(this);
+                        this.loginDialog = this.shadowRoot.querySelector("#pmclogin");
+                        this.loginDialog.addLoginListener(this);
                         this.loginButton.onclick = function() {
                             if (localStorage.user === undefined) {
-                                loginDialog.show();
+                                this.loginDialog.show();
                             }
                             else {
                                 this.fireUserLogout();
                             }
                         }.bind(this);
+
+                        this.standalone = this.getAttribute("data-standalone");
+                        if (this.standalone !== undefined) {
+                            this.standalone = (this.standalone.toLowerCase() === "true");
+                        }
+                        else {
+                            this.standalone = false;
+                        }
+                        if (!this.standalone) {
+                            this.streamer = new Stream();
+                        }
+                        this.loginButton.disabled = this.standalone;
 
                         this.pageSelectButton.onclick = function() {
                             parent._currentScheduleUID = undefined;
@@ -223,6 +235,12 @@
                         this.addPageListener(this.scheduleSelector);
                     }
                 }
+    
+                attachedCallback() {
+                    if (this.standalone) {
+                        this.loginDialog.loginToServer("", "");
+                    }
+                }
 
                 plantInfoLoaded() {
                     this.referenceSelectScheduleButton.disabled = false;
@@ -281,9 +299,11 @@
 
                 loginSuccessful(user) {
                     this.user = user;
-                    this.streamer.start();
-                    this.usernameTd.innerHTML = this.user.name; 
-                    this.usernameTd.title = "username: " + this.user.id;
+                    if (!this.standalone) {
+                        this.streamer.start();
+                    }
+                    this.usernameTd.innerHTML = this.user.username; 
+                    this.usernameTd.title = "username: " + this.user.username;
 
                     this.loginButton.innerHTML = "Logout";
 
@@ -326,7 +346,9 @@
                     this.copyFromReferencePlantButton.disabled = true;
                     this.commitButton.disabled = true;
                     this.undoButton.disabled = true;
-                    this.streamer.stop();
+                    if (!this.standalone) {
+                        this.streamer.stop();
+                    }
                 }
 
                 pageChanged(page) {
