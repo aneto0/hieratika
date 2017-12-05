@@ -241,7 +241,7 @@
                     //Not perfectly safe, but worst comes to the worst I send twice the same thing from time to time
                     var i = 0;
                     while (i < toPop) {
-                        var valueToSynch = parent._valuesToSynchroniseRemote.pop();
+                        var valueToSynch = parent._valuesToSynchroniseRemote.shift();//not pop since we want to remove the oldest (i.e. the first) before
                         variablesToSend[valueToSynch.id] = valueToSynch.value;
                         parent._scheduleValuesToCommit[valueToSynch.id] = valueToSynch.value;
                         i++;

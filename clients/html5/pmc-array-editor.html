@@ -42,7 +42,11 @@
                             var cell = row.cells[i];
                             if (cell !== undefined) {
                                 var cellValue = cell.innerHTML;
-                                this.value[i] = textToTypeValue(cellValue, typeValue);
+                                var numberValue = textToTypeValue(cellValue, typeValue);
+                                if (numberValue === undefined) {
+                                    numberValue = cellValue;
+                                }
+                                this.value[i] = numberValue;
                                 var cellInitValue = "";
                                 if (initialValue !== undefined) {
                                     cellInitValue = initialValue[i];

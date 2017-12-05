@@ -116,9 +116,16 @@
         }
 
         setInitialValue (initialValueToSet) {
-            this.initValue = initialValueToSet.slice(0);
-            this.fireValueChanged("initialValue");
-            this.refresh();
+            if (initialValueToSet !== undefined) {
+                if (initialValueToSet.slice !== undefined) {
+                    this.initValue = initialValueToSet.slice(0);
+                }
+                else {
+                    this.initValue = initialValueToSet;
+                }
+                this.fireValueChanged("initialValue");
+                this.refresh();
+            }
         }
 
         getReference () {
