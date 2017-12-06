@@ -1,8 +1,24 @@
 <html>
     <head>
         <link rel="import" href="pmc-constants.html">
+        <link rel="import" href="pmc-wait-dialog.html">
     </head>
     <script>
+
+        function showWaitDialog() {
+            if (_waitDialog == null) {
+                _waitDialog = document.createElement("pmc-wait-dialog");
+                document.body.appendChild(_waitDialog);
+            }
+            _waitDialog.showModal();
+        }
+
+        function closeWaitDialog() {
+            if (_waitDialog != null) {
+                _waitDialog.close();
+            }
+        }
+
         function inchesToPixels(inches) {
             return INCHES_TO_PX * inches;
         } 
@@ -58,6 +74,9 @@
                 },
                 success: successFn,
                 error: function (response) {
+                    if (waitDialog.open) {
+                        waitDialog.close();
+                    }
                     console.log(response);
                     alert(response);
                 }
@@ -309,6 +328,7 @@
         var _currentToken = undefined;
         //This reference to the main editor can be used to listen to page events for components that e.g. do not inherit from PMCComponent
         var _pmcMainEditor = undefined;
+        var _waitDialog = null;
     
         synchroniseRemote();
     </script>

@@ -1,0 +1,47 @@
+<html>
+    <head>
+        <link rel="import" href="libraries.html">
+    </head>
+    <body>
+        <template id="twaitdialog">
+            <dialog id="dwaitdialog">
+                <img src="/icons/ajax-loader.gif"></img>
+            </dialog>
+        </template>
+
+        <script>
+            //This enclosure is required to protect the importDoc
+            (function () {
+                var importDoc = document.currentScript.ownerDocument; // importee
+                //Constructor
+                class PMCWaitDialog extends HTMLElement {
+                    constructor() {
+                        super();
+                    }
+
+                    createdCallback () {
+                        var template = importDoc.querySelector("#twaitdialog");
+                        var clone = document.importNode(template.content, true);
+                        var root = this.createShadowRoot();
+                        root.appendChild(clone);
+
+                        this.diag = this.shadowRoot.querySelector("#dwaitdialog");
+                    }
+                    
+                    showModal() {
+                        this.diag.showModal();
+                    }
+                
+                    close() {
+                        if (this.diag.open) {
+                            this.diag.close();
+                        }
+                    }
+                }
+                document.registerElement("pmc-wait-dialog", {
+                    prototype: PMCWaitDialog.prototype,
+                });
+            })(); 
+        </script>
+    </body>
+</html>

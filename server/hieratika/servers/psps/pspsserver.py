@@ -76,6 +76,7 @@ class PSPSServer(HieratikaServer):
             self.maxXmlIds = config.getint("server-impl", "maxXmlIds")
             self.maxXmlCachedTrees = config.getint("server-impl", "maxXmlCachedTrees")
             self.baseDir = config.get("server-impl", "baseDir")
+            self.autoCreatePages = config.getboolean("server-impl", "autoCreatePages")
             self.defaultExperts = ast.literal_eval(config.get("server-impl", "defaultExperts"))
             self.lockPool = LockPool(numberOfLocks, manager)
             #This is to protect the local resources cachedXmls and xmlIds (which are local to the process)
@@ -624,6 +625,7 @@ class PSPSServer(HieratikaServer):
                             break
                     if (plantXmlFound):
                         break
+                plantXmlFileLocation = "{0}/{1}/000/plant.xml".format(directory, page.name)
                 if (plantXmlFound):
                     log.info("Found the plant.xml for configuration {0}".format(page.name))
                 else:
@@ -631,7 +633,6 @@ class PSPSServer(HieratikaServer):
                     if (latestXmlFound is not None):
                         log.warning("For {0}, going to create the plant.xml based on {1}".format(page.name, latestXmlFound))
                         try:
-                            plantXmlFileLocation = "{0}/{1}/000/plant.xml".format(directory, page.name)
                             shutil.copy2(latestXmlFound, plantXmlFileLocation) 
                         except IOError as e:
                             log.critical("Failed to create the plant.xml {0}".format(e))
@@ -639,13 +640,46 @@ class PSPSServer(HieratikaServer):
                         log.warning("No configuration xml was found for {0}".format(page.name))
 
                 #Check if the page html exists
-                self.pageHtmlPath = "{0}/{1}.html".format(self.pagesFolder, page.name)
-                if (not os.path.exists(self.pageHtmlPath)):                
-                    log.warning("The {0} file does not exist".format(self.pageHtmlPath))
+                pageHtmlPath = "{0}/{1}.html".format(self.pagesFolder, page.name)
+                if (not os.path.exists(pageHtmlPath)):                
+                    log.warning("The {0} file does not exist".format(pageHtmlPath))
+                    if (self.autoCreatePages):
+                        self.createHtmlPage(pageHtmlPath, plantXmlFileLocation)
                 
                     
             #Only want the first sub level
             break
+
+    def createHtmlPage(self, htmlPagePath, plantXmlPath):
+        """ Creates a basic html page to display the plant. This is likely to be deprecated in the future since it couples the server
+            with an assumption that the client is the html viewer.
+        """
+        html = """ <html>
+                    <head>
+                     <link rel='import' href='/pmc-struct-browser.html'>
+                    </head>
+                    <body>
+               """
+        tree = self.getCachedXmlTree(plantXmlPath)
+        if (tree is not None):
+            xmlRoot = tree.getroot()
+            plantSystemsRootXml = xmlRoot.findall(".//ns0:plantSystem", self.xmlns)
+            for plantSystemXml in plantSystemsRootXml:
+                plantSystemName = plantSystemXml.find("./ns0:name", self.xmlns).text
+                html += "<pmc-struct-browser id='{0}' name='{0}'></pmc-struct-browser>".format(plantSystemName)
+
+            html += """ </body>
+                       </html>
+                    """
+
+            try:
+                with open (htmlPagePath, "w") as f:
+                    f.write(html)
+                    log.info("Created the hmtl page for {0}".format(htmlPagePath))
+            except Exception as e:
+                log.critical("Could not create the hmtl page for {0}".format(htmlPagePath))
+        else:
+            log.critical("Could not load {0}".format(plantXmlPath))
 
     def getCachedXmlTree(self, xmlPath):
         """ Parses the xml defined by the xmlPath and caches it in memory.
