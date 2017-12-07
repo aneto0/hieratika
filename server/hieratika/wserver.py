@@ -292,7 +292,7 @@ class WServer:
         Returns:
             ok if the schedule is successfully updated or an empty string otherwise.
         """
-        toReturn = ""
+        toReturn = "ok"
         try: 
             tid = request.form["tid"]
             scheduleUID = request.form["scheduleUID"]
@@ -446,7 +446,7 @@ class WServer:
             toReturn = json.dumps(user)
             log.debug("{0}".format(str(user)))
         except KeyError as e:
-            log.critical("Missing username ({0})".format(e))
+            log.critical("Missing field ({0})".format(e))
             toReturn = "InvalidParameters"
         return toReturn
 

@@ -36,9 +36,10 @@ from lxml import etree
 ##
 # Project imports
 ##
-from hieratika.server import HieratikaServer
+from hieratika.hlibrary import HLibrary
 from hieratika.page import Page
 from hieratika.schedule import Schedule
+from hieratika.server import HieratikaServer
 from hieratika.util.lockpool import LockPool
 from hieratika.variable import Variable
 
@@ -433,6 +434,7 @@ class PSPSServer(HieratikaServer):
         return page
 
     def getLibraries(self, username, htype):
+        log.debug("Getting libraries for library type: {0} for user {1}".format(htype, username))
         libraries = []
         allLibrariesXml = self.getAllLibrariesXmls(username, htype)
 
@@ -512,10 +514,10 @@ class PSPSServer(HieratikaServer):
         xmlId = self.getXmlId(libraryUID)
         self.lockPool.acquire(xmlId)
         variables = {}
-        tree = self.getCachedXmlTree(xmlId)
+        tree = self.getCachedXmlTree(libraryUID)
         if (tree is not None):
             xmlRoot = tree.getroot()
-            structuredVariablesXml = xmlRoot.findall(".//ns0:folders", self.xmlns)
+            structuredVariablesXml = xmlRoot.findall("./ns0:folders/ns0:folder", self.xmlns)
             for structuredVariableXml in structuredVariablesXml:
                 structuredVariableName = structuredVariableXml.find("./ns0:name", self.xmlns).text
                 log.debug("Getting variables values for library variable {0}".format(structuredVariableName))
@@ -528,7 +530,7 @@ class PSPSServer(HieratikaServer):
                 for rec in records:
                     self.getRecord(rec, variables)
         else:
-            log.critical("Could not find the xml tree for {0}".format(xmlPath))
+            log.critical("Could not find the xml tree for {0}".format(xmlId))
         return variables
 
         self.lockPool.release(xmlId)

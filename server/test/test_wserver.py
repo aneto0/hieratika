@@ -19,8 +19,12 @@ __date__ = "17/11/2017"
 ##
 # Standard imports
 ##
+import ConfigParser
+import importlib
 import json
 import logging
+import multiprocessing
+import os
 import time
 import unittest
 
@@ -46,22 +50,85 @@ class TestRequest:
 class TestWServer(unittest.TestCase):
 
     def setUp(self):
-        pspsServer = PSPSServer()
-        config = {
-            "baseDir": "test/servers/psps/deploy",
-            "numberOfLocks": 8,
-            "usersXmlFilePath": "test/servers/psps/deploy/users.xml",
-            "pagesXmlFilePath": "test/servers/psps/deploy/pages.xml"
-        }
-        pspsServer.load(config)
-        self.wserver = WServer(pspsServer, "../static", True)
-        request = TestRequest({"username": "codac-dev-1"})
-        user = self.wserver.login(request)
-        user = json.loads(user)
-        self.token = user["token"]
+        config = ConfigParser.RawConfigParser()
+        config.add_section("hieratika")
+        config.set("hieratika", "structSeparator", "@")
+        config.set("hieratika", "standalone", "False")
+        config.set("hieratika", "pagesFolder", "test/servers/psps/deploy/pages")
+        config.set("hieratika", "serverModule", "hieratika.servers.psps.pspsserver")
+        config.set("hieratika", "serverClass", "PSPSServer")
+        config.set("hieratika", "udpBroadcastQueueGroup", "239.0.79.55")
+        config.set("hieratika", "udpBroadcastQueuePort", "23450")
+        config.set("hieratika", "authModule", "hieratika.auths.basicauth")
+        config.set("hieratika", "authClass", "HieratikaBasicAuth")
+        config.set("hieratika", "loginMonitorUpdateRate", "60")
+        config.set("hieratika", "loginMonitorMaxInactivityTime", 600)
+        config.set("hieratika", "loginMaxUsers", 4)
+
+        config.add_section("server-impl")
+        config.set("server-impl", "baseDir", "test/servers/psps/deploy")
+        config.set("server-impl", "numberOfLocks", 8)
+        config.set("server-impl", "maxXmlIds", 32)
+        config.set("server-impl", "maxXmlCachedTrees", 16)
+        config.set("server-impl", "defaultExperts", "['experts-1', 'experts-2']")
+        config.set("server-impl", "autoCreatePages", "True")
+
+        config.add_section("auth-impl")
+        config.set("auth-impl", "users", "codac-dev-1;experts-1;experts-2,codac-dev-2;experts-1,codac-dev-3")
+
+        serverModuleName = config.get("hieratika", "serverModule")
+        serverModule = importlib.import_module(serverModuleName)
+
+        serverClassName = config.get("hieratika", "serverClass")
+        serverClass = getattr(serverModule, serverClassName)
+
+        authModuleName = config.get("hieratika", "authModule")
+        authModule = importlib.import_module(authModuleName)
+
+        authClassName = config.get("hieratika", "authClass")
+        authClass = getattr(authModule, authClassName)
+
+        pagesFolder = config.get("hieratika", "pagesFolder")
+        #Translate into absolute path so that it can be used by other modules (which belong to other directories) as well.
+        pagesFolder = os.path.abspath(pagesFolder)
+        config.set("hieratika", "pagesFolder", pagesFolder)
+        server = serverClass()
+        auth = authClass()
+        manager = multiprocessing.Manager()
+        log.info("Loading server common configuration")
+        ok = server.loadCommon(manager, config)
+        if (ok):
+            log.info("Loading server configuration")
+            ok = server.load(manager, config)
+        else:
+            log.critical("Failed to load common server configuration")
+        if (ok):
+            log.info("Loading auth configuration")
+            ok = auth.loadCommon(manager, config)
+        else:
+            log.critical("Failed to load server configuration")
+        if (ok):
+            ok = auth.load(manager, config)
+        if (ok):
+            auth.addLogListener(server)
+            ok = auth.start()
+        else:
+            log.critical("Failed to load auth configuration")
+
+        if (ok):
+            self.wserver = WServer()
+            self.wserver.setServer(server)
+            self.wserver.setAuth(auth)
+            self.wserver.setPagesFolder(pagesFolder)
+       
+        if (ok): 
+            request = TestRequest({"username": "codac-dev-1", "password": ""})
+            user = self.wserver.login(request)
+            user = json.loads(user)
+            self.token = user["token"]
 
     def test_login(self):
-        request = TestRequest({"username": "codac-dev-1"})
+        request = TestRequest({"username": "codac-dev-1", "password" : ""})
         user = self.wserver.login(request)
         self.assertNotEqual(user, None)
         user = json.loads(user)
@@ -117,8 +184,8 @@ class TestWServer(unittest.TestCase):
 
     def test_getLibraries(self):
         request = TestRequest({"token": self.token, "type": "testtype1", "username": "codac-dev-1"})
-        schedules = self.wserver.getSchedules(request)
-        self.assertNotEqual(schedules, None)
+        libraries = self.wserver.getLibraries(request)
+        self.assertNotEqual(libraries, None)
         #TODO finish asserts
 
     def test_getScheduleVariablesValues(self):
@@ -127,6 +194,14 @@ class TestWServer(unittest.TestCase):
         request = TestRequest({"token": self.token, "scheduleUID": schedules[0]["uid"]})
         variablesValues = self.wserver.getScheduleVariablesValues(request)
         self.assertNotEqual(variablesValues, None)
+
+    def test_getLibraryVariablesValues(self):
+        request = TestRequest({"token": self.token, "type": "testtype1", "username": "codac-dev-1"})
+        libraries = json.loads(self.wserver.getLibraries(request))
+        request = TestRequest({"token": self.token, "libraryUID": libraries[0]["uid"]})
+        variablesValues = self.wserver.getLibraryVariablesValues(request)
+        self.assertNotEqual(libraries, None)
+        #TODO finish asserts
 
        
 if __name__ == '__main__':
