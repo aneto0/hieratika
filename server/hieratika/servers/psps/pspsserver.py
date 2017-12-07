@@ -432,6 +432,32 @@ class PSPSServer(HieratikaServer):
             page = self.pages[idx]
         return page
 
+    def getLibraries(self, username, htype):
+        libraries = []
+        allLibrariesXml = self.getAllLibrariesXmls(username, htype)
+
+        for xmlFile in allLibrariesXml:
+            description = ""
+            xmlId = self.getXmlId(xmlFile)
+            self.lockPool.acquire(xmlId)
+            tree = self.getCachedXmlTree(xmlFile)
+            if (tree is not None):
+                xmlRoot = tree.getroot()
+                description = xmlRoot.find("./ns0:description", self.xmlns)
+                if (description is not None):
+                    description = description.text
+            self.lockPool.release(xmlId)
+            filePath = xmlFile.split("/")
+            name = filePath[-1]
+            name = name.split(".xml")
+            if (len(name) > 1):
+                name = name[-2]
+            library = HLibrary(htype, xmlFile, name, username, description)
+            libraries.append(library);
+
+        return libraries
+
+
     def getSchedules(self, username, pageName):
         schedules = []
         allSchedulesXml = self.getAllSchedulesXmls(username, pageName)
@@ -477,6 +503,34 @@ class PSPSServer(HieratikaServer):
         xmlId = self.getXmlId(scheduleUID)
         self.lockPool.acquire(xmlId)
         variables = self.getAllVariablesValues(scheduleUID)
+        self.lockPool.release(xmlId)
+        log.debug("Returning variables: {0}".format(variables))
+        return variables
+
+    def getLibraryVariablesValues(self, libraryUID):
+        log.debug("Return library variables values for UID: {0}".format(libraryUID))
+        xmlId = self.getXmlId(libraryUID)
+        self.lockPool.acquire(xmlId)
+        variables = {}
+        tree = self.getCachedXmlTree(xmlId)
+        if (tree is not None):
+            xmlRoot = tree.getroot()
+            structuredVariablesXml = xmlRoot.findall(".//ns0:folders", self.xmlns)
+            for structuredVariableXml in structuredVariablesXml:
+                structuredVariableName = structuredVariableXml.find("./ns0:name", self.xmlns).text
+                log.debug("Getting variables values for library variable {0}".format(structuredVariableName))
+                self.getVariableValue(structuredVariableXml, structuredVariableName, variables)
+           
+            #Append non structure variables (if any) 
+            records = xmlRoot.find("./ns0:records", self.xmlns)
+            if (self.containsRecords(records)):
+                records = records.findall("./ns0:record", self.xmlns)
+                for rec in records:
+                    self.getRecord(rec, variables)
+        else:
+            log.critical("Could not find the xml tree for {0}".format(xmlPath))
+        return variables
+
         self.lockPool.release(xmlId)
         log.debug("Returning variables: {0}".format(variables))
         return variables
@@ -579,6 +633,26 @@ class PSPSServer(HieratikaServer):
         else:
             log.critical("Could not convert type {0}".format(xmlVariableType))
         return toReturn
+
+    def getAllLibrariesXmls(self, username, htype):
+        """ Helper function which gets all libraies associated to a given page for a given library type.
+       
+        Args:
+            username (str): the username to search.
+            htype (str): the library type  to search.
+        Returns:
+            All the libraries files found for a given type.
+        """
+        matches = []
+        if (self.standalone):
+            directory = "{0}/psps/libraries/{1}".format(self.baseDir, htype)
+        else:
+            directory = "{0}/users/{1}/libraries/{2}".format(self.baseDir, username, htype)
+        for root, dirnames, filenames in os.walk(directory):
+            for filename in fnmatch.filter(filenames, '*.xml'):
+                matches.append(os.path.join(root, filename))
+        return matches
+
 
     def getAllSchedulesXmls(self, username, pageName):
         """ Helper function which gets all psps configurations associated to a given page for a given user.
@@ -766,6 +840,8 @@ class PSPSServer(HieratikaServer):
 
         return ok
 
+       
+
     def getVariableValue(self, r, variableName, variables):
         """ Recursively gets all the variable values for a given plantSystem node in the xml.
             
@@ -794,34 +870,7 @@ class PSPSServer(HieratikaServer):
             records = records.findall("./ns0:record", self.xmlns)
             variableNameBeforeRecord = variableName
             for rec in records:
-                n = rec.find("./ns0:name", self.xmlns)
-                if (n is not None):
-                    variableName = variableNameBeforeRecord + self.structSeparator + n.text
-                    valuesXml = rec.find("./ns0:values", self.xmlns)
-                    if (valuesXml is not None):
-                        value = []
-                        #len(allValuesXml) > 1 should only happen the first time a plant/schedule is read (since the current version of the psps editor stores arrays as lists of <value></value>. In the future these lists should be deprecated. I always serialize the values in a single <value>[]</value> element when I update the plant/schedule.
-                        allValuesXml = valuesXml.findall("./ns0:value", self.xmlns)
-                        for valueXml in allValuesXml:
-                            try:
-                                #In order to be able to trap the case where there are strings
-                                val = json.loads(valueXml.text)
-                            except Exception as e:
-                                val = valueXml.text
-                                log.critical("Failed to load json {0}. Returning the original text.".format(e))
-                            if (isinstance(val, list)):
-                                if (len(value) == 0):
-                                    value = val
-                                else:
-                                    value.append(val)
-                            else:
-                                value.append(val)
-                        variables[variableName] = value
-                    else:
-                        log.critical("./ns0:values is missing for variable with name {0}".format(variableName))
-                else:
-                    log.critical("Wrong xml structure. ns0:name is missing in record")
-                log.debug("Retrieved value for variable [{0}]".format(variableName))
+                self.getRecord(rec, variables, variableNameBeforeRecord)
 
     def getAllVariablesValues(self, xmlPath):
         variables = {}
@@ -842,10 +891,49 @@ class PSPSServer(HieratikaServer):
     def containsRecords(self, records):
         """ 
         Returns:
-            True if the xml node r is non-empty node of type records.
+            True if the xml node r is a non-empty node of type records.
         """
         hasRecords = (records is not None)
         if (hasRecords):
             hasRecords = (len(records) > 0)
         return hasRecords
 
+    def getRecord(self, rec, variables, prefix = None):
+        """ Helper function to load the value from a record.
+        Args:
+            rec (xml Element): the record to be queried.
+            variables ({}): dictionary where to set the record name: record value
+            prefix (str): to be append to the record name before updating the variables list.
+        """
+        n = rec.find("./ns0:name", self.xmlns)
+        if (n is not None):
+            variableName = n.text
+            if (prefix is not None):
+                variableName = prefix + self.structSeparator + variableName
+            
+            valuesXml = rec.find("./ns0:values", self.xmlns)
+            if (valuesXml is not None):
+                value = []
+                #len(allValuesXml) > 1 should only happen the first time a plant/schedule is read (since the current version of the psps editor stores arrays as lists of <value></value>. In the future these lists should be deprecated. I always serialize the values in a single <value>[]</value> element when I update the plant/schedule.
+                allValuesXml = valuesXml.findall("./ns0:value", self.xmlns)
+                for valueXml in allValuesXml:
+                    try:
+                        #In order to be able to trap the case where there are strings
+                        val = json.loads(valueXml.text)
+                    except Exception as e:
+                        val = valueXml.text
+                        log.critical("Failed to load json {0}. Returning the original text.".format(e))
+                    if (isinstance(val, list)):
+                        if (len(value) == 0):
+                            value = val
+                        else:
+                            value.append(val)
+                    else:
+                        value.append(val)
+                variables[variableName] = value
+            else:
+                log.critical("./ns0:values is missing for variable with name {0}".format(variableName))
+        else:
+            log.critical("Wrong xml structure. ns0:name is missing in record")
+        log.debug("Retrieved value for variable [{0}]".format(variableName))
+ 

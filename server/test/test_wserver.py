@@ -115,6 +115,12 @@ class TestWServer(unittest.TestCase):
         self.assertNotEqual(schedules, None)
         #TODO finish asserts
 
+    def test_getLibraries(self):
+        request = TestRequest({"token": self.token, "type": "testtype1", "username": "codac-dev-1"})
+        schedules = self.wserver.getSchedules(request)
+        self.assertNotEqual(schedules, None)
+        #TODO finish asserts
+
     def test_getScheduleVariablesValues(self):
         request = TestRequest({"token": self.token, "pageName": "test0", "username": "codac-dev-1"})
         schedules = json.loads(self.wserver.getSchedules(request))

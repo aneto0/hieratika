@@ -170,6 +170,31 @@ class WServer:
             toReturn = "InvalidParameters"
         return toReturn
 
+    def getLibraries(self, request):
+        """ Gets all the library instances that are avaiable for a given library type and for a given user.
+
+        Args:
+           request.form["username"]: the username to which the returned libraries belong to. 
+           request.form["type"]: the library type.
+        Returns:
+            A json representation of all the library instances that are available for the requested user in the 
+            specified type.
+        """
+        toReturn = ""
+        try:
+            htype = request.form["type"]
+            username = request.form["username"]
+            
+            libraries = self.serverImpl.getLibraries(username, htype)
+            librariesStr = [s.__dict__ for s in libraries]
+            toReturn = json.dumps(librariesStr)
+            log.debug("For {0} in {1} returning: {2}".format(username, htype, toReturn))
+        except KeyError as e:
+            log.critical(str(e))
+            toReturn = "InvalidParameters"
+        return toReturn
+
+
     def getSchedules(self, request):
         """ Gets all the schedules that are avaiable for a given user in a given page.
 
@@ -218,7 +243,7 @@ class WServer:
         return toReturn
 
     def getScheduleVariablesValues(self, request):
-        """ Gets all the variables values for a given schedule (identified by its id which is the path to the file).
+        """ Gets all the variables values for a given schedule (identified by its uid).
         
         Args:
             request.form["scheduleUID"]: the schedule identifier.
@@ -235,6 +260,26 @@ class WServer:
             log.critical(str(e))
             toReturn = "InvalidParameters"
         return toReturn
+
+    def getLibraryVariablesValues(self, request):
+        """ Gets all the variables values for a given schedule (identified by its uid).
+        
+        Args:
+            request.form["libraryUID"]: the library identifier.
+    
+        Returns:
+            A json dictionary in the form  {variableName1:variableValue1, ...} with each library variable.
+        """
+        try: 
+            variables = []
+            libraryUID = request.form["libraryUID"]
+            variables = self.serverImpl.getLibraryVariablesValues(libraryUID)
+            toReturn = json.dumps(variables)
+        except KeyError as e:
+            log.critical(str(e))
+            toReturn = "InvalidParameters"
+        return toReturn
+
 
     def updateSchedule(self, request):
         """ Updates other users of the same schedule that the variable values have changed. Note that these changes are not sync into the disk.

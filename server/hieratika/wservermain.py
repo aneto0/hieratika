@@ -141,6 +141,15 @@ def updatePlant():
         return wserver.updatePlant(request)
     else:
         return "InvalidToken"
+
+#Return the available libraries (for a given user and a given library type)
+@application.route("/getlibraries", methods=["POST", "GET"])
+def getschedules():
+    log.debug("/getlibraries")
+    if (wserver.isTokenValid(request)):
+        return wserver.getLibraries(request) 
+    else:
+        return "InvalidToken"
     
 #Return the available schedules
 @application.route("/getschedules", methods=["POST", "GET"])
@@ -203,6 +212,15 @@ def getschedulevariablesValues():
     log.debug("/getschedulevariablesvalues")
     if (wserver.isTokenValid(request)):
         return wserver.getScheduleVariablesValues(request)
+    else:
+        return "InvalidToken"
+
+#Returns the variables associated to a given library (identified by its uid)
+@application.route("/getlibraryvariablesvalues", methods=["POST", "GET"])
+def getschedulevariablesValues():
+    log.debug("/getlibraryvariablesvalues")
+    if (wserver.isTokenValid(request)):
+        return wserver.getLibraryVariablesValues(request)
     else:
         return "InvalidToken"
 

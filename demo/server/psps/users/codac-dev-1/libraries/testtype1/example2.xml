@@ -1,0 +1,38 @@
+<ns0:library xmlns:ns0="http://www.iter.org/CODAC/PlantSystemConfig/2014" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ns0:version>00.00</ns0:version>
+  <ns0:name>Example 1</ns0:name>
+  <ns0:type>testtype1</ns0:type>
+  <ns0:description>An instance of testtype1</ns0:description>
+  <ns0:folders>
+   <ns0:folder>
+    <ns0:name>AA</ns0:name>
+    <ns0:folders>
+      <ns0:folder>
+      <ns0:name>BB</ns0:name>
+       <ns0:folders>
+        <ns0:folder>
+         <ns0:name>CC</ns0:name>
+         <ns0:folders />
+         <ns0:records>
+          <ns0:record size="1" xsi:type="recordDouble">
+           <ns0:name>DD</ns0:name>
+           <ns0:description>DD Variable value</ns0:description>
+           <ns0:values>
+            <ns0:value>-1.0</ns0:value>
+           </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+           <ns0:name>EE</ns0:name>
+           <ns0:description>EE Variable value</ns0:description>
+           <ns0:values>
+            <ns0:value>2.0</ns0:value>
+           </ns0:values>
+          </ns0:record>
+         </ns0:records>
+        </ns0:folder>
+       </ns0:folders>
+      </ns0:folder>
+     </ns0:folders>
+    </ns0:folder>
+   </ns0:folders>
+</ns0:library>

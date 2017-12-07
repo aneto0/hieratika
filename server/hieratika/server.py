@@ -194,6 +194,19 @@ class HieratikaServer(object):
         pass
 
     @abstractmethod
+    def getLibraries(self, username, htype):
+        """ Gets all the libraries (for a given type) that are avaiable for a given user.
+
+        Args:
+           username: the username to which the returned libraries belong to. 
+           htype: the library type.
+        Returns:
+            An array with all the libraries (of the requested type) that are available for the requested user.
+        """
+        pass
+
+
+    @abstractmethod
     def getPages(self):
         """
         Returns:
@@ -230,6 +243,17 @@ class HieratikaServer(object):
         
         Args:
             scheduleUID(str): unique schedule identifier.
+        Returns:
+            A dictionary of variableId:variableValue pairs  
+        pass
+        """
+
+    @abstractmethod
+    def getLibraryVariablesValues(self, libraryUID):
+        """ Gets all the variables values associated to a given library.
+        
+        Args:
+            libraryUID(str): unique library identifier.
         Returns:
             A dictionary of variableId:variableValue pairs  
         pass
