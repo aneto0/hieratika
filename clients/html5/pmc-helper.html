@@ -118,6 +118,8 @@
                 component.setInitialValue(pvInfo.value);
                 component.setPlantValue(pvInfo.value);
                 component.setValue(pvInfo.value);
+            }
+            if ("choices" in pvInfo) {
                 component.setChoices(pvInfo.choices);
             }
             component.infoLoaded();

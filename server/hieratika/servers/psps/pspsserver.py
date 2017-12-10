@@ -21,6 +21,7 @@ __date__ = "17/11/2017"
 ##
 import ast
 import ConfigParser
+import errno
 import fnmatch
 import json
 import logging
@@ -42,6 +43,8 @@ from hieratika.schedule import Schedule
 from hieratika.server import HieratikaServer
 from hieratika.util.lockpool import LockPool
 from hieratika.variable import Variable
+from hieratika.variableenum import VariableEnum
+from hieratika.variablelibrary import VariableLibrary
 
 ##
 # Logger configuration
@@ -217,7 +220,6 @@ class PSPSServer(HieratikaServer):
 
             numberOfElements = ast.literal_eval(rec.attrib["size"])
             #TODO handle permissions in xml (currently only the default ones are supported)
-            variable = Variable(nameXml.text, aliasXml.text, descriptionXml.text, typeFromXml, self.defaultExperts, numberOfElements, value)
             if (typeFromXml == "enum"):
                 choicesXml = rec.find("./ns0:choices", self.xmlns)
                 if (choicesXml is not None):
@@ -225,10 +227,37 @@ class PSPSServer(HieratikaServer):
                     choices = []
                     for choiceXml in choicesXml:
                         choices.append(choiceXml.text)
-                    variable.setChoices(choices)
+                    variable = VariableEnum(nameXml.text, aliasXml.text, descriptionXml.text, typeFromXml, self.defaultExperts, numberOfElements, value, [], choices)
                     log.debug("Added {0} choices for {1}".format(choices, variable.getName()))
                 else:
-                    log.critical("Could not find ns0:choices for {0}".format(variable.getName()))
+                    log.critical("Could not find ns0:choices for {0}".format(nameXml.text))
+            elif (typeFromXml == "library"):
+                libraryXml = rec.find("./ns0:library", self.xmlns)
+                if (libraryXml is not None):
+                    libraryNameXml = libraryXml.find("./ns0:name", self.xmlns)
+                    if (libraryNameXml is not None):
+                        libraryName = libraryNameXml.text
+                        mappingsXml = libraryXml.find("./ns0:mappings", self.xmlns)
+                        mappings = []
+                        if (mappingsXml is not None):
+                            mapsXml = mappingsXml.findall("./ns0:map", self.xmlns)
+                            for mapXml in mapsXml:
+                                mapSourceXml = mapXml.find("./ns0:source", self.xmlns)
+                                mapDestinationXml = mapXml.find("./ns0:destination", self.xmlns)
+                                if ((mapSourceXml is not None) and (mapDestinationXml is not None)):
+                                    mappings.append((mapSourceXml.text, mapDestinationXml.text))
+                                else:
+                                    log.critical("Could not find ns0:source or ns0:destination mappings for {0}".format(nameXml.text))
+                        else:
+                            log.critical("Could not find ns0:library mappings for {0}".format(nameXml.text))
+                    else:
+                        log.critical("Could not find ns0:library name for {0}".format(nameXml.text))
+                    variable = VariableLibrary(nameXml.text, aliasXml.text, descriptionXml.text, typeFromXml, self.defaultExperts, numberOfElements, value, libraryName, mappings)
+                    log.debug("Added {0} mappings for {1}".format(mappings, variable.getName()))
+                else:
+                    log.critical("Could not find ns0:library for {0}".format(nameXml.text))
+            else:
+                variable = Variable(nameXml.text, aliasXml.text, descriptionXml.text, typeFromXml, self.defaultExperts, numberOfElements, value)
             log.debug("Loaded {0}".format(variable))
         except Exception as e:
             #Not very elegant to catch all the possible exceptions...
@@ -585,9 +614,18 @@ class PSPSServer(HieratikaServer):
             if (not name.endswith(".xml")):
                 name = name + ".xml"
             if (self.standalone):
+                destScheduleDirs = "{0}/psps/configuration/{1}/{2}/".format(self.baseDir, pageName, destFolderNumber)
                 destScheduleUID = "{0}/psps/configuration/{1}/{2}/{3}".format(self.baseDir, pageName, destFolderNumber, name)
             else:
+                destScheduleDirs = "{0}/users/{1}/configuration/{2}/{3}/".format(self.baseDir, username, pageName, destFolderNumber)
                 destScheduleUID = "{0}/users/{1}/configuration/{2}/{3}/{4}".format(self.baseDir, username, pageName, destFolderNumber, name)
+            try:
+                os.makedirs(destScheduleDirs)
+            except OSError as e:
+                if (e.errno != errno.EEXIST):
+                    #Ignore the file exists error
+                    log.critical("Failed to create schedule directory {0}".format(e))
+            
             try:
                 shutil.copy2(sourceScheduleUID, destScheduleUID) 
             except IOError as e:
@@ -632,6 +670,8 @@ class PSPSServer(HieratikaServer):
             toReturn = "string" 
         elif (xmlVariableType == "recordEnum"):
             toReturn = "enum" 
+        elif (xmlVariableType == "recordLibrary"):
+            toReturn = "library" 
         else:
             log.critical("Could not convert type {0}".format(xmlVariableType))
         return toReturn

@@ -5,6 +5,7 @@
         <link rel="import" href="pmc-component.html">
         <link rel="import" href="pmc-enum.html">
         <link rel="import" href="pmc-input.html">
+        <link rel="import" href="pmc-library-button.html">
     </head>
     <body>
         <template id="tstructbrowser">
@@ -102,6 +103,9 @@
                                         if (member.type === "enum") {
                                             this.treeHTML += callerMemberName + ": <pmc-enum id=\"" + fullMemberName + "\" name=\"" + fullMemberName + "\" class=\"" + memberNameValidCSS + "\"></pmc-enum>\n";
                                         }
+                                        else if (member.type === "library") {
+                                            this.treeHTML += callerMemberName + ": <pmc-library-button id=\"" + fullMemberName + "\" name=\"" + fullMemberName + "\" class=\"" + memberNameValidCSS + "\"></pmc-library-button>\n";
+                                        }
                                         else {
                                             this.treeHTML += callerMemberName + ": <pmc-input id=\"" + fullMemberName + "\" name=\"" + fullMemberName + "\" class=\"" + memberNameValidCSS + "\"></pmc-input>\n";
                                         }
@@ -151,7 +155,9 @@
                                         compMember.setPlantValue(member.value);
                                         compMember.setValidations(member.validations);
                                         compMember.setPermissionGroups(member.permissions);
-                                        compMember.setChoices(member.choices);
+                                        if ("choices" in member) {
+                                            compMember.setChoices(member.choices);
+                                        }
                                         var userAllowed = false;
                                         for (var g in user.groups) {
                                             userAllowed = member.permissions.includes(user.groups[g]); 

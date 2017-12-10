@@ -39,19 +39,18 @@ class Variable(object):
         Variables may contain other variables (i.e. they can represent a member of a structure), where their name is the key of a __dict__ representation of the Variable object.
     """
 
-    def __init__(self, name, alias, description = "", vtype = "", permissions = [], numberOfElements = [], value = [], validations = [], choices = []):
+    def __init__(self, name, alias, description = "", vtype = "", permissions = [], numberOfElements = [], value = [], validations = []):
         """ Constructs a new Variable object.
         
         Args:
             name (str): the variable name. This name can either encode a @ separated path of a name which univocally identifies the variable in the system; or it can be the relative name of the variable when it represents a member of another variable.
             alias (str): free format text which provides a meaningful name to the variable.
-            description (str): one-line description of the variable;
-            vtype (str): the variable type as one of: uint8, int8, uint16, int16, uint32, int32, uint64, int64, string, enum;
-            numberOfElements ([int]): as an array where each entry contains the number of elements on any given direction; 
-            permissions (str): user groups that are allowed to change this variable;
+            description (str): one-line description of the variable.
+            vtype (str): the variable type as one of: uint8, int8, uint16, int16, uint32, int32, uint64, int64, string, enum.
+            numberOfElements ([int]): as an array where each entry contains the number of elements on any given direction. 
+            permissions (str): user groups that are allowed to change this variable.
             value (str): string encoded variable value.
             validations ([str]): list of validation expresssions that are associated to this variable. The format is to be interpreted and parsed by the client applications (the current format is any equation in the form EXPR OP EXPR. The EXPRs are either a mathematical expression containing at least the name of this variable inside single quotes. It may also contain the name of other variables and constant values. The OP is one of the following operators: <, <=, ==, >, >=. ). An example is 'VAR1' <= (2 * 'VAR2'), where VAR1 = self.getName().
-            choices ([str]): only meaningful if type=enum. List of possible values that can be assigned to this variable.
         """
         self.name = name
         self.alias = alias 
@@ -63,7 +62,6 @@ class Variable(object):
         self.parent = None
         self.isStruct = False
         self.members = {}
-        self.choices = choices
         self.validations = validations
 
     def getName(self):
@@ -200,20 +198,6 @@ class Variable(object):
         """
         return self.members
 
-    def getChoices(self):
-        """ Only meaningful for enum types.
-        Returns:
-            The list of possible enum choices.
-        """
-        return self.choices      
-
-    def setChoices(self, choices):
-        """ Set the available choices (only meaningful for enum types)
-        Args:
-            choices ([str]): the list of available choices for the enum.
-        """
-        self.choices = choices
-
     def __eq__(self, another):
         """ Two Variables are equal if they have the same absolute name.
            
@@ -264,7 +248,6 @@ class Variable(object):
             "permissions": map(str, self.getPermissions()),
             "validations": map(str, self.getValidations()),
             "isStruct": self.isStruct,
-            "choices": map(str, self.getChoices())
         }
         if (len(self.members) == 0):
             variable["numberOfElements"] = self.getNumberOfElements()

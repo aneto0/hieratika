@@ -144,7 +144,7 @@ def updatePlant():
 
 #Return the available libraries (for a given user and a given library type)
 @application.route("/getlibraries", methods=["POST", "GET"])
-def getschedules():
+def getlibraries():
     log.debug("/getlibraries")
     if (wserver.isTokenValid(request)):
         return wserver.getLibraries(request) 
@@ -217,7 +217,7 @@ def getschedulevariablesValues():
 
 #Returns the variables associated to a given library (identified by its uid)
 @application.route("/getlibraryvariablesvalues", methods=["POST", "GET"])
-def getschedulevariablesValues():
+def getlibraryvariablesvalues():
     log.debug("/getlibraryvariablesvalues")
     if (wserver.isTokenValid(request)):
         return wserver.getLibraryVariablesValues(request)
