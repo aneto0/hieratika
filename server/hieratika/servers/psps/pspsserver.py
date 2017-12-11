@@ -488,7 +488,6 @@ class PSPSServer(HieratikaServer):
 
         return libraries
 
-
     def getSchedules(self, username, pageName):
         schedules = []
         allSchedulesXml = self.getAllSchedulesXmls(username, pageName)
@@ -881,8 +880,6 @@ class PSPSServer(HieratikaServer):
             log.critical("No plant system defined for variable {0}".format(variableName))
 
         return ok
-
-       
 
     def getVariableValue(self, r, variableName, variables):
         """ Recursively gets all the variable values for a given plantSystem node in the xml.

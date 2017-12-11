@@ -4,51 +4,37 @@
     <schemaVersion>1.2</schemaVersion>
     <version>00.00</version>
     <sddVersion>1</sddVersion>
-    <name>DemoTypes</name>
-    <description>Demonstrate types</description>
+    <name>testlib1</name>
+    <description>A library test</description>
     <plantSystems>
         <plantSystem>
-            <name>DT</name>
+            <name>AA</name>
             <version>1.0</version>
             <description>Created at: 2015-05-27T11:52:32.620+02:00</description>
             <plantRecords>
                 <folders>
                     <folder>
-                        <name>BT</name>
+                        <name>BB</name>
                         <records>
                             <record size="1" xsi:type="recordDouble">
-                                <name>DBL</name>
-                                <alias>DBL</alias>
+                                <name>CC</name>
+                                <alias>CC</alias>
                                 <description>Double value</description>
                                 <values>
-                                  <value>-109.0</value>
+                                  <value>-2.0</value>
                                 </values>
                             </record>
-                        </records>
-                    </folder>
-                    <folder>
-                        <name>LB</name>
-                        <records>
-                            <record size="1" xsi:type="recordLibrary">
-                                <name>LIB1</name>
-                                <alias>LIB1</alias>
-                                <description>Library</description>
+                            <record size="1" xsi:type="recordDouble">
+                                <name>DD</name>
+                                <alias>DD</alias>
+                                <description>Double value</description>
                                 <values>
-                                  <value>Example 1</value>
+                                  <value>3.0</value>
                                 </values>
-                                <library>
-                                    <name>testlib1</name>
-                                    <mappings>
-                                        <map>
-                                            <source>AA@BB@CC</source> 
-                                            <destination>DT@BT@DBL</destination> 
-                                        </map>
-                                    </mappings>
-                                </library>
                             </record>
                         </records>
                     </folder>
-                </folders>
+               </folders>
             </plantRecords>
             <plantConstraints>
                 <folders>
@@ -59,8 +45,8 @@
                             <constraint>
                                 <name>Double limit</name>
                                 <description>Validates a double limit</description>
-                                <hint><![CDATA[Change the value of DT@BT@DBL<=1000]]></hint>
-                                <function name="schedule.validate"><![CDATA[='DT@BT@DBL'<=1000]]></function>
+                                <hint><![CDATA[Change the value of AA@BB@CC<=10]]></hint>
+                                <function name="schedule.validate"><![CDATA[='AA@BB@CC'<=10]]></function>
                                 <origin>SDD</origin>
                             </constraint>
                         </constraints>

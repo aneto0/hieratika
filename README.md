@@ -3,6 +3,7 @@ TODO
 -   Clean and restructure the html5 client code - SOME WORK DONE BUT NOT COMPLEET
 -   Design and implement the loader - NOT DONE
 -   Design and implement remote validation - NOT DONE
+-   Design and implement live variables support - NOT DONE
 -   Document the design - NOT DONE
 -   Document the html5 client - NOT DONE
 -   Write unit tests for the server - NOT DONE
