@@ -134,7 +134,7 @@ def getplantinfo():
   
 #Gets all the variables information for a given library
 @application.route("/getlibraryvariablesinfo", methods=["POST", "GET"])
-def getplantinfo():
+def getlibraryvariablesinfo():
     log.debug("/getlibraryvariablesinfo")
     if (wserver.isTokenValid(request)):
         return wserver.getLibraryVariablesInfo(request)

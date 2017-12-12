@@ -5,11 +5,7 @@
     <body>
         <template id="tselector">
             <dialog id="dselector">
-                <table style="border-style: dotted;border-width: 3px;width: 100%">
-                    <tr>
-                        <td><div id="diveditor"></div></td>
-                    </tr>
-                </table>
+                <iframe id="iframeeditor" style="width: 100%;border-style:solid;border-width:1px;"></iframe>
                 </br>
                 <table style="border-style:solid;border-width:1px;width: 100%">
                     <tr>
@@ -37,15 +33,28 @@
                         super();
                     }
 
-                    showSelector (availableLibraries, currentLibraryName) {
+                    getLibraryUID (libraryName) {
+                        var allLibraries = this.owner.getAvailableLibraries();
+                        var lib = allLibraries.find(function (element) {
+                            return (element.name === libraryName);
+                        });
+                        var libUID = undefined;
+                        if (lib !== undefined) {
+                            libUID = lib.uid;
+                        }
+                        return libUID;
+                    }
+
+                    showEditor (availableLibraries, currentLibraryName) {
                         var diag = this.shadowRoot.querySelector("#dselector");
                         var selector = this.shadowRoot.querySelector("#tselect");
                         selector.innerHTML = "";
                         $.each(availableLibraries, function(i, library) {
                             var option = document.createElement( 'option' );
-                            option.id = library.id;
+                            option.uid = library.uid;
                             option.value = library.name;
                             option.text = library.name;
+                            option.description = library.description;
                             selector.add(option);
                         });
                         selector.value = currentLibraryName;
@@ -54,23 +63,23 @@
                     }
 
                     getLibrary(libraryName, successFn) {
-                        var user = JSON.parse(localStorage.user);
-                        if (libraryName.length > 0) {
-                            $.ajax({
-                                type: "post",
-                                url: "/getlibrary",
-                                data: {
-                                    token: parent._currentToken,
-                                    variableId: this.owner.id, 
-                                    username: user.username, 
-                                    libraryName: libraryName 
-                                },
-                                success: successFn.bind(this),
-                                error: function (response) {
-                                    console.log(response);
-                                    alert(response);
-                                }
-                            });
+                        var libraryUID = this.getLibraryUID(libraryName);
+                        if (libraryUID !== undefined) {
+                            if (libraryName.length > 0) {
+                                $.ajax({
+                                    type: "post",
+                                    url: "/getlibraryvariablesvalues",
+                                    data: {
+                                        token: parent._currentToken,
+                                        libraryUID: libraryUID 
+                                    },
+                                    success: successFn.bind(this),
+                                    error: function (response) {
+                                        console.log(response);
+                                        alert(response);
+                                    }
+                                });
+                            }
                         }
                     }
 
@@ -83,59 +92,64 @@
                             if (ownerReference !== "none") {
                                 if (ownerReferenceValue !== undefined) {
                                     this.getLibrary(ownerReferenceValue, function (response) {
-                                        var library = $.parseJSON(response);
-                                        var libraryVariables = library["variables"];
-                                        for (var v in libraryVariables) {
-                                            var libraryVariable = libraryVariables[v];
-                                            var comps = this.editorComponents[libraryVariable.variableId];
+                                        var variables = $.parseJSON(response);
+                                        var keys = Object.keys(variables);
+                                        for (var i in keys) { 
+                                            var variableName = keys[i];
+                                            var variableValue = variables[keys[i]];
+                                            var comps = this.editorComponents[variableName];
                                             for (var c in comps) {
-                                                comps[c].setReferenceValue(libraryVariable.value);
-                                            } 
+                                                comps[c].setReferenceValue(variableValue);
+                                            }
                                         }
                                     });
                                 }
                             }
                             if (ownerInitialValue !== undefined) {
                                 this.getLibrary(ownerInitialValue, function (response) {
-                                    var library = $.parseJSON(response);
-                                    var libraryVariables = library["variables"];
-                                    for (var v in libraryVariables) {
-                                        var libraryVariable = libraryVariables[v];
-                                        var comps = this.editorComponents[libraryVariable.variableId];
+                                    var variables = $.parseJSON(response);
+                                    var keys = Object.keys(variables);
+                                    for (var i in keys) { 
+                                        var variableName = keys[i];
+                                        var variableValue = variables[keys[i]];
+                                        var comps = this.editorComponents[variableName];
                                         for (var c in comps) {
-                                            comps[c].setInitialValue(libraryVariable.value);
-                                        } 
+                                            comps[c].setInitialValue(variableValue);
+                                        }
                                     }
                                 });
                             }
                             if (ownerPlantValue !== undefined) {
                                 this.getLibrary(ownerPlantValue, function (response) {
-                                    var library = $.parseJSON(response);
-                                    var libraryVariables = library["variables"];
-                                    for (var v in libraryVariables) {
-                                        var libraryVariable = libraryVariables[v];
-                                        var comps = this.editorComponents[libraryVariable.variableId];
+                                    var variables = $.parseJSON(response);
+                                    var keys = Object.keys(variables);
+                                    for (var i in keys) { 
+                                        var variableName = keys[i];
+                                        var variableValue = variables[keys[i]];
+                                        var comps = this.editorComponents[variableName];
                                         for (var c in comps) {
-                                            comps[c].setPlantValue(libraryVariable.value);
-                                        } 
+                                            comps[c].setPlantValue(variableValue);
+                                        }
                                     }
                                 });
                             }
                         } 
                         if (this.selector.selectedIndex >= 0) {
-                            var libraryName = this.selector.options[this.selector.selectedIndex].text;
+                            var option = this.selector.options[this.selector.selectedIndex];
+                            var libraryName = option.text;
                             this.getLibrary(libraryName, function (response) {
-                                var library = $.parseJSON(response);
-                                var libraryVariables = library["variables"];
-                                for (var v in libraryVariables) {
-                                    var libraryVariable = libraryVariables[v];
-                                    var comps = this.editorComponents[libraryVariable.variableId];
+                                var variables = $.parseJSON(response);
+                                var keys = Object.keys(variables);
+                                for (var i in keys) { 
+                                    var variableName = keys[i];
+                                    var variableValue = variables[keys[i]];
+                                    var comps = this.editorComponents[variableName];
                                     for (var c in comps) {
-                                        comps[c].setValue(libraryVariable.value);
-                                    } 
+                                        comps[c].setValue(variableValue);
+                                    }
                                 }
                                 this.saveAsLibraryName.value = libraryName;
-                                this.descriptionTextArea.value = (library["description"]);
+                                this.descriptionTextArea.value = option.description;
                             });
                         } 
                     }
@@ -162,13 +176,11 @@
                             this.selected = this.selector.options[this.selector.selectedIndex].text;
                             this.owner.libraryChanged(this.selected);
                             diag.close();
-                            document.body.removeChild(this);
                         }.bind(this); //bind is needed to make sure that the "this" is still valid in the context of the callback
 
                         cancelButton.onclick = function() {
                             this.selected = "";
                             diag.close();
-                            document.body.removeChild(this);
                         }.bind(this); //bind is needed to make sure that the "this" is still valid in the context of the callback
 
                         this.selector.onchange = function() {
@@ -230,64 +242,62 @@
                             }
                         }.bind(this);
                         
-                        this.divEditor = this.shadowRoot.querySelector("#diveditor");
+                        this.iFrameEditor = this.shadowRoot.querySelector("#iframeeditor");
                         this.editorComponents = {};
                     }
 
                     setOwnerComponent(owner) {
                         this.owner = owner;
+                        this.loadEditor(owner.getLibraryType());
                     }
-    
-                    setLibraryVariables(editor, libraryVariables) {
-                        var editorUrl = editor + "?" + new Date().getTime(); //new Date... to force reloading with no caching
-                        $.ajax({
-                            type: "get",
-                            url: editorUrl, 
-                            success: function (response) {
-                                var keys = Object.keys(libraryVariables);
-                                for(var i in keys) {
-                                    var reg = new RegExp("{" + keys[i] + "}", "g");
-                                    response = response.replace(reg, libraryVariables[keys[i]]);
+                    
+                    iFrameLoaded(libraryType) {
+                        var iFrameTags = this.iFrameEditor.contentDocument.querySelectorAll("*");
+                        for (var i=0; i<iFrameTags.length; i++) {
+                            var comp = iFrameTags[i];
+                            if (comp.isPMCComponent !== undefined) {
+                                if(this.editorComponents[comp.id] === undefined) {
+                                    this.editorComponents[comp.id] = [comp];
                                 }
-                                this.divEditor.innerHTML = response;
-                                var allDivTags = this.divEditor.getElementsByTagName("*");
-                                for (var i=0; i<allDivTags.length; i++) {
-                                    var comp = allDivTags[i];
-                                    if (comp.isPMCComponent !== undefined) {
-                                        if(this.editorComponents[comp.id] === undefined) {
-                                            this.editorComponents[comp.id] = [comp];
-                                        }
-                                        else {
-                                            this.editorComponents[comp.id].push(this);
+                                else {
+                                    this.editorComponents[comp.id].push(this);
+                                }
+                            }
+                        }
+
+                        var allVariableIds = [];
+                        for (var k in this.editorComponents) {
+                            allVariableIds.push(k)
+                        }
+                        getLibraryVariablesInfo(libraryType, allVariableIds, 
+                            function (response) {
+                                var pvInfos = $.parseJSON(response);
+                                var user = JSON.parse(localStorage.user);
+                                for (var i in pvInfos) {
+                                    var pvInfo = pvInfos[i];
+                                    var targetElements = this.editorComponents[pvInfo.name];
+                                    if (targetElements != null) {
+                                        for (var j in targetElements) {
+                                            populateComponentInfo(targetElements[j], pvInfo, user);                    
                                         }
                                     }
                                 }
+                            }.bind(this)
+                        );
 
-                                var allVariableIds = [];
-                                for (var k in this.editorComponents) {
-                                    allVariableIds.push(k)
-                                }
-                                getPlantInfo(allVariableIds, 
-                                    function (response) {
-                                        var pvInfos = $.parseJSON(response);
-                                        var user = JSON.parse(localStorage.user);
-                                        for (var i in pvInfos) {
-                                            var pvInfo = pvInfos[i];
-                                            var targetElements = this.editorComponents[pvInfo.variableId];
-                                            if (targetElements != null) {
-                                                for (var j in targetElements) {
-                                                    populateComponentInfo(targetElements[j], pvInfo, user);                    
-                                                }
-                                            }
-                                        }
-                                    }.bind(this)
-                                );
-                            }.bind(this),
-                            error: function (response) {
-                                console.log(response);
-                                alert(response);
-                            }
+                        $.each(this.editorComponents, function (i, pmcCompArray) {
+                            $.each(pmcCompArray, function (j, pmcComp) {
+                                pmcComp.domLoaded();
+                            });
                         });
+                    }
+
+                    loadEditor(libraryType) {
+                        var editorUrl = "/pages/" + libraryType + ".html?" + new Date().getTime(); //new Date... to force reloading with no caching
+                        this.iFrameEditor.onload = function(evt) {
+                            this.iFrameLoaded(libraryType);
+                        }.bind(this);
+                        this.iFrameEditor.src = editorUrl;
                     }
 
                     getEditor() {

@@ -39,7 +39,7 @@ class VariableLibrary(Variable):
     """ Describes a hieratika library variable. A variable library is a Variable whose value is the name of library contaning the parameter values that are to be assigned to a list of other variables. 
     """
 
-    def __init__(self, name, alias, description = "", vtype = "", permissions = [], numberOfElements = [], value = [], libraryName = "", mappings = []):
+    def __init__(self, name, alias, description = "", vtype = "", permissions = [], numberOfElements = [], value = [], libraryType = "", mappings = []):
         """ Constructs a new VariableLibrary object.
         
         Args:
@@ -50,19 +50,19 @@ class VariableLibrary(Variable):
             numberOfElements ([int]): see Variable.__init__
             permissions (str): see Variable.__init__
             value (str): see Variable.__init__
-            libraryName (str): the name of the library.
+            libraryType (str): the library type (which univocally defines the library in the system).
             mappings ([(source1:destination1), (source2, destination2), ...]): list of key/value tuples, where the key is the name of source variable in the library and the value is the name of destination parameter (where to copy the source variable value).
         """
         super(VariableLibrary, self).__init__(name, alias, description, vtype, permissions, numberOfElements, value, [])
-        self.libraryName = libraryName
+        self.libraryType = libraryType
         self.mappings = mappings
 
-    def getLibraryName(self):
+    def getLibraryType(self):
         """ 
         Returns:
-            The name of the library (which univocally defines the library in the system).
+            The type of the library (which univocally defines the library in the system).
         """
-        return self.libraryName
+        return self.libraryType
 
     def getMappings(self):
         """
@@ -77,7 +77,8 @@ class VariableLibrary(Variable):
             A json serializable representation of the Variable which serialises all of its properties and Variable members (see Variable.asSerializableDict) and the library description (name in a field name library and the mappings in a field named mappings (see getMappings())).
         """
         variable = super(VariableLibrary, self).asSerializableDict()
-        variable["library"] = self.getLibraryName()
-        variable["mappings"] = self.getMappings()
+        variable["library"] = {}
+        variable["library"]["type"] = self.getLibraryType()
+        variable["library"]["mappings"] = self.getMappings()
         return variable
 

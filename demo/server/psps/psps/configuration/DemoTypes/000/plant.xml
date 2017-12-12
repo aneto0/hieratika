@@ -37,7 +37,7 @@
                                   <value>Example 1</value>
                                 </values>
                                 <library>
-                                    <name>testlib1</name>
+                                    <type>testlib1</type>
                                     <mappings>
                                         <map>
                                             <source>AA@BB@CC</source> 

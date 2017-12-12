@@ -159,7 +159,7 @@ class WServer:
         try: 
             libraryType = request.form["libraryType"]
             requestedVariables = json.loads(request.form["variables"])
-            variables = self.serverImpl.getLibraryVariablesValues(libraryType, requestedVariables)
+            variables = self.serverImpl.getLibraryVariablesInfo(libraryType, requestedVariables)
             variablesStr = [v.asSerializableDict() for v in variables]
             toReturn = json.dumps(variablesStr)
         except KeyError as e:

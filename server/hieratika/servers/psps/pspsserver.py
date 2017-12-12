@@ -234,9 +234,9 @@ class PSPSServer(HieratikaServer):
             elif (typeFromXml == "library"):
                 libraryXml = rec.find("./ns0:library", self.xmlns)
                 if (libraryXml is not None):
-                    libraryNameXml = libraryXml.find("./ns0:name", self.xmlns)
-                    if (libraryNameXml is not None):
-                        libraryName = libraryNameXml.text
+                    libraryTypeXml = libraryXml.find("./ns0:type", self.xmlns)
+                    if (libraryTypeXml is not None):
+                        libraryType = libraryTypeXml.text
                         mappingsXml = libraryXml.find("./ns0:mappings", self.xmlns)
                         mappings = []
                         if (mappingsXml is not None):
@@ -252,7 +252,7 @@ class PSPSServer(HieratikaServer):
                             log.critical("Could not find ns0:library mappings for {0}".format(nameXml.text))
                     else:
                         log.critical("Could not find ns0:library name for {0}".format(nameXml.text))
-                    variable = VariableLibrary(nameXml.text, aliasXml.text, descriptionXml.text, typeFromXml, self.defaultExperts, numberOfElements, value, libraryName, mappings)
+                    variable = VariableLibrary(nameXml.text, aliasXml.text, descriptionXml.text, typeFromXml, self.defaultExperts, numberOfElements, value, libraryType, mappings)
                     log.debug("Added {0} mappings for {1}".format(mappings, variable.getName()))
                 else:
                     log.critical("Could not find ns0:library for {0}".format(nameXml.text))
@@ -443,6 +443,7 @@ class PSPSServer(HieratikaServer):
                 if (variable is not None):
                     variables.append(variable)
         self.lockPool.release(xmlId)
+        return variables
 
     def getVariablesInfo(self, pageName, requestedVariables):
         xmlFileLocation = "{0}/psps/configuration/{1}/000/plant.xml".format(self.baseDir, pageName)
@@ -454,7 +455,7 @@ class PSPSServer(HieratikaServer):
         return variables 
 
     def getLibraryVariablesInfo(self, libraryType, requestedVariables):
-        xmlFileLocation = "{0}/psps/libraries/{1}.xml".format(self.baseDir, pageName)
+        xmlFileLocation = "{0}/psps/libraries/{1}.xml".format(self.baseDir, libraryType)
         log.debug("Loading library configuration from {0}".format(xmlFileLocation))
         perfStartTime = timeit.default_timer()
         variables = self.loadVariablesInfo(xmlFileLocation, requestedVariables)
@@ -553,9 +554,9 @@ class PSPSServer(HieratikaServer):
 
     def getLibraryVariablesValues(self, libraryUID):
         log.debug("Return library variables values for UID: {0}".format(libraryUID))
-        xmlId = self.getXmlId(scheduleUID)
+        xmlId = self.getXmlId(libraryUID)
         self.lockPool.acquire(xmlId)
-        variables = self.getAllVariablesValues(scheduleUID)
+        variables = self.getAllVariablesValues(libraryUID)
         self.lockPool.release(xmlId)
         log.debug("Returning variables: {0}".format(variables))
         return variables

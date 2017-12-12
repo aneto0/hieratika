@@ -82,6 +82,22 @@
             return (this.getTypeValue() === "library");
         }
 
+        setLibraryType (libraryType) {
+            this.libraryType = libraryType;
+        }
+
+        getLibraryType() {
+            return this.libraryType;
+        }
+
+        setLibraryMappings (libraryMappings) {
+            this.libraryMappings = libraryMappings;
+        }
+
+        getLibraryMappings() {
+            return this.libraryMappings;
+        }
+
         isReadOnly() {
             return this.readOnly;
         }
@@ -239,6 +255,8 @@
 
             this.typeValue = "string";
             this.choices = [];
+            this.libraryType = undefined;
+            this.libraryMappings = undefined;
             this.initValue = undefined;
             this.plantValue = undefined;
             this.referenceValue = undefined;

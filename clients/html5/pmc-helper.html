@@ -83,6 +83,26 @@
             });
         }
 
+        function getLibraryVariablesInfo(libraryType, variablesNames, successFn) {
+            $.ajax({
+                type: "post",
+                url: "/getlibraryvariablesinfo",
+                data: {
+                    token: parent._currentToken,
+                    libraryType: libraryType,
+                    variables: JSON.stringify(variablesNames)
+                },
+                success: successFn,
+                error: function (response) {
+                    if (waitDialog.open) {
+                        waitDialog.close();
+                    }
+                    console.log(response);
+                    alert(response);
+                }
+            });
+        }
+
         function populateComponentInfo(component, pvInfo, user) {
             component.setTypeValue(pvInfo.type);
             component.setReference("none");
@@ -122,6 +142,10 @@
             if ("choices" in pvInfo) {
                 component.setChoices(pvInfo.choices);
             }
+            if ("library" in pvInfo) {
+                component.setLibraryType(pvInfo.library.type);
+                component.setLibraryMappings(pvInfo.library.mappings);
+            }
             component.infoLoaded();
         }
 
@@ -136,7 +160,6 @@
                 });
             });
         }
-
         
         function setReference(currentReference) {
             if (currentReference === NONE_NAME) {

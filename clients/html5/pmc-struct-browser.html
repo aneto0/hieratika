@@ -158,6 +158,10 @@
                                         if ("choices" in member) {
                                             compMember.setChoices(member.choices);
                                         }
+                                        if ("library" in member) {
+                                            compMember.setLibraryType(member.library.type);
+                                            compMember.setLibraryMappings(member.library.mappings);
+                                        }
                                         var userAllowed = false;
                                         for (var g in user.groups) {
                                             userAllowed = member.permissions.includes(user.groups[g]); 
