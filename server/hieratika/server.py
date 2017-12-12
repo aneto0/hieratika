@@ -170,11 +170,24 @@ class HieratikaServer(object):
 
     @abstractmethod
     def getVariablesInfo(self, pageName, requestedVariables):
-        """ Returns the all the available information for any of the requestedVariables.
+        """ Returns all the available information (and meta-information) for all of the requestedVariables which belong to a given
+        configuration. In hieratika a configuration is identified by a unique name (pageName).
 
         Args:
-           pageName (str): name of the page (which corresponds to the name of the configuration).
-           variables ([str]): identifiers of the variables to be queried.
+           pageName (str): name of the page (which also corresponds to the name of the configuration entity).
+           requestedVariables ([str]): identifiers of the variables to be queried.
+        Returns:
+            A list of Variables ([Variable]) with all the information available for each of the request variables 
+        """
+        pass
+
+    @abstractmethod
+    def getLibraryVariablesInfo(self, libraryType, requestedVariables):
+        """ Returns all the available information (and meta-information) for all of the requestedVariables which belong to a given library type.
+
+        Args:
+           libraryType (str): the library type (see hlibrary).
+           requestedVariables ([str]): identifiers of the variables to be queried.
         Returns:
             A list of Variables ([Variable]) with all the information available for each of the request variables 
         """

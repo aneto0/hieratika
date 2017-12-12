@@ -123,8 +123,7 @@ def start(*args, **kwargs):
         log.critical("Failed to load configuration file {0} : {1}".format(configFile, e))
         exit()
 
-
-#Gets all the pv information
+#Gets all the variables information for a given configuration
 @application.route("/getvariablesinfo", methods=["POST", "GET"])
 def getplantinfo():
     log.debug("/getvariablesinfo")
@@ -133,6 +132,16 @@ def getplantinfo():
     else:
         return "InvalidToken"
   
+#Gets all the variables information for a given library
+@application.route("/getlibraryvariablesinfo", methods=["POST", "GET"])
+def getplantinfo():
+    log.debug("/getlibraryvariablesinfo")
+    if (wserver.isTokenValid(request)):
+        return wserver.getLibraryVariablesInfo(request)
+    else:
+        return "InvalidToken"
+
+
 #Try to update the values in the plant
 @application.route("/updateplant", methods=["POST", "GET"])
 def updatePlant():

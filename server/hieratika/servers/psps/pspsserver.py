@@ -398,10 +398,9 @@ class PSPSServer(HieratikaServer):
                 log.debug("Attaching {0} to variable {1}".format(globalConstraints[memberFullName], memberFullName))
             self.attachVariableConstraints(memberVariable, memberFullName, globalConstraints)
 
-    def getVariablesInfo(self, pageName, requestedVariables):
-        xmlFileLocation = "{0}/psps/configuration/{1}/000/plant.xml".format(self.baseDir, pageName)
-        log.debug("Loading plant configuration from {0}".format(xmlFileLocation))
-        perfStartTime = timeit.default_timer()
+    def loadVariablesInfo(self, xmlFileLocation, requestedVariables):
+        """ Helper function which provides the same loading information for getVariablesInfo and getLibraryVariablesInfo
+        """
         variables = []
         xmlId = self.getXmlId(xmlFileLocation)
         self.lockPool.acquire(xmlId)
@@ -444,8 +443,23 @@ class PSPSServer(HieratikaServer):
                 if (variable is not None):
                     variables.append(variable)
         self.lockPool.release(xmlId)
+
+    def getVariablesInfo(self, pageName, requestedVariables):
+        xmlFileLocation = "{0}/psps/configuration/{1}/000/plant.xml".format(self.baseDir, pageName)
+        log.debug("Loading plant configuration from {0}".format(xmlFileLocation))
+        perfStartTime = timeit.default_timer()
+        variables = self.loadVariablesInfo(xmlFileLocation, requestedVariables)
         perfElapsedTime = timeit.default_timer() - perfStartTime
         log.debug("Took {0} s to get the information for all the {1} variables in the plant for page {2}".format(perfElapsedTime, len(requestedVariables), pageName))
+        return variables 
+
+    def getLibraryVariablesInfo(self, libraryType, requestedVariables):
+        xmlFileLocation = "{0}/psps/libraries/{1}.xml".format(self.baseDir, pageName)
+        log.debug("Loading library configuration from {0}".format(xmlFileLocation))
+        perfStartTime = timeit.default_timer()
+        variables = self.loadVariablesInfo(xmlFileLocation, requestedVariables)
+        perfElapsedTime = timeit.default_timer() - perfStartTime
+        log.debug("Took {0} s to get the information for all the {1} variables for library type {2}".format(perfElapsedTime, len(requestedVariables), libraryType))
         return variables 
 
     def getPages(self):
@@ -539,28 +553,9 @@ class PSPSServer(HieratikaServer):
 
     def getLibraryVariablesValues(self, libraryUID):
         log.debug("Return library variables values for UID: {0}".format(libraryUID))
-        xmlId = self.getXmlId(libraryUID)
+        xmlId = self.getXmlId(scheduleUID)
         self.lockPool.acquire(xmlId)
-        variables = {}
-        tree = self.getCachedXmlTree(libraryUID)
-        if (tree is not None):
-            xmlRoot = tree.getroot()
-            structuredVariablesXml = xmlRoot.findall("./ns0:folders/ns0:folder", self.xmlns)
-            for structuredVariableXml in structuredVariablesXml:
-                structuredVariableName = structuredVariableXml.find("./ns0:name", self.xmlns).text
-                log.debug("Getting variables values for library variable {0}".format(structuredVariableName))
-                self.getVariableValue(structuredVariableXml, structuredVariableName, variables)
-           
-            #Append non structure variables (if any) 
-            records = xmlRoot.find("./ns0:records", self.xmlns)
-            if (self.containsRecords(records)):
-                records = records.findall("./ns0:record", self.xmlns)
-                for rec in records:
-                    self.getRecord(rec, variables)
-        else:
-            log.critical("Could not find the xml tree for {0}".format(xmlId))
-        return variables
-
+        variables = self.getAllVariablesValues(scheduleUID)
         self.lockPool.release(xmlId)
         log.debug("Returning variables: {0}".format(variables))
         return variables

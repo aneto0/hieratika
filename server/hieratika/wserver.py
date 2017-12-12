@@ -105,7 +105,7 @@ class WServer:
         return self.authImpl 
 
     def getVariablesInfo(self, request):
-        """ Returns the all the available information for any of the requestedVariables.
+        """ Returns the all the available information (and meta-information) for all of the requestedVariables in a given configuration set (identified by the pageName).
 
         Args:
            request.form["pageName"]: name of the page (which corresponds to the name of the configuration).
@@ -115,12 +115,12 @@ class WServer:
             The following information is retrieved for any given variable:
             - name: the full variable name (containing any structure naming information, encoded as with a structure separator);
             - alias: a free format text which provides a meaningful name to the variable.
-            - type as one of: uint8, int8, uint16, int16, uint32, int32, uint64, int64, string;
+            - type as one of: uint8, int8, uint16, int16, uint32, int32, uint64, int64, string, enum, library;
             - numberOfElements: as an array where each entry contains the number of elements on any given direction; 
             - description: one-line description of the variable;
             - permissions: user groups that are allowed to change this variable;
             - value: string encoded variable value.
-            - and * N member variables (with the information above) if the variable being returned is structured.
+            - and N member variables (with the information above) if the variable being returned is structured.
         """
        
         toReturn = ""
@@ -135,6 +135,39 @@ class WServer:
             toReturn = "InvalidParameters"
 
         return toReturn 
+
+    def getLibraryVariablesInfo(self, request):
+        """ Returns the all the available information (and meta-information) for all of the requestedVariables in a given library (identified by the libraryType).
+
+        Args:
+           request.form["libraryType"]: name of the page (which corresponds to the name of the configuration).
+           request.form["variables"]: identifiers of the variables to be queried.
+        Returns:
+            A json encoded list of variables or InvalidToken if the token is not valid.
+            The following information is retrieved for any given variable:
+            - name: the full variable name (containing any structure naming information, encoded as with a structure separator);
+            - alias: a free format text which provides a meaningful name to the variable.
+            - type as one of: uint8, int8, uint16, int16, uint32, int32, uint64, int64, string, enum, library;
+            - numberOfElements: as an array where each entry contains the number of elements on any given direction; 
+            - description: one-line description of the variable;
+            - permissions: user groups that are allowed to change this variable;
+            - value: string encoded variable value.
+            - and * N member variables (with the information above) if the variable being returned is structured.
+        """
+       
+        toReturn = ""
+        try: 
+            libraryType = request.form["libraryType"]
+            requestedVariables = json.loads(request.form["variables"])
+            variables = self.serverImpl.getLibraryVariablesValues(libraryType, requestedVariables)
+            variablesStr = [v.asSerializableDict() for v in variables]
+            toReturn = json.dumps(variablesStr)
+        except KeyError as e:
+            log.critical(str(e))
+            toReturn = "InvalidParameters"
+
+        return toReturn 
+
 
     def updatePlant(self, request):
         """ Updates the values of the requested variables in the plant.
