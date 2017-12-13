@@ -37,10 +37,9 @@
                         var clone = document.importNode(template.content, true);
                         var root = this.createShadowRoot();
                         root.appendChild(clone);
-                        var templateDiv = this.shadowRoot.querySelector("#dmaineditor");
-
                         this.plantInfoLoadedListeners = [this];
                         parent._pmcMainEditor = this;
+                        this.mainEditorIFrame = this.shadowRoot.querySelector("#dmaineditor");
                     }
 
                     attachedCallback() {
@@ -64,7 +63,7 @@
                     loadPlantInfo(pageName) {
                         showWaitDialog();
                         var allVariableIds = [];
-                        for (var k in parent._allPMCComponents) {
+                        for (var k in this.mainEditorIFrame.contentDocument._frameComponents) {
                             allVariableIds.push(k)
                         }
                         getVariablesInfo(pageName, allVariableIds, function (response) {
@@ -72,7 +71,7 @@
                             var user = JSON.parse(localStorage.user);
                             for (var i in pvInfos) {
                                 var pvInfo = pvInfos[i];
-                                var targetElements = parent._allPMCComponents[pvInfo.name];
+                                var targetElements = this.mainEditorIFrame.contentDocument._frameComponents[pvInfo.name];
                                 if (targetElements != null) {
                                     for (var j in targetElements) {
                                         populateComponentInfo(targetElements[j], pvInfo, user);                    
@@ -89,7 +88,7 @@
                     iFrameLoaded(pageName) {
                         this.loadPlantInfo(pageName); 
 
-                        $.each(parent._allPMCComponents, function (i, pmcCompArray) {
+                        $.each(this.mainEditorIFrame.contentDocument._frameComponents, function (i, pmcCompArray) {
                             $.each(pmcCompArray, function (j, pmcComp) {
                                 pmcComp.domLoaded();
                             });
@@ -97,15 +96,14 @@
                     }
 
                     pageChanged (page) {
-                        parent._allPMCComponents = {};
+                        this.mainEditorIFrame.contentDocument._frameComponents = {};
                         //Remove all the listeners (apart from this and the pmc-top-nav)
                         this.plantInfoLoadedListeners = this.plantInfoLoadedListeners.slice(0, 2);
                         var pageUrl = "pages/" + page.url + ".html?" + new Date().getTime(); //new Date... to force reloading with no caching
-                        var templateDiv = this.shadowRoot.querySelector("#dmaineditor");
-                        templateDiv.onload = function(evt) {
+                        this.mainEditorIFrame.onload = function(evt) {
                             this.iFrameLoaded(page.name);
                         }.bind(this);
-                        templateDiv.src = pageUrl;
+                        this.mainEditorIFrame.src = pageUrl;
                     }
    
                     plantInfoLoaded() {
@@ -113,8 +111,11 @@
                     } 
 
                     userLogout () {
-                        var templateDiv = this.shadowRoot.querySelector("#dmaineditor");
-                        templateDiv.innerHTML = "";
+                        this.mainEditorIFrame.innerHTML = "";
+                    }
+
+                    getAllPMCComponents() {
+                        return this.mainEditorIFrame.contentDocument._frameComponents;
                     }
                 }
                 document.registerElement("pmc-main-editor", {

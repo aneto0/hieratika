@@ -49,7 +49,7 @@
                                 var coil = {color:STANDARD_FCOLOR};
                                 $.each(props, function(p, prop) {
                                     var coilVariableId = coilVariable + "@" + prop;
-                                    var pmcCompArray = parent._allPMCComponents[coilVariableId];
+                                    var pmcCompArray = document._frameComponents[coilVariableId];
                                     if (pmcCompArray !== undefined) {
                                         coil[prop] = parseFloat(pmcCompArray[0].getValue());
                                         $.each(pmcCompArray, function (j, pmcComp) {

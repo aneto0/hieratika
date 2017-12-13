@@ -4,7 +4,7 @@
     <schemaVersion>1.2</schemaVersion>
     <version>00.00</version>
     <sddVersion>1</sddVersion>
-    <name>Example 1</name>
+    <name>Example 2</name>
     <description>A library test</description>
     <plantSystems>
         <plantSystem>
@@ -21,7 +21,7 @@
                                 <alias>CC</alias>
                                 <description>Double value</description>
                                 <values>
-                                  <value>-2.0</value>
+                                  <value>3.0</value>
                                 </values>
                             </record>
                             <record size="1" xsi:type="recordDouble">
@@ -29,7 +29,7 @@
                                 <alias>DD</alias>
                                 <description>Double value</description>
                                 <values>
-                                  <value>3.0</value>
+                                  <value>-2.0</value>
                                 </values>
                             </record>
                         </records>

@@ -26,7 +26,7 @@
                 this.parser = math.parser();
                 this.parser.set('getValue', function (variableName) {
                     var ret = undefined;
-                    var comp = parent._allPMCComponents[variableName];
+                    var comp = document._frameComponents[variableName];
                     if (comp !== undefined) {
                         if (comp.length !== undefined) {
                             ret = comp[0].getValue();

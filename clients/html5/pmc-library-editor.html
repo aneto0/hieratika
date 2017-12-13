@@ -84,6 +84,7 @@
                     }
 
                     editLibrary (valueOnly = false) {
+                        var editorComponents = this.iFrameEditor.contentDocument._frameComponents;
                         if (!valueOnly) {
                             var ownerReference = this.owner.getReference();
                             var ownerReferenceValue = this.owner.getReferenceValue();
@@ -97,7 +98,7 @@
                                         for (var i in keys) { 
                                             var variableName = keys[i];
                                             var variableValue = variables[keys[i]];
-                                            var comps = this.editorComponents[variableName];
+                                            var comps = editorComponents[variableName];
                                             for (var c in comps) {
                                                 comps[c].setReferenceValue(variableValue);
                                             }
@@ -112,7 +113,7 @@
                                     for (var i in keys) { 
                                         var variableName = keys[i];
                                         var variableValue = variables[keys[i]];
-                                        var comps = this.editorComponents[variableName];
+                                        var comps = editorComponents[variableName];
                                         for (var c in comps) {
                                             comps[c].setInitialValue(variableValue);
                                         }
@@ -126,7 +127,7 @@
                                     for (var i in keys) { 
                                         var variableName = keys[i];
                                         var variableValue = variables[keys[i]];
-                                        var comps = this.editorComponents[variableName];
+                                        var comps = editorComponents[variableName];
                                         for (var c in comps) {
                                             comps[c].setPlantValue(variableValue);
                                         }
@@ -143,7 +144,7 @@
                                 for (var i in keys) { 
                                     var variableName = keys[i];
                                     var variableValue = variables[keys[i]];
-                                    var comps = this.editorComponents[variableName];
+                                    var comps = editorComponents[variableName];
                                     for (var c in comps) {
                                         comps[c].setValue(variableValue);
                                     }
@@ -187,13 +188,15 @@
                             this.editLibrary(true);
                         }.bind(this);
 
+                        this.iFrameEditor = this.shadowRoot.querySelector("#iframeeditor");
                         this.saveAsButton.onclick = function() {
+                            var editorComponents = this.iFrameEditor.contentDocument._frameComponents;
                             var saveAsName = this.saveAsLibraryName.value;
                             var description = this.descriptionTextArea.value;
                             var user = JSON.parse(localStorage.user);
                             var variablesValues = [];
-                            for (var key in this.editorComponents) {
-                                var comps = this.editorComponents[key];
+                            for (var key in editorComponents) {
+                                var comps = editorComponents[key];
                                 //The same id might be used in different components...
                                 for (var c in comps) {
                                     variablesValues.push({
@@ -242,8 +245,6 @@
                             }
                         }.bind(this);
                         
-                        this.iFrameEditor = this.shadowRoot.querySelector("#iframeeditor");
-                        this.editorComponents = {};
                     }
 
                     setOwnerComponent(owner) {
@@ -252,21 +253,10 @@
                     }
                     
                     iFrameLoaded(libraryType) {
-                        var iFrameTags = this.iFrameEditor.contentDocument.querySelectorAll("*");
-                        for (var i=0; i<iFrameTags.length; i++) {
-                            var comp = iFrameTags[i];
-                            if (comp.isPMCComponent !== undefined) {
-                                if(this.editorComponents[comp.id] === undefined) {
-                                    this.editorComponents[comp.id] = [comp];
-                                }
-                                else {
-                                    this.editorComponents[comp.id].push(this);
-                                }
-                            }
-                        }
-
+                        //Note that we want PMCComponents to the scope of each iframe
+                        var editorComponents = this.iFrameEditor.contentDocument._frameComponents;
                         var allVariableIds = [];
-                        for (var k in this.editorComponents) {
+                        for (var k in editorComponents) {
                             allVariableIds.push(k)
                         }
                         getLibraryVariablesInfo(libraryType, allVariableIds, 
@@ -275,7 +265,7 @@
                                 var user = JSON.parse(localStorage.user);
                                 for (var i in pvInfos) {
                                     var pvInfo = pvInfos[i];
-                                    var targetElements = this.editorComponents[pvInfo.name];
+                                    var targetElements = editorComponents[pvInfo.name];
                                     if (targetElements != null) {
                                         for (var j in targetElements) {
                                             populateComponentInfo(targetElements[j], pvInfo, user);                    
@@ -285,7 +275,7 @@
                             }.bind(this)
                         );
 
-                        $.each(this.editorComponents, function (i, pmcCompArray) {
+                        $.each(editorComponents, function (i, pmcCompArray) {
                             $.each(pmcCompArray, function (j, pmcComp) {
                                 pmcComp.domLoaded();
                             });
@@ -306,6 +296,15 @@
 
                     setReadOnly (isReadOnly) {
                         this.okButton.disabled = isReadOnly;
+                    }
+
+                    setReference(referenceToSet) {
+                        var editorComponents = this.iFrameEditor.contentDocument._frameComponents;
+                        $.each(editorComponents, function (i, pmcCompArray) {
+                            $.each(pmcCompArray, function (j, pmcComp) {
+                                pmcComp.setReference(referenceToSet);
+                            });
+                        });
                     }
 
                     setUserAllowedToWrite (isUserAllowedToWrite) {

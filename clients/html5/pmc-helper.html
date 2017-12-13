@@ -29,7 +29,8 @@
 
         function loadIntoPlant(pgName) {
             var allPMCDataJSon = {};
-            $.each(parent._allPMCComponents, function (i, pmcComp) {
+            var mainFramePMCComponents = parent._pmcMainEditor.getAllPMCComponents();
+            $.each(mainFramePMCComponents, function (i, pmcComp) {
                 allPMCDataJSon[pmcComp[0].id] = pmcComp[0].getValue();
             });
             $.ajax({
@@ -46,7 +47,7 @@
                         alert("Values updated successfully!");
                         var pmcComp;
                         //The same id can be used to store multiple instances
-                        $.each(parent._allPMCComponents, function (i, pmcCompArray) {
+                        $.each(mainFramePMCComponents, function (i, pmcCompArray) {
                             $.each(pmcCompArray, function (j, pmcComp) {
                                 pmcComp.setInitialValue(pmcComp.getValue());
                             });
@@ -150,7 +151,8 @@
         }
 
         function displayPlant() {
-            $.each(parent._allPMCComponents, function (i, pmcCompArray) {
+            var mainFramePMCComponents = parent._pmcMainEditor.getAllPMCComponents();
+            $.each(mainFramePMCComponents, function (i, pmcCompArray) {
                 $.each(pmcCompArray, function (j, pmcComp) {
                     pmcComp.setReadOnly(true);
                     var value = pmcComp.getPlantValue();
@@ -165,7 +167,8 @@
             if (currentReference === NONE_NAME) {
                 //Reset all the values to N/A
                 var pmcComp;
-                $.each(parent._allPMCComponents, function (i, pmcCompArray) {
+                var mainFramePMCComponents = parent._pmcMainEditor.getAllPMCComponents();
+                $.each(mainFramePMCComponents, function (i, pmcCompArray) {
                     $.each(pmcCompArray, function (j, pmcComp) {
                         pmcComp.setReferenceValue("N/A");
                         pmcComp.setReference(currentReference);
@@ -175,7 +178,8 @@
             else if (currentReference === PLANT_NAME) {
                 //Reset all the values to N/A
                 var pmcComp;
-                $.each(parent._allPMCComponents, function (i, pmcCompArray) {
+                var mainFramePMCComponents = parent._pmcMainEditor.getAllPMCComponents();
+                $.each(mainFramePMCComponents, function (i, pmcCompArray) {
                     $.each(pmcCompArray, function (j, pmcComp) {
                         pmcComp.setReferenceValue(pmcComp.getPlantValue());
                         pmcComp.setReference(currentReference);
@@ -193,10 +197,11 @@
                     success: function (response) {
                         var variables = $.parseJSON(response);
                         var keys = Object.keys(variables);
+                        var mainFramePMCComponents = parent._pmcMainEditor.getAllPMCComponents();
                         for (var i in keys) { 
                             var variableName = keys[i];
                             var variableValue = variables[keys[i]];
-                            var targetElements = parent._allPMCComponents[variableName];
+                            var targetElements = mainFramePMCComponents[variableName];
                             if (targetElements != null) {
                                 $.each(targetElements, function (i, targetElement) {
                                     targetElement.setReferenceValue(variableValue);
@@ -224,10 +229,11 @@
                 success: function (response) {
                     variables = $.parseJSON(response);
                     var keys = Object.keys(variables);
+                    var mainFramePMCComponents = parent._pmcMainEditor.getAllPMCComponents();
                     for (var i in keys) { 
                         var variableName = keys[i];
                         var variableValue = variables[keys[i]];
-                        var targetElements = parent._allPMCComponents[variableName];
+                        var targetElements = mainFramePMCComponents[variableName];
                         if (targetElements != null) {
                             $.each(targetElements, function (i, targetElement) {
                                 if (resetValue) {
@@ -257,7 +263,8 @@
                     variables:JSON.stringify(parent._scheduleValuesToCommit)
                 },
                 success: function (response) {
-                    $.each(parent._allPMCComponents, function (i, pmcCompArray) {
+                    var mainFramePMCComponents = parent._pmcMainEditor.getAllPMCComponents();
+                    $.each(mainFramePMCComponents, function (i, pmcCompArray) {
                         $.each(pmcCompArray, function (j, pmcComp) {
                             pmcComp.setInitialValue(pmcComp.getValue());
                         });
@@ -271,7 +278,8 @@
         }
 
         function undoAllChangesToSchedule() {
-            $.each(parent._allPMCComponents, function (i, pmcCompArray) {
+            var mainFramePMCComponents = parent._pmcMainEditor.getAllPMCComponents();
+            $.each(mainFramePMCComponents, function (i, pmcCompArray) {
                 $.each(pmcCompArray, function (j, pmcComp) {
                     pmcComp.setValue(pmcComp.getInitialValue());
                 });
@@ -348,7 +356,6 @@
         var _valuesToSynchroniseRemote = [];
         var _scheduleValuesToCommit = {};
         //The same component id in the dictionary can be used to store multiple instances, i.e. id : []
-        var _allPMCComponents = {};
         var _currentScheduleUID = undefined;
         var _currentToken = undefined;
         //This reference to the main editor can be used to listen to page events for components that e.g. do not inherit from PMCComponent

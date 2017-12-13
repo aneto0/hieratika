@@ -180,13 +180,13 @@
                 id:this.id,
                 value:valueToUpdate
             }
-            var othersSameId = parent._allPMCComponents[this.id];
+            var othersSameId = document._frameComponents[this.id];
             var otherPMCComp;
             $.each(othersSameId, function (j, otherPMCComp) {
                 otherPMCComp.setValue(valueToUpdate, false);
             });
-            if (parent._currentScheduleUID !== undefined) {
-                parent._valuesToSynchroniseRemote.push(valueToUpdateR);
+            if (document._currentScheduleUID !== undefined) {
+                document._valuesToSynchroniseRemote.push(valueToUpdateR);
             }
         }
 
@@ -240,11 +240,15 @@
                 root.appendChild(clone);
                 if (this.id !== undefined) {
                     if (this.id.length > 0) {
-                        if(parent._allPMCComponents[this.id] === undefined) {
-                            parent._allPMCComponents[this.id] = [this];
+                        //_frameComponents must be private to the iframe, otherwise there will be name clashes with the libraries variables
+                        if (document._frameComponents === undefined) {
+                            document._frameComponents = {};
+                        }
+                        if(document._frameComponents[this.id] === undefined) {
+                            document._frameComponents[this.id] = [this];
                         }
                         else {
-                            parent._allPMCComponents[this.id].push(this);
+                            document._frameComponents[this.id].push(this);
                         }
                     }
                 }

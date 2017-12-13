@@ -489,15 +489,14 @@ class PSPSServer(HieratikaServer):
             tree = self.getCachedXmlTree(xmlFile)
             if (tree is not None):
                 xmlRoot = tree.getroot()
+                name = xmlRoot.find("./ns0:name", self.xmlns)
+                if (name is not None):
+                    name = name.text
                 description = xmlRoot.find("./ns0:description", self.xmlns)
                 if (description is not None):
                     description = description.text
             self.lockPool.release(xmlId)
             filePath = xmlFile.split("/")
-            name = filePath[-1]
-            name = name.split(".xml")
-            if (len(name) > 1):
-                name = name[-2]
             library = HLibrary(htype, xmlFile, name, username, description)
             libraries.append(library);
 

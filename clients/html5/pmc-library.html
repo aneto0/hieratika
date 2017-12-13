@@ -69,6 +69,11 @@
                     super.setUserAllowedToWrite(isUserAllowedToWrite);
                     this.libraryEditor.setUserAllowedToWrite(isUserAllowedToWrite);
                 }
+                
+                setReference (referenceToSet) {
+                    super.setReference(referenceToSet);
+                    this.libraryEditor.setReference(referenceToSet);
+                }
 
                 libraryChanged (newLibraryName) {
                 }
