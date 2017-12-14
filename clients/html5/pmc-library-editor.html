@@ -194,15 +194,12 @@
                             var saveAsName = this.saveAsLibraryName.value;
                             var description = this.descriptionTextArea.value;
                             var user = JSON.parse(localStorage.user);
-                            var variablesValues = [];
+                            var variables = {};
                             for (var key in editorComponents) {
                                 var comps = editorComponents[key];
                                 //The same id might be used in different components...
                                 for (var c in comps) {
-                                    variablesValues.push({
-                                        variableId: comps[c].id,
-                                        value: JSON.stringify(comps[c].getValue())
-                                    });
+                                    variables[comps[c].id] = comps[c].getValue();
                                 }
                             }
                             if (saveAsName.length === 0) {
@@ -214,22 +211,23 @@
                                     url: "/savelibrary",
                                     data: {
                                         token: parent._currentToken,
+                                        type: this.owner.getLibraryType(),
+                                        name: saveAsName,
+                                        description: description,
                                         username: user.username, 
-                                        variableId : this.owner.id, 
-                                        libraryName : saveAsName,
-                                        libraryDescription: description,
-                                        variables: JSON.stringify(variablesValues)
+                                        variables: JSON.stringify(variables)
                                     },
                                     success: function (response) {
                                         var library = $.parseJSON(response);
-                                        if (library.id !== undefined) {
+                                        if (library.uid !== undefined) {
                                             var optionsAsArray = Array.apply(null, this.selector.options).map(function(el){return el.text;});
                                             if(optionsAsArray.indexOf(saveAsName) == -1) {
                                                 this.selector.options
                                                 var option = document.createElement( 'option' );
-                                                option.id = library.id;
-                                                option.value = saveAsName;
-                                                option.text = saveAsName;
+                                                option.uid = library.uid;
+                                                option.value = library.name;
+                                                option.text = library.name;
+                                                option.description = library.description;
                                                 this.selector.add(option);
                                                 this.selector.value = saveAsName;
                                                 this.owner.addAvailableLibrary({id:library.id, name:saveAsName});

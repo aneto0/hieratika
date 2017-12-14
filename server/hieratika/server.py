@@ -315,3 +315,19 @@ class HieratikaServer(object):
         """
         pass
 
+    @abstractmethod
+    def saveLibrary(self, htype, name, description, username, variables):
+        """ Saves (and creates if needed) a library of the given type, with the given name, for the provided user. 
+    
+        Args:
+            htype (str): the library type.
+            name (str): the library name.
+            description (str): the library description.
+            username (str): the library owner.
+            variables ({variableName1:value1, variableName2:value2, ...}):  dictionary with the library variables to be stored.
+
+        Returns:
+            An instance of the new library is successfully saved/created, None otherwise.
+        """
+        pass
+

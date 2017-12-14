@@ -970,4 +970,58 @@ class PSPSServer(HieratikaServer):
         else:
             log.critical("Wrong xml structure. ns0:name is missing in record")
         log.debug("Retrieved value for variable [{0}]".format(variableName))
+
+    def saveLibrary(self, htype, name, description, username, variables):
+        ok = True
+        libraryTypeXmlFileLocation = "{0}/psps/libraries/{1}.xml".format(self.baseDir, htype)
+        if (self.standalone):
+            directory = "{0}/psps/libraries/{1}".format(self.baseDir, htype)
+        else:
+            directory = "{0}/users/{1}/libraries/{2}".format(self.baseDir, username, htype)
+
+        #Check if the directory already exists
+        if (not os.path.exists(directory)):                
+            os.makedirs(directory)
+
+        libraryInstanceXmlFileLocation = "{0}/{1}.xml".format(directory, name)
+        log.debug("Saving library at {0}".format(libraryInstanceXmlFileLocation))
+        try:
+            shutil.copy2(libraryTypeXmlFileLocation, libraryInstanceXmlFileLocation) 
+        except IOError as e:
+            log.critical("Failed to create library {0}".format(e))
+            ok = False
+
+        if (ok):
+            xmlId = self.getXmlId(libraryInstanceXmlFileLocation)
+            self.lockPool.acquire(xmlId)
+            tree = self.getCachedXmlTree(libraryInstanceXmlFileLocation)
+            if (tree is not None):
+                root = tree.getroot()
+                n = root.find("./ns0:name", self.xmlns)
+                if (n is not None):
+                    n.text = name
+                else:
+                    log.critical("./ns0:name is missing in the library definition") 
+                    ok = false
+                if (ok):
+                    n = root.find("./ns0:description", self.xmlns)
+                    if (n is not None):
+                        n.text = description
+                    else:
+                        log.critical("./ns0:description is missing in the library definition") 
+                        ok = false
+                if (ok):
+                    for name in variables:
+                        value = variables[name]
+                        ok = self.updateVariable(name, root, value)
+                        if (not ok):
+                            break
+            tree.write(libraryInstanceXmlFileLocation)
+            self.lockPool.release(xmlId)
+
+        library = None
+        if (ok):
+            library = HLibrary(htype, libraryInstanceXmlFileLocation, name, username, description)
+        return library
+
  

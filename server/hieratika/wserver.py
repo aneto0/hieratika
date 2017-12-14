@@ -315,7 +315,7 @@ class WServer:
 
 
     def updateSchedule(self, request):
-        """ Updates other users of the same schedule that the variable values have changed. Note that these changes are not sync into the disk.
+        """ Updates other users of the same schedule that the variable values have changed. Note that these changes are not permanently stored.
    
         Args:
             request.form["scheduleUID"]: unique schedule identifier.
@@ -496,7 +496,7 @@ class WServer:
             log.critical("Tried to logout without specifying a token")
 
     def commitSchedule(self, request):
-        """ Updates the variable values for a given schedule. Note that these changes are not sync into the disk.
+        """ Updates the variable values for a given schedule. 
    
         Args:
             request.form["scheduleUID"]: unique schedule identifier.
@@ -532,4 +532,31 @@ class WServer:
             toReturn = "InvalidParameters"
         return toReturn
 
+    def saveLibrary(self, request):
+        """ Saves (and creates if needed) a library of a provided type, against the given name and with the provided library variable values.
+   
+        Args:
+            request.form["type"]: the library type.
+            request.form["name"]: the library name.
+            request.form["description"]: the library description.
+            request.form["username"]: the library owner.
+            request.form["variables"]: a dictionary with the list of variables to be updated in the form {variableName1:variableValue1, ...}
+
+        Returns:
+            A json representation of the new library instance or an empty string if the library could not be saved.
+        """
+        toReturn = ""
+        try: 
+            htype = request.form["type"]
+            name = request.form["name"]
+            description = request.form["description"]
+            username = request.form["username"]
+            variables = json.loads(request.form["variables"])
+            lib = self.serverImpl.saveLibrary(htype, name, description, username, variables)
+            if (lib is not None):
+                toReturn = json.dumps(lib.__dict__)
+        except KeyError as e:
+            log.critical(str(e))
+            toReturn = "InvalidParameters"
+        return toReturn
 

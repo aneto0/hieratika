@@ -144,7 +144,7 @@ def getlibraryvariablesinfo():
 
 #Try to update the values in the plant
 @application.route("/updateplant", methods=["POST", "GET"])
-def updatePlant():
+def updateplant():
     log.debug("/updateplant")
     if (wserver.isTokenValid(request)):
         return wserver.updatePlant(request)
@@ -159,6 +159,16 @@ def getlibraries():
         return wserver.getLibraries(request) 
     else:
         return "InvalidToken"
+
+#Saves/creates a library with new values
+@application.route("/savelibrary", methods=["POST", "GET"])
+def savelibrary():
+    log.debug("/savelibrary")
+    if (wserver.isTokenValid(request)):
+        return wserver.saveLibrary(request) 
+    else:
+        return "InvalidToken"
+
     
 #Return the available schedules
 @application.route("/getschedules", methods=["POST", "GET"])
