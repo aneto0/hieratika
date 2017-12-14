@@ -12,26 +12,31 @@
     <script>
     </script>
     <template id="ttopnav">
-    <link rel="stylesheet" href="pmc-top-nav.css">
         <style>
-            @import url("fontawesome-all.min.css")
+            @import url("/w3.css");
+            @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
         </style>
-        <i class="fa fa-home" aria-hidden="true"></i> Home
+        <div class="w3-sidebar w3-bar-block w3-dark-grey w3-animate-left w3-large" style="display:none" id="tsidebar">
+            <button class="w3-bar-item w3-button w3-tiny" id="tsidebarclose"><i class="fa fa-arrow-left"></i></button>
+            <a href="#" class="w3-bar-item w3-button w3-border-bottom"><i class="fa fa-external-link"> Open</i></a>
+            <button class="w3-button w3-block w3-left-align" id="tviewaccbtn">View <i class="fa fa-caret-down"></i></button>
+            <div id="tviewacc" class="w3-hide w3-green w3-card">
+                <a href="#" class="w3-bar-item w3-button w3-text-white"><i class="fa fa-thermometer-full"></i> Plant</a>
+                <a href="#" class="w3-bar-item w3-button w3-text-white"><i class="fa fa-code-fork"></i> Schedule</a>
+            </div>
+            <a href="#" class="w3-bar-item w3-button w3-border-bottom"><i class="fa fa-code-fork"></i> Edit</a>
+            <button class="w3-button w3-block w3-left-align" id="trefaccbtn">Reference <i class="fa fa-caret-down"></i></button>
+            <div id="trefacc" class="w3-hide w3-green w3-card">
+                <a href="#" class="w3-bar-item w3-button w3-text-white"><i class="fa fa-times" style="color:#cc0000;"></i> Remove</a>
+                <a href="#" class="w3-bar-item w3-button w3-text-white"><i class="fa fa-thermometer-full"></i> Plant</a>
+                <a href="#" class="w3-bar-item w3-button w3-text-white"><i class="fa fa-code-fork"></i> Schedule</a>
+            </div>
 
-        <div class="sidebar hide-sidebar">
-          <ul class="centered">
-            <li><i class="fa fa-home" aria-hidden="true"></i> Home</li>
-            <li><i class="fa fa-info-circle" aria-hidden="true"></i> About</li>
-            <li><i class="fa fa-folder" aria-hidden="true"></i> Projects</li>
-            <li><i class="fa fa-paper-plane" aria-hidden="true"></i> Contact</li>
-          </ul>
+          </div>
         </div>
-        <nav>
-          <ul>
-            <li class="menu"><i class="fa fa-bars" aria-hidden="true"></i></li>
-          </ul>
-        </nav>
-
+        <div>
+            <button class="w3-button w3-tiny" id="tsidebaropen">&#9776;</button>
+        </div>
 <!--        <table>
             <tr>
                 <td><button title="Load current values into plant" id="loadplantbtn" disabled="true">Load</button></td>
@@ -117,8 +122,40 @@
                     var root = this.createShadowRoot();
                     root.appendChild(clone);
 
+                    var sideBar = this.shadowRoot.querySelector("#tsidebar");
+                    var sideBarOpen = this.shadowRoot.querySelector("#tsidebaropen");
+                    var sideBarClose = this.shadowRoot.querySelector("#tsidebarclose");
+                    sideBarOpen.onclick = function(evt) {
+                        sideBar.style.display = "block";
+                    }.bind(this); 
+
+                    sideBarClose.onclick = function() {
+                        sideBar.style.display = "none";
+                    }.bind(this); 
+
+                    var viewAccordion = this.shadowRoot.querySelector("#tviewacc");
+                    var viewAccordionButton = this.shadowRoot.querySelector("#tviewaccbtn");
+                    viewAccordionButton.onclick = function() {
+                        if (viewAccordion.className.indexOf("w3-show") == -1) {
+                            viewAccordion.className += " w3-show";
+                        } else { 
+                            viewAccordion.className = viewAccordion.className.replace(" w3-show", "");
+                        }
+                    }.bind(this);
+
+                    var refAccordion = this.shadowRoot.querySelector("#trefacc");
+                    var refAccordionButton = this.shadowRoot.querySelector("#trefaccbtn");
+                    refAccordionButton.onclick = function() {
+                        if (refAccordion.className.indexOf("w3-show") == -1) {
+                            refAccordion.className += " w3-show";
+                        } else { 
+                            refAccordion.className = refAccordion.className.replace(" w3-show", "");
+                        }
+                    }.bind(this);
+
+
+
                     return;
-                    var sideNav = this.shadowRoot.querySelector("#tsidenav");
                     var mainPane = this.shadowRoot.querySelector("#tmainpane");
                     var sideNavButton = this.shadowRoot.querySelector("#tsidenavbtn");
                     var sideNavCloseButton = this.shadowRoot.querySelector("#tsidenavclsbtn");
