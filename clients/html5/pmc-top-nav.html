@@ -20,27 +20,27 @@
         <div class="w3-sidebar w3-bar-block w3-dark-grey w3-animate-left w3-large" style="display:none" id="tsidebar">
             <button class="w3-bar-item w3-button w3-tiny w3-light-grey" id="tsidebarclose"><i class="fa fa-arrow-left"></i></button>
             <button class="w3-bar-item w3-button w3-border-bottom" id="loginbtn"><i class="fa fa-user-o"> Login</i></button>
-            <button href="#" class="w3-bar-item w3-button w3-border-bottom" id="pageselectbtn"><i class="fa fa-external-link"> Open</i></button>
+            <button href="#" class="w3-bar-item w3-button w3-border-bottom" title="Set the current page" id="pageselectbtn"><i class="fa fa-external-link"> Open</i></button>
             <button class="w3-button w3-block w3-left-align" id="tviewaccbtn"><i class="fa fa-info"></i> View <i class="fa fa-caret-down"></i></button>
             <div id="tviewacc" class="w3-hide w3-green w3-card">
-                <button class="w3-bar-item w3-button w3-text-white" id="viewplantbtn"><i class="fa fa-thermometer-full"></i> Plant</button>
-                <button class="w3-bar-item w3-button w3-text-white" id="viewschedulebtn"><i class="fa fa-code-fork"></i> Schedule</button>
+                <button class="w3-bar-item w3-button w3-text-white" title="View the plant" id="viewplantbtn"><i class="fa fa-thermometer-full"></i> Plant</button>
+                <button class="w3-bar-item w3-button w3-text-white" title="Edit a schedule" id="viewschedulebtn"><i class="fa fa-code-fork"></i> Schedule</button>
             </div>
             <button class="w3-bar-item w3-button w3-border-bottom" id="editschedulebtn"><i class="fa fa-code-fork"></i> Edit</button>
             <button class="w3-button w3-block w3-left-align" id="trefaccbtn"><i class="fa fa-ellipsis-v"></i> Compare <i class="fa fa-caret-down"></i></button>
             <div id="trefacc" class="w3-hide w3-green w3-card">
-                <button class="w3-bar-item w3-button w3-text-white" id="refselectnonebtn"><i class="fa fa-times" style="color:#cc0000;"></i> Remove</button>
-                <button class="w3-bar-item w3-button w3-text-white" id="refselectplantbtn"><i class="fa fa-thermometer-full"></i> Plant</button>
-                <button class="w3-bar-item w3-button w3-text-white" id="refselectschedulebtn"><i class="fa fa-code-fork"></i> Schedule</button>
+                <button class="w3-bar-item w3-button w3-text-white" title="Remove the reference" id="refselectnonebtn"><i class="fa fa-times" style="color:#cc0000;"></i> Remove</button>
+                <button class="w3-bar-item w3-button w3-text-white" title="Set the plant as the reference" id="refselectplantbtn"><i class="fa fa-thermometer-full"></i> Plant</button>
+                <button class="w3-bar-item w3-button w3-text-white" title="Set another schedule as the reference" id="refselectschedulebtn"><i class="fa fa-code-fork"></i> Schedule</button>
             </div>
             <button class="w3-button w3-block w3-left-align" id="tcpyaccbtn"><i class="fa fa-files-o"></i> Copy <i class="fa fa-caret-down"></i></button>
             <div id="tcpyacc" class="w3-hide w3-green w3-card">
-                <button class="w3-bar-item w3-button w3-text-white" id="cpyreferenceplantbtn"><i class="fa fa-thermometer-full"></i> Plant</button>
-                <button class="w3-bar-item w3-button w3-text-white" id="cpyreferenceschedulebtn"><i class="fa fa-code-fork"></i> Schedule</button>
+                <button class="w3-bar-item w3-button w3-text-white" title="Copy from the plant" id="cpyreferenceplantbtn"><i class="fa fa-thermometer-full"></i> Plant</button>
+                <button class="w3-bar-item w3-button w3-text-white" title="Copy from a given schedule" id="cpyreferenceschedulebtn"><i class="fa fa-code-fork"></i> Schedule</button>
             </div>
-            <button class="w3-bar-item w3-button w3-border-top" id="commitbtn"><i class="fa fa-floppy-o"></i> Commit</button>
-            <button class="w3-bar-item w3-button" id="undobtn"><i class="fa fa-undo"></i> Undo</button>
-            <button class="w3-bar-item w3-button w3-border-top" id="loadplantbtn"><i class="fa fa-upload"></i> Load</button>
+            <button class="w3-bar-item w3-button w3-border-top" title="Commit all changes to current schedule" id="commitbtn"><i class="fa fa-floppy-o"></i> Commit</button>
+            <button class="w3-bar-item w3-button" title="Undo all changes" id="undobtn"><i class="fa fa-undo"></i> Undo</button>
+            <button class="w3-bar-item w3-button w3-border-top" title="Load current values into plant" id="loadplantbtn"><i class="fa fa-upload"></i> Load</button>
         </div>
         <div class="w3-bar w3-dark-grey w3-tiny">
             <button class="w3-button" id="tsidebaropen">&#9776;</button>
@@ -51,71 +51,6 @@
             <span class="w3-bar-item w3-right" id="username">(login first)</span>
             <span class="w3-bar-item w3-right w3-border-left">Username: </span>
         </div>
-<!--        <table>
-            <tr>
-                <td><button title="Load current values into plant" id="loadplantbtn" disabled="true">Load</button></td>
-                <td style="padding-left:50px">
-                    <table style="border-style: dotted; border-width: 1px;">
-                        <td>
-                            <select id="pageselect" name="pageselect">
-                            </select>
-                        </td>
-                        <td><button title="Set the current page" id="pageselectbtn" disabled="true"><img width="24px" height="24px" src="icons/change-page-24.png"/></button></td>
-                    </table>
-                </td>
-        
-                <td style="padding-left:50px">
-                    <table style="border-style: dotted; border-width: 1px;">
-                        <td><button title="View the plant" id="viewplantbtn" disabled="true"><img width="24px" height="24px" src="icons/plant-view-24.png"/></button></td>
-                        <td><button title="View a schedule" id="viewschedulebtn" disabled="true"><img width="24px" height="24px" src="icons/schedule-view-24.png"/></button></td>
-                        <td><button title="Edit a schedule" id="editschedulebtn" disabled="true"><img width="24px" height="24px" src="icons/schedule-edit-24.png"/></button></td>
-                    </table>
-                </td>
-        
-                <td style="padding-left:50px">
-                    <table style="border-style: dotted; border-width: 1px;">
-                        <td><button title="Remove the reference" id="refselectnonebtn" disabled="true"><img width="24px" height="24px" src="icons/reference-set-none-24.png"/></button></td>
-                        <td><button title="Set the plant as the reference" id="refselectplantbtn" disabled="true"><img width="24px" height="24px" src="icons/reference-set-plant-24.png"/></button></td>
-                        <td><button title="Set another schedule as the reference" id="refselectschedulebtn" disabled="true"><img width="24px" height="24px" src="icons/reference-set-schedule-24.png"/></button></td>
-                    </table>
-                </td>
-
-                <td style="padding-left:50px">
-                    <table style="border-style: dotted; border-width: 1px;">
-                        <td><button title="Copy from the plant" id="cpyreferenceplantbtn" disabled="true"><img width="24px" height="24px" src="icons/reference-copy-plant-24.png"/></button></td>
-                        <td><button title="Copy from a given schedule" id="cpyreferenceschedulebtn" disabled="true"><img width="24px" height="24px" src="icons/reference-copy-schedule-24.png"/></button></td>
-                    </table>
-                </td>
-
-                <td style="padding-left:50px;">
-                    <table style="border-style: dotted; border-width: 1px;">
-                        <td><button title="Commit all changes to current schedule" id="commitbtn" disabled="true"><img width="24px" height="24px" src="icons/commit-24.png"/></button></td>
-                        <td><button title="Undo all changes" id="undobtn" disabled="true"><img width="24px" height="24px" src="icons/undo-24.png"/></button></td>
-                    </table>
-                </td>
-
-                <td style="padding-left:50px;text-align:right">
-                    <table style="border-style: dotted; border-width: 1px; font-size: 65%; background:#FFFFFF; color:#000000">
-                        <tr>
-                            <td>Displaying:</td>
-                            <td id="currentDisplay">none</td>
-                        </tr>
-                        <tr>
-                            <td>Reference:</td>
-                            <td id="currentReference">none</td>
-                        </tr>
-                    </table>
-                </td>
-
-                <td style="padding-left:50px;text-align:right">
-                    <table style="border-style: dotted; border-width: 1px;">
-                        <td style="color:white" id="username">...</td>
-                        <td><button title="Login" id="loginbtn">Login</button></td>
-                    </table>
-                </td>
-                
-            </tr>
-        </table>-->
         <pmc-login id="pmclogin"></pmc-login>
         <pmc-page-selector id="pageselector"></pmc-page-selector>
         <pmc-schedule-selector id="scheduleselector"></pmc-schedule-selector>

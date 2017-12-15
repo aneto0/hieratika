@@ -562,6 +562,7 @@ class PSPSServer(HieratikaServer):
         return variables
 
     def commitSchedule(self, tid, scheduleUID, variables):
+        log.debug("Committing schedule {0} with variables: ({1})".format(scheduleUID, variables))
         updatedVariables = {}
         xmlId = self.getXmlId(scheduleUID)
         self.lockPool.acquire(xmlId)
@@ -574,6 +575,7 @@ class PSPSServer(HieratikaServer):
                     updatedVariables[name] = value
         tree.write(scheduleUID)
         self.lockPool.release(xmlId)
+        log.debug("Committed schedule variables {0}".format(updatedVariables))
         return updatedVariables 
 
     def updatePlant(self, pageName, variables):

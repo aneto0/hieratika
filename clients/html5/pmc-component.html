@@ -185,8 +185,8 @@
             $.each(othersSameId, function (j, otherPMCComp) {
                 otherPMCComp.setValue(valueToUpdate, false);
             });
-            if (document._currentScheduleUID !== undefined) {
-                document._valuesToSynchroniseRemote.push(valueToUpdateR);
+            if (parent._currentScheduleUID !== undefined) {
+                parent._valuesToSynchroniseRemote.push(valueToUpdateR);
             }
         }
 

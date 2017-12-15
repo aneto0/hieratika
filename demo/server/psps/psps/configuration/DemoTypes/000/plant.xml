@@ -24,6 +24,22 @@
                                   <value>-109.0</value>
                                 </values>
                             </record>
+                            <record size="[5]" xsi:type="recordDouble">
+                                <name>DBLA</name>
+                                <alias>DBLA</alias>
+                                <description>Double value array</description>
+                                <values>
+                                  <value>[1, 2, 3, 4, 5]</value>
+                                </values>
+                            </record>
+                            <record size="[2,3]" xsi:type="recordDouble">
+                                <name>DBLM</name>
+                                <alias>DBLM</alias>
+                                <description>Double value matrix</description>
+                                <values>
+                                  <value>[[1, 1], [1, 1, 1]]</value>
+                                </values>
+                            </record>
                         </records>
                     </folder>
                     <folder>

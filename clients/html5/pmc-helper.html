@@ -269,6 +269,7 @@
                             pmcComp.setInitialValue(pmcComp.getValue());
                         });
                     });
+                    parent._scheduleValuesToCommit = {};
                 }.bind(this),
                 error: function (response) {
                     console.log(response);
