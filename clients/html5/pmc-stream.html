@@ -4,7 +4,7 @@
         }
 
         start () {
-            stop();
+            this.stop();
             this.evtSrc = new EventSource("/stream?token=" + parent._currentToken);
             //Changed values are received in json format
             this.evtSrc.onmessage = function(e) {

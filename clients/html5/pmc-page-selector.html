@@ -1,0 +1,117 @@
+<html>
+<head>
+    <link rel="import" href="pmc-helper.html">
+</head>
+</body>
+    <template id="tpagesselector">
+        <dialog id="dpagesselector">
+            <div id="divpages">
+                <table style="border-style:solid;border-width:1px;width: 100%">
+                    <tr>
+                        <td>
+                            Pages 
+                        </td>
+                        <td>
+                            Description
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><select id="pageselect" size="20" style="width:150px;overflow-x:scroll"></select></td>
+                        <td id="descriptionarea" style="width:250px;vertical-align:top;background-color:#F5F5F5"></td>
+                    </tr>
+                </table>
+                <table style="border-style:solid;border-width:0px;width: 100%">
+                    <tr>
+                        <td style="padding-top:20px;">
+                            <button title="OK" id="okbtn">OK</button>
+                            <button title="Cancel" id="cancelbtn">Cancel</button>
+                        </td>
+                   </tr>
+                </table>
+            </dialog>
+        </div>
+    </template>
+
+    <script>
+        //This is enclosure is required to protect the importDoc
+        (function () {
+            var importDoc = document.currentScript.ownerDocument; // importee
+            class PMCPageSelector extends HTMLElement {
+                constructor() {
+                    super();
+                }
+
+                createdCallback () {
+                    var template = importDoc.querySelector("#tpagesselector");
+                    // import template into
+                    var clone = document.importNode(template.content, true);
+                    var root = this.createShadowRoot();
+                    root.appendChild(clone);
+              
+                    this.pageName = ""; 
+                    this.diag = this.shadowRoot.querySelector("#dpagesselector");
+                    this.pageSelect = this.shadowRoot.querySelector("#pageselect");
+                    this.pageSelect.onclick = function() {
+                        this.updatePageDescription();
+                    }.bind(this);
+                    
+                    this.descriptionArea = this.shadowRoot.querySelector("#descriptionarea");
+                    this.okButton = this.shadowRoot.querySelector("#okbtn");
+                    this.okButton.onclick = function() {
+                        var page = this.pageSelect[this.pageSelect.selectedIndex].pageInfo;
+                        this.okCallbackFunction(page);
+                        this.diag.close();
+                    }.bind(this);
+
+                    var cancelButton = this.shadowRoot.querySelector("#cancelbtn");
+                    cancelButton.onclick = function() {
+                        this.diag.close();
+                    }.bind(this); 
+                }
+
+                updatePageDescription() {
+                    if (this.pageSelect.selectedIndex >= 0) {
+                        this.okButton.disabled = false;
+                        this.descriptionArea.innerHTML = this.pageSelect[this.pageSelect.selectedIndex].pageInfo.description;
+                    }
+                }
+
+                show(okCallbackFun) {
+                    this.pageSelect.innerHTML = "";
+                    this.okCallbackFunction = okCallbackFun;
+                    this.okButton.disabled = true;
+                    $.ajax({
+                        type: "post",
+                        url: "/getpages",
+                        data: {
+                            token: parent._currentToken,
+                        },
+                        success: function (response) {
+                            var pagesJson = $.parseJSON(response);
+                            for (var p in pagesJson) {
+                                var option1 = document.createElement("option");
+                                var pageName = pagesJson[p].name;
+                                option1.text = pageName;
+                                option1.value = pageName;
+                                option1.pageInfo = pagesJson[p];
+                                this.pageSelect.appendChild(option1);
+                            }
+                            this.diag.showModal();
+                        }.bind(this),
+                        error: function (response) {
+                            console.log(response);
+                            alert(response);
+                        }
+                    });
+                }
+            }
+
+            document.registerElement("pmc-page-selector", {
+                prototype: PMCPageSelector.prototype,
+            });
+
+        }());
+    </script>
+
+    </body>
+</html>

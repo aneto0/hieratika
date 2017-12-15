@@ -170,7 +170,7 @@ class PSPSServer(HieratikaServer):
                         return None
                     records = records.findall("./ns0:record", self.xmlns)
                     for rec in records:
-                        n = rec.find("./ns0:name")
+                        n = rec.find("./ns0:name", self.xmlns)
                         if (n is not None):
                             recordName = n.text
                             if (p == recordName):
@@ -207,7 +207,7 @@ class PSPSServer(HieratikaServer):
                         val = json.loads(valueXml.text)
                     except Exception as e:
                         val = valueXml.text
-                        log.critical("Failed to load json {0}. Returning the original text.".format(e))
+                        log.critical("Failed to load json {0} for {1}. Returning the original text.".format(e, nameXml.text))
                     if (isinstance(val, list)):
                         if (len(value) == 0):
                             value = val
@@ -342,6 +342,7 @@ class PSPSServer(HieratikaServer):
             if (r is not None):
                 constraintsXml = r.findall("./ns0:folders/ns0:folder/ns0:constraints//ns0:constraint", self.xmlns)
             else:
+                constraintsXml = None
                 log.warning("No plantConstraints for plant system {0}".format(plantSystemName))
             if (constraintsXml is not None):
                 for constraintXml in constraintsXml:
@@ -447,20 +448,20 @@ class PSPSServer(HieratikaServer):
 
     def getVariablesInfo(self, pageName, requestedVariables):
         xmlFileLocation = "{0}/psps/configuration/{1}/000/plant.xml".format(self.baseDir, pageName)
-        log.debug("Loading plant configuration from {0}".format(xmlFileLocation))
+        log.info("Loading plant configuration from {0}".format(xmlFileLocation))
         perfStartTime = timeit.default_timer()
         variables = self.loadVariablesInfo(xmlFileLocation, requestedVariables)
         perfElapsedTime = timeit.default_timer() - perfStartTime
-        log.debug("Took {0} s to get the information for all the {1} variables in the plant for page {2}".format(perfElapsedTime, len(requestedVariables), pageName))
+        log.info("Took {0} s to get the information for all the {1} variables in the plant for page {2}".format(perfElapsedTime, len(requestedVariables), pageName))
         return variables 
 
     def getLibraryVariablesInfo(self, libraryType, requestedVariables):
         xmlFileLocation = "{0}/psps/libraries/{1}.xml".format(self.baseDir, libraryType)
-        log.debug("Loading library configuration from {0}".format(xmlFileLocation))
+        log.info("Loading library configuration from {0}".format(xmlFileLocation))
         perfStartTime = timeit.default_timer()
         variables = self.loadVariablesInfo(xmlFileLocation, requestedVariables)
         perfElapsedTime = timeit.default_timer() - perfStartTime
-        log.debug("Took {0} s to get the information for all the {1} variables for library type {2}".format(perfElapsedTime, len(requestedVariables), libraryType))
+        log.info("Took {0} s to get the information for all the {1} variables for library type {2}".format(perfElapsedTime, len(requestedVariables), libraryType))
         return variables 
 
     def getPages(self):

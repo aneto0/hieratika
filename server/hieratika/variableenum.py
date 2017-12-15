@@ -54,7 +54,7 @@ class VariableEnum(Variable):
             validations ([str]): see Variable.__init__
             choices ([str]): list of possible values that can be assigned to this variable.
         """
-        super(VariableEnum, self).__init__(name, alias, description, vtype, permissions, numberOfElements, value, [], validations, choices = [])
+        super(VariableEnum, self).__init__(name, alias, description, vtype, permissions, numberOfElements, value, validations)
         self.validations = validations
         self.choices = choices
 

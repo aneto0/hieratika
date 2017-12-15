@@ -75,8 +75,8 @@
                 },
                 success: successFn,
                 error: function (response) {
-                    if (waitDialog.open) {
-                        waitDialog.close();
+                    if (_waitDialog.open) {
+                        _waitDialog.close();
                     }
                     console.log(response);
                     alert(response);
@@ -95,8 +95,8 @@
                 },
                 success: successFn,
                 error: function (response) {
-                    if (waitDialog.open) {
-                        waitDialog.close();
+                    if (_waitDialog.open) {
+                        _waitDialog.close();
                     }
                     console.log(response);
                     alert(response);
