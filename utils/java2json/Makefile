@@ -9,7 +9,7 @@ BUILD_DIR = build
 	$(JC) $(JFLAGS) -cp $(CLASSPATH) -d $(BUILD_DIR) $*.java
 
 CLASSES = \
-	JavaToJson.java  \
+	Java2Json.java  \
 	PMCVariable.java  \
 	PMCGap.java  \
 	PMCDiscreteCoil.java  \

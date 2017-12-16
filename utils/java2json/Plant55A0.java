@@ -16,7 +16,7 @@ class Plant55A0 {
         }
     }
 
-    public P55A0DiscreteCoils discreteCoils = new P55A0DiscreteCoils();
+    //public P55A0DiscreteCoils discreteCoils = new P55A0DiscreteCoils();
     public P55A0LoopCoils loopCoils = new P55A0LoopCoils();
-    public P55A0EmbeddedList embedded = new P55A0EmbeddedList();
+    //public P55A0EmbeddedList embedded = new P55A0EmbeddedList();
 }

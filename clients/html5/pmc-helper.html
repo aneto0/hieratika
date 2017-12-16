@@ -124,12 +124,7 @@
                 var memberName = keys[keyIdx];
                 var memberPVInfo = pvInfo[memberName];
                 var memberVariableName = memberPVInfo["name"];
-                if (memberVariableName === undefined) {
-                    if (Array.isArray(memberPVInfo)) {
-                        component[memberName] = memberPVInfo;
-                    }
-                }
-                else {
+                if (memberVariableName !== undefined) {
                     component[memberName] = memberPVInfo;
                 }
             }

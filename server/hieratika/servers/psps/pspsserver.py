@@ -387,9 +387,13 @@ class PSPSServer(HieratikaServer):
 
     def attachVariableConstraints(self, variable, parentName, globalConstraints):
         #Check if the variable is in the constraints list
-        if (variable.getName() in globalConstraints):
-            log.debug("Attaching {0} to variable {1}".format(globalConstraints[variable.getName()], variable.getName()))
-            variable.setValidations(globalConstraints[variable.getName()])
+        varName = variable.getName()
+        if (varName not in globalConstraints):
+            varName = variable.getAbsoluteName()
+        if (varName in globalConstraints):
+            log.debug("Attaching {0} to variable {1}".format(globalConstraints[varName], variable.getName()))
+            variable.setValidations(globalConstraints[varName])
+           
         members = variable.getMembers()
         for memberName, memberVariable in members.iteritems():
             memberFullName = parentName + self.structSeparator + memberName
@@ -439,8 +443,7 @@ class PSPSServer(HieratikaServer):
                         r = pr
                     #Recursively add all the variables information
                     variable = self.getVariableInfo(r, parent)
-                    self.attachVariableConstraints(variable, variable.getName(), constraints)
-                    
+                self.attachVariableConstraints(variable, variable.getName(), constraints)
                 if (variable is not None):
                     variables.append(variable)
         self.lockPool.release(xmlId)

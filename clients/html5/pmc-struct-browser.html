@@ -119,58 +119,51 @@
         
                     populateComponentInfo(member, user) {
                         if (member !== undefined) {
-                            if (Array.isArray(member)) {
-                                for (var i in member) {
-                                    this.populateComponentInfo(member[i], user);
+                            var memberName = member["name"];
+                            if (memberName !== undefined) {
+                                var memberIsStruct = member["isStruct"]
+                                if (memberIsStruct !== undefined) {
+                                    memberIsStruct = (memberIsStruct === true);
                                 }
-                            }
-                            else {
-                                var memberName = member["name"];
-                                if (memberName !== undefined) {
-                                    var memberIsStruct = member["isStruct"]
-                                    if (memberIsStruct !== undefined) {
-                                        memberIsStruct = (memberIsStruct === true);
-                                    }
-                                    if (memberIsStruct) {
-                                        var membersNames = Object.keys(member);
-                                        for (var i in membersNames) {
-                                            var subMemberName = membersNames[i];
-                                            var isVariable = (member[subMemberName] !== undefined);
-                                            if (isVariable) {
-                                                isVariable = (member[subMemberName]["isStruct"] !== undefined);
-                                            }
-                                            if (isVariable) {
-                                                this.populateComponentInfo(member[subMemberName], user);
-                                            }
-                                        } 
-                                    }
-                                    else {
-                                        var memberNameValidCSS = ".P" + memberName.replace(/[|&;$%@"<>()+,]/g, "");
-                                        memberNameValidCSS = memberNameValidCSS.replace(/:/g, "");
-                                        var compMember = this.shadowRoot.querySelector(memberNameValidCSS);
-                                        compMember.setTypeValue(member.type);
-                                        compMember.setNumberOfElements(member.numberOfElements);
-                                        compMember.setReference("none");
-                                        compMember.setInitialValue(member.value);
-                                        compMember.setPlantValue(member.value);
-                                        compMember.setValidations(member.validations);
-                                        compMember.setPermissionGroups(member.permissions);
-                                        if ("choices" in member) {
-                                            compMember.setChoices(member.choices);
+                                if (memberIsStruct) {
+                                    var membersNames = Object.keys(member);
+                                    for (var i in membersNames) {
+                                        var subMemberName = membersNames[i];
+                                        var isVariable = (member[subMemberName] !== undefined);
+                                        if (isVariable) {
+                                            isVariable = (member[subMemberName]["isStruct"] !== undefined);
                                         }
-                                        if ("library" in member) {
-                                            compMember.setLibraryType(member.library.type);
-                                            compMember.setLibraryMappings(member.library.mappings);
+                                        if (isVariable) {
+                                            this.populateComponentInfo(member[subMemberName], user);
                                         }
-                                        var userAllowed = false;
-                                        for (var g in user.groups) {
-                                            userAllowed = member.permissions.includes(user.groups[g]); 
-                                            if (userAllowed) {
-                                                break;
-                                            }
-                                        }
-                                        compMember.setUserAllowedToWrite(userAllowed);
+                                    } 
+                                }
+                                else {
+                                    var memberNameValidCSS = ".P" + memberName.replace(/[|&;$%@"<>()+,]/g, "");
+                                    memberNameValidCSS = memberNameValidCSS.replace(/:/g, "");
+                                    var compMember = this.shadowRoot.querySelector(memberNameValidCSS);
+                                    compMember.setTypeValue(member.type);
+                                    compMember.setNumberOfElements(member.numberOfElements);
+                                    compMember.setReference("none");
+                                    compMember.setInitialValue(member.value);
+                                    compMember.setPlantValue(member.value);
+                                    compMember.setValidations(member.validations);
+                                    compMember.setPermissionGroups(member.permissions);
+                                    if ("choices" in member) {
+                                        compMember.setChoices(member.choices);
                                     }
+                                    if ("library" in member) {
+                                        compMember.setLibraryType(member.library.type);
+                                        compMember.setLibraryMappings(member.library.mappings);
+                                    }
+                                    var userAllowed = false;
+                                    for (var g in user.groups) {
+                                        userAllowed = member.permissions.includes(user.groups[g]); 
+                                        if (userAllowed) {
+                                            break;
+                                        }
+                                    }
+                                    compMember.setUserAllowedToWrite(userAllowed);
                                 }
                             }
                         }

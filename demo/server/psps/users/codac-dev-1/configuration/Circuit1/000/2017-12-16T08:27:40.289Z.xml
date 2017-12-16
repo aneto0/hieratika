@@ -1,0 +1,201 @@
+<configurationContainer xmlns="http://www.iter.org/CODAC/PlantSystemConfig/2014" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <schemaVersion>1.2</schemaVersion>
+    <version>00.00</version>
+    <sddVersion>1</sddVersion>
+    <name>2017-12-16T08:27:40.289Z.xml</name>
+    <description>Schedule created on the 2017-12-16T08:27:40.289Z</description>
+    <plantSystems>
+        <plantSystem>
+            <name>CC</name>
+            <version>1.0</version>
+            <description>Created at: 2015-05-27T11:52:32.620+02:00</description>
+            <plantRecords>
+                <folders>
+                    <folder>
+                        <name>CIRC</name>
+                        <records>
+                            <record size="1" xsi:type="recordDouble">
+                                <name>V1</name>
+                                <alias>V1</alias>
+                                <description>Input voltage</description>
+                                <values>
+                                    <value>1.0</value>
+                                </values>
+                            </record>
+                            <record size="1" xsi:type="recordDouble">
+                                <name>R1</name>
+                                <alias>R1</alias>
+                                <description>R1</description>
+                                <values>
+                                    <value>50.0</value>
+                                </values>
+                            </record>
+                            <record size="1" xsi:type="recordDouble">
+                                <name>L1</name>
+                                <alias>L1</alias>
+                                <description>L1</description>
+                                <values>
+                                    <value>0.245894</value>
+                                </values>
+                            </record>
+                            <record size="1" xsi:type="recordDouble">
+                                <name>C1</name>
+                                <alias>C1</alias>
+                                <description>C1</description>
+                                <values>
+                                    <value>1.03013e-07</value>
+                                </values>
+                            </record>
+                            <record size="1" xsi:type="recordDouble">
+                                <name>L2</name>
+                                <alias>L2</alias>
+                                <description>L2</description>
+                                <values>
+                                    <value>9.83652e-05</value>
+                                </values>
+                            </record>
+                            <record size="1" xsi:type="recordDouble">
+                                <name>C2</name>
+                                <alias>C2</alias>
+                                <description>C2</description>
+                                <values>
+                                    <value>0.000257513</value>
+                                </values>
+                            </record>
+                            <record size="1" xsi:type="recordDouble">
+                                <name>L3</name>
+                                <alias>L3</alias>
+                                <description>L3</description>
+                                <values>
+                                    <value>0.795775</value>
+                                </values>
+                            </record>
+                            <record size="1" xsi:type="recordDouble">
+                                <name>C3</name>
+                                <alias>C3</alias>
+                                <description>C3</description>
+                                <values>
+                                    <value>3.1831e-08</value>
+                                </values>
+                            </record>
+                            <record size="1" xsi:type="recordDouble">
+                                <name>L4</name>
+                                <alias>L4</alias>
+                                <description>L4</description>
+                                <values>
+                                    <value>9.83652e-05</value>
+                                </values>
+                            </record>
+                            <record size="1" xsi:type="recordDouble">
+                                <name>C4</name>
+                                <alias>C4</alias>
+                                <description>C4</description>
+                                <values>
+                                    <value>0.000257513</value>
+                                </values>
+                            </record>
+                            <record size="1" xsi:type="recordDouble">
+                                <name>C5</name>
+                                <alias>C5</alias>
+                                <description>C5</description>
+                                <values>
+                                    <value>1.03013e-07</value>
+                                </values>
+                            </record>
+                            <record size="1" xsi:type="recordDouble">
+                                <name>L5</name>
+                                <alias>L5</alias>
+                                <description>L5</description>
+                                <values>
+                                    <value>0.245894</value>
+                                </values>
+                            </record>
+                            <record size="1" xsi:type="recordDouble">
+                                <name>R2</name>
+                                <alias>R2</alias>
+                                <description>R2</description>
+                                <values>
+                                    <value>50.0</value>
+                                </values>
+                            </record>
+                        </records>
+                    </folder>
+                    <folder>
+                        <name>SIM</name>
+                        <records>
+                            <record size="1" xsi:type="recordDouble">
+                                <name>FS</name>
+                                <alias>FS</alias>
+                                <description>Simulation start angular frequency</description>
+                                <values>
+                                    <value>970.0</value>
+                                </values>
+                            </record>
+                            <record size="1" xsi:type="recordDouble">
+                                <name>FE</name>
+                                <alias>FE</alias>
+                                <description>Simulation end angular frequency</description>
+                                <values>
+                                    <value>1030.0</value>
+                                </values>
+                            </record>
+                            <record size="1" xsi:type="recordLong">
+                                <name>PTS</name>
+                                <alias>PTS</alias>
+                                <description>Simulation number of points (to be used the discretize the [start, stop] interval)</description>
+                                <values>
+                                    <value>100</value>
+                                </values>
+                            </record>
+                            <record size="1" xsi:type="recordDouble">
+                                <name>V1</name>
+                                <alias>V1</alias>
+                                <description>Input voltage</description>
+                                <values>
+                                    <value>1.0</value>
+                                </values>
+                            </record>
+                            <record size="1" xsi:type="recordDouble">
+                                <name>VOUT</name>
+                                <alias>VOUT</alias>
+                                <description>Expected output voltage</description>
+                                <values>
+                                    <value>10000000000000000000.0</value>
+                                </values>
+                            </record>
+                        </records>
+                    </folder>
+                </folders>
+            </plantRecords>
+            <plantConstraints>
+                <folders>
+                    <folder>
+                        <name>From SDD</name>
+                        <folders/>
+                        <constraints>
+                            <constraint>
+                                <name>Input voltage limit</name>
+                                <description>Validates the input voltage limit</description>
+                                <hint>Change the value of CC@SIM@V1&lt;=10</hint>
+                                <function name="schedule.validate">='CC@SIM@V1'&lt;=10</function>
+                                <origin>SDD</origin>
+                            </constraint>
+                            <constraint>
+                                <name>Maximum expected output voltage</name>
+                                <description>To write the maximum output voltage</description>
+                                <hint>Change the value of CC@SIM@VOUT&lt;=10</hint>
+                                <function name="schedule.validate">='CC@SIM@VOUT'&lt;=10</function>
+                                <origin>SDD</origin>
+                            </constraint>
+
+                        </constraints>
+                    </folder>
+                </folders>
+                <constraints/>
+            </plantConstraints>
+            <sdnTopics>
+                <sdnTopics/>
+            </sdnTopics>
+        </plantSystem>
+    </plantSystems>
+</configurationContainer>

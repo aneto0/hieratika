@@ -1,0 +1,89 @@
+<html>
+    <head>
+        <link rel="import" href="/libraries.html">
+        <link rel="import" href="/pmc-component.html">
+        <link rel="import" href="/pmc-input.html">
+    </head>
+    <body>
+        <div>
+            <img src="/pages/circuit1.svg" style="padding-bottom: 1cm; padding-top: 1cm;"></img>
+        </div>
+        <table style="border-width: 0px;">
+            <tr style="vertical-align:top">
+                <td>
+                    <table style="border-width: 1px; background-color:#353535; color: white;">
+                        <tr>
+                            <td colspan="2">Simulation parameters</td>
+                        </tr>
+                        <tr>
+                            <td>Start frequency (rad/s)</td><td><pmc-input id="CC@SIM@FS"></pmc-input></td>
+                        </tr>
+                        <tr>
+                            <td>End frequency (rad/s)</td><td><pmc-input id="CC@SIM@FE"></pmc-input></td>
+                        </tr>
+                        <tr>
+                            <td>Number of points</td><td><pmc-input id="CC@SIM@PTS"></pmc-input></td>
+                        </tr>
+                        <tr>
+                            <td>V1 (V)</td><td><pmc-input id='CC@SIM@V1'></pmc-input></td>
+                        </tr>
+                    </table>`
+                </td>
+                <td>
+                    <table style="border-width: 1px; background-color:#228B22; color: white;">
+                        <tr>
+                            <td colspan="2">Circuit parameters</td>
+                        </tr>
+                        <tr>
+                            <td>R1 (&#8486;)</td><td><pmc-input id="CC@CIRC@R1"></pmc-input></td>
+                        </tr>
+                        <tr>
+                            <td>L1 (H)</td><td><pmc-input id="CC@CIRC@L1"></pmc-input></td>
+                        </tr>
+                        <tr>
+                            <td>C1 (F)</td><td><pmc-input id="CC@CIRC@C1"></pmc-input></td>
+                        </tr>
+                        <tr>
+                            <td>L2 (H)</td><td><pmc-input id="CC@CIRC@L2"></pmc-input></td>
+                        </tr>
+                        <tr>
+                            <td>C2 (F)</td><td><pmc-input id="CC@CIRC@C2"></pmc-input></td>
+                        </tr>
+                        <tr>
+                            <td>L3 (H)</td><td><pmc-input id="CC@CIRC@L3"></pmc-input></td>
+                        </tr>
+                        <tr>
+                            <td>C3 (F)</td><td><pmc-input id="CC@CIRC@C3"></pmc-input></td>
+                        </tr>
+                        <tr>
+                            <td>L4 (H)</td><td><pmc-input id="CC@CIRC@L4"></pmc-input></td>
+                        </tr>
+                        <tr>
+                            <td>C4 (F)</td><td><pmc-input id="CC@CIRC@C4"></pmc-input></td>
+                        </tr>
+                        <tr>
+                            <td>L5 (H)</td><td><pmc-input id="CC@CIRC@L5"></pmc-input></td>
+                        </tr>
+                        <tr>
+                            <td>C5 (F)</td><td><pmc-input id="CC@CIRC@C5"></pmc-input></td>
+                        </tr>
+                        <tr>
+                            <td>R2 (F)</td><td><pmc-input id="CC@CIRC@R2"></pmc-input></td>
+                        </tr>
+                    </table>
+                </td>
+                <td>
+                    <table style="border-width: 1px; background-color:#B22222; color: white;">
+                        <tr>
+                            <td colspan="2">Expected output</td>
+                        </tr>
+                        <tr>
+                            <td>V<sub>OUT</sub></td><td><pmc-input id="CC@SIM@VOUT"></pmc-input></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>
+                    

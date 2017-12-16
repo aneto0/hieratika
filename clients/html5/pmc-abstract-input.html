@@ -34,7 +34,12 @@
             var errorIdx = 0;
             if (this.validations !== undefined) {
                 for (errorIdx=0; (errorIdx<this.validations.length) && (!error); errorIdx++) {
-                    error = !this.validations[errorIdx].test();
+                    if(this.validations[errorIdx].test !== undefined) {
+                        error = !this.validations[errorIdx].test();
+                    }
+                    else {
+                        console.log("Invalid validation function for " + this.id);
+                    }
                 }
             }
             var titleString = this.toString();
