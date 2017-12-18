@@ -22,6 +22,8 @@ __date__ = "17/12/2017"
 from flask import Response
 import json
 import logging
+import time
+import threading
 
 ##
 # Project imports
@@ -64,7 +66,7 @@ class WTransformation:
         """
         self.transformationImpls = transformationImpls
 
-    def transformCb(self, transformImpl, transformationUID, fun, inputs):
+    def transformCb(self, transformationImpl, transformationUID, fun, inputs):
         """ TODO
         """
         transformationImpl.transform(transformationUID, fun, inputs)
@@ -98,7 +100,7 @@ class WTransformation:
             if (transformationImpl is not None):
                 log.critical("Executing transformation for function with UID {0}".format(funUID))
                 transformationUID = str(time.time())
-                transformationThread = threading.Thread(target=self.transformCb, args=(transformationUID, fun, inputs, ))
+                transformationThread = threading.Thread(target=self.transformCb, args=(transformationImpl, transformationUID, fun, inputs, ))
                 transformationThread.daemon = True
                 transformationThread.start()
                 toReturn = transformationUID

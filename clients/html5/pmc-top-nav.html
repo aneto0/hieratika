@@ -8,6 +8,7 @@
     <link rel="import" href="pmc-page-selector.html">
     <link rel="import" href="pmc-schedule-selector.html">
     <link rel="import" href="pmc-stream.html">
+    <link rel="import" href="pmc-transformations.html">
 </head>
 <body>
     <script>
@@ -40,6 +41,7 @@
             </div>
             <button class="w3-bar-item w3-button w3-border-top" title="Commit all changes to current schedule" id="commitbtn"><i class="fa fa-floppy-o"></i> Commit</button>
             <button class="w3-bar-item w3-button" title="Undo all changes" id="undobtn"><i class="fa fa-undo"></i> Undo</button>
+            <button class="w3-bar-item w3-button w3-border-top" title="Manage transformations" id="transformationsbtn"><i class="fa fa-cogs"></i> f(x)</button>
             <button class="w3-bar-item w3-button w3-border-top" title="Load current values into plant" id="loadplantbtn"><i class="fa fa-upload"></i> Load</button>
         </div>
         <div class="w3-bar w3-dark-grey w3-tiny">
@@ -54,6 +56,7 @@
         <pmc-login id="pmclogin"></pmc-login>
         <pmc-page-selector id="pageselector"></pmc-page-selector>
         <pmc-schedule-selector id="scheduleselector"></pmc-schedule-selector>
+        <pmc-transformations id="transformations"></pmc-transformations>
     </template>
 
     <script>
@@ -239,6 +242,12 @@
                         undoAllChangesToSchedule();
                     }.bind(this);
 
+                    this.transformationsViewer = this.shadowRoot.querySelector("#transformations");
+                    this.transformationsButton = this.shadowRoot.querySelector("#transformationsbtn");
+                    this.transformationsButton.onclick = function() {
+                        this.transformationsViewer.show();
+                    }.bind(this);
+
                     this.pageListeners = [this];
                     this.userLogoutListeners = [this];
                     this.addPageListener(this.scheduleSelector);
@@ -330,14 +339,34 @@
                     this.undoButton.disabled = true;
                 }
 
+                getTransformations() {
+                    $.ajax({
+                        type: "post",
+                        url: "/gettransformationsinfo",
+                        data: {
+                            token: parent._currentToken,
+                            pageName: this.selectedPage.name
+                        },
+                        success: function (response) {
+                            var transformations = JSON.parse(response);
+                            this.transformationsViewer.setTransformations(transformations);
+                            this.editScheduleButton.disabled = false;
+                            this.viewScheduleButton.disabled = false;
+                            this.viewPlantButton.disabled = false;
+                            this.referenceSelectScheduleButton.disabled = false;
+                            this.referenceSelectNoneButton.disabled = false;
+                            this.referenceSelectPlantButton.disabled = false;
+                        }.bind(this),
+                        error: function (response) {
+                            console.log(response);
+                            alert(response);
+                        }
+                    });
+                }
+
                 pageChanged(page) {
                     this.selectedPage = page;
-                    this.editScheduleButton.disabled = false;
-                    this.viewScheduleButton.disabled = false;
-                    this.viewPlantButton.disabled = false;
-                    this.referenceSelectScheduleButton.disabled = false;
-                    this.referenceSelectNoneButton.disabled = false;
-                    this.referenceSelectPlantButton.disabled = false;
+                    this.getTransformations();
                 }
 
                 refererenceScheduleChanged(schedule) {

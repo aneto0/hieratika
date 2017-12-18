@@ -38,15 +38,17 @@ class TransformationFunction(object):
     """ Describes a hieratika transformation function.
     """
 
-    def __init__(self, fun, inputs, outputs):
+    def __init__(self, fun, description, inputs, outputs):
         """ Constructs a new TransformationFunction object.
         
         Args:
             fun (str): the function name. 
-            inputs ([str]): name of the function input variables.
-            outputs ([str]): name of the function output variables.
+            description (str): the function description. 
+            inputs ({var1:id1, var2:id2, ...}): a dictionary whose keys are the name of the function input variables and whose values are the id of the variables (see Variable) where the function parameter values should be read from. 
+            outputs ({var1:id1, var2:id2, ...}): a dictionary whose keys are the name of the function ouput variables and whose values are the id of the variables (see Variable) where the function parameter value should written into. 
         """
         self.fun = fun
+        self.description = description
         self.inputs = inputs
         self.outputs = outputs
 
@@ -77,6 +79,19 @@ class TransformationFunction(object):
             The function output variables names (see __init__)
         """
         return self.outputs
+
+    def getDescription(self):
+        """
+        Returns:
+            The function description. 
+        """
+        return self.description
+
+    def getUID(self):
+        """
+        Returns a unique identifier for the TransformationFunction based on the function name, input variables names and output variables names.
+        """
+        return "{0}_{1}_{2}".format(self.fun, self.inputs.keys(), self.outputs.keys())
 
     def __eq__(self, another):
         """ Two TransformationFunction are equal if they have the same unique identifier (see getUID).
@@ -112,5 +127,5 @@ class TransformationFunction(object):
             Returns:
                 A string representation of a Variable which consists of the function name followed by the input and output variables.
         """
-        return "{0} = {1}({2})".format(self.outputs, self.fun, self.inputs) 
+        return "{0} = {1}({2})".format(self.outputs.keys(), self.fun, self.inputs.keys()) 
 

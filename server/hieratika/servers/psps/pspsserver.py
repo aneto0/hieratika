@@ -41,6 +41,7 @@ from hieratika.hlibrary import HLibrary
 from hieratika.page import Page
 from hieratika.schedule import Schedule
 from hieratika.server import HieratikaServer
+from hieratika.transformationfunction import TransformationFunction
 from hieratika.util.lockpool import LockPool
 from hieratika.variable import Variable
 from hieratika.variableenum import VariableEnum
@@ -472,6 +473,69 @@ class PSPSServer(HieratikaServer):
         log.info("Loading plant transformations from {0}".format(xmlFileLocation))
         perfStartTime = timeit.default_timer()
         transformations = []
+        xmlId = self.getXmlId(xmlFileLocation)
+        self.lockPool.acquire(xmlId)
+        tree = self.getCachedXmlTree(xmlFileLocation)
+        if (tree is not None):
+            xmlRoot = tree.getroot()
+            transformationsXml = xmlRoot.findall("./ns0:transformations//ns0:transformation", self.xmlns)
+            for transformationXml in transformationsXml:
+                inputs = {}
+                outputs = {}
+                funXml = transformationXml.find("./ns0:fun", self.xmlns)
+                descriptionXml = transformationXml.find("./ns0:description", self.xmlns)
+                inputsXml = transformationXml.findall("./ns0:inputs//ns0:input", self.xmlns)
+                outputsXml = transformationXml.findall("./ns0:outputs//ns0:output", self.xmlns)
+                ok = True
+                for inputXml in inputsXml:
+                    inputNameXml = inputXml.find("./ns0:name", self.xmlns)
+                    inputMapXml = inputXml.find("./ns0:map", self.xmlns)
+                    ok = (inputNameXml is not None)
+                    if (ok):
+                        ok = (inputMapXml is not None)
+                    else:
+                        log.critical("<input><name> not defined in transformation for {0}".format(pageName))
+
+                    if (ok):
+                        ok = (inputNameXml.text not in inputs)
+                    else:
+                        log.critical("<input><map> not defined in transformation for {0}".format(pageName))
+                    
+                    if (ok):
+                        inputs[inputNameXml.text] = inputMapXml.text
+                    else:
+                        log.critical("<input><name> already defined in transformation for {0}".format(pageName))
+                if (ok):
+                    for outputXml in outputsXml:
+                        outputNameXml = outputXml.find("./ns0:name", self.xmlns)
+                        outputMapXml = outputXml.find("./ns0:map", self.xmlns)
+
+                        ok = (outputNameXml is not None)
+                        if (ok):
+                            ok = (outputMapXml is not None)
+                        else:
+                            log.critical("<output><name> not defined in transformation for {0}".format(pageName))
+
+                        if (ok):
+                            ok = (outputNameXml.text not in outputs)
+                        else:
+                            log.critical("<output><map> not defined in transformation for {0}".format(pageName))
+                        
+                        if (ok):
+                            outputs[outputNameXml.text] = outputMapXml.text
+                        else:
+                            log.critical("<output><name> already defined in transformation for {0}".format(pageName))
+                if (ok):
+                    if (funXml is not None):
+                        description = ""
+                        if (descriptionXml is not None):
+                            description = descriptionXml.text
+                        transformations.append(TransformationFunction(funXml.text, description, inputs, outputs))
+                    else:
+                        log.critical("fun not defined in transformation for {0}".format(pageName))
+
+        self.lockPool.release(xmlId)
+        return transformations
 
         perfElapsedTime = timeit.default_timer() - perfStartTime
         log.info("Took {0} s to get the information for all the {1} transformations in the plant for page {2}".format(perfElapsedTime, len(transformations), pageName))

@@ -176,8 +176,8 @@ class WServer:
         toReturn = ""
         try: 
             pageName = request.form["pageName"]
-            transformations = self.serverImpl.getVariablesInfo(pageName, requestedVariables)
-            transformationsStr = [v.__dict__ for t in transformations]
+            transformations = self.serverImpl.getTransformationsInfo(pageName)
+            transformationsStr = [t.__dict__ for t in transformations]
             toReturn = json.dumps(transformationsStr)
         except KeyError as e:
             log.critical(str(e))

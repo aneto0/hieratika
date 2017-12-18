@@ -1,0 +1,131 @@
+<html>
+<head>
+    <link rel="import" href="pmc-helper.html">
+</head>
+</body>
+    <template id="ttransformations">
+        <dialog id="dtransformations">
+            <div id="divtinfo">
+                <table style="border-style:solid;border-width:1px;width: 100%" id="tabletinfo">
+                </table>
+                <table style="border-style:solid;border-width:0px;width: 100%">
+                    <tr>
+                        <td style="padding-top:20px;">
+                            <button title="Run" id="runbtn">Run</button>
+                            <button title="Abort" id="abortbtn">Abort</button>
+                            <button title="Close" id="closebtn">Close</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </dialog>
+    </template>
+
+    <script>
+        //This is enclosure is required to protect the importDoc
+        (function () {
+            var importDoc = document.currentScript.ownerDocument; // importee
+            class PMCTransformations extends HTMLElement {
+                constructor() {
+                    super();
+                }
+
+                createdCallback () {
+                    var template = importDoc.querySelector("#ttransformations");
+                    // import template into
+                    var clone = document.importNode(template.content, true);
+                    var root = this.createShadowRoot();
+                    root.appendChild(clone);
+               
+                    this.diag = this.shadowRoot.querySelector("#dtransformations");
+                    this.transformationsTable = this.shadowRoot.querySelector("#tabletinfo");
+                    this.runButton = this.shadowRoot.querySelector("#runbtn");
+                    var abortButton = this.shadowRoot.querySelector("#abortbtn");
+                    var closeButton = this.shadowRoot.querySelector("#closebtn");
+                    this.runButton.onclick = function() {
+                        for (var i=0; i<this.transformations.length; i++) {
+                            this.runTransformation(this.transformations[i]);
+                        }
+                    }.bind(this);
+
+                    closeButton.onclick = function() {
+                        this.diag.close();
+                    }.bind(this); 
+
+                    this.runButton.disabled = true;
+                    abortButton.disabled = true;
+                    abortButton.onclick = function() {
+                    }.bind(this); 
+                }
+        
+                runTransformation (transformation) {
+                    var inputVariables = Object.keys(transformation.inputs);
+                    var inputs = {};
+                    var ok = true;
+                    var mainFramePMCComponents = parent._pmcMainEditor.getAllPMCComponents();
+                    for (var i=0; (i<inputVariables.length) && (ok); i++) {
+                        var varname = inputVariables[i];
+                        var mapname = transformation.inputs[varname];
+                        var comp = mainFramePMCComponents[mapname];
+                        if (comp !== undefined) {
+                            inputs[varname] = comp[0].getValue();
+                        }
+                        else {
+                            console.log("Component with name " + mapname + " not found.");
+                            ok = false;
+                        }
+                    }
+                    if (ok) {
+                        $.ajax({
+                            type: "post",
+                            url: "/transform",
+                            data: {
+                                token: parent._currentToken,
+                                fun: transformation.fun,
+                                inputs: JSON.stringify(inputs)
+                            },
+                            success: function (response) {
+                                alert(response);
+                            },
+                            error: function (response) {
+                                console.log(response);
+                                alert(response);
+                            }
+                        });
+
+                    }
+                }
+
+                setTransformations (transformations) {
+                    this.transformations = transformations;
+                    this.transformationsTable.innerHTML = "";
+                    for (var i=0; i<transformations.length; i++) {
+                        var funName = transformations[i].fun;
+                        var inputs = Object.keys(transformations[i].inputs).toString();
+                        var outputs = Object.keys(transformations[i].outputs).toString();
+                        var fuid = funName + inputs + outputs;
+                        fuid = fuid.replace(/[|&;$%@"<>()+,]/g, ""); 
+                        var row = this.transformationsTable.insertRow();
+                        var fName = row.insertCell(0);
+                        fName.innerHTML = funName;
+                        var pbar = row.insertCell(1);
+                        row.title = outputs + " = " + funName + "(" + inputs + ")";
+                        pbar.innerHTML = "<progress value=\"0\" max=\"100\" id=\"" + fuid + "\"></progress>";
+                    }
+                    this.runButton.disabled = (transformations.length === 0);
+                }
+
+                show() {
+                    this.diag.showModal();
+                }
+            }
+
+            document.registerElement("pmc-transformations", {
+                prototype: PMCTransformations.prototype,
+            });
+
+        }());
+    </script>
+
+    </body>
+</html>

@@ -149,10 +149,26 @@
                                     <value>1.0</value>
                                 </values>
                             </record>
-                            <record size="1" xsi:type="recordDouble">
+                            <record size="10" xsi:type="recordDouble">
                                 <name>VOUT</name>
                                 <alias>VOUT</alias>
                                 <description>Expected output voltage</description>
+                                <values>
+                                    <value>10000000000000000000.0</value>
+                                </values>
+                            </record>
+                            <record size="10" xsi:type="recordDouble">
+                                <name>VANGLE</name>
+                                <alias>VANGLE</alias>
+                                <description>Expected output angle</description>
+                                <values>
+                                    <value>10000000000000000000.0</value>
+                                </values>
+                            </record>
+                            <record size="10" xsi:type="recordDouble">
+                                <name>FOUT</name>
+                                <alias>FOUT</alias>
+                                <description>Output frequency</description>
                                 <values>
                                     <value>10000000000000000000.0</value>
                                 </values>
@@ -190,84 +206,92 @@
             <sdnTopics>
                 <sdnTopics/>
             </sdnTopics>
-            <transformations>
-                <transformation>
-                    <fun>AhKab_Butterworth</fun>
-                    <description>Butterworth filter implemented using ahkab</description>
-                    <inputs>
-                        <input>
-                            <name>R1</name>
-                            <map>CC@CIRC@R1</map>
-                        </input>
-                        <input>
-                            <name>L1</name>
-                            <map>CC@CIRC@L1</map>
-                        </input>
-                        <input>
-                            <name>C1</name>
-                            <map>CC@CIRC@C1</map>
-                        </input>
-                        <input>
-                            <name>L2</name>
-                            <map>CC@CIRC@L2</map>
-                        </input>
-                        <input>
-                            <name>C2</name>
-                            <map>CC@CIRC@C2</map>
-                        </input>
-                        <input>
-                            <name>L3</name>
-                            <map>CC@CIRC@L3</map>
-                        </input>
-                        <input>
-                            <name>C3</name>
-                            <map>CC@CIRC@C3</map>
-                        </input>
-                        <input>
-                            <name>L4</name>
-                            <map>CC@CIRC@L4</map>
-                        </input>
-                        <input>
-                            <name>C4</name>
-                            <map>CC@CIRC@C4</map>
-                        </input>
-                        <input>
-                            <name>L5</name>
-                            <map>CC@CIRC@L5</map>
-                        </input>
-                        <input>
-                            <name>C5</name>
-                            <map>CC@CIRC@C5</map>
-                        </input>
-                        <input>
-                            <name>R2</name>
-                            <map>CC@CIRC@R2</map>
-                        </input>
-                        <input>
-                            <name>V1</name>
-                            <map>CC@SIM@V1</map>
-                        </input>
-                        <input>
-                            <name>FS</name>
-                            <map>CC@SIM@FS</map>
-                        </input>
-                        <input>
-                            <name>FE</name>
-                            <map>CC@SIM@FS</map>
-                        </input>
-                        <input>
-                            <name>PTS</name>
-                            <map>CC@SIM@PTS</map>
-                        </input>
-                    </inputs>
-                    <outputs>
-                        <output>
-                            <name>VOUT</name>
-                            <map>CC@CIRC@VOUT</map>
-                        </output>
-                    </outputs>
-                <transformation>
-            </transformations>
         </plantSystem>
     </plantSystems>
+    <transformations>
+        <transformation>
+            <fun>ahkab_butterworth</fun>
+            <description>Butterworth filter implemented using ahkab</description>
+            <inputs>
+                <input>
+                    <name>R1</name>
+                    <map>CC@CIRC@R1</map>
+                </input>
+                <input>
+                    <name>L1</name>
+                    <map>CC@CIRC@L1</map>
+                </input>
+                <input>
+                    <name>C1</name>
+                    <map>CC@CIRC@C1</map>
+                </input>
+                <input>
+                    <name>L2</name>
+                    <map>CC@CIRC@L2</map>
+                </input>
+                <input>
+                    <name>C2</name>
+                    <map>CC@CIRC@C2</map>
+                </input>
+                <input>
+                    <name>L3</name>
+                    <map>CC@CIRC@L3</map>
+                </input>
+                <input>
+                    <name>C3</name>
+                    <map>CC@CIRC@C3</map>
+                </input>
+                <input>
+                    <name>L4</name>
+                    <map>CC@CIRC@L4</map>
+                </input>
+                <input>
+                    <name>C4</name>
+                    <map>CC@CIRC@C4</map>
+                </input>
+                <input>
+                    <name>L5</name>
+                    <map>CC@CIRC@L5</map>
+                </input>
+                <input>
+                    <name>C5</name>
+                    <map>CC@CIRC@C5</map>
+                </input>
+                <input>
+                    <name>R2</name>
+                    <map>CC@CIRC@R2</map>
+                </input>
+                <input>
+                    <name>V1</name>
+                    <map>CC@SIM@V1</map>
+                </input>
+                <input>
+                    <name>FS</name>
+                    <map>CC@SIM@FS</map>
+                </input>
+                <input>
+                    <name>FE</name>
+                    <map>CC@SIM@FE</map>
+                </input>
+                <input>
+                    <name>PTS</name>
+                    <map>CC@SIM@PTS</map>
+                </input>
+            </inputs>
+            <outputs>
+                <output>
+                    <name>FOUT</name>
+                    <map>CC@CIRC@FOUT</map>
+                </output>
+                <output>
+                    <name>VOUT</name>
+                    <map>CC@CIRC@VOUT</map>
+                </output>
+                <output>
+                    <name>VANGLE</name>
+                    <map>CC@CIRC@VANGLE</map>
+                </output>
+            </outputs>
+        </transformation>
+    </transformations>
 </configurationContainer>

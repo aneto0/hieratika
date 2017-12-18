@@ -20,6 +20,7 @@ __date__ = "17/11/2017"
 # Standard imports
 ##
 import argparse
+import ast
 import ConfigParser
 import importlib
 import logging
@@ -31,6 +32,7 @@ from flask import Flask, Response, request, send_from_directory
 # Project imports
 ##
 from hieratika.wserver import WServer
+from hieratika.wtransformation import WTransformation
 
 ##
 # Logger configuration
@@ -49,6 +51,9 @@ application = Flask(__name__, static_url_path="")
 # The WServer implementation
 wserver = WServer()
 
+# The WTransformation implementation
+wtransformation = WTransformation()
+
 def load(config):
     try:
         serverModuleName = config.get("hieratika", "serverModule")
@@ -66,6 +71,17 @@ def load(config):
         authClassName = config.get("hieratika", "authClass")
         log.info("Auth class is {0}".format(authClassName))
         authClass = getattr(authModule, authClassName)
+
+        transformationModuleNames = []
+        transformationClassNames = []
+        if (config.has_option("hieratika", "transformationModules")):
+            transformationModuleNames = config.get("hieratika", "transformationModules")
+            log.info("Transformation modules are {0}".format(transformationModuleNames))
+            transformationModuleNames = ast.literal_eval(transformationModuleNames)
+
+            transformationClassNames = config.get("hieratika", "transformationClasses")
+            log.info("Transformation classes are {0}".format(transformationClassNames))
+            transformationClassNames = ast.literal_eval(transformationClassNames)
 
         pagesFolder = config.get("hieratika", "pagesFolder")
         #Translate into absolute path so that it can be used by other modules (which belong to other directories) as well.
@@ -97,6 +113,30 @@ def load(config):
             ok = auth.start()
         else:
             log.critical("Failed to load auth configuration")
+
+        transformations = []
+        if (ok):
+            for transformationModuleName, transformationClassName in zip(transformationModuleNames, transformationClassNames):
+                transformationModule = importlib.import_module(transformationModuleName) 
+                transformationClass = getattr(transformationModule, transformationClassName)
+                transformationInstance = transformationClass()
+                transformations.append(transformationInstance)
+                log.info("Loading transformation {0}.{1} common configuration".format(transformationModuleName, transformationClassName))
+                ok = transformationInstance.loadCommon(manager, config)
+                if (ok):
+                    log.info("Loading transformation {0}.{1} configuration".format(transformationModuleName, transformationClassName))
+                    ok = transformationInstance.load(manager, config)
+                else:
+                    log.info("Failed Loading transformation {0}.{1} common configuration".format(transformationModuleName, transformationClassName))
+
+                if (ok):
+                    transformationInstance.setServer(server)
+                else:
+                    log.info("Failed Loading transformation {0}.{1} configuration".format(transformationModuleName, transformationClassName))
+                    break
+
+        if (ok):
+            wtransformation.setTransformations(transformations)
 
         if (ok):
             #The web app which is a Flask standard application
@@ -291,6 +331,15 @@ def createschedule():
     log.debug("/createschedule")
     if (wserver.isTokenValid(request)):
         return wserver.createSchedule(request)
+    else:
+        return "InvalidToken"
+
+#Applies a transformation
+@application.route("/transform", methods=["POST", "GET"])
+def transform():
+    log.debug("/transform")
+    if (wserver.isTokenValid(request)):
+        return wtransformation.transform(request)
     else:
         return "InvalidToken"
     

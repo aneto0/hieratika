@@ -21,6 +21,7 @@ __date__ = "17/12/2017"
 ##
 from abc import ABCMeta, abstractmethod
 import json
+import logging
 
 ##
 # Project imports
@@ -44,16 +45,6 @@ class HieratikaTransformation(object):
     def __init__(self):
         pass
         
-    def loadCommon(self, manager, config):
-        """ Loads parameters that are common to all transformation implementations.
-            NOOP as of today.
-        Args:
-            manager(multiprocessing.Manager): A multiprocessing Manager instance to allocate objects that are to be shared by different processes.
-        Returns:
-            True 
-        """
-        return True
-
     @abstractmethod
     def load(self, manager, config):
         """ Configures the transformation against a set of parameters. This set of parameters is specific for each transformation implementation.
@@ -72,7 +63,7 @@ class HieratikaTransformation(object):
         Args:
             transformationUID (str): unique identifier for the transformation (one for each call to this function) to be used when calling the update method.
             fun (str): name of the function to be executed.
-            inputs ({variableName1:value1, variableName2:value2, ...}):  dictionary with variables to be updated.
+            inputs ({variableName1:value1, variableName2:value2, ...}):  dictionary with variables to be used as input to the function.
         Returns:
             None
         """
@@ -83,11 +74,21 @@ class HieratikaTransformation(object):
         """ Returns True if the transformation defined by fun and by list of inputs can be executed by this HieratikaTransformation instance.
         Args:
             fun (str): name of the function to be executed.
-            inputs ({variableName1:value1, variableName2:value2, ...}):  dictionary with variables to be updated.
+            inputs ({variableName1:value1, variableName2:value2, ...}):  dictionary with variables to be used as input to the function.
         Returns:
             None
         """
         pass
+
+    def loadCommon(self, manager, config):
+        """ Loads parameters that are common to all transformation implementations.
+            NOOP as of today.
+        Args:
+            manager(multiprocessing.Manager): A multiprocessing Manager instance to allocate objects that are to be shared by different processes.
+        Returns:
+            True 
+        """
+        return True
 
     def setServer(self, server):
         """ Sets the server implementation.
