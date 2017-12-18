@@ -19,13 +19,9 @@ __date__ = "17/11/2017"
 ##
 # Standard imports
 ##
-import argparse
-from flask import Flask, Response, request, send_from_directory
+from flask import request
 import json
 import logging
-import time
-import timeit
-import threading
 
 ##
 # Project imports
@@ -162,6 +158,27 @@ class WServer:
             variables = self.serverImpl.getLibraryVariablesInfo(libraryType, requestedVariables)
             variablesStr = [v.asSerializableDict() for v in variables]
             toReturn = json.dumps(variablesStr)
+        except KeyError as e:
+            log.critical(str(e))
+            toReturn = "InvalidParameters"
+
+        return toReturn 
+
+    def getTransformationsInfo(self, request):
+        """ Returns the all the available information (and meta-information) for all the transformations in a given configuration set (identified by the pageName).
+
+        Args:
+           request.form["pageName"]: name of the page (which corresponds to the name of the configuration).
+        Returns:
+            A json encoded list of transformations (see TransformationFunction) or InvalidToken if the token is not valid.
+        """
+       
+        toReturn = ""
+        try: 
+            pageName = request.form["pageName"]
+            transformations = self.serverImpl.getVariablesInfo(pageName, requestedVariables)
+            transformationsStr = [v.__dict__ for t in transformations]
+            toReturn = json.dumps(transformationsStr)
         except KeyError as e:
             log.critical(str(e))
             toReturn = "InvalidParameters"

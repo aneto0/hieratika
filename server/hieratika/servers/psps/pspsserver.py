@@ -467,6 +467,16 @@ class PSPSServer(HieratikaServer):
         log.info("Took {0} s to get the information for all the {1} variables for library type {2}".format(perfElapsedTime, len(requestedVariables), libraryType))
         return variables 
 
+    def getTransformationsInfo(self, pageName):
+        xmlFileLocation = "{0}/psps/configuration/{1}/000/plant.xml".format(self.baseDir, pageName)
+        log.info("Loading plant transformations from {0}".format(xmlFileLocation))
+        perfStartTime = timeit.default_timer()
+        transformations = []
+
+        perfElapsedTime = timeit.default_timer() - perfStartTime
+        log.info("Took {0} s to get the information for all the {1} transformations in the plant for page {2}".format(perfElapsedTime, len(transformations), pageName))
+        return variables 
+
     def getPages(self):
         return self.pages
 

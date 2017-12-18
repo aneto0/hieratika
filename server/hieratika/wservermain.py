@@ -141,6 +141,14 @@ def getlibraryvariablesinfo():
     else:
         return "InvalidToken"
 
+#Gets all the available transformations
+@application.route("/gettransformationsinfo", methods=["POST", "GET"])
+def gettransformationsinfo():
+    log.debug("/gettransformationsinfo")
+    if (wserver.isTokenValid(request)):
+        return wserver.getTransformationsInfo(request)
+    else:
+        return "InvalidToken"
 
 #Try to update the values in the plant
 @application.route("/updateplant", methods=["POST", "GET"])

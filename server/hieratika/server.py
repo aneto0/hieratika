@@ -194,6 +194,18 @@ class HieratikaServer(object):
         pass
 
     @abstractmethod
+    def getTransformationsInfo(self, pageName):
+        """ Returns all the available information (and meta-information) for all of the TransformationFunction(s) that belong to a given
+        configuration. In hieratika a configuration is identified by a unique name (pageName).
+
+        Args:
+           pageName (str): name of the page (which also corresponds to the name of the configuration entity).
+        Returns:
+            A list of TransformationFunction ([TransformationFunction]) for the requested page. 
+        """
+        pass
+
+    @abstractmethod
     def getSchedules(self, username, pageName):
         """ Gets all the schedules that are avaiable for a given user in a given page.
 

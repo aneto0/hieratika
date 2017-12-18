@@ -17,14 +17,6 @@
                         <name>CIRC</name>
                         <records>
                             <record size="1" xsi:type="recordDouble">
-                                <name>V1</name>
-                                <alias>V1</alias>
-                                <description>Input voltage</description>
-                                <values>
-                                    <value>1.0</value>
-                                </values>
-                            </record>
-                            <record size="1" xsi:type="recordDouble">
                                 <name>R1</name>
                                 <alias>R1</alias>
                                 <description>R1</description>
@@ -198,6 +190,84 @@
             <sdnTopics>
                 <sdnTopics/>
             </sdnTopics>
+            <transformations>
+                <transformation>
+                    <fun>AhKab_Butterworth</fun>
+                    <description>Butterworth filter implemented using ahkab</description>
+                    <inputs>
+                        <input>
+                            <name>R1</name>
+                            <map>CC@CIRC@R1</map>
+                        </input>
+                        <input>
+                            <name>L1</name>
+                            <map>CC@CIRC@L1</map>
+                        </input>
+                        <input>
+                            <name>C1</name>
+                            <map>CC@CIRC@C1</map>
+                        </input>
+                        <input>
+                            <name>L2</name>
+                            <map>CC@CIRC@L2</map>
+                        </input>
+                        <input>
+                            <name>C2</name>
+                            <map>CC@CIRC@C2</map>
+                        </input>
+                        <input>
+                            <name>L3</name>
+                            <map>CC@CIRC@L3</map>
+                        </input>
+                        <input>
+                            <name>C3</name>
+                            <map>CC@CIRC@C3</map>
+                        </input>
+                        <input>
+                            <name>L4</name>
+                            <map>CC@CIRC@L4</map>
+                        </input>
+                        <input>
+                            <name>C4</name>
+                            <map>CC@CIRC@C4</map>
+                        </input>
+                        <input>
+                            <name>L5</name>
+                            <map>CC@CIRC@L5</map>
+                        </input>
+                        <input>
+                            <name>C5</name>
+                            <map>CC@CIRC@C5</map>
+                        </input>
+                        <input>
+                            <name>R2</name>
+                            <map>CC@CIRC@R2</map>
+                        </input>
+                        <input>
+                            <name>V1</name>
+                            <map>CC@SIM@V1</map>
+                        </input>
+                        <input>
+                            <name>FS</name>
+                            <map>CC@SIM@FS</map>
+                        </input>
+                        <input>
+                            <name>FE</name>
+                            <map>CC@SIM@FS</map>
+                        </input>
+                        <input>
+                            <name>PTS</name>
+                            <map>CC@SIM@PTS</map>
+                        </input>
+                    </inputs>
+                    <outputs>
+                        <output>
+                            <name>VOUT</name>
+                            <map>CC@CIRC@VOUT</map>
+                        </output>
+                    </outputs>
+                <transformation>
+            </transformations>
         </plantSystem>
     </plantSystems>
 </configurationContainer>
