@@ -1,8 +1,9 @@
 TODO
 -   Prototype the library concept: link parameters to pre-cooked definitions, e.g. waveforms (PARTIALLY DONE)
--   Clean and restructure the html5 client code - SOME WORK DONE BUT NOT COMPLEET
+-   Design and implement remote validation - PARTIALLY DONE
+-   Clean and restructure the html5 client code - SOME WORK DONE BUT NOT COMPLETE
 -   Design and implement the loader - NOT DONE
--   Design and implement remote validation - NOT DONE
+-   Design and implement the concept of pulses (DAP) - NOT DONE
 -   Design and implement live variables support - NOT DONE
 -   Document the design - NOT DONE
 -   Document the html5 client - NOT DONE
