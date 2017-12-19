@@ -1,6 +1,7 @@
 <script>
     class Stream {
         constructor() {
+            this.transformationListeners = [];
         }
 
         start () {
@@ -11,9 +12,13 @@
                 if (e.data.length > 0) {
                     var jsonData = $.parseJSON(e.data);
                     var reset = jsonData["reset"];
+                    var transformationUID = jsonData["transformationUID"];
                     if (reset !== undefined) {
                         var tid = jsonData["tid"];
                         parent._remoteServerTid = tid;
+                    }
+                    else if (transformationUID !== undefined) {
+                        this.fireTransformationUpdated(jsonData);
                     }
                     else {
                         var variables = jsonData["variables"];
@@ -43,13 +48,23 @@
                         }
                     }
                 }
-            } 
+            }.bind(this);
         }
 
         stop () {
             if (this.evtSrc !== undefined) {
                 this.evtSrc.close();
             }
+        }
+
+        fireTransformationUpdated(transformationInfo) {
+            for (var i=0; i<this.transformationListeners.length; i++) {
+                this.transformationListeners[i].transformationUpdated(transformationInfo);
+            }
+        }
+
+        addTransformationListener(listener) {
+            this.transformationListeners.push(listener);
         }
     }
 </script>

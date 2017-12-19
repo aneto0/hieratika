@@ -25,6 +25,7 @@ from abc import ABCMeta, abstractmethod
 import json
 import logging
 import numpy as np
+import time
 
 ##
 # Project imports
@@ -88,12 +89,13 @@ class AhkabDemo(HieratikaTransformation):
             # run it
             res = run(cir, ac1)
             outputs = {}
-            outputs["FOUT"] = res["ac"]["f"]
-            outputs["VOUT"] = np.abs(res["ac"]["Vn8"])
-            outputs["VANGLE"] = np.angle(res["ac"]["Vn8"])
-            progress = (freq - startFrequency) / deltaFrequency
+            fout = res["ac"]["f"].tolist()
+            outputs["VOUT"] = [fout, np.abs(res["ac"]["Vn8"]).tolist()]
+            outputs["VANGLE"] = [fout, np.angle(res["ac"]["Vn8"]).tolist()]
+            progress = float(freq - startFrequency) / float(deltaFrequency)
             freq = freq + stepFrequency
             self.update(transformationUID, 0, progress, outputs)
+            time.sleep(1)
 
         return True
 

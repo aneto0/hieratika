@@ -149,28 +149,20 @@
                                     <value>1.0</value>
                                 </values>
                             </record>
-                            <record size="10" xsi:type="recordDouble">
+                            <record size="[1,1]" xsi:type="recordDouble">
                                 <name>VOUT</name>
                                 <alias>VOUT</alias>
                                 <description>Expected output voltage</description>
                                 <values>
-                                    <value>10000000000000000000.0</value>
+                                    <value>[[0],[0]]</value>
                                 </values>
                             </record>
-                            <record size="10" xsi:type="recordDouble">
+                            <record size="[1,1]" xsi:type="recordDouble">
                                 <name>VANGLE</name>
                                 <alias>VANGLE</alias>
                                 <description>Expected output angle</description>
                                 <values>
-                                    <value>10000000000000000000.0</value>
-                                </values>
-                            </record>
-                            <record size="10" xsi:type="recordDouble">
-                                <name>FOUT</name>
-                                <alias>FOUT</alias>
-                                <description>Output frequency</description>
-                                <values>
-                                    <value>10000000000000000000.0</value>
+                                    <value>[[0],[0]]</value>
                                 </values>
                             </record>
                         </records>
@@ -280,16 +272,12 @@
             </inputs>
             <outputs>
                 <output>
-                    <name>FOUT</name>
-                    <map>CC@CIRC@FOUT</map>
-                </output>
-                <output>
                     <name>VOUT</name>
-                    <map>CC@CIRC@VOUT</map>
+                    <map>CC@SIM@VOUT</map>
                 </output>
                 <output>
                     <name>VANGLE</name>
-                    <map>CC@CIRC@VANGLE</map>
+                    <map>CC@SIM@VANGLE</map>
                 </output>
             </outputs>
         </transformation>

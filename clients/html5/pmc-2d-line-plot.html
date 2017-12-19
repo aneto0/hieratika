@@ -1,0 +1,192 @@
+<html>
+    <head>
+        <link rel="import" href="libraries.html">
+        <link rel="import" href="pmc-component.html">
+    </head>
+    <body>
+        <template id="t2dplot">
+            <canvas width="600" height="300" id="tcanvas"></canvas>
+        </template>
+        <script>
+        //This is enclosure is required to protect the importDoc
+        (function () {
+            var importDoc = document.currentScript.ownerDocument; // importee
+            class PMC2DLinePlot extends PMCComponent {
+                constructor () {
+                    super();
+                }
+
+                populateDataset (dataset, values) {
+                    for (var i=0; i<values.length; i++) {
+                        if (values[0][i] !== undefined) {
+                            dataset.data.push({x: values[0][i], y: values[1][i]});
+                        }
+                    }
+                }
+
+
+                reset () {
+                    for (var i=0; i<this.chart.data.datasets.length; i++) {
+                        this.chart.data.datasets[i].data = [];
+                    }
+                }
+
+                checkValues () {
+                    if (!this.appendData) {
+                        this.reset();
+                    }
+
+                    if (this.value !== undefined) {
+                        this.populateDataset(this.chart.data.datasets[0], this.value);
+                    }
+
+                    var ref = this.getReference();
+                    var refValue = this.getReferenceValue();
+                    var plantValue = this.getPlantValue();
+                    if (this.showReference) {
+                        if ((ref !== NONE_NAME) && (refValue !== undefined)) {
+                            this.populateDataset(this.chart.data.datasets[1], refValue);
+                        }
+                    }
+                    if (this.showPlant) {
+                        if (plantValue !== undefined) {
+                            this.populateDataset(this.chart.data.datasets[this.showPlantIdx], plantValue);
+                        }
+                    }
+                    this.chart.update();
+
+                    this.title = this.toString();
+                }
+
+                setValue (elementsToSet, updateRemote=true) {
+                    super.setValue(elementsToSet.slice(0), updateRemote);
+                    this.checkValues();
+                }
+
+                refresh() {
+                    this.checkValues(false);
+                }
+
+                getTemplate() {
+                    var template = importDoc.querySelector("#t2dplot");
+                    return template;
+                }
+
+                createdCallback () {
+                    super.createdCallback();
+                }
+
+                attachedCallback () {
+                    super.attachedCallback();
+                    var ctx = this.shadowRoot.querySelector("#tcanvas");
+                    var xlabel = this.getAttribute("data-xlabel");
+                    var ylabel = this.getAttribute("data-ylabel");
+                    var xtype = this.getAttribute("data-xtype");
+                    var ytype = this.getAttribute("data-ytype");
+                    var appendData = this.getAttribute("data-append");
+                    var showPlant = this.getAttribute("data-show-plant");
+                    var showReference = this.getAttribute("data-show-reference");
+                    if (appendData !== null) {
+                        this.appendData = (appendData.toLowerCase() === "true");
+                    }
+                    else {
+                        this.appendData  = false;
+                    }
+                    if (showPlant !== null) {
+                        this.showPlant = (showPlant.toLowerCase() === "true");
+                    }
+                    else {
+                        this.showPlant = true;
+                    }
+                    if (showReference !== null) {
+                        this.showReference = (showReference.toLowerCase() === "true");
+                    }
+                    else {
+                        this.showReference = true;
+                    }
+
+                    if (xlabel === null) {
+                        xlabel = "";
+                    }
+                    if (ylabel === null) {
+                        ylabel = "";
+                    }
+                    if (xtype === null) {
+                        xtype = "linear";
+                    }
+                    if (ytype === null) {
+                        ytype = "linear";
+                    }
+
+                    var chart = new Chart(ctx, {
+                        // The type of chart we want to create
+                        type: "line",
+
+                        // The data for our dataset
+                        data: {
+                            datasets: [
+                            {
+                                label: "Current",
+                                fill: "false",
+                                backgroundColor: "white",
+                                borderColor: "blue" // The main line color
+                            }
+                            ]
+                        },
+
+                        // Configuration options go here
+                        options: {
+                            scales: {
+                                xAxes: [{
+                                    type: xtype,
+                                    position: "bottom",
+                                    scaleLabel: {
+                                        display: true,
+                                        labelString: xlabel
+                                    }
+                                }],
+                                yAxes: [{
+                                    type: ytype,
+                                    scaleLabel: {
+                                        display: true,
+                                        labelString: ylabel
+                                    }
+                                }]
+                            },
+                            responsive : false
+                        }
+                    });
+                    if (this.showReference) {
+                        chart.data.datasets.push(
+                            {
+                                label: "Reference",
+                                fill: "false",
+                                backgroundColor: "white",
+                                borderColor: "gray"
+                            }
+                        );
+                    }
+                    if (this.showPlant) {
+                        chart.data.datasets.push(
+                            {
+                                label: "Plant",
+                                fill: "false",
+                                backgroundColor: "white",
+                                borderColor: "red"
+                            }
+                        );
+                    }
+                    this.showPlantIdx = (chart.data.datasets.length - 1);
+                    chart.update();
+                    this.chart = chart;
+                }
+            }
+
+            document.registerElement("pmc-2d-line-plot", {
+                prototype: PMC2DLinePlot.prototype
+            });
+
+       })();
+        </script>
+   </body>
+</html>

@@ -248,6 +248,8 @@
                         this.transformationsViewer.show();
                     }.bind(this);
 
+
+                    this.streamer.addTransformationListener(this.transformationsViewer);
                     this.pageListeners = [this];
                     this.userLogoutListeners = [this];
                     this.addPageListener(this.scheduleSelector);
@@ -328,6 +330,7 @@
                 disableAllButPageSelect() {
                     this.loadPlantButton.disabled = true;
                     this.editScheduleButton.disabled = true;
+                    this.transformationsButton.disabled = true;
                     this.viewPlantButton.disabled = true;
                     this.viewScheduleButton.disabled = true;
                     this.copyFromReferenceScheduleButton.disabled = true;
@@ -351,6 +354,7 @@
                             var transformations = JSON.parse(response);
                             this.transformationsViewer.setTransformations(transformations);
                             this.editScheduleButton.disabled = false;
+                            this.transformationsButton.disabled = false;
                             this.viewScheduleButton.disabled = false;
                             this.viewPlantButton.disabled = false;
                             this.referenceSelectScheduleButton.disabled = false;

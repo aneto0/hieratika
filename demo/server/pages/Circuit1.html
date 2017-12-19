@@ -1,6 +1,7 @@
 <html>
     <head>
         <link rel="import" href="/libraries.html">
+        <link rel="import" href="/pmc-2d-line-plot.html">
         <link rel="import" href="/pmc-component.html">
         <link rel="import" href="/pmc-input.html">
     </head>
@@ -73,13 +74,18 @@
                     </table>
                 </td>
                 <td>
-                    <table style="border-width: 1px; background-color:#B22222; color: white;">
+                    <table style="border-width: 1px;">
                         <tr>
-                            <td colspan="2">Expected output</td>
+                            <td colspan="2" style="background-color:#B22222; color: white;">Expected output</td>
                         </tr>
                         <tr>
-                            <td>V<sub>OUT</sub></td><td><pmc-input id="CC@SIM@VOUT"></pmc-input></td>
+<!--                            <td>V<sub>OUT</sub></td><td><pmc-input id="CC@SIM@VOUT"></pmc-input></td>-->
+                            <td><pmc-2d-line-plot id="CC@SIM@VOUT" data-xlabel="Hz" data-ylabel="Vout (V)" data-xtype="linear" data-append="true" data-append="true" data-show-plant="false" data-show-reference="false"></pmc-2d-line-plot></td>
                         </tr>
+                        <tr>
+                            <td><pmc-2d-line-plot id="CC@SIM@VANGLE" data-xlabel="Hz" data-ylabel="(rad)" data-xtype="linear" data-append="true" data-show-plant="false" data-show-reference="false"></pmc-2d-line-plot></td>
+                        </tr>
+
                     </table>
                 </td>
             </tr>

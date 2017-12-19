@@ -43,7 +43,23 @@
                     var abortButton = this.shadowRoot.querySelector("#abortbtn");
                     var closeButton = this.shadowRoot.querySelector("#closebtn");
                     this.runButton.onclick = function() {
+                        var mainFramePMCComponents = parent._pmcMainEditor.getAllPMCComponents();
                         for (var i=0; i<this.transformations.length; i++) {
+                            var transformation = this.transformations[i];
+                            transformation.progressBar.value = 0;
+                            var outputKeys = Object.keys(transformation.outputs);
+                            for (var j=0; j<outputKeys.length; j++) {
+                                var mapname = transformation.outputs[outputKeys[j]];
+                                if (mapname !== undefined) {
+                                    var comps = mainFramePMCComponents[mapname];
+                                    if (comps !== undefined) {
+                                        for (var z=0; z<comps.length; z++) {
+                                            //Reset the components
+                                            comps[z].reset();
+                                        }
+                                    }
+                                }
+                            }
                             this.runTransformation(this.transformations[i]);
                         }
                     }.bind(this);
@@ -85,7 +101,7 @@
                                 inputs: JSON.stringify(inputs)
                             },
                             success: function (response) {
-                                alert(response);
+                                transformation["uid"] = "" + response;
                             },
                             error: function (response) {
                                 console.log(response);
@@ -108,11 +124,41 @@
                         var row = this.transformationsTable.insertRow();
                         var fName = row.insertCell(0);
                         fName.innerHTML = funName;
-                        var pbar = row.insertCell(1);
+                        var pbarCell = row.insertCell(1);
                         row.title = outputs + " = " + funName + "(" + inputs + ")";
-                        pbar.innerHTML = "<progress value=\"0\" max=\"100\" id=\"" + fuid + "\"></progress>";
+                        pbarCell.innerHTML = "<progress value=\"0\" max=\"100\" id=\"pbar_" + fuid + "\"></progress>";
+                        var pbar = this.shadowRoot.querySelector("#pbar_" + fuid);
+                        transformations[i]["progressBar"] = pbar;
                     }
                     this.runButton.disabled = (transformations.length === 0);
+                }
+
+                transformationUpdated(transformationInfo) {
+                    var mainFramePMCComponents = parent._pmcMainEditor.getAllPMCComponents();
+                    for (var i=0; i<this.transformations.length; i++) {
+                        var transformation = this.transformations[i];
+                        if (transformation.uid === transformationInfo["transformationUID"]) {
+                            var progressValue = parseFloat(transformationInfo["progress"]);
+                            progressValue *= 100;
+                            transformation.progressBar.value = "" + progressValue;
+
+                            var outputs = transformationInfo["outputs"];
+                            var outputKeys = Object.keys(outputs);
+                            for (var j=0; j<outputKeys.length; j++) {
+                                //Map the transformation output (i.e. the variable name has seen by the transformation) to the variable name in the UI
+                                var mapname = transformation.outputs[outputKeys[j]];
+                                if (mapname !== undefined) {
+                                    var comps = mainFramePMCComponents[mapname];
+                                    if (comps !== undefined) {
+                                        for (var z=0; z<comps.length; z++) {
+                                            comps[z].setValue(outputs[outputKeys[j]]);
+                                        }
+                                    }
+                                }
+                            } 
+                            break;
+                        }
+                    }
                 }
 
                 show() {
