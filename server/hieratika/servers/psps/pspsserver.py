@@ -908,6 +908,73 @@ class PSPSServer(HieratikaServer):
         self.mux.release()
         return ret
 
+    def updateLibrary(self, rec, variableValue):
+        """ Updates the values of the variables mapped in a library.
+
+        Args:
+            rec (xmlElement): record which contains the library:
+            variableValue (str): the variable value which shall contain the username of the owner of the variable and the name of the library separated by a / 
+        """
+        ok = True
+        variableValueOwnerLibName = variableValues.split("/")
+        if (len(variableValueOwnerLibName) < 2):
+            log.critical("The library variable value shall contain the owner username and the name of the variable separated by a /")
+            ok = False 
+        #The variable name i the 
+        libraryXml = rec.find("./ns0:library", self.xmlns)
+        if (ok):
+            username = variableValueOwnerLibName[0]
+            libraryName = variableValueOwnerLibName[1]
+            if(libraryXml is not None):
+                libraryTypeXml = libraryXml.find("./ns0:type", self.xmlns)
+                sourceLibraryVariables = []
+                destinationPlantScheduleVariables = []
+                if (libraryTypeXml is not None):
+                    libraryType = libraryTypeXml.text
+                    mappingsXml = libraryXml.find("./ns0:mappings", self.xmlns)
+                    if (mappingsXml is not None):
+                        mapsXml = mappingsXml.findall("./ns0:map", self.xmlns)
+                        for mapXml in mapsXml:
+                            mapSourceXml = mapXml.find("./ns0:source", self.xmlns)
+                            mapDestinationXml = mapXml.find("./ns0:destination", self.xmlns)
+                            if (mapSourceXml is not None):
+                                sourceLibraryVariables.append(mapSourceXml.text)
+                            else:
+                                log.critical("Could not find ns0:source mappings for {0}".format(nameXml.text))
+                                ok = False
+                                break
+                            if (mapDestinationXml is not None):
+                                destinationPlantScheduleVariables.append(mapDestinationXml.text)
+                            else:
+                                log.critical("Could not find ns0:destination mappings for {0}".format(nameXml.text))
+                                ok = False
+                                break
+                    else:
+                        log.critical("ns0:mappingsXml could not be found {0}".format(libraryName))
+                else:
+                    log.critical("ns0:type could not be found {0}".format(libraryName))
+                if (ok):
+                    ok = (len(sourceLibraryVariables) == len(destinationPlantScheduleVariables))
+                
+                if (ok):
+                    if (self.standalone):
+                        directory = "{0}/psps/libraries/{1}".format(self.baseDir, libraryType)
+                    else:
+                        directory = "{0}/users/{1}/libraries/{2}".format(self.baseDir, username, libraryType)
+
+                    libraryUID = "{0}/{1}.xml".format(directory, libraryName)
+                    libraryVariables = self.getLibraryVariablesValues(self, libraryUID)
+                    for (source, destination) in zip(sourceLibraryVariables, destinationPlantScheduleVariables):
+                        if (source in libraryVariables):
+                            self.updateVariable(destination, root, libraryVariables[source])
+                        else:
+                            log.critical("{0} could not be found in {1}".format(source, libraryName))
+                else:
+                    log.critical("Number of source variables ({0}) is different from number of destination variables ({1})".format(len(sourceLibraryVariables), len(destinationPlantScheduleVariables)))
+            else:
+                log.critical("ns0:library could not be found {0}".format(libraryName))
+
+
     def updateVariable(self, variableName, root, variableValue):
         """ Updates the value of the a variable in a given xml (plant or schedule).
             This method is not thread-safe and expects the methods acquire and release to be called by the caller.
@@ -948,6 +1015,9 @@ class PSPSServer(HieratikaServer):
                 valuesXml = etree.SubElement(recordXml, "{{{0}}}values".format(self.xmlns["ns0"]))
                 valueXml = etree.SubElement(valuesXml, "{{{0}}}value".format(self.xmlns["ns0"]))
                 valueXml.text = json.dumps(variableValue)
+                typeFromXml = self.convertVariableTypeFromXml(rec.attrib["{" + self.xmlns["xsi"] + "}type"])
+                if (typeFromXml == "library"):
+                    self.updateLibrary(recordXml, root, variableValue)
                 ok = True
             else:
                 log.critical("Could not find {0} . Failed while looking for {1}".format(variableName, fullVariablePath))

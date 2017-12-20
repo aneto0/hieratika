@@ -87,8 +87,8 @@
                         return template;
                     }
 
-                    libraryChanged (newLibraryName) {
-                        this.value = newLibraryName;
+                    libraryChanged (libraryOwner, newLibraryName) {
+                        this.value = libraryOwner + "/" + newLibraryName;
                         this.checkValues();
                     }
 

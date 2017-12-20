@@ -283,15 +283,25 @@
 
                 loginSuccessful(user) {
                     this.user = user;
-                    if (!this.standalone) {
-                        this.streamer.start();
-                    }
-                    this.usernameDisplay.innerHTML = this.user.username; 
-                    this.usernameDisplay.title = "username: " + this.user.username;
-
-                    this.loginButton.innerHTML = "<i class='fa fa-user-o'> Logout</i>";
-
-                    this.pageSelectButton.disabled = false;
+                    $.ajax({
+                        type: "post",
+                        url: "/getusers",
+                        data: {
+                            token : parent._currentToken
+                        },
+                        success: function (response) {
+                            this.streamer.start();
+                            parent._allUsers = $.parseJSON(response);
+                            this.usernameDisplay.innerHTML = this.user.username; 
+                            this.usernameDisplay.title = "username: " + this.user.username;
+                            this.loginButton.innerHTML = "<i class='fa fa-user-o'> Logout</i>";
+                            this.pageSelectButton.disabled = false;
+                        }.bind(this),
+                        error: function (response) {
+                            console.log(response);
+                            alert(response);
+                        }
+                    });
                 }
                 
                 firePageChanged(page) {

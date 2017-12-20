@@ -50,7 +50,7 @@
                                 <alias>LIB1</alias>
                                 <description>Library</description>
                                 <values>
-                                  <value>Example 1</value>
+                                  <value>codac-dev-1/Example 1</value>
                                 </values>
                                 <library>
                                     <type>testlib1</type>

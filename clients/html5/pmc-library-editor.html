@@ -9,6 +9,7 @@
                 </br>
                 <table style="border-style:solid;border-width:1px;width: 100%">
                     <tr>
+                        <td><select id="uselect" name="uselect"></select></td>
                         <td><select id="tselect" name="tselect"></select></td>
                         <td><button id="saveAsButton">Save as...</button><input type="text" id="saveAsLibraryName"></input></td>
                     </tr>
@@ -45,21 +46,43 @@
                         return libUID;
                     }
 
-                    showEditor (availableLibraries, currentLibraryName) {
-                        var diag = this.shadowRoot.querySelector("#dselector");
-                        var selector = this.shadowRoot.querySelector("#tselect");
-                        selector.innerHTML = "";
-                        $.each(availableLibraries, function(i, library) {
-                            var option = document.createElement( 'option' );
-                            option.uid = library.uid;
-                            option.value = library.name;
-                            option.text = library.name;
-                            option.description = library.description;
-                            selector.add(option);
+                    populateLibraries (username, selectedLibrary) {
+                        $.ajax({
+                            type: "post",
+                            url: "/getlibraries",
+                            data: {
+                                token: parent._currentToken,
+                                username: username,
+                                type: this.owner.getLibraryType()
+                            },
+                            success: function (response) {
+                                var availableLibraries = $.parseJSON(response);
+                                var selector = this.shadowRoot.querySelector("#tselect");
+                                var diag = this.shadowRoot.querySelector("#dselector");
+                                selector.innerHTML = "";
+                                $.each(availableLibraries, function(i, library) {
+                                    var option = document.createElement( 'option' );
+                                    option.uid = library.uid;
+                                    option.value = library.name;
+                                    option.text = library.name;
+                                    option.description = library.description;
+                                    selector.add(option);
+                                });
+                                selector.value = selectedLibrary;
+                                this.editLibrary();
+                                diag.showModal();
+                            }.bind(this),
+                            error: function (response) {
+                                console.log(response);
+                                alert(response);
+                            }
                         });
-                        selector.value = currentLibraryName;
-                        this.editLibrary();
-                        diag.showModal();
+                    }
+
+                    showEditor (currentLibrary) {
+                        var userSelector = this.shadowRoot.querySelector("#uselect");
+                        //TODO POPULATE USERS HEE
+                         
                     }
 
                     getLibrary(libraryName, successFn) {
@@ -222,7 +245,6 @@
                                         if (library.uid !== undefined) {
                                             var optionsAsArray = Array.apply(null, this.selector.options).map(function(el){return el.text;});
                                             if(optionsAsArray.indexOf(saveAsName) == -1) {
-                                                this.selector.options
                                                 var option = document.createElement( 'option' );
                                                 option.uid = library.uid;
                                                 option.value = library.name;

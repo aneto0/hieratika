@@ -242,34 +242,20 @@
                     this.okCallbackFunction = okCallbackFun;
                     this.okButton.disabled = true;
                     this.scheduleSelect.disabled = true;
-                    $.ajax({
-                        type: "post",
-                        url: "/getusers",
-                        data: {
-                            token : parent._currentToken
-                        },
-                        success: function (response) {
-                            var usersJSon = $.parseJSON(response);
-                            this.userSelect.innerHTML = "";
-                            this.scheduleSelect.innerHTML = "";
-                            var option1 = document.createElement("option");
-                            option1.text = "Select user";
-                            option1.value = NONE_NAME;
-                            this.scheduleSelect.appendChild(option1);
-                            for (var u in usersJSon) {
-                                option1 = document.createElement("option");
-                                var username = usersJSon[u].username;
-                                option1.text = username;
-                                option1.value = username;
-                                this.userSelect.appendChild(option1);
-                            }
-                            this.diag.showModal();
-                        }.bind(this),
-                        error: function (response) {
-                            console.log(response);
-                            alert(response);
-                        }
-                    });
+                    this.userSelect.innerHTML = "";
+                    this.scheduleSelect.innerHTML = "";
+                    var option1 = document.createElement("option");
+                    option1.text = "Select user";
+                    option1.value = NONE_NAME;
+                    this.scheduleSelect.appendChild(option1);
+                    for (var u in parent._allUsers) {
+                        option1 = document.createElement("option");
+                        var username = parent._allUsers[u].username;
+                        option1.text = username;
+                        option1.value = username;
+                        this.userSelect.appendChild(option1);
+                    }
+                    this.diag.showModal();
                 }
             }
 

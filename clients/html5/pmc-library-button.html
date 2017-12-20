@@ -44,10 +44,10 @@
                         return template;
                     }
 
-                    libraryChanged (newLibraryName) {
+                    libraryChanged (libraryOwner, newLibraryName) {
                         if (!this.isReadOnly()) {
                             this.buttonInput.innerHTML = newLibraryName;
-                            this.setValue(newLibraryName);
+                            this.setValue(libraryOwner + "/" + newLibraryName);
                             this.checkValues(this.buttonInput);
                         }
                     }

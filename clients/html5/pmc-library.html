@@ -25,7 +25,8 @@
 
                 showLibraryEditor () {
                     //document.body.appendChild(this.libraryEditor);
-                    var user = JSON.parse(localStorage.user);
+                    this.libraryEditor.showEditor(this.getValue());
+                    /*var user = JSON.parse(localStorage.user);
                     $.ajax({
                         type: "post",
                         url: "/getlibraries",
@@ -43,23 +44,10 @@
                             console.log(response);
                             alert(response);
                         }
-                    });
+                    });*/
 
                 }
             
-                setAvailableLibraries(libraries) {
-                    //copy the array
-                    this.availableLibraries = libraries.slice();
-                }
-
-                addAvailableLibrary(library) {
-                    this.availableLibraries.push(library);
-                } 
-
-                getAvailableLibraries() {
-                    return this.availableLibraries;
-                }
-
                 setReadOnly (isReadOnly) {
                     super.setReadOnly(isReadOnly);
                     this.libraryEditor.setReadOnly(isReadOnly);
@@ -75,7 +63,7 @@
                     this.libraryEditor.setReference(referenceToSet);
                 }
 
-                libraryChanged (newLibraryName) {
+                libraryChanged (libraryOwner, newLibraryName) {
                 }
             }
         </script>
