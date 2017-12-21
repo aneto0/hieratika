@@ -10,7 +10,7 @@
                 <table style="border-style:solid;border-width:1px;width: 100%">
                     <tr>
                         <td><select id="uselect" name="uselect"></select></td>
-                        <td><select id="tselect" name="tselect"></select></td>
+                        <td><select id="lselect" name="lselect"></select></td>
                         <td><button id="saveAsButton">Save as...</button><input type="text" id="saveAsLibraryName"></input></td>
                     </tr>
                     <tr>
@@ -35,7 +35,7 @@
                     }
 
                     getLibraryUID (libraryName) {
-                        var allLibraries = this.owner.getAvailableLibraries();
+                        var allLibraries = this.availableLibraries;
                         var lib = allLibraries.find(function (element) {
                             return (element.name === libraryName);
                         });
@@ -46,7 +46,7 @@
                         return libUID;
                     }
 
-                    populateLibraries (username, selectedLibrary) {
+                    populateLibraries (username, readyFun) {
                         $.ajax({
                             type: "post",
                             url: "/getlibraries",
@@ -56,21 +56,18 @@
                                 type: this.owner.getLibraryType()
                             },
                             success: function (response) {
-                                var availableLibraries = $.parseJSON(response);
-                                var selector = this.shadowRoot.querySelector("#tselect");
-                                var diag = this.shadowRoot.querySelector("#dselector");
-                                selector.innerHTML = "";
-                                $.each(availableLibraries, function(i, library) {
+                                this.availableLibraries = $.parseJSON(response);
+                                this.librarySelector.innerHTML = "";
+                                for (var i=0; i<this.availableLibraries.length; i++) {
+                                    var library = this.availableLibraries[i];
                                     var option = document.createElement( 'option' );
                                     option.uid = library.uid;
                                     option.value = library.name;
                                     option.text = library.name;
                                     option.description = library.description;
-                                    selector.add(option);
-                                });
-                                selector.value = selectedLibrary;
-                                this.editLibrary();
-                                diag.showModal();
+                                    this.librarySelector.add(option);
+                                }
+                                readyFun();
                             }.bind(this),
                             error: function (response) {
                                 console.log(response);
@@ -79,10 +76,28 @@
                         });
                     }
 
-                    showEditor (currentLibrary) {
-                        var userSelector = this.shadowRoot.querySelector("#uselect");
-                        //TODO POPULATE USERS HEE
-                         
+                    populateUsers(libraryUser) {
+                        if (this.userSelector.options.length === 0) {
+                            for (var u in parent._allUsers) {
+                                var option1 = document.createElement("option");
+                                var username = parent._allUsers[u].username;
+                                option1.text = username;
+                                option1.value = username;
+                                this.userSelector.appendChild(option1);
+                            }
+                        }
+                        this.userSelector.value = libraryUser;
+                    }
+
+                    showEditor (libraryUser, libraryValue) {
+                        showWaitDialog();
+                        this.populateUsers(libraryUser); 
+                        this.populateLibraries(libraryUser, function() {
+                            this.librarySelector.value = libraryValue;
+                            this.editLibrary();
+                            this.diag.showModal();
+                        }.bind(this));
+                        closeWaitDialog();
                     }
 
                     getLibrary(libraryName, successFn) {
@@ -108,14 +123,30 @@
 
                     editLibrary (valueOnly = false) {
                         var editorComponents = this.iFrameEditor.contentDocument._frameComponents;
-                        if (!valueOnly) {
-                            var ownerReference = this.owner.getReference();
-                            var ownerReferenceValue = this.owner.getReferenceValue();
-                            var ownerInitialValue = this.owner.getInitialValue();
-                            var ownerPlantValue = this.owner.getPlantValue();
-                            if (ownerReference !== "none") {
-                                if (ownerReferenceValue !== undefined) {
-                                    this.getLibrary(ownerReferenceValue, function (response) {
+                        if (editorComponents !== undefined) {
+                            if (!valueOnly) {
+                                var ownerReference = this.owner.getReference();
+                                var ownerReferenceValue = this.owner.getReferenceValue();
+                                var ownerInitialValue = this.owner.getInitialValue();
+                                var ownerPlantValue = this.owner.getPlantValue();
+                                if (ownerReference !== "none") {
+                                    if (ownerReferenceValue !== undefined) {
+                                        this.getLibrary(ownerReferenceValue, function (response) {
+                                            var variables = $.parseJSON(response);
+                                            var keys = Object.keys(variables);
+                                            for (var i in keys) { 
+                                                var variableName = keys[i];
+                                                var variableValue = variables[keys[i]];
+                                                var comps = editorComponents[variableName];
+                                                for (var c in comps) {
+                                                    comps[c].setReferenceValue(variableValue);
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
+                                if (ownerInitialValue !== undefined) {
+                                    this.getLibrary(ownerInitialValue, function (response) {
                                         var variables = $.parseJSON(response);
                                         var keys = Object.keys(variables);
                                         for (var i in keys) { 
@@ -123,73 +154,61 @@
                                             var variableValue = variables[keys[i]];
                                             var comps = editorComponents[variableName];
                                             for (var c in comps) {
-                                                comps[c].setReferenceValue(variableValue);
+                                                comps[c].setInitialValue(variableValue);
                                             }
                                         }
                                     });
                                 }
-                            }
-                            if (ownerInitialValue !== undefined) {
-                                this.getLibrary(ownerInitialValue, function (response) {
-                                    var variables = $.parseJSON(response);
-                                    var keys = Object.keys(variables);
-                                    for (var i in keys) { 
-                                        var variableName = keys[i];
-                                        var variableValue = variables[keys[i]];
-                                        var comps = editorComponents[variableName];
-                                        for (var c in comps) {
-                                            comps[c].setInitialValue(variableValue);
+                                if (ownerPlantValue !== undefined) {
+                                    this.getLibrary(ownerPlantValue, function (response) {
+                                        var variables = $.parseJSON(response);
+                                        var keys = Object.keys(variables);
+                                        for (var i in keys) { 
+                                            var variableName = keys[i];
+                                            var variableValue = variables[keys[i]];
+                                            var comps = editorComponents[variableName];
+                                            for (var c in comps) {
+                                                comps[c].setPlantValue(variableValue);
+                                            }
                                         }
-                                    }
-                                });
-                            }
-                            if (ownerPlantValue !== undefined) {
-                                this.getLibrary(ownerPlantValue, function (response) {
-                                    var variables = $.parseJSON(response);
-                                    var keys = Object.keys(variables);
-                                    for (var i in keys) { 
-                                        var variableName = keys[i];
-                                        var variableValue = variables[keys[i]];
-                                        var comps = editorComponents[variableName];
-                                        for (var c in comps) {
-                                            comps[c].setPlantValue(variableValue);
-                                        }
-                                    }
-                                });
-                            }
-                        } 
-                        if (this.selector.selectedIndex >= 0) {
-                            var option = this.selector.options[this.selector.selectedIndex];
-                            var libraryName = option.text;
-                            this.getLibrary(libraryName, function (response) {
-                                var variables = $.parseJSON(response);
-                                var keys = Object.keys(variables);
-                                for (var i in keys) { 
-                                    var variableName = keys[i];
-                                    var variableValue = variables[keys[i]];
-                                    var comps = editorComponents[variableName];
-                                    for (var c in comps) {
-                                        comps[c].setValue(variableValue);
-                                    }
+                                    });
                                 }
-                                this.saveAsLibraryName.value = libraryName;
-                                this.descriptionTextArea.value = option.description;
-                            });
-                        } 
+                            } 
+                            if (this.librarySelector.selectedIndex >= 0) {
+                                var option = this.librarySelector.options[this.librarySelector.selectedIndex];
+                                var libraryName = option.text;
+                                this.getLibrary(libraryName, function (response) {
+                                    var variables = $.parseJSON(response);
+                                    var keys = Object.keys(variables);
+                                    for (var i in keys) { 
+                                        var variableName = keys[i];
+                                        var variableValue = variables[keys[i]];
+                                        var comps = editorComponents[variableName];
+                                        for (var c in comps) {
+                                            comps[c].setValue(variableValue);
+                                        }
+                                    }
+                                    this.saveAsLibraryName.value = libraryName;
+                                    this.descriptionTextArea.value = option.description;
+                                });
+                            } 
+                        }
                     }
 
                     createdCallback() {
                         // Get template 
                         var template = importDoc.querySelector("#tselector");
 
+                        this.availableLibraries = []; 
                         // import template into
                         var clone = document.importNode(template.content, true);
                         var root = this.createShadowRoot();
      
                         root.appendChild(clone);
 
-                        var diag = this.shadowRoot.querySelector("#dselector");
-                        this.selector = this.shadowRoot.querySelector("#tselect");
+                        this.diag = this.shadowRoot.querySelector("#dselector");
+                        this.librarySelector = this.shadowRoot.querySelector("#lselect");
+                        this.userSelector = this.shadowRoot.querySelector("#uselect");
                         this.okButton = this.shadowRoot.querySelector("#tselectorOK");
                         var cancelButton = this.shadowRoot.querySelector("#tselectorCancel");
                         this.saveAsButton = this.shadowRoot.querySelector("#saveAsButton");
@@ -197,17 +216,28 @@
                         this.descriptionTextArea = this.shadowRoot.querySelector("#descriptionTextArea");
 
                         this.okButton.onclick = function() {
-                            this.selected = this.selector.options[this.selector.selectedIndex].text;
-                            this.owner.libraryChanged(this.selected);
-                            diag.close();
+                            var selectedUser = this.userSelector.options[this.userSelector.selectedIndex].text;
+                            var selectedLibrary = this.librarySelector.options[this.librarySelector.selectedIndex].text;
+                            this.owner.libraryChanged(selectedUser, selectedLibrary);
+                            this.diag.close();
                         }.bind(this); //bind is needed to make sure that the "this" is still valid in the context of the callback
 
                         cancelButton.onclick = function() {
-                            this.selected = "";
-                            diag.close();
+                            this.diag.close();
                         }.bind(this); //bind is needed to make sure that the "this" is still valid in the context of the callback
 
-                        this.selector.onchange = function() {
+                        this.userSelector.onchange = function() {
+                            var selectedUser = this.userSelector.options[this.userSelector.selectedIndex].text;
+                            this.populateLibraries(selectedUser, function() {
+                                if (this.availableLibraries.length > 0) {
+                                    var selectedLibrary = this.availableLibraries[0].name;
+                                    this.librarySelector.value = selectedLibrary;
+                                }
+                                this.editLibrary();
+                            }.bind(this));
+                        }.bind(this);
+
+                        this.librarySelector.onchange = function() {
                             this.editLibrary(true);
                         }.bind(this);
 
@@ -243,15 +273,15 @@
                                     success: function (response) {
                                         var library = $.parseJSON(response);
                                         if (library.uid !== undefined) {
-                                            var optionsAsArray = Array.apply(null, this.selector.options).map(function(el){return el.text;});
+                                            var optionsAsArray = Array.apply(null, this.librarySelector.options).map(function(el){return el.text;});
                                             if(optionsAsArray.indexOf(saveAsName) == -1) {
                                                 var option = document.createElement( 'option' );
                                                 option.uid = library.uid;
                                                 option.value = library.name;
                                                 option.text = library.name;
                                                 option.description = library.description;
-                                                this.selector.add(option);
-                                                this.selector.value = saveAsName;
+                                                this.librarySelector.add(option);
+                                                this.librarySelector.value = saveAsName;
                                                 this.owner.addAvailableLibrary({id:library.id, name:saveAsName});
                                             }
                                             alert("Library updated successfully!");
@@ -264,7 +294,6 @@
                                 });
                             }
                         }.bind(this);
-                        
                     }
 
                     setOwnerComponent(owner) {
@@ -294,12 +323,12 @@
                                 }
                             }.bind(this)
                         );
-
-                        $.each(editorComponents, function (i, pmcCompArray) {
-                            $.each(pmcCompArray, function (j, pmcComp) {
-                                pmcComp.domLoaded();
-                            });
-                        });
+                        for (var i=0; i<editorComponents.length; i++) {
+                            var pmcCompArray = editorComponents[i];
+                            for (var j=0; j<pmcCompArray.length; j++) {
+                                pmcCompArray[j].domLoaded();
+                            }
+                        }
                     }
 
                     loadEditor(libraryType) {
@@ -320,11 +349,14 @@
 
                     setReference(referenceToSet) {
                         var editorComponents = this.iFrameEditor.contentDocument._frameComponents;
-                        $.each(editorComponents, function (i, pmcCompArray) {
-                            $.each(pmcCompArray, function (j, pmcComp) {
-                                pmcComp.setReference(referenceToSet);
-                            });
-                        });
+                        if (editorComponents !== undefined) {
+                            for (var i=0; i<editorComponents.length; i++) {
+                                var pmcCompArray = editorComponents[i];
+                                for (var j=0; j<pmcCompArray.length; j++) {
+                                    pmcCompArray[j].setReference(referenceToSet);
+                                }
+                            }
+                        }
                     }
 
                     setUserAllowedToWrite (isUserAllowedToWrite) {

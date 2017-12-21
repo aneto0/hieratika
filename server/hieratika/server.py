@@ -119,9 +119,9 @@ class HieratikaServer(object):
                                 time.sleep(0.01)
                         # Only trigger if the source was not from this tid. If it an update from 
                         # the plant, always trigger as some of the parameters might have failed to load
-                        if ("scheduleUID" in encodedPy):
-                            if (encodedPy["tid"] == tid):
-                                encodedJson = ""
+                        #if ("scheduleUID" in encodedPy):
+                        #    if (encodedPy["tid"] == tid):
+                        #        encodedJson = ""
                 yield "data: {0}\n\n".format(encodedJson)
         except Exception as e:
             log.critical("streamData failed {0}".format(e))

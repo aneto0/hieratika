@@ -29,8 +29,9 @@
                         }
                         if ((!updateSchedule) || (scheduleUID === parent._currentScheduleUID)) {
                             //variables is a dictionary with name:value pairs
+                            var mainFramePMCComponents = parent._pmcMainEditor.getAllPMCComponents();
                             for (var name in variables) {
-                                var targetElements = document._frameComponents[name];
+                                var targetElements = mainFramePMCComponents[name];
                                 var value = variables[name];
                                 if (targetElements  !== undefined) {
                                     $.each(targetElements, function (i, targetElement) {

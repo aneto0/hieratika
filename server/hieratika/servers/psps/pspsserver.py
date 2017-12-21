@@ -30,6 +30,7 @@ import shutil
 import time
 import timeit
 import threading
+import uuid
 #from xml.etree import cElementTree
 #xml.etree cElementTree does not support reverse for parents of a given node
 from lxml import etree
@@ -111,9 +112,11 @@ class PSPSServer(HieratikaServer):
 
         try:
             ret = self.xmlIds[xmlPath]
+            log.debug("Found {0} in cache and the value is {1}".format(xmlPath, ret))
         except KeyError:
-            ret = str(time.time())
+            ret = uuid.uuid1()
             self.xmlIds[xmlPath] = ret
+            log.debug("Not found {0} in cache and the generated value is {1}".format(xmlPath, ret))
         self.mux.release()
         return ret
 
@@ -648,8 +651,11 @@ class PSPSServer(HieratikaServer):
             root = tree.getroot()
             for name in variables:
                 value = variables[name]
-                if(self.updateVariable(name, root, value)):
-                    updatedVariables[name] = value
+                sucessfullyUpdatedVariables = self.updateVariable(name, root, value)
+                for var in sucessfullyUpdatedVariables:
+                    varName = var[0]
+                    varValue = var[1] 
+                    updatedVariables[varName] = varValue
         tree.write(scheduleUID)
         self.lockPool.release(xmlId)
         log.debug("Committed schedule variables {0}".format(updatedVariables))
@@ -665,8 +671,11 @@ class PSPSServer(HieratikaServer):
             root = tree.getroot()
             for name in variables:
                 value = variables[name]
-                if(self.updateVariable(name, root, value)):
-                    updatedVariables[name] = value
+                sucessfullyUpdatedVariables = self.updateVariable(name, root, value)
+                for var in sucessfullyUpdatedVariables:
+                    varName = var[0]
+                    varValue = var[1] 
+                    updatedVariables[varName] = varValue
         tree.write(xmlPath)
         self.lockPool.release(xmlId)
         return updatedVariables 
@@ -908,15 +917,19 @@ class PSPSServer(HieratikaServer):
         self.mux.release()
         return ret
 
-    def updateLibrary(self, rec, variableValue):
+    def updateLibrary(self, rec, root, variableValue):
         """ Updates the values of the variables mapped in a library.
 
         Args:
             rec (xmlElement): record which contains the library:
+            root (Element node): the root of the xml to be updated.
             variableValue (str): the variable value which shall contain the username of the owner of the variable and the name of the library separated by a / 
+        Returns:
+            The list of updated variables as an array of variable/value tupples.
         """
+        updatedVariables = []
         ok = True
-        variableValueOwnerLibName = variableValues.split("/")
+        variableValueOwnerLibName = variableValue.split("/")
         if (len(variableValueOwnerLibName) < 2):
             log.critical("The library variable value shall contain the owner username and the name of the variable separated by a /")
             ok = False 
@@ -963,16 +976,19 @@ class PSPSServer(HieratikaServer):
                         directory = "{0}/users/{1}/libraries/{2}".format(self.baseDir, username, libraryType)
 
                     libraryUID = "{0}/{1}.xml".format(directory, libraryName)
-                    libraryVariables = self.getLibraryVariablesValues(self, libraryUID)
+                    libraryVariables = self.getLibraryVariablesValues(libraryUID)
                     for (source, destination) in zip(sourceLibraryVariables, destinationPlantScheduleVariables):
                         if (source in libraryVariables):
-                            self.updateVariable(destination, root, libraryVariables[source])
+                            #+ provides list concatenation
+                            updatedVariables = updatedVariables + self.updateVariable(destination, root, libraryVariables[source])
                         else:
                             log.critical("{0} could not be found in {1}".format(source, libraryName))
                 else:
                     log.critical("Number of source variables ({0}) is different from number of destination variables ({1})".format(len(sourceLibraryVariables), len(destinationPlantScheduleVariables)))
             else:
                 log.critical("ns0:library could not be found {0}".format(libraryName))
+
+        return updatedVariables
 
 
     def updateVariable(self, variableName, root, variableValue):
@@ -986,20 +1002,20 @@ class PSPSServer(HieratikaServer):
             variableValue (str): the value of the variable to be updated.
 
         Returns:
-            True if the variable is sucessfully updated.
+            An array of tupples with the updated variables/values (len(list) > 1 if a library is updated).
         """
 
         #Allow only one process to interact with a given xml at the time
         #Makes sure that this is both multi-processing and multi-threading safe
         log.debug("Updating {0} with value {1}".format(variableName, variableValue))
 
-        ok = False
+        updatedVariables = []
         #TODO for the time being I will encode the plant system name as the first structSeparator token. This needs discussion at some stage
         idx = variableName.find(self.structSeparator)
         if (idx != -1):
             plantSystemName = variableName[:idx]
-            variableName = variableName[idx + 1:]
-            path = variableName.split(self.structSeparator)
+            variableNameAfterPS = variableName[idx + 1:]
+            path = variableNameAfterPS.split(self.structSeparator)
            
             r = root.find("./ns0:plantSystems/ns0:plantSystem[ns0:name='{0}']/ns0:plantRecords".format(plantSystemName), self.xmlns)
             fullVariablePath = "." 
@@ -1015,16 +1031,17 @@ class PSPSServer(HieratikaServer):
                 valuesXml = etree.SubElement(recordXml, "{{{0}}}values".format(self.xmlns["ns0"]))
                 valueXml = etree.SubElement(valuesXml, "{{{0}}}value".format(self.xmlns["ns0"]))
                 valueXml.text = json.dumps(variableValue)
-                typeFromXml = self.convertVariableTypeFromXml(rec.attrib["{" + self.xmlns["xsi"] + "}type"])
+                typeFromXml = self.convertVariableTypeFromXml(recordXml.attrib["{" + self.xmlns["xsi"] + "}type"])
+                updatedVariables.append((variableName, variableValue))
                 if (typeFromXml == "library"):
-                    self.updateLibrary(recordXml, root, variableValue)
-                ok = True
+                    #+ provides list concatenation
+                    updatedVariables = updatedVariables + self.updateLibrary(recordXml, root, variableValue)
             else:
                 log.critical("Could not find {0} . Failed while looking for {1}".format(variableName, fullVariablePath))
         else:
             log.critical("No plant system defined for variable {0}".format(variableName))
 
-        return ok
+        return updatedVariables
 
     def getVariableValue(self, r, variableName, variables):
         """ Recursively gets all the variable values for a given plantSystem node in the xml.
@@ -1163,7 +1180,8 @@ class PSPSServer(HieratikaServer):
                 if (ok):
                     for name in variables:
                         value = variables[name]
-                        ok = self.updateVariable(name, root, value)
+                        updatedVariable = self.updateVariable(name, root, value)
+                        ok = (len(updateVariable) > 0) 
                         if (not ok):
                             break
             tree.write(libraryInstanceXmlFileLocation)

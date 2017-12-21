@@ -24,28 +24,10 @@
                 }
 
                 showLibraryEditor () {
-                    //document.body.appendChild(this.libraryEditor);
-                    this.libraryEditor.showEditor(this.getValue());
-                    /*var user = JSON.parse(localStorage.user);
-                    $.ajax({
-                        type: "post",
-                        url: "/getlibraries",
-                        data: {
-                            token: parent._currentToken,
-                            username: user.username,
-                            type: this.getLibraryType()
-                        },
-                        success: function (response) {
-                            var allLibraries = $.parseJSON(response);
-                            this.setAvailableLibraries(allLibraries);
-                            this.libraryEditor.showEditor(this.availableLibraries, this.getValue());
-                        }.bind(this),
-                        error: function (response) {
-                            console.log(response);
-                            alert(response);
-                        }
-                    });*/
-
+                    var libraryValueUser = this.getValue().split("/");
+                    var libraryUser = libraryValueUser[0];
+                    var libraryName = libraryValueUser[1];
+                    this.libraryEditor.showEditor(libraryUser, libraryName);
                 }
             
                 setReadOnly (isReadOnly) {
