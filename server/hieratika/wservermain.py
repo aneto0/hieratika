@@ -31,6 +31,7 @@ from flask import Flask, Response, request, send_from_directory
 ##
 # Project imports
 ##
+from hieratika.wloader import WLoader
 from hieratika.wserver import WServer
 from hieratika.wtransformation import WTransformation
 
@@ -53,6 +54,9 @@ wserver = WServer()
 
 # The WTransformation implementation
 wtransformation = WTransformation()
+
+# The WLoader implementation
+wloader = WLoader()
 
 def load(config):
     try:
@@ -82,6 +86,18 @@ def load(config):
             transformationClassNames = config.get("hieratika", "transformationClasses")
             log.info("Transformation classes are {0}".format(transformationClassNames))
             transformationClassNames = ast.literal_eval(transformationClassNames)
+
+        loaderModuleNames = []
+        loaderClassNames = []
+        if (config.has_option("hieratika", "loaderModules")):
+            loaderModuleNames = config.get("hieratika", "loaderModules")
+            log.info("Transformation modules are {0}".format(loaderModuleNames))
+            loaderModuleNames = ast.literal_eval(loaderModuleNames)
+
+            loaderClassNames = config.get("hieratika", "loaderClasses")
+            log.info("Transformation classes are {0}".format(loaderClassNames))
+            loaderClassNames = ast.literal_eval(loaderClassNames)
+
 
         pagesFolder = config.get("hieratika", "pagesFolder")
         #Translate into absolute path so that it can be used by other modules (which belong to other directories) as well.
@@ -137,6 +153,30 @@ def load(config):
 
         if (ok):
             wtransformation.setTransformations(transformations)
+
+        loaders = []
+        if (ok):
+            for loaderModuleName, loaderClassName in zip(loaderModuleNames, loaderClassNames):
+                loaderModule = importlib.import_module(loaderModuleName) 
+                loaderClass = getattr(loaderModule, loaderClassName)
+                loaderInstance = loaderClass()
+                loaders.append(loaderInstance)
+                log.info("Loading loader {0}.{1} common configuration".format(loaderModuleName, loaderClassName))
+                ok = loaderInstance.loadCommon(manager, config)
+                if (ok):
+                    log.info("Loading loader {0}.{1} configuration".format(loaderModuleName, loaderClassName))
+                    ok = loaderInstance.load(manager, config)
+                else:
+                    log.info("Failed Loading loader {0}.{1} common configuration".format(loaderModuleName, loaderClassName))
+
+                if (ok):
+                    loaderInstance.setServer(server)
+                else:
+                    log.info("Failed Loading vormation {0}.{1} configuration".format(loaderModuleName, loaderClassName))
+                    break
+
+        if (ok):
+            wloader.setLoaders(loaders)
 
         if (ok):
             #The web app which is a Flask standard application
@@ -196,6 +236,15 @@ def updateplant():
     log.debug("/updateplant")
     if (wserver.isTokenValid(request)):
         return wserver.updatePlant(request)
+    else:
+        return "InvalidToken"
+
+#Try to load the values into the plant
+@application.route("/loadintoplant", methods=["POST", "GET"])
+def loadintoplant():
+    log.debug("/loadintoplant")
+    if (wserver.isTokenValid(request)):
+        return wloader.loadIntoPlant(request)
     else:
         return "InvalidToken"
 

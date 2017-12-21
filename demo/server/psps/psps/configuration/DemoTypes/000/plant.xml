@@ -24,6 +24,14 @@
                                   <value>-109.0</value>
                                 </values>
                             </record>
+                            <record size="1" xsi:type="recordDouble">
+                                <name>DBL2</name>
+                                <alias>DBL2</alias>
+                                <description>Another Double value</description>
+                                <values>
+                                  <value>-109.0</value>
+                                </values>
+                            </record>
                             <record size="[5]" xsi:type="recordDouble">
                                 <name>DBLA</name>
                                 <alias>DBLA</alias>
@@ -58,6 +66,28 @@
                                         <map>
                                             <source>AA@BB@CC</source> 
                                             <destination>DT@BT@DBL</destination> 
+                                        </map>
+                                        <map>
+                                            <source>AA@BB@DD</source> 
+                                            <destination>DT@BT@DBL2</destination> 
+                                        </map>
+
+                                    </mappings>
+                                </library>
+                            </record>
+                            <record size="1" xsi:type="recordLibrary">
+                                <name>LIB2</name>
+                                <alias>LIB2</alias>
+                                <description>Library</description>
+                                <values>
+                                  <value>codac-dev-1/Example 1</value>
+                                </values>
+                                <library>
+                                    <type>testlib1</type>
+                                    <mappings>
+                                        <map>
+                                            <source>AA@BB@CC</source> 
+                                            <destination>DT@BT@DBL2</destination> 
                                         </map>
                                     </mappings>
                                 </library>

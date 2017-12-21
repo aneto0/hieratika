@@ -114,7 +114,7 @@ class PSPSServer(HieratikaServer):
             ret = self.xmlIds[xmlPath]
             log.debug("Found {0} in cache and the value is {1}".format(xmlPath, ret))
         except KeyError:
-            ret = uuid.uuid1()
+            ret = uuid.uuid1().hex
             self.xmlIds[xmlPath] = ret
             log.debug("Not found {0} in cache and the generated value is {1}".format(xmlPath, ret))
         self.mux.release()

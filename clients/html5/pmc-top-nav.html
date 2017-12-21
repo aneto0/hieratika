@@ -41,8 +41,9 @@
             </div>
             <button class="w3-bar-item w3-button w3-border-top" title="Commit all changes to current schedule" id="commitbtn"><i class="fa fa-floppy-o"></i> Commit</button>
             <button class="w3-bar-item w3-button" title="Undo all changes" id="undobtn"><i class="fa fa-undo"></i> Undo</button>
+            <button class="w3-bar-item w3-button" title="Set current values as the plant" id="setplantbtn"><i class="fa fa-thermometer-full"></i> Set plant</button>
             <button class="w3-bar-item w3-button w3-border-top" title="Manage transformations" id="transformationsbtn"><i class="fa fa-cogs"></i> f(x)</button>
-            <button class="w3-bar-item w3-button w3-border-top" title="Load current values into plant" id="loadplantbtn"><i class="fa fa-upload"></i> Load</button>
+            <button class="w3-bar-item w3-button w3-border-top" title="Load the current plant into the system" id="loadintoplantbtn"><i class="fa fa-upload"></i> Load</button>
         </div>
         <div class="w3-bar w3-dark-grey w3-tiny">
             <button class="w3-button" id="tsidebaropen">&#9776;</button>
@@ -105,11 +106,18 @@
                         this.handleAccordionClick(copyAccordion);
                     }.bind(this);
 
-                    this.loadPlantButton = this.shadowRoot.querySelector("#loadplantbtn");
-                    this.loadPlantButton.onclick = function() {
+                    this.setPlantButton = this.shadowRoot.querySelector("#setplantbtn");
+                    this.setPlantButton.onclick = function() {
+                        updatePlant(this.selectedPage.name);
+                        this.hideSideBar();
+                    }.bind(this);
+        
+                    this.loadIntoPlantButton = this.shadowRoot.querySelector("#loadintoplantbtn");
+                    this.loadIntoPlantButton.onclick = function() {
                         loadIntoPlant(this.selectedPage.name);
                         this.hideSideBar();
-                    }.bind(this); 
+                    }.bind(this);
+
 
                     this.pageSelectButton = this.shadowRoot.querySelector("#pageselectbtn");
                     this.loginButton = this.shadowRoot.querySelector("#loginbtn");
@@ -164,7 +172,7 @@
                         this.handleAccordionClick(viewAccordion);
                         parent._currentScheduleUID = undefined;
                         this.currentDisplay.innerHTML = PLANT_NAME;
-                        this.loadPlantButton.disabled = true;
+                        this.setPlantButton.disabled = true;
                         this.copyFromReferenceScheduleButton.disabled = true;
                         this.copyFromReferencePlantButton.disabled = true;
                         this.commitButton.disabled = true;
@@ -338,7 +346,8 @@
                 }
 
                 disableAllButPageSelect() {
-                    this.loadPlantButton.disabled = true;
+                    this.setPlantButton.disabled = true;
+                    this.loadIntoPlantButton.disabled = true;
                     this.editScheduleButton.disabled = true;
                     this.transformationsButton.disabled = true;
                     this.viewPlantButton.disabled = true;
@@ -364,6 +373,7 @@
                             var transformations = JSON.parse(response);
                             this.transformationsViewer.setTransformations(transformations);
                             this.editScheduleButton.disabled = false;
+                            this.loadIntoPlantButton.disabled = false;
                             this.transformationsButton.disabled = false;
                             this.viewScheduleButton.disabled = false;
                             this.viewPlantButton.disabled = false;
@@ -396,7 +406,7 @@
                     this.currentDisplay.innerHTML = schedule.name; 
                     copyFromSchedule(schedule.uid, true, false, false);
                     parent._currentScheduleUID = schedule.uid;
-                    this.loadPlantButton.disabled = false;
+                    this.setPlantButton.disabled = false;
                     this.copyFromReferenceScheduleButton.disabled = false;
                     this.copyFromReferencePlantButton.disabled = false;
                     this.commitButton.disabled = false;
@@ -407,7 +417,7 @@
                     this.currentDisplay.innerHTML = schedule.name; 
                     copyFromSchedule(schedule.uid, true, false, true);
                     parent._currentScheduleUID = schedule.uid;
-                    this.loadPlantButton.disabled = false;
+                    this.setPlantButton.disabled = false;
                     this.copyFromReferenceScheduleButton.disabled = true;
                     this.copyFromReferencePlantButton.disabled = true;
                     this.commitButton.disabled = true;

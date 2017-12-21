@@ -1,6 +1,8 @@
 TODO
--   Clean and restructure the html5 client code - SOME WORK DONE BUT NOT COMPLETE
 -   Design and implement the loader - NOT DONE
+-   Rename the page concept to configuration model/object - NOT DONE
+-   Make sure that every action goes through the auth module - NOT DONE
+-   Clean and restructure the html5 client code - SOME WORK DONE BUT NOT COMPLETE
 -   Design and implement the concept of pulses (DAP) - NOT DONE
 -   Design and implement live variables support - NOT DONE
 -   Document the design - NOT DONE

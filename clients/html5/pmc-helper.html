@@ -28,6 +28,29 @@
         } 
 
         function loadIntoPlant(pgName) {
+            $.ajax({
+                type: "post",
+                url: "/loadintoplant",
+                data: {
+                    token: parent._currentToken,
+                    pageNames: JSON.stringify([pgName])
+                },
+                success: function (response) {
+                    if (response == "ok") {
+                        alert("Plant loaded successfully!");
+                    } 
+                    else {
+                        alert("Form submission failed!");
+                    }
+                },
+                error: function (response) {
+                    console.log(response);
+                    alert(response);
+                }
+            });
+        }
+
+        function updatePlant(pgName) {
             var allPMCDataJSon = {};
             var mainFramePMCComponents = parent._pmcMainEditor.getAllPMCComponents();
             $.each(mainFramePMCComponents, function (i, pmcComp) {
@@ -44,7 +67,7 @@
                 },
                 success: function (response) {
                     if (response == "ok") {
-                        alert("Values updated successfully!");
+                        alert("Plant updated successfully. Do not forget to load.");
                         var pmcComp;
                         //The same id can be used to store multiple instances
                         $.each(mainFramePMCComponents, function (i, pmcCompArray) {
