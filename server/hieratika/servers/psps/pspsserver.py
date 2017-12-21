@@ -42,6 +42,11 @@ from hieratika.schedule import Schedule
 from hieratika.util.lockpool import LockPool
 from hieratika.variable import Variable
 
+# SUP RPC Configuration Server support
+#from SupConfigurationRPCClient import SupClient
+import pvaccess 
+import SupConfigurationRPCClient
+
 ##
 # Logger configuration
 ##
@@ -509,8 +514,17 @@ class PSPSServer(HieratikaServer):
                 if(self.updateVariable(name, root, value)):
                     updatedVariables[name] = value
         tree.write(xmlPath)
+        triedVariables=updatedVariables
+        # SUP RPC Server starts
+        try:
+            SupConfigurationRPCClient.apply(xmlPath)
+        except pvaccess.PvaException as e:
+            log.error("RPC Exception: %s" % e.message)
+            triedVariables = {}
+            triedVariables["error"] = e.message
+        # SUP RPC Server ends
         self.lockPool.release(xmlId)
-        return updatedVariables 
+        return triedVariables
 
     def createSchedule(self, name, description, username, pageName, sourceScheduleUID):
         ok = True
