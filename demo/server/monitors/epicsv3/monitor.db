@@ -1,0 +1,25 @@
+record( longin, "LIVE-VAR-1")
+{
+   field(DTYP, "Soft Channel")
+}
+
+record( ai, "LIVE-VAR-2")
+{
+   field(DTYP, "Soft Channel")
+}
+
+record( waveform, "LIVE-VAR-3")
+{
+   field(DTYP, "Soft Channel")
+   field(FTVL, "LONG")
+   field(NELM, 5)
+}
+
+record( waveform, "LIVE-VAR-4")
+{
+   field(DTYP, "Soft Channel")
+   field(FTVL, "DOUBLE")
+   field(NELM, 3)
+
+}
+
