@@ -101,7 +101,7 @@ class LockPool(object):
             else:
                 #Case where this pid is asking for the first time for a lock for this key
                 #Create a thread which allows subsequent calls with the same pid to lock on the thread context
-                log.debug("The process with pid: {0} is requesting for the first time to lock key: {1} (which had already been locked by another process). Thread: {2}.".format(pid, key, threading.current_thread().ident))
+                log.debug("The process with pid: {0} is requesting for the first time to lock key: {1}. Thread: {2}.".format(pid, key, threading.current_thread().ident))
                 self.processThreads[key]["tcounter"] = 1
                 self.processThreads[key]["tlock"].acquire()
                 #Increment the number of processes that are locked on this key

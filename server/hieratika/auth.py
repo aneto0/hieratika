@@ -30,6 +30,11 @@ import threading
 import uuid
 
 ##
+# Project imports
+##
+from hieratika.util.lockpool import LockPool
+
+##
 # Logger configuration
 ##
 log = logging.getLogger("{0}".format(__name__))
@@ -49,7 +54,7 @@ class HieratikaAuth(object):
 
     def addLogListener(self, listener):
         """ Registers a listener which will be notfied everytime a user logs in or out from the system.
-            The listener class shall implement the functions userLoggedIn(username) and userLoggedOut(username).
+            The listener class shall implement the functions userLoggedIn(username, token) and userLoggedOut(username, token).
         Args(listener):
             The object to notify everytime a user logs in or out from the system.
         """
@@ -69,6 +74,8 @@ class HieratikaAuth(object):
         """
         try:
             self.tokens = manager.dict()
+            self.lockPool = LockPool(1, manager)
+            self.lockKey = "HAUTHPY"
             self.standalone = config.getboolean("hieratika", "standalone")
             #For monitoring user login state
             if (not self.standalone):
@@ -113,11 +120,13 @@ class HieratikaAuth(object):
             #Logout all the users that have not interacted with the server for a while
             currentTime = int(time.time())
             #Dict proxys cannot be iterated like a normal dict
+            self.lockPool.acquire(self.lockKey)
             keys = self.tokens.keys()
             for k in keys:
                 if ((currentTime - self.tokens[k][1])  > self.loginMonitorMaxInactivityTime):
                     log.info("User {0} was not active for the last {1} seconds. User will be logout".format(self.tokens[k][0], self.loginMonitorMaxInactivityTime))
                     self.logout(k) 
+            self.lockPool.release(self.lockKey)
             #Print current server info
             self.printInfo()
 
@@ -134,10 +143,15 @@ class HieratikaAuth(object):
         """
         ok = True
         if (not self.standalone):
+            log.debug("Checking if tokenId: {0} is in the tokens list".format(tokenId))
+            self.lockPool.acquire(self.lockKey)
             ok = (tokenId in self.tokens)
             if (ok):
-                self.tokens[tokenId] = (self.tokens[tokenId][0], int(time.time()))
-                log.debug("Updated: {0} ({1}) : {2}".format(self.tokens[tokenId][0], tokenId, self.tokens[tokenId][1]))
+                username = self.tokens[tokenId][0]
+                interactionTime = time.time()
+                self.tokens[tokenId] = (username, interactionTime)
+                log.debug("Updated: {0} ({1}) : {2}".format(username, tokenId, interactionTime))
+            self.lockPool.release(self.lockKey)
         return ok
 
     def login(self, username, password):
@@ -150,7 +164,9 @@ class HieratikaAuth(object):
         """
         user = None
         if (not self.standalone):
+            self.lockPool.acquire(self.lockKey)
             numberOfLoggedUsers = len(self.tokens)
+            self.lockPool.release(self.lockKey)
             ok = (numberOfLoggedUsers < self.loginMaxUsers)
             if (ok):
                 ok = self.authenticate(username, password)
@@ -168,12 +184,14 @@ class HieratikaAuth(object):
             loginToken = uuid.uuid4().hex
             user.setToken(loginToken)
             if (not self.standalone):
+                self.lockPool.acquire(self.lockKey)
                 self.tokens[loginToken] = (user.getUsername(), int(time.time()))
+                self.lockPool.release(self.lockKey)
             else:
                 self.stdAloneUsername = user.getUsername()
 
             for l in self.logListeners:
-                l.userLoggedIn(username)
+                l.userLoggedIn(username, loginToken)
         else:
             log.warning("{0} is not registered as a valid user".format(username))
         return user
@@ -184,22 +202,26 @@ class HieratikaAuth(object):
         info = "Server information\n"
         info = info + "Logged users\n"
         info = info + "{0:40}|{1:40}\n".format("user", "Last interaction")
+        self.lockPool.acquire(self.lockKey)
         keys = self.tokens.keys()
         for k in keys:
             user = self.tokens[k][0]
             interactionTime = str(datetime.datetime.fromtimestamp(self.tokens[k][1]))
             info = info + "{0:40}|{1:40}\n".format(user, interactionTime)
+        self.lockPool.release(self.lockKey)
         log.info(info)
 
     def getUsernameFromToken(self, token):
         """ Returns the username associated to a given token.
         """
         if (not self.standalone):
+            self.lockPool.acquire(self.lockKey)
             try:
                 username = self.tokens[token][0]
             except KeyError as e:
                 log.critical("Failed to get user with token {0}".format(token))
                 username = None
+            self.lockPool.release(self.lockKey)
         else:
             username = self.stdAloneUsername
         return username
@@ -212,11 +234,13 @@ class HieratikaAuth(object):
             token (str): token that was provided to the user when was logged in
         """
         try:
+            self.lockPool.acquire(self.lockKey)
             user = self.tokens[token][0]
             log.info("Logging out {0} with token {1}".format(user, token))
             del(self.tokens[token])
+            self.lockPool.release(self.lockKey)
             for l in self.logListeners:
-                l.userLoggedOut(user)
+                l.userLoggedOut(user, token)
         except KeyError as e:
             log.critical("Failed to logout user with token {0} : {1}".format(token, e))
 

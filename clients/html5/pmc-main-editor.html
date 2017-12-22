@@ -64,10 +64,20 @@
                     loadPlantInfo(pageName) {
                         showWaitDialog();
                         var allVariableIds = [];
-                        for (var k in this.mainEditorIFrame.contentDocument._frameComponents) {
-                            allVariableIds.push(k)
+                        var allLiveVariableIds = [];
+                        var mainFrameComponents = this.mainEditorIFrame.contentDocument._frameComponents;
+                        for (var k in mainFrameComponents) {
+                            var comp = mainFrameComponents[k][0];
+                            if (comp !== undefined) {
+                                if (comp.isLiveVariable()) {
+                                    allLiveVariableIds.push(k);
+                                }
+                                else {
+                                    allVariableIds.push(k);
+                                }
+                            }
                         }
-                        getVariablesInfo(pageName, allVariableIds, function (response) {
+                        getLiveVariablesInfo(allLiveVariableIds, function (response) {
                             var pvInfos = $.parseJSON(response);
                             var user = JSON.parse(localStorage.user);
                             for (var i in pvInfos) {
@@ -79,9 +89,23 @@
                                     }
                                 }
                             }
+                            getVariablesInfo(pageName, allVariableIds, function (response) {
+                                var pvInfos = $.parseJSON(response);
+                                var user = JSON.parse(localStorage.user);
+                                for (var i in pvInfos) {
+                                    var pvInfo = pvInfos[i];
+                                    var targetElements = this.mainEditorIFrame.contentDocument._frameComponents[pvInfo.name];
+                                    if (targetElements != null) {
+                                        for (var j in targetElements) {
+                                            populateComponentInfo(targetElements[j], pvInfo, user);                    
+                                        }
+                                    }
+                                }
 
-                            this.firePlantInfoLoaded();
-                            closeWaitDialog();
+                                this.firePlantInfoLoaded();
+                                closeWaitDialog();
+                            }.bind(this)
+                            );
                         }.bind(this)
                         );
                     }

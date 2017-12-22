@@ -32,6 +32,7 @@ from flask import Flask, Response, request, send_from_directory
 # Project imports
 ##
 from hieratika.wloader import WLoader
+from hieratika.wmonitor import WMonitor
 from hieratika.wserver import WServer
 from hieratika.wtransformation import WTransformation
 
@@ -57,6 +58,9 @@ wtransformation = WTransformation()
 
 # The WLoader implementation
 wloader = WLoader()
+
+# The WMonitor implementation
+wmonitor = WMonitor()
 
 def load(config):
     try:
@@ -97,6 +101,17 @@ def load(config):
             loaderClassNames = config.get("hieratika", "loaderClasses")
             log.info("Transformation classes are {0}".format(loaderClassNames))
             loaderClassNames = ast.literal_eval(loaderClassNames)
+
+        monitorModuleNames = []
+        monitorClassNames = []
+        if (config.has_option("hieratika", "monitorModules")):
+            monitorModuleNames = config.get("hieratika", "monitorModules")
+            log.info("Transformation modules are {0}".format(monitorModuleNames))
+            monitorModuleNames = ast.literal_eval(monitorModuleNames)
+
+            monitorClassNames = config.get("hieratika", "monitorClasses")
+            log.info("Transformation classes are {0}".format(monitorClassNames))
+            monitorClassNames = ast.literal_eval(monitorClassNames)
 
 
         pagesFolder = config.get("hieratika", "pagesFolder")
@@ -172,11 +187,35 @@ def load(config):
                 if (ok):
                     loaderInstance.setServer(server)
                 else:
-                    log.info("Failed Loading vormation {0}.{1} configuration".format(loaderModuleName, loaderClassName))
+                    log.info("Failed Loading loader {0}.{1} configuration".format(loaderModuleName, loaderClassName))
                     break
 
         if (ok):
             wloader.setLoaders(loaders)
+
+        monitors = []
+        if (ok):
+            for monitorModuleName, monitorClassName in zip(monitorModuleNames, monitorClassNames):
+                monitorModule = importlib.import_module(monitorModuleName) 
+                monitorClass = getattr(monitorModule, monitorClassName)
+                monitorInstance = monitorClass()
+                monitors.append(monitorInstance)
+                log.info("Loading monitor {0}.{1} common configuration".format(monitorModuleName, monitorClassName))
+                ok = monitorInstance.loadCommon(manager, config)
+                if (ok):
+                    log.info("Loading monitor {0}.{1} configuration".format(monitorModuleName, monitorClassName))
+                    ok = monitorInstance.load(manager, config)
+                else:
+                    log.info("Failed Loading monitor {0}.{1} common configuration".format(monitorModuleName, monitorClassName))
+
+                if (ok):
+                    monitorInstance.setServer(server)
+                else:
+                    log.info("Failed Loading monitor {0}.{1} configuration".format(monitorModuleName, monitorClassName))
+                    break
+
+        if (ok):
+            wmonitor.setMonitors(monitors)
 
         if (ok):
             #The web app which is a Flask standard application
@@ -205,12 +244,22 @@ def start(*args, **kwargs):
 
 #Gets all the variables information for a given configuration
 @application.route("/getvariablesinfo", methods=["POST", "GET"])
-def getplantinfo():
+def getvariablesinfo():
     log.debug("/getvariablesinfo")
     if (wserver.isTokenValid(request)):
         return wserver.getVariablesInfo(request)
     else:
         return "InvalidToken"
+
+#Gets information about a set of live variables
+@application.route("/getlivevariablesinfo", methods=["POST", "GET"])
+def getlivevariablesinfo():
+    log.debug("/getlivevariablesinfo")
+    if (wserver.isTokenValid(request)):
+        return wmonitor.getLiveVariablesInfo(request)
+    else:
+        return "InvalidToken"
+
   
 #Gets all the variables information for a given library
 @application.route("/getlibraryvariablesinfo", methods=["POST", "GET"])
@@ -408,7 +457,7 @@ def stream():
             username = wserver.getAuth().getUsernameFromToken(tokenId)
             if (username is not None): 
                 #Note that this cannot be interfaced through the wserver (otherwise the yield reply will not work properly)
-                return Response(wserver.getServer().streamData(username), mimetype="text/event-stream")
+                return Response(wserver.getServer().streamData(username, tokenId), mimetype="text/event-stream")
         else:
             return "InvalidToken"
 

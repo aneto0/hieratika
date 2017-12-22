@@ -107,6 +107,25 @@
             });
         }
 
+        function getLiveVariablesInfo(variablesNames, successFn) {
+            $.ajax({
+                type: "post",
+                url: "/getlivevariablesinfo",
+                data: {
+                    token: parent._currentToken,
+                    variables: JSON.stringify(variablesNames)
+                },
+                success: successFn,
+                error: function (response) {
+                    if (_waitDialog.open) {
+                        _waitDialog.close();
+                    }
+                    console.log(response);
+                    alert(response);
+                }
+            });
+        }
+
         function getLibraryVariablesInfo(libraryType, variablesNames, successFn) {
             $.ajax({
                 type: "post",

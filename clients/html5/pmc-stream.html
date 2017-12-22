@@ -23,27 +23,29 @@
                     else {
                         var variables = jsonData["variables"];
                         var scheduleUID = jsonData["scheduleUID"];
-                        var updateSchedule = false;
-                        if (scheduleUID !== undefined) {
-                            updateSchedule = true;
-                        }
-                        if ((!updateSchedule) || (scheduleUID === parent._currentScheduleUID)) {
-                            //variables is a dictionary with name:value pairs
-                            var mainFramePMCComponents = parent._pmcMainEditor.getAllPMCComponents();
+                        var updateLive = (jsonData["live"] !== undefined);
+                        var updateSchedule = (scheduleUID !== undefined);
+                        var updateThisSchedule = (scheduleUID === parent._currentScheduleUID);
+                        var updatePlant = ((!updateLive) && (scheduleUID === undefined));
+                        //variables is a dictionary with name:value pairs
+                        var mainFramePMCComponents = parent._pmcMainEditor.getAllPMCComponents();
+                        //If it is to update a schedule and this is not the correct uid, do not even try
+                        if ((updateLive) || (updateSchedule && updateThisSchedule) || (updatePlant)) {
                             for (var name in variables) {
+                                //The same id might be used in different components
                                 var targetElements = mainFramePMCComponents[name];
                                 var value = variables[name];
                                 if (targetElements  !== undefined) {
-                                    $.each(targetElements, function (i, targetElement) {
-                                        if (updateSchedule) {
-                                            targetElement.setValue(value, false);
+                                    for (var i=0; i<targetElements.length; i++) {
+                                        if ((updateSchedule) || (updateLive)) {
+                                            targetElements[i].setValue(value, false);
                                             //Someone else changed but might not have commited!
                                             parent._scheduleValuesToCommit[name] = value;
                                         }
                                         else {
                                             targetElement.setPlantValue(value);
                                         }
-                                    });
+                                    }
                                 }
                             }
                         }

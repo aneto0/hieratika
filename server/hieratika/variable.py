@@ -134,6 +134,12 @@ class Variable(object):
         """
         self.validations = validations
 
+    def setValue(self, value):
+        """ Sets the variables value.
+        Args:
+            value (str): value to be updated.
+        """
+        self.value = value
 
     def getValue(self):
         """

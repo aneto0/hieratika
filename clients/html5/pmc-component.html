@@ -14,7 +14,11 @@
             if (this.reference === PLANT_NAME) {
                 refToDisplay = this.plantValue;
             }
-            return "[" + this.id + "] Current: " + this.getValue() + " Plant: " + this.getPlantValue() + " Reference: " + this.getReferenceValue() + " Initial: " + this.getInitialValue();
+            var title = "[" + this.id + "] Current: " + this.getValue();
+            if (!this.liveVariable) {
+                title = title + " Plant: " + this.getPlantValue() + " Reference: " + this.getReferenceValue() + " Initial: " + this.getInitialValue();
+            }
+            return title;
         }
 
         showValues () {
@@ -79,13 +83,22 @@
 
         setReferenceValue (referenceValueToSet) {
             if (referenceValueToSet !== undefined) {
-                this.referenceValue = referenceValueToSet.slice(0);
+                if (referenceValueToSet .slice !== undefined) {
+                    this.referenceValue = referenceValueToSet.slice(0);
+                }
+                else {
+                    this.referenceValue = referenceValueToSet;
+                }
                 this.refresh();
             }
         }
 
         isLibrary () {
             return (this.getTypeValue() === "library");
+        }
+
+        isLiveVariable() {
+            return this.liveVariable;
         }
 
         setLibraryType (libraryType) {
@@ -105,11 +118,12 @@
         }
 
         isReadOnly() {
-            return this.readOnly;
+            return ((this.readOnly) || (this.liveVariable));
         }
 
         setReadOnly (isReadOnly) {
             this.readOnly = isReadOnly;
+            this.readOnly = ((this.readOnly) || (this.liveVariable));
             this.refresh();
         }
 
@@ -135,7 +149,12 @@
 
         setPlantValue (plantValueToSet) {
             if (plantValueToSet !==  undefined) {
-                this.plantValue = plantValueToSet.slice(0);
+                if (plantValueToSet.slice !== undefined) {
+                    this.plantValue = plantValueToSet.slice(0);
+                }
+                else {
+                    this.plantValue = plantValueToSet;
+                }
                 this.fireValueChanged("plantValue");
                 this.refresh();
             }
@@ -239,6 +258,32 @@
 
         createdCallback() {
             var template = this.getTemplate();
+            
+            this.valueChangedListeners = [];
+            this.permissionGroups = [];
+            this.userAllowedToWrite = false;
+
+            this.typeValue = "string";
+            this.choices = [];
+            this.libraryType = undefined;
+            this.libraryMappings = undefined;
+            this.initValue = undefined;
+            this.plantValue = undefined;
+            this.referenceValue = undefined;
+            this.reference = NONE_NAME;
+            this.numberOfElements = 0;
+            this.library = undefined;
+            this.validations = undefined;
+            this.struct = false;
+            this.readOnly = false;
+            this.liveVariable = this.getAttribute("data-live");
+            if (this.liveVariable !== null) {
+                this.liveVariable = (this.liveVariable.toLowerCase() === "true");
+            }
+            else {
+                this.liveVariable = false;
+            }
+
             if (template !== undefined) {
                 // import template into
                 var clone = document.importNode(template.content, true);
@@ -259,23 +304,6 @@
                     }
                 }
             }
-            this.valueChangedListeners = [];
-            this.permissionGroups = [];
-            this.userAllowedToWrite = false;
-
-            this.typeValue = "string";
-            this.choices = [];
-            this.libraryType = undefined;
-            this.libraryMappings = undefined;
-            this.initValue = undefined;
-            this.plantValue = undefined;
-            this.referenceValue = undefined;
-            this.reference = NONE_NAME;
-            this.numberOfElements = 0;
-            this.library = undefined;
-            this.validations = undefined;
-            this.struct = false;
-            this.readOnly = false;
         }
 
         setPermissionGroups (groups) {

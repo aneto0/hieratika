@@ -21,7 +21,6 @@ __date__ = "18/12/2017"
 ##
 from ahkab import new_ac, run
 from ahkab.circuit import Circuit
-from abc import ABCMeta, abstractmethod
 import json
 import logging
 import numpy as np
@@ -45,10 +44,8 @@ class AhkabDemo(HieratikaTransformation):
         TODO
     """
     
-    __metaclass__ = ABCMeta
-
     def __init__(self):
-        super(HieratikaTransformation, self).__init__()
+        super(AhkabDemo, self).__init__()
         
     def load(self, manager, config):
         return True

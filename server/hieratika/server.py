@@ -85,16 +85,24 @@ class HieratikaServer(object):
         tid += str(threading.current_thread().ident) 
         return tid
  
-    def streamData(self, username):
+    def streamData(self, username, token):
         """ Streams data back to the client using SSE.
             The inferface is provided by a broadcastqueue.
          
         Args:
-            username (str): username of the user requesting for data to be streamed.
+            username (str): user requesting for data to be streamed.
+            token (str): login token of the user requesting for data to be streamed.
         """
+        #TODO This implementation has a design choice that has to be discussed in the future: all the variables are always streamed, even if the client might 
+        #have no interest on them (because e.g. the page he is browsing has none the variables that have been updated). This design choice makes the server
+        #processing lighter at the expense of increased bandwidth and more processing on the client (which has to decide if the updated variables are relevant to him or not).
+        #An alternative would be to use a registrar at the server side and to filter before sending to the client. Given that the current architecture is multi process and multi threading
+        #this might also have a performance impact which is not negligible, as the registrar would have to be implemented using multi process safe components (e.g. multiprocessing.Manager()) or 
+        #to use a local mechanism which allows to register variables using the UDP queue. This strategy would allow to have the registrar structures local to the streamData thread and would potentially
+        #increase performance.
         tid = None
         try:
-            log.info("Streaming data for user {0}".format(username))
+            log.info("Streaming data for user {0} ({1})".format(username, token))
             while True:
                 if (tid == None):
                     # The first time just register the Queue and send back the TID so that updates from this client are not sent back to itself (see updateschedule)
@@ -111,22 +119,17 @@ class HieratikaServer(object):
                         log.debug("Streaming {0}".format(encodedJson))
                         encodedPy = json.loads(encodedJson)
                         if ("logout" in encodedPy):
-                            if (encodedPy["logout"] == username):
-                                log.info("Stopping streamData as user {0} logged out".format(username))
+                            if (encodedPy["logout"] == token):
+                                log.info("Stopping streamData as user {0} in instance ({1}) logged out".format(username, token))
                                 break
                             else:
                                 encodedJson = ""
                                 time.sleep(0.01)
-                        # Only trigger if the source was not from this tid. If it an update from 
-                        # the plant, always trigger as some of the parameters might have failed to load
-                        #if ("scheduleUID" in encodedPy):
-                        #    if (encodedPy["tid"] == tid):
-                        #        encodedJson = ""
                 yield "data: {0}\n\n".format(encodedJson)
         except Exception as e:
-            log.critical("streamData failed {0}".format(e))
-            self.streamData(username)
-        log.info("Stopped streamData for user {0}".format(username))
+            log.critical("streamData failed for user {0} in instance ({1}) {2}".format(username, token, e))
+            self.streamData(username, token)
+        log.info("Stopped streamData for user {0} in instance ({1})".format(username, token))
 
     def queueStreamData(self, jSonData):
         """ Streams the input jSonData to all the SSE registered clients. This data contains the id of the client thread (received the first time the client registered in streamData), the scheduleUID related to the update and a dictionary with the list of variables that were update. If the update is from the plant the tid and scheduleUID parameters are ignored.
@@ -136,19 +139,19 @@ class HieratikaServer(object):
         """
         self.udpQueue.put(jSonData)
 
-    def userLoggedIn(self, username):
+    def userLoggedIn(self, username, token):
         """ Called everytime a user is logged in into the system.
         Args:
             username (str): the username of the user.
         """
         pass
 
-    def userLoggedOut(self, username):
+    def userLoggedOut(self, username, token):
         """ Called everytime a user is logged in into the system.
         Args:
             username (str): the username of the user.
         """
-        self.udpQueue.put(json.dumps({"logout": username}))
+        self.udpQueue.put(json.dumps({"logout": token}))
 
     def isStandalone(self):
         """
