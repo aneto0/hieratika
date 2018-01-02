@@ -46,10 +46,9 @@ class HieratikaMonitor(object):
         pass
         
     @abstractmethod
-    def load(self, manager, config):
+    def load(self, config):
         """ Configures the monitor against a set of parameters. This set of parameters is specific for each transformation implementation.
         Args:
-            manager(multiprocessing.Manager): A multiprocessing Manager instance to allocate objects that are to be shared by different processes.
             config(ConfigParser): the monitor specific implementation parameters are in the section "live-impl".
         Returns:
             True if the monitor is successfully configured.
@@ -68,11 +67,12 @@ class HieratikaMonitor(object):
         pass
 
 
-    def loadCommon(self, manager, config):
+    def loadCommon(self, config):
         """ Loads parameters that are common to all monitor implementations.
             NOOP as of today.
         Args:
-            manager(multiprocessing.Manager): A multiprocessing Manager instance to allocate objects that are to be shared by different processes.
+            config (ConfigParser): parameters that are common to all authenticate implementations:
+            NONE as of today.
         Returns:
             True 
         """

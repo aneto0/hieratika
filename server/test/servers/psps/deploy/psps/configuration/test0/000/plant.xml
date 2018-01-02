@@ -8,7 +8,7 @@
     <ns0:plantSystem>
      <ns0:name>AA</ns0:name>
       <ns0:version>1.0</ns0:version>
-      <ns0:description />
+      <ns0:description/>
       <ns0:plantRecords>
         <ns0:folders>
           <ns0:folder>
@@ -19,24 +19,21 @@
                 <ns0:folders>
                   <ns0:folder>
                     <ns0:name>AA</ns0:name>
-                    <ns0:folders />
+                    <ns0:folders/>
                     <ns0:records>
                       <ns0:record size="1" xsi:type="recordDouble">
                         <ns0:name>AA</ns0:name>
                         <ns0:pvName>AA-AA-AA:AA-AA</ns0:pvName>
                         <ns0:alias>A test name</ns0:alias>
                         <ns0:description>A test description</ns0:description>
-                        <ns0:origin />
-                        <ns0:values>
-                          <ns0:value>4</ns0:value>
-                        </ns0:values>
-                      </ns0:record>
+                        <ns0:origin/>
+                        <ns0:values><ns0:value>4</ns0:value></ns0:values></ns0:record>
                       <ns0:record size="1" xsi:type="recordDouble">
                         <ns0:name>BB</ns0:name>
                         <ns0:pvName>AA-AA-AA:AA-BB</ns0:pvName>
                         <ns0:alias>A test name</ns0:alias>
                         <ns0:description>A test description</ns0:description>
-                        <ns0:origin />
+                        <ns0:origin/>
                         <ns0:values>
                           <ns0:value>2</ns0:value>
                         </ns0:values>
@@ -46,7 +43,7 @@
                         <ns0:pvName>AA-AA-AA:AA-CC</ns0:pvName>
                         <ns0:alias>A test name</ns0:alias>
                         <ns0:description>A test description</ns0:description>
-                        <ns0:origin />
+                        <ns0:origin/>
                         <ns0:values>
                           <ns0:value>3</ns0:value>
                         </ns0:values>
@@ -55,14 +52,14 @@
                   </ns0:folder>
                   <ns0:folder>
                     <ns0:name>BB</ns0:name>
-                    <ns0:folders />
+                    <ns0:folders/>
                     <ns0:records>
                       <ns0:record size="1" xsi:type="recordDouble">
                         <ns0:name>AA</ns0:name>
                         <ns0:pvName>AA-AA-AA:BB-AA</ns0:pvName>
                         <ns0:alias>A test name</ns0:alias>
                         <ns0:description>A test description</ns0:description>
-                        <ns0:origin />
+                        <ns0:origin/>
                         <ns0:values>
                           <ns0:value>4</ns0:value>
                         </ns0:values>
@@ -72,7 +69,7 @@
                         <ns0:pvName>AA-AA-AA:BB-BB</ns0:pvName>
                         <ns0:alias>A test name</ns0:alias>
                         <ns0:description>A test description</ns0:description>
-                        <ns0:origin />
+                        <ns0:origin/>
                         <ns0:values>
                           <ns0:value>5</ns0:value>
                         </ns0:values>
@@ -82,7 +79,7 @@
                         <ns0:pvName>AA-AA-AA:BB-CC</ns0:pvName>
                         <ns0:alias>A test name</ns0:alias>
                         <ns0:description>A test description</ns0:description>
-                        <ns0:origin />
+                        <ns0:origin/>
                         <ns0:values>
                           <ns0:value>6</ns0:value>
                         </ns0:values>
@@ -96,14 +93,14 @@
                 <ns0:folders>
                   <ns0:folder>
                     <ns0:name>AA</ns0:name>
-                    <ns0:folders />
+                    <ns0:folders/>
                     <ns0:records>
                       <ns0:record size="1" xsi:type="recordDouble">
                         <ns0:name>AA</ns0:name>
                         <ns0:pvName>AA-AA-BB:AA-AA</ns0:pvName>
                         <ns0:alias>A test name</ns0:alias>
                         <ns0:description>A test description</ns0:description>
-                        <ns0:origin />
+                        <ns0:origin/>
                         <ns0:values>
                           <ns0:value>7</ns0:value>
                         </ns0:values>
@@ -113,7 +110,7 @@
                         <ns0:pvName>AA-AA-BB:AA-BB</ns0:pvName>
                         <ns0:alias>A test name</ns0:alias>
                         <ns0:description>A test description</ns0:description>
-                        <ns0:origin />
+                        <ns0:origin/>
                         <ns0:values>
                           <ns0:value>8</ns0:value>
                         </ns0:values>
@@ -123,7 +120,7 @@
                         <ns0:pvName>AA-AA-BB:AA-CC</ns0:pvName>
                         <ns0:alias>A test name</ns0:alias>
                         <ns0:description>A test description</ns0:description>
-                        <ns0:origin />
+                        <ns0:origin/>
                         <ns0:values>
                           <ns0:value>9</ns0:value>
                         </ns0:values>
@@ -132,14 +129,14 @@
                   </ns0:folder>
                   <ns0:folder>
                     <ns0:name>BB</ns0:name>
-                    <ns0:folders />
+                    <ns0:folders/>
                     <ns0:records>
                       <ns0:record size="1" xsi:type="recordDouble">
                         <ns0:name>AA</ns0:name>
                         <ns0:pvName>AA-AA-BB:BB-AA</ns0:pvName>
                         <ns0:alias>A test name</ns0:alias>
                         <ns0:description>A test description</ns0:description>
-                        <ns0:origin />
+                        <ns0:origin/>
                         <ns0:values>
                           <ns0:value>10</ns0:value>
                         </ns0:values>
@@ -149,7 +146,7 @@
                         <ns0:pvName>AA-AA-BB:BB-BB</ns0:pvName>
                         <ns0:alias>A test name</ns0:alias>
                         <ns0:description>A test description</ns0:description>
-                        <ns0:origin />
+                        <ns0:origin/>
                         <ns0:values>
                           <ns0:value>11</ns0:value>
                         </ns0:values>
@@ -159,7 +156,7 @@
                         <ns0:pvName>AA-AA-BB:BB-CC</ns0:pvName>
                         <ns0:alias>A test name</ns0:alias>
                         <ns0:description>A test description</ns0:description>
-                        <ns0:origin />
+                        <ns0:origin/>
                         <ns0:values>
                           <ns0:value>12</ns0:value>
                         </ns0:values>
@@ -176,7 +173,7 @@
     <ns0:plantSystem>
       <ns0:name>BB</ns0:name>
       <ns0:version>1.0</ns0:version>
-      <ns0:description />
+      <ns0:description/>
       <ns0:plantRecords>
         <ns0:folders>
           <ns0:folder>
@@ -187,14 +184,14 @@
                 <ns0:folders>
                   <ns0:folder>
                     <ns0:name>AA</ns0:name>
-                    <ns0:folders />
+                    <ns0:folders/>
                     <ns0:records>
                       <ns0:record size="1" xsi:type="recordDouble">
                         <ns0:name>AA</ns0:name>
                         <ns0:pvName>BB-AA-AA:AA-AA</ns0:pvName>
                         <ns0:alias>A test name</ns0:alias>
                         <ns0:description>A test description</ns0:description>
-                        <ns0:origin />
+                        <ns0:origin/>
                         <ns0:values>
                           <ns0:value>-1</ns0:value>
                         </ns0:values>
@@ -204,7 +201,7 @@
                         <ns0:pvName>BB-AA-AA:AA-BB</ns0:pvName>
                         <ns0:alias>A test name</ns0:alias>
                         <ns0:description>A test description</ns0:description>
-                        <ns0:origin />
+                        <ns0:origin/>
                         <ns0:values>
                           <ns0:value>-2</ns0:value>
                         </ns0:values>
@@ -214,7 +211,7 @@
                         <ns0:pvName>BB-AA-AA:AA-CC</ns0:pvName>
                         <ns0:alias>A test name</ns0:alias>
                         <ns0:description>A test description</ns0:description>
-                        <ns0:origin />
+                        <ns0:origin/>
                         <ns0:values>
                           <ns0:value>-3</ns0:value>
                         </ns0:values>
@@ -223,14 +220,14 @@
                   </ns0:folder>
                   <ns0:folder>
                     <ns0:name>BB</ns0:name>
-                    <ns0:folders />
+                    <ns0:folders/>
                     <ns0:records>
                       <ns0:record size="1" xsi:type="recordDouble">
                         <ns0:name>AA</ns0:name>
                         <ns0:pvName>BB-AA-AA:BB-AA</ns0:pvName>
                         <ns0:alias>A test name</ns0:alias>
                         <ns0:description>A test description</ns0:description>
-                        <ns0:origin />
+                        <ns0:origin/>
                         <ns0:values>
                           <ns0:value>-4</ns0:value>
                         </ns0:values>
@@ -240,7 +237,7 @@
                         <ns0:pvName>BB-AA-AA:BB-BB</ns0:pvName>
                         <ns0:alias>A test name</ns0:alias>
                         <ns0:description>A test description</ns0:description>
-                        <ns0:origin />
+                        <ns0:origin/>
                         <ns0:values>
                           <ns0:value>-5</ns0:value>
                         </ns0:values>
@@ -250,7 +247,7 @@
                         <ns0:pvName>BB-AA-AA:BB-CC</ns0:pvName>
                         <ns0:alias>A test name</ns0:alias>
                         <ns0:description>A test description</ns0:description>
-                        <ns0:origin />
+                        <ns0:origin/>
                         <ns0:values>
                           <ns0:value>-6</ns0:value>
                         </ns0:values>
@@ -264,14 +261,14 @@
                 <ns0:folders>
                   <ns0:folder>
                     <ns0:name>AA</ns0:name>
-                    <ns0:folders />
+                    <ns0:folders/>
                     <ns0:records>
                       <ns0:record size="1" xsi:type="recordDouble">
                         <ns0:name>AA</ns0:name>
                         <ns0:pvName>BB-AA-BB:AA-AA</ns0:pvName>
                         <ns0:alias>A test name</ns0:alias>
                         <ns0:description>A test description</ns0:description>
-                        <ns0:origin />
+                        <ns0:origin/>
                         <ns0:values>
                           <ns0:value>-7</ns0:value>
                         </ns0:values>
@@ -281,7 +278,7 @@
                         <ns0:pvName>BB-AA-BB:AA-BB</ns0:pvName>
                         <ns0:alias>A test name</ns0:alias>
                         <ns0:description>A test description</ns0:description>
-                        <ns0:origin />
+                        <ns0:origin/>
                         <ns0:values>
                           <ns0:value>-8</ns0:value>
                         </ns0:values>
@@ -291,7 +288,7 @@
                         <ns0:pvName>BB-AA-BB:AA-CC</ns0:pvName>
                         <ns0:alias>A test name</ns0:alias>
                         <ns0:description>A test description</ns0:description>
-                        <ns0:origin />
+                        <ns0:origin/>
                         <ns0:values>
                           <ns0:value>-9</ns0:value>
                         </ns0:values>
@@ -300,14 +297,14 @@
                   </ns0:folder>
                   <ns0:folder>
                     <ns0:name>BB</ns0:name>
-                    <ns0:folders />
+                    <ns0:folders/>
                     <ns0:records>
                       <ns0:record size="1" xsi:type="recordDouble">
                         <ns0:name>AA</ns0:name>
                         <ns0:pvName>BB-AA-BB:BB-AA</ns0:pvName>
                         <ns0:alias>A test name</ns0:alias>
                         <ns0:description>A test description</ns0:description>
-                        <ns0:origin />
+                        <ns0:origin/>
                         <ns0:values>
                           <ns0:value>-10</ns0:value>
                         </ns0:values>
@@ -317,7 +314,7 @@
                         <ns0:pvName>BB-AA-BB:BB-BB</ns0:pvName>
                         <ns0:alias>A test name</ns0:alias>
                         <ns0:description>A test description</ns0:description>
-                        <ns0:origin />
+                        <ns0:origin/>
                         <ns0:values>
                           <ns0:value>-11</ns0:value>
                         </ns0:values>
@@ -327,7 +324,7 @@
                         <ns0:pvName>BB-AA-BB:BB-CC</ns0:pvName>
                         <ns0:alias>A test name</ns0:alias>
                         <ns0:description>A test description</ns0:description>
-                        <ns0:origin />
+                        <ns0:origin/>
                         <ns0:values>
                           <ns0:value>-12</ns0:value>
                         </ns0:values>
@@ -342,5 +339,5 @@
       </ns0:plantRecords>
     </ns0:plantSystem>
   </ns0:plantSystems>
-  <ns0:plantConstraints />
+  <ns0:plantConstraints/>
 </ns0:configurationContainer>

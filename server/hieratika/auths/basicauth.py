@@ -46,10 +46,9 @@ class HieratikaBasicAuth(HieratikaAuth):
         super(HieratikaBasicAuth, self).__init__()
         self.allowedUsers = []
 
-    def load(self, manager, config):
+    def load(self, config):
         """ Loads the list of usernames that are allowed to login into the system.
         Args:
-            manager(multiprocessing.Manager): noop
             config(ConfigParser): shall contain the usernames and user groups in the "auth-impl" section inside a parameter named users.
             The format shall be users:username1;usergroup1;usergroup2,username2;usergroup1,... (i.e. users are separated by , and each user groups separated by ;)
         Returns:

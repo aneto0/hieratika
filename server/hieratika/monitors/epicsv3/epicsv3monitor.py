@@ -170,7 +170,7 @@ class EPICSV3Monitor(HieratikaMonitor):
 
         return variables
 
-    def load(self, manager, config):
+    def load(self, config):
         """  Registers with a camonitor the variable names defined in a json file whose path shall be defined in
         [monitor-impl] variableListJsonPath
         """
@@ -191,7 +191,7 @@ class EPICSV3Monitor(HieratikaMonitor):
             ok = False
         return ok
 
-    def loadCommon(self, manager, config):
+    def loadCommon(self, config):
         return True
 
 

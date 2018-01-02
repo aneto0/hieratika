@@ -25,6 +25,7 @@ import datetime
 import json
 import logging
 import multiprocessing
+import multiprocessing.managers
 import os
 import time
 import threading
@@ -51,13 +52,16 @@ class HieratikaServer(object):
     __metaclass__ = ABCMeta
 
     def __init__(self):
-        pass
+        #MUST use a different manager instance for every dictionary group (where a group is a set of dictionaries which are
+        #guaranteed to have exclusive access (read and read/write) to its elements. See https://stackoverflow.com/questions/48052148/python-multiprocessing-dict-sharing-between-processes ).
+        self.managerStreamUsers = multiprocessing.managers.SyncManager()
+        self.managerStreamUsers.start()
+        self.streamUsers = self.managerStreamUsers.dict()
         
-    def loadCommon(self, manager, config):
+    def loadCommon(self, config):
         """ Loads parameters that are common to all server implementations.
         
         Args:
-            manager(multiprocessing.Manager): A multiprocessing Manager instance to allocate objects that are to be shared by different processes.
             config (ConfigParser): parameters that are common to all server implementations:
             - udpBroadcastPort (int): the port that is used by the broadcastqueue.
         Returns:
@@ -68,7 +72,6 @@ class HieratikaServer(object):
             udpGroup = config.get("hieratika", "udpBroadcastQueueGroup")
             udpPort = config.getint("hieratika", "udpBroadcastQueuePort")
             self.standalone = config.getboolean("hieratika", "standalone")
-            self.streamUsers = manager.dict()
             self.udpQueue = BroacastQueue(udpGroup, udpPort)
         except (KeyError, ValueError, ConfigParser.Error) as e:
             log.critical("Failed to load configuration parameters {0}".format(e))
@@ -161,10 +164,9 @@ class HieratikaServer(object):
         return self.standalone
 
     @abstractmethod
-    def load(self, manager, config):
+    def load(self, config):
         """ Configures the server against a set of parameters. This set of parameters is specific for each server implementation.
         Args:
-            manager(multiprocessing.Manager): A multiprocessing Manager instance to allocate objects that are to be shared by different processes.
             config(ConfigParser): the server specific implementation parameters are in the section "server-impl".
         Returns:
             True if the server is successfully configured.

@@ -25,6 +25,7 @@ import json
 import logging
 import multiprocessing
 import os
+import socket
 import time
 import unittest
 
@@ -46,6 +47,7 @@ logging.basicConfig(level=logging.DEBUG, format='[%(asctime)s] [%(levelname)s] [
 class TestRequest:
     def __init__(self, form):
         self.form = form
+        self.method = "POST"
 
 class TestWServer(unittest.TestCase):
 
@@ -94,21 +96,20 @@ class TestWServer(unittest.TestCase):
         config.set("hieratika", "pagesFolder", pagesFolder)
         server = serverClass()
         auth = authClass()
-        manager = multiprocessing.Manager()
         log.info("Loading server common configuration")
-        ok = server.loadCommon(manager, config)
+        ok = server.loadCommon(config)
         if (ok):
             log.info("Loading server configuration")
-            ok = server.load(manager, config)
+            ok = server.load(config)
         else:
             log.critical("Failed to load common server configuration")
         if (ok):
             log.info("Loading auth configuration")
-            ok = auth.loadCommon(manager, config)
+            ok = auth.loadCommon(config)
         else:
             log.critical("Failed to load server configuration")
         if (ok):
-            ok = auth.load(manager, config)
+            ok = auth.load(config)
         if (ok):
             auth.addLogListener(server)
             ok = auth.start()
@@ -127,6 +128,8 @@ class TestWServer(unittest.TestCase):
             user = json.loads(user)
             self.token = user["token"]
 
+        self.go = multiprocessing.Value('i', 0)
+
     def test_login(self):
         request = TestRequest({"username": "codac-dev-1", "password" : ""})
         user = self.wserver.login(request)
@@ -139,23 +142,36 @@ class TestWServer(unittest.TestCase):
             log.critical(e)
             self.assertTrue(False)
 
+    def test_logout(self):
+        self.wserver.logout()
+
     def test_getVariablesInfo(self):
         variables = ["AA", "BB", "AA@AA@AA@AA@AA", "BB@AA@AA@BB@CC"]
 #, "AA@AA", "AA@AA@AA@AA", "BB", "BB@AA", "BB@AA@AA", "AA@AA@AA@AA@AA", "AA@AA@AA@AA@BB", "AA@AA@AA@AA@CC", "AA@AA@AA@BB@AA", "AA@AA@AA@BB@BB", "AA@AA@AA@BB@CC", "BB@AA@AA@AA@AA", "BB@AA@AA@AA@BB", "BB@AA@AA@AA@CC", "BB@AA@AA@BB@AA", "BB@AA@AA@BB@BB", "BB@AA@AA@BB@CC"]
         request = TestRequest({"token": self.token, "pageName": "test0", "variables": json.dumps(variables)})
+        #print request
+        self.wserver.isTokenValid(request)
         jsonReply = self.wserver.getVariablesInfo(request)
         variablesInfo = json.loads(jsonReply)
-        print variablesInfo
-        for i, variableInfo in enumerate(variablesInfo):
+        #print variablesInfo
+        #for i, variableInfo in enumerate(variablesInfo):
             #TODO finish for all the other properties or implement method eq in future variable class
             #self.assertEqual(variables[i], variableInfo["name"])
-            print json.dumps(variableInfo, indent=4, sort_keys=True)
+            #print json.dumps(variableInfo, indent=4, sort_keys=True)
             #varAAAAAAAAAA = variableInfo["AA"]["AA"]["AA"]["AA"]
             #varAAAAAAAABB = variableInfo["AA"]["AA"]["AA"]["BB"]
             #varAAAAAABBAA = variableInfo["AA"]["AA"]["BB"]["AA"]
             #print json.dumps(varAAAAAAAAAA, indent=4, sort_keys=True)
             #print json.dumps(varAAAAAAAABB, indent=4, sort_keys=True)
             #print json.dumps(varAAAAAABBAA, indent=4, sort_keys=True)
+
+    def test_getLibraryVariablesInfo(self):
+        variables = ["AA@BB@CC", "AA@BB@DD"]
+        request = TestRequest({"token": self.token, "libraryType": "testlib1", "variables": json.dumps(variables)})
+        self.wserver.isTokenValid(request)
+        jsonReply = self.wserver.getLibraryVariablesInfo(request)
+        variablesInfo = json.loads(jsonReply)
+        print variablesInfo
 
     def test_commitSchedule(self):
         request = TestRequest({"token": self.token, "pageName": "test0", "username": "codac-dev-1"})
@@ -184,6 +200,7 @@ class TestWServer(unittest.TestCase):
 
     def test_getLibraries(self):
         request = TestRequest({"token": self.token, "type": "testtype1", "username": "codac-dev-1"})
+        self.wserver.isTokenValid(request)
         libraries = self.wserver.getLibraries(request)
         self.assertNotEqual(libraries, None)
         #TODO finish asserts
@@ -202,6 +219,80 @@ class TestWServer(unittest.TestCase):
         variablesValues = self.wserver.getLibraryVariablesValues(request)
         self.assertNotEqual(libraries, None)
         #TODO finish asserts
+
+    def test_getPages(self):
+        request = TestRequest({"token": self.token})
+        self.wserver.isTokenValid(request)
+        pages = json.loads(self.wserver.getPages(request))
+        self.assertNotEqual(pages, None)
+        #TODO finish asserts
+
+
+    def integratedTestCB1(self):
+        while(self.go.value == 0):
+            time.sleep(1)
+
+        count = 20
+        while(count > 0):
+            self.test_getPages()
+            self.test_getVariablesInfo()
+            #self.test_getLibraries()
+            #TODO mux me multiprocessing.RLock
+            #self.test_getLibraryVariablesInfo()
+            #self.test_getLibraryVariablesInfo()
+            #self.test_getLibraryVariablesInfo()
+            count = count - 1
+ 
+    def integratedTestCB2(self):
+        count = 20
+        while(count > 0):
+            self.test_getLibraryVariablesInfo()
+            time.sleep(1)
+            print ("integratedTestCB2 BYE")
+            count = count - 1
+
+    def test_integrated(self):
+        numberOfProcesses = 8
+        self.integratedCount = numberOfProcesses * 2
+        procs = []
+        for i in range(numberOfProcesses):
+            p = multiprocessing.Process(target=self.integratedTestCB1)
+            procs.append(p)
+            p = multiprocessing.Process(target=self.integratedTestCB2)
+            procs.append(p)
+        for p in procs:
+            p.start()
+        for p in procs:
+            p.join()
+        while (self.integratedCount > 0):
+            print self.integratedCount
+            time.sleep(1)
+
+    def test_integrated_fork(self):
+        numberOfProcesses = 8
+        forkedPids = []
+        for i in range(numberOfProcesses):
+            newpid = os.fork()
+            if (newpid == 0):
+                self.integratedTestCB1()
+                os._exit(0)
+            else:
+                forkedPids.append(newpid)
+
+#        for i in range(numberOfProcesses):
+#            newpid = os.fork()
+#            if (newpid == 0):
+#                self.integratedTestCB2()
+#                os._exit(0)
+#            else:
+#                forkedPids.append(newpid)
+
+
+        time.sleep(1)
+        self.go.value = 1
+        for p in forkedPids:
+            os.waitpid(p, 0)
+
 
        
 if __name__ == '__main__':

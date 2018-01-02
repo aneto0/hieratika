@@ -16,6 +16,12 @@ __license__ = "EUPL"
 __author__ = "Andre' Neto"
 __date__ = "17/11/2017"
 
+
+#from gevent import monkey
+#monkey.patch_all(thread=False, socket=False)
+#import socket
+#socket.setdefaulttimeout(None)
+
 ##
 # Standard imports
 ##
@@ -24,8 +30,8 @@ import ast
 import ConfigParser
 import importlib
 import logging
-import multiprocessing
 import os
+import timeit
 from flask import Flask, Response, request, send_from_directory
 
 ##
@@ -124,21 +130,20 @@ def load(config):
         server = serverClass()
         auth = authClass()
 
-        manager = multiprocessing.Manager()
         log.info("Loading server common configuration")
-        ok = server.loadCommon(manager, config)
+        ok = server.loadCommon(config)
         if (ok):
             log.info("Loading server configuration")
-            ok = server.load(manager, config)
+            ok = server.load(config)
         else:
             log.critical("Failed to load common server configuration")
         if (ok):
             log.info("Loading auth configuration")
-            ok = auth.loadCommon(manager, config)
+            ok = auth.loadCommon(config)
         else:
             log.critical("Failed to load server configuration")
         if (ok):
-            ok = auth.load(manager, config)
+            ok = auth.load(config)
         if (ok):
             auth.addLogListener(server)
             ok = auth.start()
@@ -153,10 +158,10 @@ def load(config):
                 transformationInstance = transformationClass()
                 transformations.append(transformationInstance)
                 log.info("Loading transformation {0}.{1} common configuration".format(transformationModuleName, transformationClassName))
-                ok = transformationInstance.loadCommon(manager, config)
+                ok = transformationInstance.loadCommon(config)
                 if (ok):
                     log.info("Loading transformation {0}.{1} configuration".format(transformationModuleName, transformationClassName))
-                    ok = transformationInstance.load(manager, config)
+                    ok = transformationInstance.load(config)
                 else:
                     log.info("Failed Loading transformation {0}.{1} common configuration".format(transformationModuleName, transformationClassName))
 
@@ -177,10 +182,10 @@ def load(config):
                 loaderInstance = loaderClass()
                 loaders.append(loaderInstance)
                 log.info("Loading loader {0}.{1} common configuration".format(loaderModuleName, loaderClassName))
-                ok = loaderInstance.loadCommon(manager, config)
+                ok = loaderInstance.loadCommon(config)
                 if (ok):
                     log.info("Loading loader {0}.{1} configuration".format(loaderModuleName, loaderClassName))
-                    ok = loaderInstance.load(manager, config)
+                    ok = loaderInstance.load(config)
                 else:
                     log.info("Failed Loading loader {0}.{1} common configuration".format(loaderModuleName, loaderClassName))
 
@@ -201,10 +206,10 @@ def load(config):
                 monitorInstance = monitorClass()
                 monitors.append(monitorInstance)
                 log.info("Loading monitor {0}.{1} common configuration".format(monitorModuleName, monitorClassName))
-                ok = monitorInstance.loadCommon(manager, config)
+                ok = monitorInstance.loadCommon(config)
                 if (ok):
                     log.info("Loading monitor {0}.{1} configuration".format(monitorModuleName, monitorClassName))
-                    ok = monitorInstance.load(manager, config)
+                    ok = monitorInstance.load(config)
                 else:
                     log.info("Failed Loading monitor {0}.{1} common configuration".format(monitorModuleName, monitorClassName))
 
@@ -222,6 +227,7 @@ def load(config):
             wserver.setServer(server)
             wserver.setAuth(auth)
             wserver.setPagesFolder(pagesFolder)
+            #monkey.patch_socket()
             return application
         else:
             log.critical("Failed to load either the server or the auth service") 
@@ -247,7 +253,10 @@ def start(*args, **kwargs):
 def getvariablesinfo():
     log.debug("/getvariablesinfo")
     if (wserver.isTokenValid(request)):
-        return wserver.getVariablesInfo(request)
+        log.debug("/IN getvariablesinfo")
+        ret = wserver.getVariablesInfo(request)
+        log.debug("/OUT getvariablesinfo")
+        return ret
     else:
         return "InvalidToken"
 
@@ -256,7 +265,10 @@ def getvariablesinfo():
 def getlivevariablesinfo():
     log.debug("/getlivevariablesinfo")
     if (wserver.isTokenValid(request)):
-        return wmonitor.getLiveVariablesInfo(request)
+        log.debug("/IN getlivevariablesinfo")
+        ret = wmonitor.getLiveVariablesInfo(request)
+        log.debug("/OUT getlivevariablesinfo")
+        return ret
     else:
         return "InvalidToken"
 
@@ -264,9 +276,17 @@ def getlivevariablesinfo():
 #Gets all the variables information for a given library
 @application.route("/getlibraryvariablesinfo", methods=["POST", "GET"])
 def getlibraryvariablesinfo():
+    perfStartTime = timeit.default_timer()
     log.debug("/getlibraryvariablesinfo")
     if (wserver.isTokenValid(request)):
-        return wserver.getLibraryVariablesInfo(request)
+        perfElapsedTime = timeit.default_timer() - perfStartTime
+        log.info("Took {0} s to getlibraryvariablesinfo".format(perfElapsedTime))
+        log.debug("/getlibraryvariablesinfo2")
+        perfStartTime = timeit.default_timer()
+        ret = wserver.getLibraryVariablesInfo(request)
+        perfElapsedTime = timeit.default_timer() - perfStartTime
+        log.info("Took {0} s to getlibraryvariablesinfo2".format(perfElapsedTime))
+        return ret
     else:
         return "InvalidToken"
 
@@ -275,7 +295,10 @@ def getlibraryvariablesinfo():
 def gettransformationsinfo():
     log.debug("/gettransformationsinfo")
     if (wserver.isTokenValid(request)):
-        return wserver.getTransformationsInfo(request)
+        log.debug("/IN gettransformationsinfo")
+        ret = wserver.getTransformationsInfo(request)
+        log.debug("/OUT gettransformationsinfo")
+        return ret
     else:
         return "InvalidToken"
 
@@ -284,7 +307,10 @@ def gettransformationsinfo():
 def updateplant():
     log.debug("/updateplant")
     if (wserver.isTokenValid(request)):
-        return wserver.updatePlant(request)
+        log.debug("/IN updateplant")
+        ret = wserver.updatePlant(request)
+        log.debug("/OUT updateplant")
+        return ret
     else:
         return "InvalidToken"
 
@@ -293,7 +319,10 @@ def updateplant():
 def loadintoplant():
     log.debug("/loadintoplant")
     if (wserver.isTokenValid(request)):
-        return wloader.loadIntoPlant(request)
+        log.debug("/IN loadintoplant")
+        ret = wloader.loadIntoPlant(request)
+        log.debug("/OUT loadintoplant")
+        return ret
     else:
         return "InvalidToken"
 
@@ -302,7 +331,10 @@ def loadintoplant():
 def getlibraries():
     log.debug("/getlibraries")
     if (wserver.isTokenValid(request)):
-        return wserver.getLibraries(request) 
+        log.debug("/IN getlibraries")
+        ret = wserver.getLibraries(request) 
+        log.debug("/OUT getlibraries")
+        return ret
     else:
         return "InvalidToken"
 
@@ -311,7 +343,10 @@ def getlibraries():
 def savelibrary():
     log.debug("/savelibrary")
     if (wserver.isTokenValid(request)):
-        return wserver.saveLibrary(request) 
+        log.debug("/IN savelibrary")
+        ret = wserver.saveLibrary(request) 
+        log.debug("/OUT savelibrary")
+        return ret
     else:
         return "InvalidToken"
 
@@ -321,7 +356,10 @@ def savelibrary():
 def getschedules():
     log.debug("/getschedules")
     if (wserver.isTokenValid(request)):
-        return wserver.getSchedules(request) 
+        log.debug("/IN getschedules")
+        ret = wserver.getSchedules(request) 
+        log.debug("/OUT getschedules")
+        return ret
     else:
         return "InvalidToken"
 
@@ -330,7 +368,10 @@ def getschedules():
 def getusers():
     log.debug("/getusers")
     if (wserver.isTokenValid(request)):
-        return wserver.getUsers(request) 
+        log.debug("/IN getusers")
+        ret = wserver.getUsers(request) 
+        log.debug("/OUT getusers")
+        return ret
     else:
         return "InvalidToken"
 
@@ -339,7 +380,10 @@ def getusers():
 def getuser():
     log.debug("/getuser")
     if (wserver.isTokenValid(request)):
-        return wserver.getUser(request) 
+        log.debug("/IN getuser")
+        ret = wserver.getUser(request) 
+        log.debug("/OUT getuser")
+        return ret
     else:
         return "InvalidToken"
 
@@ -349,7 +393,10 @@ def getuser():
 def getpages():
     log.debug("/getpages")
     if (wserver.isTokenValid(request)):
-        return wserver.getPages(request) 
+        log.debug("/IN getpages")
+        ret = wserver.getPages(request) 
+        log.debug("/OUT getpages")
+        return ret
     else:
         return "InvalidToken"
 
@@ -358,7 +405,10 @@ def getpages():
 def getpage():
     log.debug("/getpage")
     if (wserver.isTokenValid(request)):
-        return wserver.getPage(request) 
+        log.debug("/IN getpage")
+        ret = wserver.getPage(request) 
+        log.debug("/OUT getpage")
+        return ret
     else:
         return "InvalidToken"
 
@@ -367,7 +417,10 @@ def getpage():
 def getschedule():
     log.debug("/getschedule")
     if (wserver.isTokenValid(request)):
-        return wserver.getSchedule(request)    
+        log.debug("/IN getschedule")
+        ret = wserver.getSchedule(request)    
+        log.debug("/OUT getschedule")
+        return ret
     else:
         return "InvalidToken"
 
@@ -376,7 +429,10 @@ def getschedule():
 def getschedulevariablesValues():
     log.debug("/getschedulevariablesvalues")
     if (wserver.isTokenValid(request)):
-        return wserver.getScheduleVariablesValues(request)
+        log.debug("/IN getschedulevariablesvalues")
+        ret = wserver.getScheduleVariablesValues(request)
+        log.debug("/OUT getschedulevariablesvalues")
+        return ret
     else:
         return "InvalidToken"
 
@@ -385,7 +441,10 @@ def getschedulevariablesValues():
 def getlibraryvariablesvalues():
     log.debug("/getlibraryvariablesvalues")
     if (wserver.isTokenValid(request)):
-        return wserver.getLibraryVariablesValues(request)
+        log.debug("/IN getlibraryvariablesvalues")
+        ret = wserver.getLibraryVariablesValues(request)
+        log.debug("/OUT getlibraryvariablesvalues")
+        return ret
     else:
         return "InvalidToken"
 
@@ -410,7 +469,10 @@ def logout():
 def updateschedule():
     log.debug("/updateschedule")
     if (wserver.isTokenValid(request)):
-        return wserver.updateSchedule(request)    
+        log.debug("/IN updateschedule")
+        ret = wserver.updateSchedule(request)    
+        log.debug("/OUT updateschedule")
+        return ret
     else:
         return "InvalidToken"
 
@@ -419,7 +481,10 @@ def updateschedule():
 def commitschedule():
     log.debug("/commitschedule")
     if (wserver.isTokenValid(request)):
-        return wserver.commitSchedule(request)    
+        log.debug("/IN commitschedule")
+        ret = wserver.commitSchedule(request)    
+        log.debug("/OUT commitschedule")
+        return ret
     else:
         return "InvalidToken"
 
@@ -428,7 +493,10 @@ def commitschedule():
 def createschedule():
     log.debug("/createschedule")
     if (wserver.isTokenValid(request)):
-        return wserver.createSchedule(request)
+        log.debug("/IN createschedule")
+        ret = wserver.createSchedule(request)
+        log.debug("/OUT createschedule")
+        return ret
     else:
         return "InvalidToken"
 
@@ -437,29 +505,28 @@ def createschedule():
 def transform():
     log.debug("/transform")
     if (wserver.isTokenValid(request)):
-        return wtransformation.transform(request)
+        log.debug("/IN transform")
+        ret = wtransformation.transform(request)
+        log.debug("/OUT transform")
+        return ret
     else:
         return "InvalidToken"
     
 @application.route("/stream", methods=["POST", "GET"])
 def stream():
     log.debug("/stream")
-    if (wserver.getServer().isStandalone()):
-        log.critical("No streaming supported in a standalone implementation")
-        return "NotAvailable"
-    else:
-        if (wserver.isTokenValid(request)):
-            if (request.method == "POST"):
-                tokenId = request.form["token"]
-            else:
-                tokenId = request.args["token"]
-
-            username = wserver.getAuth().getUsernameFromToken(tokenId)
-            if (username is not None): 
-                #Note that this cannot be interfaced through the wserver (otherwise the yield reply will not work properly)
-                return Response(wserver.getServer().streamData(username, tokenId), mimetype="text/event-stream")
+    if (wserver.isTokenValid(request)):
+        if (request.method == "POST"):
+            tokenId = request.form["token"]
         else:
-            return "InvalidToken"
+            tokenId = request.args["token"]
+
+        username = wserver.getAuth().getUsernameFromToken(tokenId)
+        if (username is not None): 
+            #Note that this cannot be interfaced through the wserver (otherwise the yield reply will not work properly)
+            return Response(wserver.getServer().streamData(username, tokenId), mimetype="text/event-stream")
+    else:
+        return "InvalidToken"
 
 @application.route("/")
 def index():

@@ -24,6 +24,7 @@ import ConfigParser
 import datetime
 import logging
 import multiprocessing
+import multiprocessing.managers
 import os
 import time
 import threading
@@ -49,8 +50,14 @@ class HieratikaAuth(object):
     __metaclass__ = ABCMeta
 
     def __init__(self):
+        super(HieratikaAuth, self).__init__()
         self.logListeners = []
         self.stdAloneUsername = None
+        self.manager = multiprocessing.managers.SyncManager()
+        self.manager.start()
+        self.tokensU = self.manager.dict()
+        self.tokensT = self.manager.dict()
+        self.mux = multiprocessing.Lock()
 
     def addLogListener(self, listener):
         """ Registers a listener which will be notfied everytime a user logs in or out from the system.
@@ -60,11 +67,10 @@ class HieratikaAuth(object):
         """
         self.logListeners.append(listener)
 
-    def loadCommon(self, manager, config):
+    def loadCommon(self, config):
         """ Loads parameters that are common to all authentication implementations.
         
         Args:
-            manager(multiprocessing.Manager): A multiprocessing Manager instance to allocate objects that are to be shared by different processes.
             config (ConfigParser): parameters that are common to all authenticate implementations:
             - loginMonitorUpdateRate (int): the time interval in seconds at which the state of logged in users is to be checked. 
             - loginMonitorMaxInactivityTime (int): maximum time that a given user can stay logged in without interacting with the server.
@@ -73,9 +79,7 @@ class HieratikaAuth(object):
             True if all the parameters are successfully loaded.
         """
         try:
-            self.tokens = manager.dict()
-            self.lockPool = LockPool(1, manager)
-            self.lockKey = "HAUTHPY"
+            print self.tokensU
             self.standalone = config.getboolean("hieratika", "standalone")
             #For monitoring user login state
             if (not self.standalone):
@@ -120,13 +124,13 @@ class HieratikaAuth(object):
             #Logout all the users that have not interacted with the server for a while
             currentTime = int(time.time())
             #Dict proxys cannot be iterated like a normal dict
-            self.lockPool.acquire(self.lockKey)
-            keys = self.tokens.keys()
+            self.mux.acquire()
+            keys = self.tokensU.keys()
             for k in keys:
-                if ((currentTime - self.tokens[k][1])  > self.loginMonitorMaxInactivityTime):
-                    log.info("User {0} was not active for the last {1} seconds. User will be logout".format(self.tokens[k][0], self.loginMonitorMaxInactivityTime))
+                if ((currentTime - self.tokensT[k])  > self.loginMonitorMaxInactivityTime):
+                    log.info("User {0} was not active for the last {1} seconds. User will be logout".format(self.tokensU[k], self.loginMonitorMaxInactivityTime))
                     self.logout(k) 
-            self.lockPool.release(self.lockKey)
+            self.mux.release()
             #Print current server info
             self.printInfo()
 
@@ -141,17 +145,16 @@ class HieratikaAuth(object):
         Returns:
             True if the token is valid.
         """
-        ok = True
         if (not self.standalone):
+            self.mux.acquire()
             log.debug("Checking if tokenId: {0} is in the tokens list".format(tokenId))
-            self.lockPool.acquire(self.lockKey)
-            ok = (tokenId in self.tokens)
+            ok = (self.tokensU.has_key(tokenId))
             if (ok):
-                username = self.tokens[tokenId][0]
+                username = self.tokensU.get(tokenId)
                 interactionTime = time.time()
-                self.tokens[tokenId] = (username, interactionTime)
+                self.tokensT.update([(tokenId, interactionTime)])
                 log.debug("Updated: {0} ({1}) : {2}".format(username, tokenId, interactionTime))
-            self.lockPool.release(self.lockKey)
+            self.mux.release()
         return ok
 
     def login(self, username, password):
@@ -164,9 +167,9 @@ class HieratikaAuth(object):
         """
         user = None
         if (not self.standalone):
-            self.lockPool.acquire(self.lockKey)
-            numberOfLoggedUsers = len(self.tokens)
-            self.lockPool.release(self.lockKey)
+            self.mux.acquire()
+            numberOfLoggedUsers = len(self.tokensU)
+            self.mux.release()
             ok = (numberOfLoggedUsers < self.loginMaxUsers)
             if (ok):
                 ok = self.authenticate(username, password)
@@ -184,9 +187,10 @@ class HieratikaAuth(object):
             loginToken = uuid.uuid4().hex
             user.setToken(loginToken)
             if (not self.standalone):
-                self.lockPool.acquire(self.lockKey)
-                self.tokens[loginToken] = (user.getUsername(), int(time.time()))
-                self.lockPool.release(self.lockKey)
+                self.mux.acquire()
+                self.tokensU[loginToken] = user.getUsername()
+                self.tokensT[loginToken] = int(time.time())
+                self.mux.release()
             else:
                 self.stdAloneUsername = user.getUsername()
 
@@ -199,29 +203,30 @@ class HieratikaAuth(object):
     def printInfo(self):
         """ Prints information about the server state into the log.
         """
+        return
         info = "Server information\n"
         info = info + "Logged users\n"
         info = info + "{0:40}|{1:40}\n".format("user", "Last interaction")
-        self.lockPool.acquire(self.lockKey)
-        keys = self.tokens.keys()
+        self.mux.acquire()
+        keys = self.tokensU.keys()
         for k in keys:
-            user = self.tokens[k][0]
-            interactionTime = str(datetime.datetime.fromtimestamp(self.tokens[k][1]))
+            user = self.tokensU[k]
+            interactionTime = str(datetime.datetime.fromtimestamp(self.tokensT[k]))
             info = info + "{0:40}|{1:40}\n".format(user, interactionTime)
-        self.lockPool.release(self.lockKey)
+        self.mux.release()
         log.info(info)
 
     def getUsernameFromToken(self, token):
         """ Returns the username associated to a given token.
         """
         if (not self.standalone):
-            self.lockPool.acquire(self.lockKey)
+            self.mux.acquire()
             try:
-                username = self.tokens[token][0]
+                username = self.tokensU[token]
             except KeyError as e:
                 log.critical("Failed to get user with token {0}".format(token))
                 username = None
-            self.lockPool.release(self.lockKey)
+            self.mux.release()
         else:
             username = self.stdAloneUsername
         return username
@@ -234,21 +239,21 @@ class HieratikaAuth(object):
             token (str): token that was provided to the user when was logged in
         """
         try:
-            self.lockPool.acquire(self.lockKey)
-            user = self.tokens[token][0]
+            self.mux.acquire()
+            user = self.tokensU[token]
             log.info("Logging out {0} with token {1}".format(user, token))
-            del(self.tokens[token])
-            self.lockPool.release(self.lockKey)
+            del(self.tokensU[token])
+            del(self.tokensT[token])
+            self.mux.release()
             for l in self.logListeners:
                 l.userLoggedOut(user, token)
         except KeyError as e:
             log.critical("Failed to logout user with token {0} : {1}".format(token, e))
 
     @abstractmethod
-    def load(self, manager, config):
+    def load(self, config):
         """ Configures the authentication service against a set of parameters. This set of parameters is specific for each implementation.
         Args:
-            manager(multiprocessing.Manager): A multiprocessing Manager instance to allocate objects that are to be shared by different processes.
             config(ConfigParser): the authentication specific implementation parameters are in the "auth-impl" section.
         Returns:
             True if the authentication service is successfully configured.

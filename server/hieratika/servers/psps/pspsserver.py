@@ -25,6 +25,8 @@ import errno
 import fnmatch
 import json
 import logging
+import multiprocessing
+import multiprocessing.managers
 import os
 import shutil
 import time
@@ -70,11 +72,15 @@ class PSPSServer(HieratikaServer):
         #cachedXmls is local to each process since the xml Element cannot be pickled by the multiprocessing Manager
         self.cachedXmls = {}
         self.recordTag = "{{{0}}}record".format(self.xmlns["ns0"])
+        self.pageManager = multiprocessing.managers.SyncManager()
+        self.pageManager.start()
+        self.pages = self.pageManager.list()
+        #This is to protect the local resources cachedXmls and xmlIds (which are local to the process)
+        self.mux = multiprocessing.Lock() 
 
-    def load(self, manager, config):
+    def load(self, config):
         ok = True
         try:
-            self.pages = manager.list()
             self.structSeparator = config.get("hieratika", "structSeparator") 
             self.standalone = config.getboolean("hieratika", "standalone")
             self.pagesFolder = config.get("hieratika", "pagesFolder")
@@ -84,9 +90,7 @@ class PSPSServer(HieratikaServer):
             self.baseDir = config.get("server-impl", "baseDir")
             self.autoCreatePages = config.getboolean("server-impl", "autoCreatePages")
             self.defaultExperts = ast.literal_eval(config.get("server-impl", "defaultExperts"))
-            self.lockPool = LockPool(numberOfLocks, manager)
-            #This is to protect the local resources cachedXmls and xmlIds (which are local to the process)
-            self.mux = threading.Lock() 
+            self.lockPool = LockPool(numberOfLocks)
             self.loadPages()
         except (ConfigParser.Error, KeyError) as e:
             log.critical(str(e))
@@ -114,7 +118,8 @@ class PSPSServer(HieratikaServer):
             ret = self.xmlIds[xmlPath]
             log.debug("Found {0} in cache and the value is {1}".format(xmlPath, ret))
         except KeyError:
-            ret = uuid.uuid1().hex
+            #Careful that this uuid must be unique in different processes, so that the same key always generate the same id! (Otherwise we migh lock with one key and unlock with a different key)
+            ret = uuid.uuid5(uuid.NAMESPACE_OID, xmlPath).hex
             self.xmlIds[xmlPath] = ret
             log.debug("Not found {0} in cache and the generated value is {1}".format(xmlPath, ret))
         self.mux.release()

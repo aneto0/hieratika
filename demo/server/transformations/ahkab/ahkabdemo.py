@@ -47,10 +47,10 @@ class AhkabDemo(HieratikaTransformation):
     def __init__(self):
         super(AhkabDemo, self).__init__()
         
-    def load(self, manager, config):
+    def load(self, config):
         return True
 
-    def loadCommon(self, manager, config):
+    def loadCommon(self, config):
         return True
 
     def transform(self, transformationUID, fun, inputs):

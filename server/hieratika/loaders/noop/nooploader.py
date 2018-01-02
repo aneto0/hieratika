@@ -41,7 +41,7 @@ class NOOPLoader(HieratikaLoader):
     def __init__(self):
         super(HieratikaLoader, self).__init__()
         
-    def load(self, manager, config):
+    def load(self, config):
         return True
 
     def loadIntoPlant(self, pageName):

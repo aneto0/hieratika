@@ -46,21 +46,21 @@ class HieratikaLoader(object):
         pass
         
     @abstractmethod
-    def load(self, manager, config):
+    def load(self, config):
         """ Configures the loader against a set of parameters. This set of parameters is specific for each loader implementation.
         Args:
-            manager(multiprocessing.Manager): A multiprocessing Manager instance to allocate objects that are to be shared by different processes.
             config(ConfigParser): the loader specific implementation parameters are in the section "loader-impl".
         Returns:
             True if the loader is successfully configured.
         """
         pass
 
-    def loadCommon(self, manager, config):
+    def loadCommon(self, config):
         """ Loads parameters that are common to all loader implementations.
             NOOP as of today.
         Args:
-            manager(multiprocessing.Manager): A multiprocessing Manager instance to allocate objects that are to be shared by different processes.
+            config (ConfigParser): parameters that are common to all authenticate implementations:
+            NONE as of today.
         Returns:
             True 
         """

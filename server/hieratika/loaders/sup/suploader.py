@@ -44,7 +44,7 @@ class SUPLoader(HieratikaLoader):
     def __init__(self):
         super(HieratikaLoader, self).__init__()
         
-    def load(self, manager, config):
+    def load(self, config):
         ok = True
         try:
             self.baseDir = config.get("loader-impl", "baseDir")

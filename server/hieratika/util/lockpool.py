@@ -24,6 +24,7 @@ __date__ = "17/11/2017"
 ##
 import logging
 import multiprocessing
+import multiprocessing.managers
 import os
 import time
 import threading
@@ -52,26 +53,29 @@ class LockPool(object):
         (after the second time the same caller process is acquiring the same key).
 
         When a key is released, if no more threads or processes are waiting on that key, the semaphore is returned to the pool.
+
+    Args:
+        numberOfLocks (int): the maximum number of simultaneous locks (i.e. different keys) that is allowed to lock on this pool.
     """
 
-    def __init__(self, numberOfProcessLocks, manager = multiprocessing.Manager()):
-        #Global mux to protect access to shared counter
-        self.mux = multiprocessing.RLock()
+    def __init__(self, numberOfLocks):
+        #MUST use a different manager instance for every group (where a group is a set of dictionaries which are
+        #guaranteed to have exclusive access (read and read/write) to its elements. See https://stackoverflow.com/questions/48052148/python-multiprocessing-dict-sharing-between-processes ).
+        self.manager = multiprocessing.managers.SyncManager()
+        self.manager.start()
+        #Global mux to protect access to shared counter (I have tested that this also protects against multi-threading in the scope of the same process)
+        self.mux = self.manager.Lock()
         #Counts the number of locks that were allocated to a given key. Note that this has to be done this way as no multiprocessing semaphores nor multiprocessing dicts can be created after the child processes are forked (given that these will have a local copy of all the variables)
-        self.allocatedLocksC = manager.dict()
+        self.allocatedLocksC = self.manager.dict()
         #Stores the self.sharedLocks array index that is assigned to a given key
-        self.allocatedLocksI = manager.dict()
+        self.allocatedLocksI = self.manager.dict()
         #The pool of semaphores. One different semaphore will be allocated for each key
         self.sharedLocks = []
-        #Stores True in all the indexes that are not being used by any key
-        self.sharedLocksFreeState = manager.list()
-        for i in range(numberOfProcessLocks):
+        #Stores the indexes of the semaphores which are ready to be used
+        self.sharedLocksFreeState = self.manager.list()
+        for i in range(numberOfLocks):
             self.sharedLocks.append(multiprocessing.Lock())
             self.sharedLocksFreeState.append(True)
-
-        #Note that after forking there will be one independent copy of processThreads per child process, so that there will be a unique copy
-        # of this dictionary for every forked child (which will have its own list of threads)
-        self.processThreads = {}
 
     def acquire(self, key):
         """ Acquires a lock against a given key.
@@ -81,51 +85,41 @@ class LockPool(object):
         """
         self.mux.acquire()
         pid = str(os.getpid())
-        #Register threads for this key in this pid. Remember that self.processThreads is local to the child process
-        if (key not in self.processThreads):
-            self.processThreads[key] = {}
-            self.processThreads[key]["tcounter"] = 0
-            self.processThreads[key]["tlock"] = threading.Lock()
+        log.critical("A0 {0} {1}>>>> {2} {3} {4}".format(key, pid, self.allocatedLocksC, self.allocatedLocksI, self.sharedLocksFreeState))
+        #print self.allocatedLocksC
         #Check if there is already a key with this lock
         if (key in self.allocatedLocksC):
             #Since this key was already locked, it can have been locked by another process or by this same process using
             #another thread
-            if (self.processThreads[key]["tcounter"] > 0):
-                #Case where this pid had already requested a lock for this key
-                log.debug("The process with pid: {0} had already requested to lock key: {1}. Going to lock on the thread. Thread: {2}.".format(pid, key, threading.current_thread().ident))
-                #Increment the number of locks associated to the same pid (remember processThreads is local to the child and thus the pid)
-                self.processThreads[key]["tcounter"] = self.processThreads[key]["tcounter"] + 1
-                self.mux.release()
-                #Lock on the thread
-                self.processThreads[key]["tlock"].acquire()
-            else:
-                #Case where this pid is asking for the first time for a lock for this key
-                #Create a thread which allows subsequent calls with the same pid to lock on the thread context
-                log.debug("The process with pid: {0} is requesting for the first time to lock key: {1}. Thread: {2}.".format(pid, key, threading.current_thread().ident))
-                self.processThreads[key]["tcounter"] = 1
-                self.processThreads[key]["tlock"].acquire()
-                #Increment the number of processes that are locked on this key
-                self.allocatedLocksC[key] = self.allocatedLocksC[key] + 1
-                idx = self.allocatedLocksI[key]
-                #Lock on the process
-                self.mux.release()
-                self.sharedLocks[idx].acquire()
+            log.critical("A0.1 {0} {1}>>>> {2} {3} {4}".format(key, pid, self.allocatedLocksC, self.allocatedLocksI, self.sharedLocksFreeState))
+            self.allocatedLocksC[key] = self.allocatedLocksC[key] + 1
+            log.critical("A1 {0} {1}>>>> {2} {3} {4}".format(key, pid, self.allocatedLocksC, self.allocatedLocksI, self.sharedLocksFreeState))
+            idx = self.allocatedLocksI[key]
+            log.debug("The process with pid: {0} had already locked the key (with another thread): {1}. Thread: {2}. Number of locks for this key:{3} idx:{4} L:{5} @ {6}".format(pid, key, threading.current_thread().ident, self.allocatedLocksC[key], id(idx), self.sharedLocks[idx], id(self.sharedLocks[idx])))
+            lock = self.sharedLocks[idx]
+            log.critical("A2 {0} {1}>>>> {2} {3} {4}".format(key, pid, self.allocatedLocksC, self.allocatedLocksI, self.sharedLocksFreeState))
+            self.mux.release()
+            lock.acquire()
+            log.critical("A3 {0} {1}>>>> {2} {3} {4}".format(key, pid, self.allocatedLocksC, self.allocatedLocksI, self.sharedLocksFreeState))
         else:
             #Get a free lock
             try:
-                #No one has ever requested to lock on this key, so just lock the process and prepare a thread lock
-                # in case another thread from this pid requests a lock for the same key
-                idx = self.sharedLocksFreeState.index(True)
+                log.critical("A0.2 {0} {1}>>>> {2} {3} {4}".format(key, pid, self.allocatedLocksC, self.allocatedLocksI, self.sharedLocksFreeState))
+                #No one has ever requested to lock on this key, so just lock the process and prepare a shared lock
+                idx = int(self.sharedLocksFreeState.index(True))
                 #Get a multiprocessing semaphore which in not being used now. If this fails the exception below will be raised
+                log.critical("A4 {0} {1}>>>> {2} {3} {4}".format(key, pid, self.allocatedLocksC, self.allocatedLocksI, self.sharedLocksFreeState))
                 self.allocatedLocksC[key] = 1
+                log.critical("A5 {0} {1}>>>> {2} {3} {4}".format(key, pid, self.allocatedLocksC, self.allocatedLocksI, self.sharedLocksFreeState))
                 self.allocatedLocksI[key] = idx
+                log.critical("A6 {0} {1}>>>> {2} {3} {4}".format(key, pid, self.allocatedLocksC, self.allocatedLocksI, self.sharedLocksFreeState))
                 self.sharedLocksFreeState[idx] = False
-                self.processThreads[key]["tcounter"] = 1
-                self.processThreads[key]["tlock"].acquire()
+                log.critical("A7 {0} {1}>>>> {2} {3} {4}".format(key, pid, self.allocatedLocksC, self.allocatedLocksI, self.sharedLocksFreeState))
                 #Lock on the process
-                log.debug("The process with pid: {0} is the first to lock key: {1}. Thread: {2}.".format(pid, key, threading.current_thread().ident))
+                log.debug("The process with pid: {0} is the first to lock key: {1}. Thread: {2} {3} L:{4} @ {5}".format(pid, key, threading.current_thread().ident, id(idx), self.sharedLocks[idx], id(self.sharedLocks[idx])))
                 #Note that this will block the calling thread from this process but not other threads from the same process
                 self.sharedLocks[idx].acquire()
+                log.critical("A8 {0} {1}>>>> {2} {3} {4}".format(key, pid, self.allocatedLocksC, self.allocatedLocksI, self.sharedLocksFreeState))
                 self.mux.release()
             except ValueError:
                 #No locks available on the shared pool. Poll for resources to be available...
@@ -146,29 +140,30 @@ class LockPool(object):
         """
         self.mux.acquire()
         pid = str(os.getpid())
-        self.processThreads[key]["tcounter"] = self.processThreads[key]["tcounter"] - 1
-        #Release the thread locking this key. Note that a thread is always acquired at lock creation
-        self.processThreads[key]["tlock"].release()
-        if (self.processThreads[key]["tcounter"] == 0):
-            #If no more threads for this pid (remember processThreads is local to the pid), release the process lock
-            self.allocatedLocksC[key] = self.allocatedLocksC[key] - 1
-            #Release the process lock
-            idx = self.allocatedLocksI[key]
-            log.debug("The process with pid: {0} has no more threads locking the key: {1} and will be released. Thread: {2}.".format(pid, key, threading.current_thread().ident))
-            self.sharedLocks[idx].release()
-        else:
-            log.debug("The process with pid: {0} still has more threads locking the key: {1} so that only the thread will be released. Thread: {2}.".format(pid, key, threading.current_thread().ident))
-
+        log.critical("R0 {0} {1}>>>> {2} {3} {4}".format(key, pid, self.allocatedLocksC, self.allocatedLocksI, self.sharedLocksFreeState))
+        idx = int(self.allocatedLocksI[key])
+        log.critical("R1 {0} {1}>>>> {2} {3} {4}".format(key, pid, self.allocatedLocksC, self.allocatedLocksI, self.sharedLocksFreeState))
+        log.debug("Releasing process with pid: {0} for key: {1}. Thread: {2} {3} L:{4} @ {5}".format(pid, key, threading.current_thread().ident, id(idx), self.sharedLocks[idx], id(self.sharedLocks[idx]))) 
+        lock = self.sharedLocks[idx]
+        log.critical("R2 {0} {1}>>>> {2} {3} {4}".format(key, pid, self.allocatedLocksC, self.allocatedLocksI, self.sharedLocksFreeState))
+        self.allocatedLocksC[key] = self.allocatedLocksC[key] - 1
         if (self.allocatedLocksC[key] == 0):
-            log.debug("The process with pid: {0} was the last locking the key: {1} so that the semaphore will be returned to the pool. Thread: {2}.".format(pid, key, threading.current_thread().ident))
-            # If there are no more processes interested give it back to the pool
-            self.sharedLocksFreeState[idx] = True
-            self.allocatedLocksC.pop(key)
+            log.debug("The process with pid: {0} was the last locking the key: {1} so that the semaphore will be returned to the pool. Thread: {2}".format(pid, key, threading.current_thread().ident)) 
+            log.critical("R3 {0} {1}>>>> {2} {3} {4}".format(key, pid, self.allocatedLocksC, self.allocatedLocksI, self.sharedLocksFreeState))
+            # If there are no more processes interested give it back to the pool 
+            self.sharedLocksFreeState[idx] = True 
+            log.critical("R3.1 {0} {1}>>>> {2} {3} {4}".format(key, pid, self.allocatedLocksC, self.allocatedLocksI, self.sharedLocksFreeState))
+            self.allocatedLocksC.pop(key) 
+            log.critical("R3.2 {0} {1}>>>> {2} {3} {4}".format(key, pid, self.allocatedLocksC, self.allocatedLocksI, self.sharedLocksFreeState))
             self.allocatedLocksI.pop(key)
-            self.processThreads.pop(key)
+            log.critical("R4 {0} {1}>>>> {2} {3} {4}".format(key, pid, self.allocatedLocksC, self.allocatedLocksI, self.sharedLocksFreeState))
+        else: 
+            log.debug("The process with pid: {0} is releasing the key: {1}. Thread: {2}. Number of locks: {3}".format(pid, key, threading.current_thread().ident, self.allocatedLocksC[key]))
+            log.critical("R5 {0} {1}>>>> {2} {3} {4}".format(key, pid, self.allocatedLocksC, self.allocatedLocksI, self.sharedLocksFreeState))
+        log.critical("R6 {0} {1}>>>> {2} {3} {4}".format(key, pid, self.allocatedLocksC, self.allocatedLocksI, self.sharedLocksFreeState))
+        lock.release()
         self.mux.release()
                
-
     def isKeyInUse(self, key): 
         """ Checks if a given key is currently being used.
         Returns:
