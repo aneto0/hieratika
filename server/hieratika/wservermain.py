@@ -30,6 +30,7 @@ import ast
 import ConfigParser
 import importlib
 import logging
+import multiprocessing
 import os
 import timeit
 from flask import Flask, Response, request, send_from_directory
@@ -137,6 +138,7 @@ def load(config):
             ok = server.load(config)
         else:
             log.critical("Failed to load common server configuration")
+
         if (ok):
             log.info("Loading auth configuration")
             ok = auth.loadCommon(config)

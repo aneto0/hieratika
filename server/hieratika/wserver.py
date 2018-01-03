@@ -256,20 +256,20 @@ class WServer:
             specified page.
         """
         toReturn = ""
-        try:
-            pageName = request.form["pageName"]
-            if "username" in request.form:
-                username = request.form["username"]
-            else:
-                username = ""
-            
-            schedules = self.serverImpl.getSchedules(username, pageName)
-            schedulesStr = [s.__dict__ for s in schedules]
-            toReturn = json.dumps(schedulesStr)
-            log.debug("For {0} in {1} returning: {2}".format(username, pageName, toReturn))
-        except KeyError as e:
-            log.critical(str(e))
-            toReturn = "InvalidParameters"
+#        try:
+        pageName = request.form["pageName"]
+        if "username" in request.form:
+            username = request.form["username"]
+        else:
+            username = ""
+        
+        schedules = self.serverImpl.getSchedules(username, pageName)
+        schedulesStr = [s.__dict__ for s in schedules]
+        toReturn = json.dumps(schedulesStr)
+        log.debug("For {0} in {1} returning: {2}".format(username, pageName, toReturn))
+#        except Exception as e:
+#            log.critical(str(e))
+#            toReturn = "InvalidParameters"
         return toReturn
 
     def getSchedule(self, request):

@@ -17,6 +17,7 @@ class A:
         self.mux.acquire()
         if (self.d.has_key(self.key)):
             item = self.d.get(self.key)
+            #print item
             self.d.update([(self.key, item + 1)])
             #print "{0} {1} {2}".format(os.getpid(), threading.current_thread().ident, self.d)
         else:
@@ -119,12 +120,12 @@ if __name__ == "__main__":
     manager = multiprocessing.Manager()
     inst1 = A(manager, mux)
     inst2 = A(manager, mux)
-    print "Same manager, same mux"
-    test_sameProcessSameThread(inst1, inst2, nRuns)
-    test_sameProcessThreaded(inst1, inst2, nRuns, nThreads)
-    test_manyProcessesSingleThreaded(inst1, inst2, nRuns, nProcesses)
-    test_manyForkedProcessesSingleThreaded(inst1, inst2, nRuns, nProcesses)
-    test_manyForkedProcessesMultiThreaded(inst1, inst2, nRuns, nProcesses, nThreads)
+    #print "Same manager, same mux"
+    #test_sameProcessSameThread(inst1, inst2, nRuns)
+    #test_sameProcessThreaded(inst1, inst2, nRuns, nThreads)
+    #test_manyProcessesSingleThreaded(inst1, inst2, nRuns, nProcesses)
+    #test_manyForkedProcessesSingleThreaded(inst1, inst2, nRuns, nProcesses)
+    #test_manyForkedProcessesMultiThreaded(inst1, inst2, nRuns, nProcesses, nThreads)
 
     #Different managers, different muxes
     print "Different managers, different muxes"
@@ -136,11 +137,11 @@ if __name__ == "__main__":
     manager2.start()
     inst1 = A(manager1, mux1)
     inst2 = A(manager2, mux2)
-    test_sameProcessSameThread(inst1, inst2, nRuns)
-    test_sameProcessThreaded(inst1, inst2, nRuns, nThreads)
-    test_manyProcessesSingleThreaded(inst1, inst2, nRuns, nProcesses)
-    test_manyForkedProcessesSingleThreaded(inst1, inst2, nRuns, nProcesses)
-    test_manyForkedProcessesMultiThreaded(inst1, inst2, nRuns, nProcesses, nThreads)
+    #test_sameProcessSameThread(inst1, inst2, nRuns)
+    #test_sameProcessThreaded(inst1, inst2, nRuns, nThreads)
+    #test_manyProcessesSingleThreaded(inst1, inst2, nRuns, nProcesses)
+    #test_manyForkedProcessesSingleThreaded(inst1, inst2, nRuns, nProcesses)
+    #test_manyForkedProcessesMultiThreaded(inst1, inst2, nRuns, nProcesses, nThreads)
 
     #Same manager, different muxes
     print "Same manager, different muxes"
@@ -152,6 +153,6 @@ if __name__ == "__main__":
     test_sameProcessThreaded(inst1, inst2, nRuns, nThreads)
     test_manyProcessesSingleThreaded(inst1, inst2, nRuns, nProcesses)
     #This fails...
-    #test_manyForkedProcessesSingleThreaded(inst1, inst2, nRuns, nProcesses)
-    test_manyForkedProcessesMultiThreaded(inst1, inst2, nRuns, nProcesses, nThreads)
+    test_manyForkedProcessesSingleThreaded(inst1, inst2, nRuns, nProcesses)
+    #test_manyForkedProcessesMultiThreaded(inst1, inst2, nRuns, nProcesses, nThreads)
 

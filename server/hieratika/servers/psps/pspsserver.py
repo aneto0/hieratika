@@ -26,7 +26,6 @@ import fnmatch
 import json
 import logging
 import multiprocessing
-import multiprocessing.managers
 import os
 import shutil
 import time
@@ -46,6 +45,8 @@ from hieratika.schedule import Schedule
 from hieratika.server import HieratikaServer
 from hieratika.transformationfunction import TransformationFunction
 from hieratika.util.lockpool import LockPool
+from hieratika.util.shareddict import SharedDictionary
+from hieratika.util.sharedlist import SharedList
 from hieratika.variable import Variable
 from hieratika.variableenum import VariableEnum
 from hieratika.variablelibrary import VariableLibrary
@@ -72,9 +73,7 @@ class PSPSServer(HieratikaServer):
         #cachedXmls is local to each process since the xml Element cannot be pickled by the multiprocessing Manager
         self.cachedXmls = {}
         self.recordTag = "{{{0}}}record".format(self.xmlns["ns0"])
-        self.pageManager = multiprocessing.managers.SyncManager()
-        self.pageManager.start()
-        self.pages = self.pageManager.list()
+        self.pages = SharedList()
         #This is to protect the local resources cachedXmls and xmlIds (which are local to the process)
         self.mux = multiprocessing.Lock() 
 
@@ -550,7 +549,7 @@ class PSPSServer(HieratikaServer):
         return variables 
 
     def getPages(self):
-        return self.pages
+        return self.pages.get("pages")
 
     def getPage(self, pageName):
         page = None

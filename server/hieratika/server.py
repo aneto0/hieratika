@@ -34,6 +34,7 @@ import threading
 # Project imports
 ##
 from hieratika.util.broadcastqueue import BroacastQueue
+from hieratika.util.shareddict import SharedDictionary
 
 ##
 # Logger configuration
@@ -52,11 +53,7 @@ class HieratikaServer(object):
     __metaclass__ = ABCMeta
 
     def __init__(self):
-        #MUST use a different manager instance for every dictionary group (where a group is a set of dictionaries which are
-        #guaranteed to have exclusive access (read and read/write) to its elements. See https://stackoverflow.com/questions/48052148/python-multiprocessing-dict-sharing-between-processes ).
-        self.managerStreamUsers = multiprocessing.managers.SyncManager()
-        self.managerStreamUsers.start()
-        self.streamUsers = self.managerStreamUsers.dict()
+        super(HieratikaServer, self).__init__()
         
     def loadCommon(self, config):
         """ Loads parameters that are common to all server implementations.
@@ -67,6 +64,7 @@ class HieratikaServer(object):
         Returns:
             True if all the parameters are successfully loaded.
         """
+        self.streamUsers = SharedDictionary() 
         try:
             #IPC using UDP sockets
             udpGroup = config.get("hieratika", "udpBroadcastQueueGroup")

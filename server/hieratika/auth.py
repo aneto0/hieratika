@@ -24,7 +24,6 @@ import ConfigParser
 import datetime
 import logging
 import multiprocessing
-import multiprocessing.managers
 import os
 import time
 import threading
@@ -34,6 +33,7 @@ import uuid
 # Project imports
 ##
 from hieratika.util.lockpool import LockPool
+from hieratika.util.shareddict import SharedDictionary
 
 ##
 # Logger configuration
@@ -53,11 +53,7 @@ class HieratikaAuth(object):
         super(HieratikaAuth, self).__init__()
         self.logListeners = []
         self.stdAloneUsername = None
-        self.manager = multiprocessing.managers.SyncManager()
-        self.manager.start()
-        self.tokensU = self.manager.dict()
-        self.tokensT = self.manager.dict()
-        self.mux = multiprocessing.Lock()
+        
 
     def addLogListener(self, listener):
         """ Registers a listener which will be notfied everytime a user logs in or out from the system.
@@ -78,8 +74,9 @@ class HieratikaAuth(object):
         Returns:
             True if all the parameters are successfully loaded.
         """
+        self.tokens = SharedDictionary()
+        self.mux = multiprocessing.Lock()
         try:
-            print self.tokensU
             self.standalone = config.getboolean("hieratika", "standalone")
             #For monitoring user login state
             if (not self.standalone):
@@ -125,10 +122,10 @@ class HieratikaAuth(object):
             currentTime = int(time.time())
             #Dict proxys cannot be iterated like a normal dict
             self.mux.acquire()
-            keys = self.tokensU.keys()
+            keys = self.tokens.keys()
             for k in keys:
-                if ((currentTime - self.tokensT[k])  > self.loginMonitorMaxInactivityTime):
-                    log.info("User {0} was not active for the last {1} seconds. User will be logout".format(self.tokensU[k], self.loginMonitorMaxInactivityTime))
+                if ((currentTime - self.tokens[k][1])  > self.loginMonitorMaxInactivityTime):
+                    log.info("User {0} was not active for the last {1} seconds. User will be logout".format(self.tokens[k][0], self.loginMonitorMaxInactivityTime))
                     self.logout(k) 
             self.mux.release()
             #Print current server info
@@ -148,11 +145,11 @@ class HieratikaAuth(object):
         if (not self.standalone):
             self.mux.acquire()
             log.debug("Checking if tokenId: {0} is in the tokens list".format(tokenId))
-            ok = (self.tokensU.has_key(tokenId))
+            ok = (self.tokens.has_key(tokenId))
             if (ok):
-                username = self.tokensU.get(tokenId)
+                username = self.tokens.get(tokenId)[0]
                 interactionTime = time.time()
-                self.tokensT.update([(tokenId, interactionTime)])
+                self.tokens.update([(tokenId, (username, interactionTime))])
                 log.debug("Updated: {0} ({1}) : {2}".format(username, tokenId, interactionTime))
             self.mux.release()
         return ok
@@ -168,7 +165,7 @@ class HieratikaAuth(object):
         user = None
         if (not self.standalone):
             self.mux.acquire()
-            numberOfLoggedUsers = len(self.tokensU)
+            numberOfLoggedUsers = len(self.tokens)
             self.mux.release()
             ok = (numberOfLoggedUsers < self.loginMaxUsers)
             if (ok):
@@ -188,8 +185,7 @@ class HieratikaAuth(object):
             user.setToken(loginToken)
             if (not self.standalone):
                 self.mux.acquire()
-                self.tokensU[loginToken] = user.getUsername()
-                self.tokensT[loginToken] = int(time.time())
+                self.tokens[loginToken] = (user.getUsername(), int(time.time()))
                 self.mux.release()
             else:
                 self.stdAloneUsername = user.getUsername()
@@ -208,10 +204,10 @@ class HieratikaAuth(object):
         info = info + "Logged users\n"
         info = info + "{0:40}|{1:40}\n".format("user", "Last interaction")
         self.mux.acquire()
-        keys = self.tokensU.keys()
+        keys = self.tokens.keys()
         for k in keys:
-            user = self.tokensU[k]
-            interactionTime = str(datetime.datetime.fromtimestamp(self.tokensT[k]))
+            user = self.tokens[k][0]
+            interactionTime = str(datetime.datetime.fromtimestamp(self.tokens[k][1]))
             info = info + "{0:40}|{1:40}\n".format(user, interactionTime)
         self.mux.release()
         log.info(info)
@@ -222,7 +218,7 @@ class HieratikaAuth(object):
         if (not self.standalone):
             self.mux.acquire()
             try:
-                username = self.tokensU[token]
+                username = self.tokens[token][0]
             except KeyError as e:
                 log.critical("Failed to get user with token {0}".format(token))
                 username = None
@@ -240,10 +236,9 @@ class HieratikaAuth(object):
         """
         try:
             self.mux.acquire()
-            user = self.tokensU[token]
+            user = self.tokens[token][0]
             log.info("Logging out {0} with token {1}".format(user, token))
-            del(self.tokensU[token])
-            del(self.tokensT[token])
+            del(self.tokens[token])
             self.mux.release()
             for l in self.logListeners:
                 l.userLoggedOut(user, token)
