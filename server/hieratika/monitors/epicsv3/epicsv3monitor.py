@@ -158,9 +158,12 @@ class EPICSV3Monitor(HieratikaMonitor):
     def getLiveVariablesInfo(self, requestedVariables):
         variables = []
         for varname in requestedVariables:
+            log.debug("Looking for variable {0}".format(varname))
             if varname in self.variableCache:
                 variable = self.variableCache[varname]
+                log.debug("Going to caget {0}".format(varname))
                 value = epics.caget(varname)
+                log.debug("caget {0} = {1}".format(varname, value))
                 if (value is not None):
                     nelm = variable.getNumberOfElements()
                     if (nelm > 1):
@@ -180,9 +183,9 @@ class EPICSV3Monitor(HieratikaMonitor):
             with open(jsonFileName) as jsonFile:
                 variableList = json.load(jsonFile)
                 for pvName in variableList:
-                    log.info("Going to monitor {0}".format(pvName))
                     var = self.loadVariable(pvName)
                     if (var is not None):
+                        log.info("Going to monitor {0}".format(pvName))
                         self.variableCache[pvName] = var
                         epics.camonitor(pvName, None, self.pvValueChanged)
             ok = True

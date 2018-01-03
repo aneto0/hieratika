@@ -46,7 +46,8 @@ log = logging.getLogger("{0}".format(__name__))
 class TestHTTP(unittest.TestCase):
 
     def setUp(self):
-        self.baseURL = "127.0.0.1:7000"
+        #self.baseURL = "127.0.0.1:7000"
+        self.baseURL = "192.168.130.46:80"
         self.testPage = "DemoTypes"
 
         params = urllib.urlencode({"username": "codac-dev-1", "password": ""})
@@ -104,10 +105,27 @@ class TestHTTP(unittest.TestCase):
         else:
             self.assertTrue(False)
 
+    def test_gettransformationsinfo(self):
+        params = urllib.urlencode({"token": self.token, "pageName": self.testPage})
+        conn = httplib.HTTPConnection("{0}".format(self.baseURL))
+        conn.request("POST", "gettransformationsinfo", params, self.headers)
+        response = conn.getresponse()
+        self.assertTrue(True)
+
+    def test_getlivevariablesinfo(self):
+        variables = ["LIVE-VAR-1", "LIVE-VAR-2", "LIVE-VAR-3", "LIVE-VAR-4"]
+        params = urllib.urlencode({"token": self.token, "pageName": self.testPage, "variables": json.dumps(variables)})
+        conn = httplib.HTTPConnection("{0}".format(self.baseURL))
+        conn.request("POST", "getlivevariablesinfo", params, self.headers)
+        response = conn.getresponse()
+        self.assertTrue(True)
+
 
     def test_full_page_load(self):
+        self.test_getpages()
         self.test_getvariablesinfo()
-        self.test_getlibraryvariablesinfo()
+        self.test_gettransformationsinfo()
+        self.test_getlivevariablesinfo()
         self.test_getlibraryvariablesinfo()
         self.test_getlibraryvariablesinfo()
         self.assertTrue(True)

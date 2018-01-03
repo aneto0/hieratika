@@ -298,12 +298,17 @@
                             token : parent._currentToken
                         },
                         success: function (response) {
-                            this.streamer.start();
-                            parent._allUsers = $.parseJSON(response);
-                            this.usernameDisplay.innerHTML = this.user.username; 
-                            this.usernameDisplay.title = "username: " + this.user.username;
-                            this.loginButton.innerHTML = "<i class='fa fa-user-o'> Logout</i>";
-                            this.pageSelectButton.disabled = false;
+                            if (response !== INVALID_TOKEN) {
+                                this.streamer.start();
+                                parent._allUsers = $.parseJSON(response);
+                                this.usernameDisplay.innerHTML = this.user.username; 
+                                this.usernameDisplay.title = "username: " + this.user.username;
+                                this.loginButton.innerHTML = "<i class='fa fa-user-o'> Logout</i>";
+                                this.pageSelectButton.disabled = false;
+                            }
+                            else {
+                                this.fireUserLogout();
+                            }
                         }.bind(this),
                         error: function (response) {
                             console.log(response);
@@ -332,7 +337,7 @@
                     });
                     localStorage.removeItem("user");
                     localStorage.removeItem("schedule");
-                    this.usernameDisplay.innerHTML = "...";
+                    this.usernameDisplay.innerHTML = "(login first)"
                     this.currentDisplay.innerHTML = NONE_NAME; 
                     this.currentDisplay.style.color = NONE_COLOR; 
                     this.currentReference.innerHTML = NONE_NAME; 

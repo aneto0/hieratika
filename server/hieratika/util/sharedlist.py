@@ -54,8 +54,10 @@ class SharedList(object):
         """ Creates the shared list.
         """
         super(SharedList, self).__init__()
-        self.listImpl = SharedDictionary.globalManager.list()
         self.mux = SharedDictionary.globalMux
+        self.mux.acquire()
+        self.listImpl = SharedDictionary.globalManager.list()
+        self.mux.release()
 
     def append (self, item):
         """ See list.append ()
@@ -76,7 +78,12 @@ class SharedList(object):
         """ See list.__getitem__()
         """
         self.mux.acquire()
-        ret = self.listImpl.__getitem__(index)
+        try:
+            ret = self.listImpl.__getitem__(index)
+        #This has to stay since otherwise accessing an invalid index will trigger a infinite loop (as __getitem__ will be called again and will lock forever in mux.acquire)
+        except Exception:
+            self.mux.release()
+            raise
         self.mux.release()
         return ret
 
@@ -101,6 +108,14 @@ class SharedList(object):
         """
         self.mux.acquire()
         ret = self.listImpl.__contains__(item)
+        self.mux.release()
+        return ret
+
+    def __str__(self):
+        """ See list.__str__
+        """
+        self.mux.acquire()
+        ret = self.listImpl.__str__()
         self.mux.release()
         return ret
 

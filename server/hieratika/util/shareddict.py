@@ -57,14 +57,20 @@ class SharedDictionary(object):
         """ Creates the shared dictionary.
         """
         super(SharedDictionary, self).__init__()
-        self.dictImpl = SharedDictionary.globalManager.dict()
         self.mux = SharedDictionary.globalMux
+        self.mux.acquire()
+        self.dictImpl = SharedDictionary.globalManager.dict()
+        self.mux.release()
 
     def get (self, key):
         """ See dict.get()
         """
         self.mux.acquire()
-        ret = self.dictImpl.get(key)
+        try:
+            ret = self.dictImpl.get(key)
+        except Exception:
+            self.mux.release()
+            raise
         self.mux.release()
         return ret
 
@@ -72,7 +78,11 @@ class SharedDictionary(object):
         """ See dict.update()
         """
         self.mux.acquire()
-        ret = self.dictImpl.update(keyitem)
+        try:
+            ret = self.dictImpl.update(keyitem)
+        except Exception:
+            self.mux.release()
+            raise
         self.mux.release()
         return ret
 
@@ -88,7 +98,13 @@ class SharedDictionary(object):
         """ See dict.__getitem__()
         """
         self.mux.acquire()
-        ret = self.dictImpl.__getitem__(key)
+        try:
+            ret = self.dictImpl.__getitem__(key)
+        #This has to stay since otherwise accessing an invalid index will trigger a infinite loop (as __getitem__ will be called again and will lock forever in mux.acquire)
+        except Exception:
+            self.mux.release()
+            raise
+
         self.mux.release()
         return ret
 
@@ -104,7 +120,13 @@ class SharedDictionary(object):
         """ See dict.pop()
         """
         self.mux.acquire()
-        ret = self.dictImpl.pop(key)
+        try:
+            ret = self.dictImpl.pop(key)
+        #This has to stay since otherwise accessing an invalid index will trigger a infinite loop (as __getitem__ will be called again and will lock forever in mux.acquire)
+        except Exception:
+            self.mux.release()
+            raise
+
         self.mux.release()
         return ret
 
@@ -137,6 +159,14 @@ class SharedDictionary(object):
         """
         self.mux.acquire()
         ret = self.dictImpl.keys()
+        self.mux.release()
+        return ret
+
+    def __str__(self):
+        """ See dict.__str__
+        """
+        self.mux.acquire()
+        ret = self.dictImpl.__str__()
         self.mux.release()
         return ret
 

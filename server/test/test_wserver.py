@@ -39,7 +39,7 @@ from hieratika.servers.psps.pspsserver import PSPSServer
 # Logger configuration
 ##
 log = logging.getLogger("{0}".format(__name__))
-logging.basicConfig(level=logging.DEBUG, format='[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)d] %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+logging.basicConfig(level=logging.DEBUG, format='[%(asctime)s] [%(levelname)s] [%(process)d] [%(thread)d] [%(filename)s:%(lineno)d] %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
 ##
 # Class definition

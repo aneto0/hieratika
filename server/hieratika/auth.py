@@ -142,9 +142,11 @@ class HieratikaAuth(object):
         Returns:
             True if the token is valid.
         """
+        log.debug(">>Checking if tokenId: {0} is in the tokens list {1}".format(tokenId, self.tokens))
         if (not self.standalone):
+            log.debug(">Checking if tokenId: {0} is in the tokens list {1}".format(tokenId, self.tokens))
             self.mux.acquire()
-            log.debug("Checking if tokenId: {0} is in the tokens list".format(tokenId))
+            log.debug("Checking if tokenId: {0} is in the tokens list {1}".format(tokenId, self.tokens))
             ok = (self.tokens.has_key(tokenId))
             if (ok):
                 username = self.tokens.get(tokenId)[0]
