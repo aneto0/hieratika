@@ -12,7 +12,7 @@
             (function () {
                 var importDoc = document.currentScript.ownerDocument; // importee
                 //Constructor
-                class PMCDiscreteCoils2D extends HTMLElement {
+                class HtkDiscreteCoils2D extends HTMLElement {
                     constructor() {
                         super();
                     }
@@ -78,15 +78,15 @@
                         var propChange = src.id.substring(src.id.lastIndexOf("@") + 1);
                         var coil;
                         var value;
-                        if (typeOfChange === "value") {
+                        if (typeOfChange === VALUE_CHANGED) {
                             coil = this.coils[coilId];
                             value = parseFloat(src.getValue());
                         }
-                        else if (typeOfChange === "plantValue") {
+                        else if (typeOfChange === VALUE_CHANGED_PLANT) {
                             coil = this.coils[coilId + "Plant"];
                             value = parseFloat(src.getPlantValue());
                         }
-                        else if (typeOfChange === "reference") {
+                        else if (typeOfChange === VALUE_CHANGED_REFERENCE) {
                             coil = this.coils[coilId + "Ref"];
                             value = parseFloat(src.getReferenceValue());
                         }
@@ -205,7 +205,7 @@
                 }
                 
                 document.registerElement("htk-discrete-coils-2d", {
-                    prototype: PMCDiscreteCoils2D.prototype,
+                    prototype: HtkDiscreteCoils2D.prototype,
                 });
             })(); 
         </script>

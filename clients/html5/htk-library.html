@@ -15,11 +15,21 @@
                     this.availableLibraries = [];
                     //Create an editor
                     this.libraryEditor = this.shadowRoot.querySelector("#tlibrary-editor");
+                    this.libraryType = undefined;
+                    this.libraryMappings = undefined;
+                }
+
+                setVariable (variable) {
+                    super.setVariable(variable);
+                    if ("library" in variable) {
+                        this.setLibraryType(variable.library.type);
+                        this.setLibraryMappings(variable.library.mappings);
+                    }
                 }
 
                 setLibraryType(libraryType) {
-                    super.setLibraryType(libraryType);
                     //Attach a selector
+                    this.libraryType = libraryType;
                     this.libraryEditor.setOwnerComponent(this);
                 }
 
@@ -43,6 +53,18 @@
                 setReference (referenceToSet) {
                     super.setReference(referenceToSet);
                     this.libraryEditor.setReference(referenceToSet);
+                }
+
+                getLibraryType() {
+                    return this.libraryType;
+                }
+
+                setLibraryMappings (libraryMappings) {
+                    this.libraryMappings = libraryMappings;
+                }
+
+                getLibraryMappings() {
+                    return this.libraryMappings;
                 }
 
                 libraryChanged (libraryOwner, newLibraryName) {

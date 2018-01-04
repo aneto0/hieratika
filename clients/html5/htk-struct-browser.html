@@ -142,20 +142,7 @@
                                     var memberNameValidCSS = ".P" + memberName.replace(/[|&;$%@"<>()+,]/g, "");
                                     memberNameValidCSS = memberNameValidCSS.replace(/:/g, "");
                                     var compMember = this.shadowRoot.querySelector(memberNameValidCSS);
-                                    compMember.setTypeValue(member.type);
-                                    compMember.setNumberOfElements(member.numberOfElements);
-                                    compMember.setReference("none");
-                                    compMember.setInitialValue(member.value);
-                                    compMember.setPlantValue(member.value);
-                                    compMember.setValidations(member.validations);
-                                    compMember.setPermissionGroups(member.permissions);
-                                    if ("choices" in member) {
-                                        compMember.setChoices(member.choices);
-                                    }
-                                    if ("library" in member) {
-                                        compMember.setLibraryType(member.library.type);
-                                        compMember.setLibraryMappings(member.library.mappings);
-                                    }
+                                    compMember.setVariable(member);
                                     var userAllowed = false;
                                     for (var g in user.groups) {
                                         userAllowed = member.permissions.includes(user.groups[g]); 
@@ -169,7 +156,8 @@
                         }
                     }
 
-                    infoLoaded () {
+                    setVariable (variable) {
+                        super.setVariable(variable);
                         this.name = this.id;
                         this.isStruct = this.isStruct();
                         this.mainDiv.innerHTML = "Loading structure, please wait";

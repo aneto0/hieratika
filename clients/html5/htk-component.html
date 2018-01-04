@@ -1,14 +1,86 @@
-<!-- Define a new standard component for the htk -->
+<!-- 
+ date: 04/01/2018
+ author: Andre' Neto
+ 
+ copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
+ the Development of Fusion Energy ('Fusion for Energy').
+ Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ by the European Commission - subsequent versions of the EUPL (the "Licence")
+ You may not use this work except in compliance with the Licence.
+ You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+ 
+ warning: Unless required by applicable law or agreed to in writing, 
+ software distributed under the Licence is distributed on an "AS IS"
+ basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ or implied. See the Licence permissions and limitations under the Licence.
+--> 
+
+<!-- Standard imports -->
+
+<!-- Project imports -->
 <link rel="import" href="libraries.html">
 <link rel="import" href="htk-validation.html">
 
+<!-- Class definiton-->
 <script type="text/javascript">
-    //Constructor
+    /**
+     * @brief The root in Hieratika HTML5 components class hierarchy.
+     * @details All the Hieratika HTML5 user-interface components shall inherit from HtkComponent. 
+     * This component is responsible for implementing all the logical interfaces to the hieratika server, so that components 
+     * inheriting from this component will (mostly) have to handle only with appropriate data transformation for user display.
+     *
+     * Typically an HtkComponent is associated and represents an Hieratika variable (identified by a unique name). See setVariable.
+     */
     class HtkComponent extends HTMLElement {
+        
+        /**
+         * @brief Constructor. NOOP.
+         */
         constructor() {
             super();
         }
 
+        /**
+         * @brief Associates a variable to this HtkComponent.
+         * @param[in] variable the Hieratika variable to associate to this component.
+         * It shall contain at least the following information:
+         * - type (see getTypeValue)
+         * - validations (see getValidations)
+         * - permissions (see getPermissions)
+         * - isStruct (see isStruct)
+         */
+        setVariable (variable) {
+            this.setReference("none");
+            this.setTypeValue(variable.type);
+            this.setValidations(variable.validations);
+            this.setPermissionGroups(variable.permissions);
+            this.setIsStruct(variable.isStruct);
+            //Loop through all the elements and try to find structures (by looking for the property name of any of the members)
+            var keys = Object.keys(variable); 
+            for (var keyIdx in keys) { 
+                var memberName = keys[keyIdx];
+                var memberVariable = variable[memberName];
+                if (memberVariable !== undefined) {
+                    var memberVariableName = memberVariable["name"];
+                    if (memberVariableName !== undefined) {
+                        this[memberName] = memberVariable;
+                    }
+                }
+            }
+            //Structures do not have numberOfElements nor value
+            if ("numberOfElements" in variable) {
+                this.setNumberOfElements(variable.numberOfElements);
+                this.setInitialValue(variable.value);
+                this.setPlantValue(variable.value);
+                this.setValue(variable.value);
+            }
+        }
+
+
+        /**
+         * @brief Returns a string representation of the current component values.
+         * @return a string representation of the current component values.
+         */
         toString () {
             var refToDisplay = this.referenceValue;
             if (this.reference === PLANT_NAME) {
@@ -21,10 +93,16 @@
             return title;
         }
 
-        showValues () {
-            alert(this.toString());
-        }
-
+        /**
+         * @brief Default implementation of value comparison.
+         * @details Two values are equal if either of these conditions is true:
+         * - this.getTypeValue() is float32 or float64 and the value returned by parseFloat is equal for both values;
+         * - this.getTypeValue() is int* or uint* and the value returned by parseInt is equal for both values;
+         * - the string value of both values is equal.
+         * @param[in] value1 the first value to be compared.
+         * @param[in] value2 the second value to be compared.
+         * @return true if any of the conditions above is true.
+         */
         compareValues (value1, value2) {
             var val1 = String(value1);
             var val2 = String(value2);
@@ -41,6 +119,14 @@
             return (val1 === val2);
         }
 
+        /**
+         * @brief Default implementation of value comparison against a reference (or the plant).
+         * @details Compares the \a value against either plant value (if getReference() === PLANT_NAME) or against the current reference (if set).
+         * @param[in] value the value to be compared.
+         * @param[in] pltValue the current plant value.
+         * @param[in] refValue the current reference value.
+         * @return true if the value is equal (as returned by compareValues) to either the reference or the plant value.
+         */
         compareWithReference (value, pltValue, refValue) {
             var val1 = String(value);
             var val2 = String(value);
@@ -55,32 +141,19 @@
             return this.compareValues(val1, val2);
         }
 
-        
         /**
-         * @brief Function called when the component is expected to refresh its contents
-         * @details To be specialised by other components that want to be warned when a browser refresh has happened.
+         * @brief Returns the value of this component in the selected reference (see getReference).
+         * @return the value of this component in the current selected reference.
          */
-        refresh () {
-        }
-
-        /**
-         * @brief Function called when the component is expected to reset its view (e.g. to clear a buffer).
-         */
-        reset () {
-        }
-
-        getNumberOfElements () {
-            return this.numberOfElements;
-        }
-
-        setNumberOfElements (numberOfElementsIn) {
-            this.numberOfElements = numberOfElementsIn;
-        }
-
         getReferenceValue () {
             return this.referenceValue;
         }
 
+        /**
+         * @brief Sets the value of this component in the selected reference (see getReference).
+         * @details After setting the value, a fireValueChanged event with VALUE_CHANGED_REFERENCE will be triggered and the component will be asked to refresh.
+         * @param[in] referenceValueToSet the new value to set.
+         */
         setReferenceValue (referenceValueToSet) {
             if (referenceValueToSet !== undefined) {
                 if (referenceValueToSet .slice !== undefined) {
@@ -89,64 +162,24 @@
                 else {
                     this.referenceValue = referenceValueToSet;
                 }
+                this.fireValueChanged("referenceValue");
                 this.refresh();
             }
         }
 
-        isLibrary () {
-            return (this.getTypeValue() === "library");
-        }
-
-        isLiveVariable() {
-            return this.liveVariable;
-        }
-
-        setLibraryType (libraryType) {
-            this.libraryType = libraryType;
-        }
-
-        getLibraryType() {
-            return this.libraryType;
-        }
-
-        setLibraryMappings (libraryMappings) {
-            this.libraryMappings = libraryMappings;
-        }
-
-        getLibraryMappings() {
-            return this.libraryMappings;
-        }
-
-        isReadOnly() {
-            return ((this.readOnly) || (this.liveVariable));
-        }
-
-        setReadOnly (isReadOnly) {
-            this.readOnly = isReadOnly;
-            this.readOnly = ((this.readOnly) || (this.liveVariable));
-            this.refresh();
-        }
-
-        getTypeValue () {
-            return this.typeValue;
-        }
-
-        setTypeValue (typeValueToSet) {
-            this.typeValue = typeValueToSet;
-        }
-
+        /**
+         * @brief Returns the value of this component in the plant representation.
+         * @return the value of this component in the plant representation.
+         */
         getPlantValue () {
             return this.plantValue;
         }
 
-        setChoices (choices) {
-            this.choices = choices;
-        }
-
-        getChoices () {
-            return this.choices;
-        }
-
+        /**
+         * @brief Sets the value of this component in the plant.
+         * @details After setting the value, a fireValueChanged event with VALUE_CHANGED_PLANT will be triggered and the component will be asked to refresh.
+         * @param[in] plantValueToSet the new value to set.
+         */
         setPlantValue (plantValueToSet) {
             if (plantValueToSet !==  undefined) {
                 if (plantValueToSet.slice !== undefined) {
@@ -155,15 +188,24 @@
                 else {
                     this.plantValue = plantValueToSet;
                 }
-                this.fireValueChanged("plantValue");
+                this.fireValueChanged(HtkComponent.VALUE_CHANGED_PLANT);
                 this.refresh();
             }
         }
 
+        /**
+         * @brief Returns the value of this component at the time of the last commit (or since the page was loaded).
+         * @return the value of this component at the time of the last commit.
+         */
         getInitialValue () {
             return this.initValue;
         }
 
+        /**
+         * @brief Sets the inital value of this component (i.e. the value set at the last commit or when the page was loaded).
+         * @details After setting the value, a fireValueChanged event with VALUE_CHANGED_INITIAL will be triggered and the component will be asked to refresh.
+         * @param[in] initialValueToSet the new value to set.
+         */
         setInitialValue (initialValueToSet) {
             if (initialValueToSet !== undefined) {
                 if (initialValueToSet.slice !== undefined) {
@@ -172,34 +214,115 @@
                 else {
                     this.initValue = initialValueToSet;
                 }
-                this.fireValueChanged("initialValue");
+                this.fireValueChanged(HtkComponent.VALUE_CHANGED_INITIAL);
                 this.refresh();
             }
         }
 
+        /**
+         * @brief Returns the name of the reference against which this component value is to be compared.
+         * @return the name of the reference against which this component value is to be compared.
+         */
         getReference () {
             return this.reference;
         }
 
+        /**
+         * @brief Sets the name of the reference against which this component value is to be compared.
+         * @details After setting the value, a fireValueChanged event with VALUE_CHANGED_REFERENCE_NAME will be triggered and the component will be asked to refresh.
+         * @param[in] referenceToSet the name of the new reference.
+         */
         setReference (referenceToSet) {
             this.reference = referenceToSet;
-            this.fireValueChanged("reference");
+            this.fireValueChanged(HtkComponent.VALUE_CHANGED_REFERENCE_NAME);
             this.refresh();
         }
 
+        /**
+         * @brief Returns the current value of the variable represented by this component.
+         * @return the current value of the variable represented by this component.
+         */
         getValue () {
             return this.value;
         }
 
+        /**
+         * @brief Sets the current value of the variable represented by this component.
+         * @param[in] valueToSet the new value.
+         * @param[in] updateRemote if true, the server will be informed that the variable value has changed.
+         */
         setValue (valueToSet, updateRemote = true) {
             this.value = valueToSet;
-            this.fireValueChanged("value");
+            this.fireValueChanged(HtkComponent.VALUE_CHANGED);
             if (updateRemote) {
                 this.updateRemote(valueToSet); 
             }
             this.refresh();
         }
 
+        /**
+         * @brief Returns true if the variable represented by this component is live (i.e. it is not a configuration variable whose value can be stored in a configuration or loaded into the plant).
+         * @return true if the variable represented by this component is a live variable.
+         */
+        isLiveVariable() {
+            return this.liveVariable;
+        }
+
+        /**
+         * @brief Returns true if the value of the variable represented by this component cannot be changed.
+         * @return true if the value of the variable represented by this component cannot be changed.
+         */
+        isReadOnly() {
+            return ((this.readOnly) || (this.liveVariable));
+        }
+
+        /**
+         * @brief Sets if the value of the variable represented by this component is allowed to be changed.
+         * @param[in] isReadOnly if true the value of the variable represented by this component cannot be changed.
+         */
+        setReadOnly (isReadOnly) {
+            this.readOnly = isReadOnly;
+            this.readOnly = ((this.readOnly) || (this.liveVariable));
+            this.refresh();
+        }
+
+        /**
+         * @brief Returns the number of elements as an array where each entry contains the number of elements on any given direction. 
+         * @return the number of elements. 
+         */
+        getNumberOfElements() {
+            return this.numberOfElements;
+        }
+
+        /**
+         * @brief Sets the number of elements as an array where each entry contains the number of elements on any given direction. 
+         * @param[in] numberOfElements the new number of elements array.
+         */
+        setNumberOfElements(numberOfElementsIn) {
+            this.numberOfElements = numberOfElementsIn;
+        }
+
+        /**
+         * @brief Returns the type of variable represented by this component.
+         * @details The variable by can be one of : uint8, int8, uint16, int16, uint32, int32, uint64, int64, string, enum.
+         * @return the type of variable represented by this component.
+         */
+        getTypeValue () {
+            return this.typeValue;
+        }
+
+        /**
+         * @brief Sets the type of variable represented by this component.
+         * @param[in] typeValueToSet the variable as one of: uint8, int8, uint16, int16, uint32, int32, uint64, int64, string, enum.
+         */
+        setTypeValue (typeValueToSet) {
+            this.typeValue = typeValueToSet;
+        }
+
+        /**
+         * @brief Updates other components that are representing the same variable (both locally and remote) that the value has changed.
+         * @param[in] valueToUpdate the updated value.
+         */
         updateRemote (valueToUpdate) {
             var valueToUpdateR = {
                 id:this.id,
@@ -215,6 +338,18 @@
             }
         }
 
+        /**
+         * @brief Returns an array with all the valitations(HtkValidationType) that are associated to the variable represented by this component.
+         * @return an array with all the valitations(HtkValidationType).
+         */
+        getValidations () {
+            return this.validations;
+        }
+
+        /**
+         * @brief Sets an array with all the valitations(HtkValidationType) that are associated to the variable represented by this component.
+         * @param[in] validationsToSet the validations to be set.
+         */
         setValidations (validationsToSet) {
             this.validations = [new HtkValidationType(this)];
             for(var i in validationsToSet) {
@@ -222,40 +357,77 @@
             }
         }
 
-        getValidations () {
-            return this.validations;
-        }
-
-        setIsStruct (struct) {
-            this.struct = struct;
-        }
-
+        /**
+         * @brief Returns true if the variable represented by this component is a structure.
+         * @return true if the variable represented by this component is a structure.
+         */
         isStruct() {
             return this.struct;
         }
 
+        /**
+         * @brief Sets if the variable represented by this component is a structure.
+         * @param[in] struct true if the variable represented by this component is a structure.
+         */
+        setIsStruct (struct) {
+            this.struct = struct;
+        }
+
+        /**
+         * @brief Function called when the component is expected to refresh its contents.
+         * @details To be specialised by other components that want to be warned when a browser refresh has happened.
+         */
+        refresh () {
+        }
+
+        /**
+         * @brief Function called when the component is expected to reset its view (e.g. to clear a buffer).
+         */
+        reset () {
+        }
+
+        /**
+         * @brief Components that which to be warned that the DOM has been loaded shall override this method.
+         */
         domLoaded () {
         }
 
-        infoLoaded() {
-        }
-
+        /**
+         * @brief All components inheriting from HtkComponent shall overried this method.
+         * @return the HTML5 template representing the element.
+         */
         getTemplate() {
         }
 
+        /** 
+         * @brief This method will be called when on the components that have been registered with addValueChangedListener.
+         * @param[in] source the component triggering the change of value.
+         * @param[in] typeOfChange the type of change as one of: VALUE_CHANGED, VALUE_CHANGED_INITIAL, VALUE_CHANGED_REFERENCE, VALUE_CHANGED_PLANT, VALUE_CHANGED_REFERENCE_NAME.
+         */
         valueChanged(source, typeOfChange) {
         }
 
+        /**
+         * @brief Informs all the registered components that the value changed.
+         * @param[in] typeOfChange the type of change as one of: VALUE_CHANGED, VALUE_CHANGED_INITIAL, VALUE_CHANGED_REFERENCE, VALUE_CHANGED_PLANT, VALUE_CHANGED_REFERENCE_NAME.
+         */
         fireValueChanged(typeOfChange) {
             for(var f in this.valueChangedListeners) {
                 this.valueChangedListeners[f].valueChanged(this, typeOfChange);
             }
         }
 
+        /**
+         * @brief Registers a component (does not have to inherit from HtkComponent but must have the function valueChanged) to listen for valueChanged events.
+         * @param[comp] the component to register.
+         */
         addValueChangedListener(comp) {
             this.valueChangedListeners.push(comp);
         }
 
+        /**
+         * @brief HTML5 createdCallback function. Initialise all the component variables and register the component to listen for information from the server.
+         */
         createdCallback() {
             var template = this.getTemplate();
             
@@ -264,18 +436,15 @@
             this.userAllowedToWrite = false;
 
             this.typeValue = "string";
-            this.choices = [];
-            this.libraryType = undefined;
-            this.libraryMappings = undefined;
             this.initValue = undefined;
             this.plantValue = undefined;
             this.referenceValue = undefined;
             this.reference = NONE_NAME;
-            this.numberOfElements = 0;
             this.library = undefined;
             this.validations = undefined;
             this.struct = false;
             this.readOnly = false;
+            this.numberOfElements = [];
             this.liveVariable = this.getAttribute("data-live");
             if (this.liveVariable !== null) {
                 this.liveVariable = (this.liveVariable.toLowerCase() === "true");
@@ -306,28 +475,51 @@
             }
         }
 
+        /**
+         * @brief HTML5 attachedCallback. NOOP.
+         */
+        attachedCallback () {
+        }
+
+        /**
+         * @brief HTML5 detachedCallback. NOOP.
+         */
+        detachedCallback () {
+        }
+
+        /**
+         * @brief Sets the groups that are allow to change this component variable value.
+         * @param[in] groups an array with the names of the groups that are allowed to change this component variable value.
+         */
         setPermissionGroups (groups) {
             this.permissionGroups = groups;
         }
 
+        /**
+         * @brief Returns true if this is user is allowed to change the value of the variable represented by this component.
+         * @return true if this is user is allowed to change the value of this component.
+         */
         isUserAllowedToWrite () {
             return this.userAllowedToWrite;
         }
 
+        /**
+         * @brief Sets if this is user is allowed to change the value of the variable represented by this component.
+         * @param[in] allowed true if the user is to be allowed to change the value of the variable.
+         */
         setUserAllowedToWrite(allowed) {
             this.userAllowedToWrite = allowed;
             this.refresh();
         }
-
-        attachedCallback () {
-        }
-
-        detachedCallback () {
-        }
-
-        isHtkComponent() {
-            return true;
-        }
     }
+
+    /**
+     * Static constants that are used by the HtkComponent
+     */
+    HtkComponent.VALUE_CHANGED = 0;
+    HtkComponent.VALUE_CHANGED_INITIAL = 1;
+    HtkComponent.VALUE_CHANGED_REFERENCE = 2;
+    HtkComponent.VALUE_CHANGED_PLANT = 3;
+    HtkComponent.VALUE_CHANGED_REFERENCE_NAME = 4;
 </script>
 

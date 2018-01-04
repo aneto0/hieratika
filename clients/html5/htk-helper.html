@@ -147,11 +147,7 @@
         }
 
         function populateComponentInfo(component, pvInfo, user) {
-            component.setTypeValue(pvInfo.type);
-            component.setReference("none");
-            component.setValidations(pvInfo.validations);
-            component.setPermissionGroups(pvInfo.permissions);
-            component.setIsStruct(pvInfo.isStruct);
+            component.setVariable(pvInfo);
             var userAllowed = false;
             for (var g in user.groups) {
                 userAllowed = pvInfo.permissions.includes(user.groups[g]); 
@@ -160,31 +156,6 @@
                 }
             }
             component.setUserAllowedToWrite(userAllowed);
-            //Loop through all the elements
-            var keys = Object.keys(pvInfo); 
-            for (var keyIdx in keys) { 
-                var memberName = keys[keyIdx];
-                var memberPVInfo = pvInfo[memberName];
-                var memberVariableName = memberPVInfo["name"];
-                if (memberVariableName !== undefined) {
-                    component[memberName] = memberPVInfo;
-                }
-            }
-            //Structures do not have numberOfElements nor value
-            if ("numberOfElements" in pvInfo) {
-                component.setNumberOfElements(pvInfo.numberOfElements);
-                component.setInitialValue(pvInfo.value);
-                component.setPlantValue(pvInfo.value);
-                component.setValue(pvInfo.value);
-            }
-            if ("choices" in pvInfo) {
-                component.setChoices(pvInfo.choices);
-            }
-            if ("library" in pvInfo) {
-                component.setLibraryType(pvInfo.library.type);
-                component.setLibraryMappings(pvInfo.library.mappings);
-            }
-            component.infoLoaded();
         }
 
         function displayPlant() {
@@ -362,26 +333,28 @@
 
         function textToTypeValue(txtValue, typeValue) {
             var ret = txtValue;
-            if (typeValue.startsWith("float")) {
-                if(!isNaN(ret)) {
-                    ret = parseFloat(ret);
-                }
-                else {
-                    ret = undefined;
-                }
-            }
-            else if ((typeValue.startsWith("int") || (typeValue.startsWith("uint")))) {
-                if(!isNaN(ret)) {
-                    ret = parseFloat(ret);
-                    if(Number.isInteger(ret)) {
-                        ret = parseInt(ret);
+            if (typeValue !== undefined) {
+                if (typeValue.startsWith("float")) {
+                    if(!isNaN(ret)) {
+                        ret = parseFloat(ret);
                     }
                     else {
                         ret = undefined;
                     }
                 }
-                else {
-                    ret = undefined;
+                else if ((typeValue.startsWith("int") || (typeValue.startsWith("uint")))) {
+                    if(!isNaN(ret)) {
+                        ret = parseFloat(ret);
+                        if(Number.isInteger(ret)) {
+                            ret = parseInt(ret);
+                        }
+                        else {
+                            ret = undefined;
+                        }
+                    }
+                    else {
+                        ret = undefined;
+                    }
                 }
             }
             return ret;
