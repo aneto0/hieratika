@@ -1,7 +1,7 @@
 <html>
     <head>
         <link rel="import" href="libraries.html">
-        <link rel="import" href="pmc-abstract-input.html">
+        <link rel="import" href="htk-abstract-input.html">
     </head>
     <body>
         <template id="tenum">
@@ -14,7 +14,7 @@
             (function () {
                 var importDoc = document.currentScript.ownerDocument; // importee
                 //Constructor
-                class PMCEnum extends PMCAbstractInput {
+                class HtkEnum extends HtkAbstractInput {
                     constructor() {
                         super();
                     }
@@ -55,8 +55,8 @@
                         this.select.disabled = isReadOnly;
                     }
                 }
-                document.registerElement("pmc-enum", {
-                    prototype: PMCEnum.prototype,
+                document.registerElement("htk-enum", {
+                    prototype: HtkEnum.prototype,
                 });
             })(); 
         </script>

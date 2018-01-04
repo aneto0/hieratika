@@ -1,7 +1,7 @@
 <html>
     <head>
         <link rel="import" href="libraries.html">
-        <link rel="import" href="pmc-component.html">
+        <link rel="import" href="htk-component.html">
     </head>
     <body>
         <template id="ttarray">
@@ -26,7 +26,7 @@
             //This is enclosure is required to protect the importDoc
             (function () {
                 var importDoc = document.currentScript.ownerDocument; // importee
-                class PMCArrayEditor extends PMCComponent {
+                class HtkArrayEditor extends HtkComponent {
                     constructor () {
                         super(this);
                     }
@@ -221,8 +221,8 @@
                     }
                 }
                 
-                document.registerElement("pmc-array-editor", {
-                    prototype: PMCArrayEditor.prototype
+                document.registerElement("htk-array-editor", {
+                    prototype: HtkArrayEditor.prototype
                 });
 
             })();

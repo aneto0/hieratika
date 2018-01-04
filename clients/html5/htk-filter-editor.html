@@ -1,7 +1,7 @@
 <html>
     <head>
         <link rel="import" href="libraries.html">
-        <link rel="import" href="pmc-component.html">
+        <link rel="import" href="htk-component.html">
     </head>
     <body>
         <template id="tfilter">
@@ -34,7 +34,7 @@
         //This is enclosure is required to protect the importDoc
         (function () {
             var importDoc = document.currentScript.ownerDocument; // importee
-            class PMCFilterEditor extends PMCComponent {
+            class HtkFilterEditor extends HtkComponent {
                 constructor () {
                     super();
                 }
@@ -363,8 +363,8 @@
                 }
             }
 
-            document.registerElement("pmc-filter-editor", {
-                prototype: PMCFilterEditor.prototype
+            document.registerElement("htk-filter-editor", {
+                prototype: HtkFilterEditor.prototype
             });
 
        })();

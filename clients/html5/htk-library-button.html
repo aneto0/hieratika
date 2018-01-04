@@ -1,12 +1,12 @@
 <html>
     <head>
         <link rel="import" href="libraries.html">
-        <link rel="import" href="pmc-library.html">
-        <link rel="import" href="pmc-library-editor.html">
+        <link rel="import" href="htk-library.html">
+        <link rel="import" href="htk-library-editor.html">
     </head>
     <body>
         <template id="ttlibrary">
-            <pmc-library-editor id="tlibrary-editor"></pmc-library-editor>
+            <htk-library-editor id="tlibrary-editor"></htk-library-editor>
             <button type="button" id="blibrary"></button>
         </template>
 
@@ -15,7 +15,7 @@
             (function () {
                 var importDoc = document.currentScript.ownerDocument; // importee
                 //Constructor
-                class PMCLibraryButton extends PMCLibrary {
+                class HtkLibraryButton extends HtkLibrary {
                     constructor() {
                         super();
                     }
@@ -53,8 +53,8 @@
                     }
                 }
 
-                document.registerElement("pmc-library-button", {
-                    prototype: PMCLibraryButton.prototype,
+                document.registerElement("htk-library-button", {
+                    prototype: HtkLibraryButton.prototype,
                 });
             })(); 
         </script>

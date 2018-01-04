@@ -1,12 +1,12 @@
 <html>
     <head>
         <link rel="import" href="/libraries.html">
-        <link rel="import" href="/pmc-component.html">
-        <link rel="import" href="/pmc-array-editor.html">
-        <link rel="import" href="/pmc-helper.html">
-        <link rel="import" href="/pmc-input.html">
-        <link rel="import" href="/pmc-library-button.html">
-        <link rel="import" href="/pages/pmc-loop-coils-3d.html">
+        <link rel="import" href="/htk-component.html">
+        <link rel="import" href="/htk-array-editor.html">
+        <link rel="import" href="/htk-helper.html">
+        <link rel="import" href="/htk-input.html">
+        <link rel="import" href="/htk-library-button.html">
+        <link rel="import" href="/pages/htk-loop-coils-3d.html">
     </head>
     <body onload="loadTables()">
         <script>
@@ -19,22 +19,22 @@
                             <td colspan="2">{KEY}</td>
                         </tr>
                         <tr>
-                            <td>r1 (m)</td><td><pmc-input id="{KEY}@r1" name="{KEY}@r1"></pmc-input></td>
+                            <td>r1 (m)</td><td><htk-input id="{KEY}@r1" name="{KEY}@r1"></htk-input></td>
                         </tr>
                         <tr>
-                            <td>z1 (m)</td><td><pmc-input id="{KEY}@z1" name="{KEY}@z1"></pmc-input></td>
+                            <td>z1 (m)</td><td><htk-input id="{KEY}@z1" name="{KEY}@z1"></htk-input></td>
                         </tr>
                         <tr>
-                            <td>r2 (m)</td><td><pmc-input id="{KEY}@r2" name="{KEY}@r2"></pmc-input></td>
+                            <td>r2 (m)</td><td><htk-input id="{KEY}@r2" name="{KEY}@r2"></htk-input></td>
                         </tr>
                         <tr>
-                            <td>z2 (m)</td><td><pmc-input id="{KEY}@z2" name="{KEY}@z2"></pmc-input></td>
+                            <td>z2 (m)</td><td><htk-input id="{KEY}@z2" name="{KEY}@z2"></htk-input></td>
                         </tr>
                         <tr>
-                            <td>&#934;<sub>1</sub> (deg)</td><td><pmc-input id="{KEY}@phi1" name="{KEY}@phi1"></pmc-input></td>
+                            <td>&#934;<sub>1</sub> (deg)</td><td><htk-input id="{KEY}@phi1" name="{KEY}@phi1"></htk-input></td>
                         </tr>
                         <tr>
-                            <td>&#934;<sub>2</sub> (deg)</td><td><pmc-input id="{KEY}@phi2" name="{KEY}@phi2"></pmc-input></td>
+                            <td>&#934;<sub>2</sub> (deg)</td><td><htk-input id="{KEY}@phi2" name="{KEY}@phi2"></htk-input></td>
                         </tr>
                     </table>`;
                 var reg = new RegExp("{KEY}", "g");
@@ -188,7 +188,7 @@
                     <table id="tableAD1" style="border-width: 1px; background-color: transparent" ></table>
                 </td>
                 <td>
-                    <pmc-loop-coils-3d id="vesselAD1" data-coil-variables='{"ids": ["D1-A0@MSA@AD@M1001", "D1-A0@MSA@AD@M1002", "D1-A0@MSA@AD@M1003", "D1-A0@MSA@AD@M1004", "D1-A0@MSA@AD@M1005", "D1-A0@MSA@AD@M1006", "D1-A0@MSA@AD@M1007", "D1-A0@MSA@AD@M1008", "D1-A0@MSA@AD@M1009", "D1-A0@MSA@AD@M1010", "D1-A0@MSA@AD@M1011", "D1-A0@MSA@AD@M1012", "D1-A0@MSA@AD@M1013", "D1-A0@MSA@AD@M1014", "D1-A0@MSA@AD@M1015", "D1-A0@MSA@AD@M1016", "D1-A0@MSA@AD@M1017", "D1-A0@MSA@AD@M1018", "D1-A0@MSA@AD@M1020", "D1-A0@MSA@AD@M1021"]}' data-tokamak-min-phi='0' data-tokamak-max-phi='180'></pmc-loop-coils-3d>
+                    <htk-loop-coils-3d id="vesselAD1" data-coil-variables='{"ids": ["D1-A0@MSA@AD@M1001", "D1-A0@MSA@AD@M1002", "D1-A0@MSA@AD@M1003", "D1-A0@MSA@AD@M1004", "D1-A0@MSA@AD@M1005", "D1-A0@MSA@AD@M1006", "D1-A0@MSA@AD@M1007", "D1-A0@MSA@AD@M1008", "D1-A0@MSA@AD@M1009", "D1-A0@MSA@AD@M1010", "D1-A0@MSA@AD@M1011", "D1-A0@MSA@AD@M1012", "D1-A0@MSA@AD@M1013", "D1-A0@MSA@AD@M1014", "D1-A0@MSA@AD@M1015", "D1-A0@MSA@AD@M1016", "D1-A0@MSA@AD@M1017", "D1-A0@MSA@AD@M1018", "D1-A0@MSA@AD@M1020", "D1-A0@MSA@AD@M1021"]}' data-tokamak-min-phi='0' data-tokamak-max-phi='180'></htk-loop-coils-3d>
                 </td>
             </tr>
         </table>
@@ -199,7 +199,7 @@
                     <table id="tableAD2" style="border-width: 1px; background-color: transparent" ></table>
                 </td>
                 <td>
-                    <pmc-loop-coils-3d id="vesselAD2" data-coil-variables='{"ids": ["D1-A0@MSA@AD@M2001", "D1-A0@MSA@AD@M2002", "D1-A0@MSA@AD@M2003", "D1-A0@MSA@AD@M2004", "D1-A0@MSA@AD@M2005", "D1-A0@MSA@AD@M2006", "D1-A0@MSA@AD@M2007", "D1-A0@MSA@AD@M2008", "D1-A0@MSA@AD@M2009", "D1-A0@MSA@AD@M2020", "D1-A0@MSA@AD@M2011", "D1-A0@MSA@AD@M2012", "D1-A0@MSA@AD@M2013", "D1-A0@MSA@AD@M2014", "D1-A0@MSA@AD@M2015", "D1-A0@MSA@AD@M2016", "D1-A0@MSA@AD@M2017", "D1-A0@MSA@AD@M2018", "D1-A0@MSA@AD@M2020", "D1-A0@MSA@AD@M2021", "D1-A0@MSA@AD@M2022", "D1-A0@MSA@AD@M2023"]}' data-tokamak-min-phi='0' data-tokamak-max-phi='180'></pmc-loop-coils-3d>
+                    <htk-loop-coils-3d id="vesselAD2" data-coil-variables='{"ids": ["D1-A0@MSA@AD@M2001", "D1-A0@MSA@AD@M2002", "D1-A0@MSA@AD@M2003", "D1-A0@MSA@AD@M2004", "D1-A0@MSA@AD@M2005", "D1-A0@MSA@AD@M2006", "D1-A0@MSA@AD@M2007", "D1-A0@MSA@AD@M2008", "D1-A0@MSA@AD@M2009", "D1-A0@MSA@AD@M2020", "D1-A0@MSA@AD@M2011", "D1-A0@MSA@AD@M2012", "D1-A0@MSA@AD@M2013", "D1-A0@MSA@AD@M2014", "D1-A0@MSA@AD@M2015", "D1-A0@MSA@AD@M2016", "D1-A0@MSA@AD@M2017", "D1-A0@MSA@AD@M2018", "D1-A0@MSA@AD@M2020", "D1-A0@MSA@AD@M2021", "D1-A0@MSA@AD@M2022", "D1-A0@MSA@AD@M2023"]}' data-tokamak-min-phi='0' data-tokamak-max-phi='180'></htk-loop-coils-3d>
                 </td>
             </tr>
         </table>
@@ -210,7 +210,7 @@
                     <table id="tableAD4" style="border-width: 1px; background-color: transparent" ></table>
                 </td>
                 <td>
-                    <pmc-loop-coils-3d id="vesselAD4" data-coil-variables='{"ids": ["D1-A0@MSA@AD@M4001", "D1-A0@MSA@AD@M4002", "D1-A0@MSA@AD@M4003", "D1-A0@MSA@AD@M4004", "D1-A0@MSA@AD@M4005", "D1-A0@MSA@AD@M4006", "D1-A0@MSA@AD@M4007", "D1-A0@MSA@AD@M4008", "D1-A0@MSA@AD@M4009", "D1-A0@MSA@AD@M4010", "D1-A0@MSA@AD@M4011", "D1-A0@MSA@AD@M4012", "D1-A0@MSA@AD@M4013", "D1-A0@MSA@AD@M4014", "D1-A0@MSA@AD@M4015", "D1-A0@MSA@AD@M4016", "D1-A0@MSA@AD@M4017", "D1-A0@MSA@AD@M4018", "D1-A0@MSA@AD@M4020", "D1-A0@MSA@AD@M4021", "D1-A0@MSA@AD@M4022", "D1-A0@MSA@AD@M4023", "D1-A0@MSA@AD@M4024", "D1-A0@MSA@AD@M4025"]}' data-tokamak-min-phi='0' data-tokamak-max-phi='90'></pmc-loop-coils-3d>
+                    <htk-loop-coils-3d id="vesselAD4" data-coil-variables='{"ids": ["D1-A0@MSA@AD@M4001", "D1-A0@MSA@AD@M4002", "D1-A0@MSA@AD@M4003", "D1-A0@MSA@AD@M4004", "D1-A0@MSA@AD@M4005", "D1-A0@MSA@AD@M4006", "D1-A0@MSA@AD@M4007", "D1-A0@MSA@AD@M4008", "D1-A0@MSA@AD@M4009", "D1-A0@MSA@AD@M4010", "D1-A0@MSA@AD@M4011", "D1-A0@MSA@AD@M4012", "D1-A0@MSA@AD@M4013", "D1-A0@MSA@AD@M4014", "D1-A0@MSA@AD@M4015", "D1-A0@MSA@AD@M4016", "D1-A0@MSA@AD@M4017", "D1-A0@MSA@AD@M4018", "D1-A0@MSA@AD@M4020", "D1-A0@MSA@AD@M4021", "D1-A0@MSA@AD@M4022", "D1-A0@MSA@AD@M4023", "D1-A0@MSA@AD@M4024", "D1-A0@MSA@AD@M4025"]}' data-tokamak-min-phi='0' data-tokamak-max-phi='90'></htk-loop-coils-3d>
                 </td>
             </tr>
         </table>
@@ -221,7 +221,7 @@
                     <table id="tableAD5" style="border-width: 1px; background-color: transparent" ></table>
                 </td>
                 <td>
-                    <pmc-loop-coils-3d id="vesselAD5" data-coil-variables='{"ids": ["D1-A0@MSA@AD@M5001", "D1-A0@MSA@AD@M5002", "D1-A0@MSA@AD@M5003", "D1-A0@MSA@AD@M5004", "D1-A0@MSA@AD@M5005", "D1-A0@MSA@AD@M5006", "D1-A0@MSA@AD@M5007", "D1-A0@MSA@AD@M5008", "D1-A0@MSA@AD@M5009", "D1-A0@MSA@AD@M5010", "D1-A0@MSA@AD@M5011", "D1-A0@MSA@AD@M5012", "D1-A0@MSA@AD@M5013", "D1-A0@MSA@AD@M5014", "D1-A0@MSA@AD@M5015", "D1-A0@MSA@AD@M5016", "D1-A0@MSA@AD@M5017", "D1-A0@MSA@AD@M5018", "D1-A0@MSA@AD@M5020", "D1-A0@MSA@AD@M5021", "D1-A0@MSA@AD@M5022", "D1-A0@MSA@AD@M5023", "D1-A0@MSA@AD@M5024", "D1-A0@MSA@AD@M5025"]}' data-tokamak-min-phi='0' data-tokamak-max-phi='90'></pmc-loop-coils-3d>
+                    <htk-loop-coils-3d id="vesselAD5" data-coil-variables='{"ids": ["D1-A0@MSA@AD@M5001", "D1-A0@MSA@AD@M5002", "D1-A0@MSA@AD@M5003", "D1-A0@MSA@AD@M5004", "D1-A0@MSA@AD@M5005", "D1-A0@MSA@AD@M5006", "D1-A0@MSA@AD@M5007", "D1-A0@MSA@AD@M5008", "D1-A0@MSA@AD@M5009", "D1-A0@MSA@AD@M5010", "D1-A0@MSA@AD@M5011", "D1-A0@MSA@AD@M5012", "D1-A0@MSA@AD@M5013", "D1-A0@MSA@AD@M5014", "D1-A0@MSA@AD@M5015", "D1-A0@MSA@AD@M5016", "D1-A0@MSA@AD@M5017", "D1-A0@MSA@AD@M5018", "D1-A0@MSA@AD@M5020", "D1-A0@MSA@AD@M5021", "D1-A0@MSA@AD@M5022", "D1-A0@MSA@AD@M5023", "D1-A0@MSA@AD@M5024", "D1-A0@MSA@AD@M5025"]}' data-tokamak-min-phi='0' data-tokamak-max-phi='90'></htk-loop-coils-3d>
                 </td>
             </tr>
         </table>
@@ -232,7 +232,7 @@
                     <table id="tableAD7" style="border-width: 1px; background-color: transparent" ></table>
                 </td>
                 <td>
-                    <pmc-loop-coils-3d id="vesselAD7" data-coil-variables='{"ids": ["D1-A0@MSA@AD@M7001", "D1-A0@MSA@AD@M7002", "D1-A0@MSA@AD@M7003", "D1-A0@MSA@AD@M7004", "D1-A0@MSA@AD@M7005", "D1-A0@MSA@AD@M7006", "D1-A0@MSA@AD@M7007", "D1-A0@MSA@AD@M7008", "D1-A0@MSA@AD@M7009", "D1-A0@MSA@AD@M7010", "D1-A0@MSA@AD@M7011", "D1-A0@MSA@AD@M7012", "D1-A0@MSA@AD@M7013", "D1-A0@MSA@AD@M7014", "D1-A0@MSA@AD@M7015", "D1-A0@MSA@AD@M7016", "D1-A0@MSA@AD@M7017", "D1-A0@MSA@AD@M7018", "D1-A0@MSA@AD@M7020", "D1-A0@MSA@AD@M7021", "D1-A0@MSA@AD@M7022", "D1-A0@MSA@AD@M7023", "D1-A0@MSA@AD@M7024", "D1-A0@MSA@AD@M7025"]}' data-tokamak-min-phi='0' data-tokamak-max-phi='90'></pmc-loop-coils-3d>
+                    <htk-loop-coils-3d id="vesselAD7" data-coil-variables='{"ids": ["D1-A0@MSA@AD@M7001", "D1-A0@MSA@AD@M7002", "D1-A0@MSA@AD@M7003", "D1-A0@MSA@AD@M7004", "D1-A0@MSA@AD@M7005", "D1-A0@MSA@AD@M7006", "D1-A0@MSA@AD@M7007", "D1-A0@MSA@AD@M7008", "D1-A0@MSA@AD@M7009", "D1-A0@MSA@AD@M7010", "D1-A0@MSA@AD@M7011", "D1-A0@MSA@AD@M7012", "D1-A0@MSA@AD@M7013", "D1-A0@MSA@AD@M7014", "D1-A0@MSA@AD@M7015", "D1-A0@MSA@AD@M7016", "D1-A0@MSA@AD@M7017", "D1-A0@MSA@AD@M7018", "D1-A0@MSA@AD@M7020", "D1-A0@MSA@AD@M7021", "D1-A0@MSA@AD@M7022", "D1-A0@MSA@AD@M7023", "D1-A0@MSA@AD@M7024", "D1-A0@MSA@AD@M7025"]}' data-tokamak-min-phi='0' data-tokamak-max-phi='90'></htk-loop-coils-3d>
                 </td>
             </tr>
         </table>
@@ -243,7 +243,7 @@
                     <table id="tableAD8" style="border-width: 1px; background-color: transparent" ></table>
                 </td>
                 <td>
-                    <pmc-loop-coils-3d id="vesselAD8" data-coil-variables='{"ids": ["D1-A0@MSA@AD@M8001", "D1-A0@MSA@AD@M8002", "D1-A0@MSA@AD@M8003", "D1-A0@MSA@AD@M8004", "D1-A0@MSA@AD@M8005", "D1-A0@MSA@AD@M8006", "D1-A0@MSA@AD@M8007", "D1-A0@MSA@AD@M8008", "D1-A0@MSA@AD@M8009", "D1-A0@MSA@AD@M8010", "D1-A0@MSA@AD@M8011", "D1-A0@MSA@AD@M8012", "D1-A0@MSA@AD@M8013", "D1-A0@MSA@AD@M8014", "D1-A0@MSA@AD@M8015", "D1-A0@MSA@AD@M8016", "D1-A0@MSA@AD@M8017", "D1-A0@MSA@AD@M8018", "D1-A0@MSA@AD@M8020", "D1-A0@MSA@AD@M8021", "D1-A0@MSA@AD@M8022", "D1-A0@MSA@AD@M8023", "D1-A0@MSA@AD@M8024", "D1-A0@MSA@AD@M8025"]}' data-tokamak-min-phi='0' data-tokamak-max-phi='90'></pmc-loop-coils-3d>
+                    <htk-loop-coils-3d id="vesselAD8" data-coil-variables='{"ids": ["D1-A0@MSA@AD@M8001", "D1-A0@MSA@AD@M8002", "D1-A0@MSA@AD@M8003", "D1-A0@MSA@AD@M8004", "D1-A0@MSA@AD@M8005", "D1-A0@MSA@AD@M8006", "D1-A0@MSA@AD@M8007", "D1-A0@MSA@AD@M8008", "D1-A0@MSA@AD@M8009", "D1-A0@MSA@AD@M8010", "D1-A0@MSA@AD@M8011", "D1-A0@MSA@AD@M8012", "D1-A0@MSA@AD@M8013", "D1-A0@MSA@AD@M8014", "D1-A0@MSA@AD@M8015", "D1-A0@MSA@AD@M8016", "D1-A0@MSA@AD@M8017", "D1-A0@MSA@AD@M8018", "D1-A0@MSA@AD@M8020", "D1-A0@MSA@AD@M8021", "D1-A0@MSA@AD@M8022", "D1-A0@MSA@AD@M8023", "D1-A0@MSA@AD@M8024", "D1-A0@MSA@AD@M8025"]}' data-tokamak-min-phi='0' data-tokamak-max-phi='90'></htk-loop-coils-3d>
                 </td>
             </tr>
         </table>-->
@@ -256,7 +256,7 @@
                     <table id="tableAE0" style="border-width: 1px; background-color: transparent" ></table>
                 </td>
                 <td>
-                    <pmc-loop-coils-3d id="vesselAE0" data-coil-variables='{"ids": ["D1-A0@MSA@AE@M0001", "D1-A0@MSA@AE@M0002", "D1-A0@MSA@AE@M0003", "D1-A0@MSA@AE@M0004"]}' data-tokamak-min-phi='0' data-tokamak-max-phi='180'></pmc-loop-coils-3d>
+                    <htk-loop-coils-3d id="vesselAE0" data-coil-variables='{"ids": ["D1-A0@MSA@AE@M0001", "D1-A0@MSA@AE@M0002", "D1-A0@MSA@AE@M0003", "D1-A0@MSA@AE@M0004"]}' data-tokamak-min-phi='0' data-tokamak-max-phi='180'></htk-loop-coils-3d>
                 </td>
             </tr>
         </table>
@@ -267,7 +267,7 @@
                     <table id="tableAB2" style="border-width: 1px; background-color: transparent" ></table>
                 </td>
                 <td>
-                    <pmc-loop-coils-3d id="vesselAB2" data-coil-variables='{"ids": ["D1-A0@MSA@AB@M2101", "D1-A0@MSA@AB@M2102", "D1-A0@MSA@AB@M2103", "D1-A0@MSA@AB@M2104", "D1-A0@MSA@AB@M2105", "D1-A0@MSA@AB@M2106", "D1-A0@MSA@AB@M2107", "D1-A0@MSA@AB@M2108", "D1-A0@MSA@AB@M2109", "D1-A0@MSA@AB@M2110", "D1-A0@MSA@AB@M2111", "D1-A0@MSA@AB@M2112"]}' data-tokamak-min-phi='0' data-tokamak-max-phi='180'></pmc-loop-coils-3d>
+                    <htk-loop-coils-3d id="vesselAB2" data-coil-variables='{"ids": ["D1-A0@MSA@AB@M2101", "D1-A0@MSA@AB@M2102", "D1-A0@MSA@AB@M2103", "D1-A0@MSA@AB@M2104", "D1-A0@MSA@AB@M2105", "D1-A0@MSA@AB@M2106", "D1-A0@MSA@AB@M2107", "D1-A0@MSA@AB@M2108", "D1-A0@MSA@AB@M2109", "D1-A0@MSA@AB@M2110", "D1-A0@MSA@AB@M2111", "D1-A0@MSA@AB@M2112"]}' data-tokamak-min-phi='0' data-tokamak-max-phi='180'></htk-loop-coils-3d>
                 </td>
             </tr>
         </table>

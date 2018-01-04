@@ -1,7 +1,7 @@
 <html>
     <head>
         <link rel="import" href="libraries.html">
-        <link rel="import" href="pmc-component.html">
+        <link rel="import" href="htk-component.html">
     </head>
     <body>
         <template id="tcubicle">
@@ -13,7 +13,7 @@
             (function () {
                 var importDoc = document.currentScript.ownerDocument; // importee
 
-                class PMCCubicleEditor extends PMCComponent {
+                class HtkCubicleEditor extends HtkComponent {
                     constructor() {
                         super();
                     }
@@ -32,8 +32,8 @@
                         return template;
                     }
                 }
-                document.registerElement("pmc-cubicle-editor", {
-                    prototype: PMCCubicleEditor.prototype
+                document.registerElement("htk-cubicle-editor", {
+                    prototype: HtkCubicleEditor.prototype
                 });
             })();
         </script>

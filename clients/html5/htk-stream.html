@@ -28,12 +28,12 @@
                         var updateThisSchedule = (scheduleUID === parent._currentScheduleUID);
                         var updatePlant = ((!updateLive) && (scheduleUID === undefined));
                         //variables is a dictionary with name:value pairs
-                        var mainFramePMCComponents = parent._pmcMainEditor.getAllPMCComponents();
+                        var mainFrameHtkComponents = parent._htkMainEditor.getAllHtkComponents();
                         //If it is to update a schedule and this is not the correct uid, do not even try
                         if ((updateLive) || (updateSchedule && updateThisSchedule) || (updatePlant)) {
                             for (var name in variables) {
                                 //The same id might be used in different components
-                                var targetElements = mainFramePMCComponents[name];
+                                var targetElements = mainFrameHtkComponents[name];
                                 var value = variables[name];
                                 if (targetElements  !== undefined) {
                                     for (var i=0; i<targetElements.length; i++) {

@@ -137,7 +137,7 @@ def importVariables(jsonFileName, db, prefix = "", groups = ""):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description = "Import plant variables from a json file to the backend database")
-    parser.add_argument("-D", "--database", default="/tmp/pmc-server.db", help="Database file location")
+    parser.add_argument("-D", "--database", default="/tmp/htk-server.db", help="Database file location")
     parser.add_argument("-p", "--prefix", default="", help="A prefix to apply to all variable names")
     parser.add_argument("-f", "--jsonfile", required=True, help="The variable prefix")
     parser.add_argument("-g", "--group", default="", help="Comma separated group ids that have permission to change the variable value in run-time")

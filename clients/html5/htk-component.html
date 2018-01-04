@@ -1,10 +1,10 @@
-<!-- Define a new standard component for the pmc -->
+<!-- Define a new standard component for the htk -->
 <link rel="import" href="libraries.html">
-<link rel="import" href="pmc-validation.html">
+<link rel="import" href="htk-validation.html">
 
 <script type="text/javascript">
     //Constructor
-    class PMCComponent extends HTMLElement {
+    class HtkComponent extends HTMLElement {
         constructor() {
             super();
         }
@@ -206,9 +206,9 @@
                 value:valueToUpdate
             }
             var othersSameId = document._frameComponents[this.id];
-            var otherPMCComp;
-            $.each(othersSameId, function (j, otherPMCComp) {
-                otherPMCComp.setValue(valueToUpdate, false);
+            var otherHtkComp;
+            $.each(othersSameId, function (j, otherHtkComp) {
+                otherHtkComp.setValue(valueToUpdate, false);
             });
             if (parent._currentScheduleUID !== undefined) {
                 parent._valuesToSynchroniseRemote.push(valueToUpdateR);
@@ -216,9 +216,9 @@
         }
 
         setValidations (validationsToSet) {
-            this.validations = [new PMCValidationType(this)];
+            this.validations = [new HtkValidationType(this)];
             for(var i in validationsToSet) {
-                this.validations.push(new PMCValidationMath(validationsToSet[i]));
+                this.validations.push(new HtkValidationMath(validationsToSet[i]));
             }
         }
 
@@ -325,7 +325,7 @@
         detachedCallback () {
         }
 
-        isPMCComponent() {
+        isHtkComponent() {
             return true;
         }
     }

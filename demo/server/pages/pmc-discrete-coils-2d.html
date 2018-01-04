@@ -24,7 +24,7 @@
                         root.appendChild(clone);
 
                         this.canvas = this.shadowRoot.querySelector("#tcanvas");
-                        parent._pmcMainEditor.addPlantInfoLoadedListener(this);
+                        parent._htkMainEditor.addPlantInfoLoadedListener(this);
                     }
 
                     plantInfoLoaded() {
@@ -45,17 +45,17 @@
                                 var coilPlant = {color:PLANT_COLOR};
                                 $.each(props, function(p, prop) {
                                     var coilVariableId = coilVariable + "@" + prop;
-                                    var pmcCompArray = document._frameComponents[coilVariableId];
-                                    if (pmcCompArray !== undefined) {
-                                        coil[prop] = parseFloat(pmcCompArray[0].getValue());
-                                        coilRef[prop] = parseFloat(pmcCompArray[0].getValue());
-                                        coilPlant[prop] = parseFloat(pmcCompArray[0].getValue());
-                                        $.each(pmcCompArray, function (j, pmcComp) {
-                                            pmcComp.addValueChangedListener(this);
-                                            pmcComp.addEventListener("mouseover", function (evt) {
+                                    var htkCompArray = document._frameComponents[coilVariableId];
+                                    if (htkCompArray !== undefined) {
+                                        coil[prop] = parseFloat(htkCompArray[0].getValue());
+                                        coilRef[prop] = parseFloat(htkCompArray[0].getValue());
+                                        coilPlant[prop] = parseFloat(htkCompArray[0].getValue());
+                                        $.each(htkCompArray, function (j, htkComp) {
+                                            htkComp.addValueChangedListener(this);
+                                            htkComp.addEventListener("mouseover", function (evt) {
                                                 this.setCoilHighlighted(coilVariable, true);
                                             }.bind(this));
-                                            pmcComp.addEventListener("mouseout", function (evt) {
+                                            htkComp.addEventListener("mouseout", function (evt) {
                                                 this.setCoilHighlighted(coilVariable, false);
                                             }.bind(this));
                                         }.bind(this));
@@ -204,7 +204,7 @@
                     }
                 }
                 
-                document.registerElement("pmc-discrete-coils-2d", {
+                document.registerElement("htk-discrete-coils-2d", {
                     prototype: PMCDiscreteCoils2D.prototype,
                 });
             })(); 

@@ -1,6 +1,6 @@
 <html>
 <head>
-    <link rel="import" href="pmc-helper.html">
+    <link rel="import" href="htk-helper.html">
 </head>
 </body>
     <template id="ttransformations">
@@ -25,7 +25,7 @@
         //This is enclosure is required to protect the importDoc
         (function () {
             var importDoc = document.currentScript.ownerDocument; // importee
-            class PMCTransformations extends HTMLElement {
+            class HtkTransformations extends HTMLElement {
                 constructor() {
                     super();
                 }
@@ -43,7 +43,7 @@
                     var abortButton = this.shadowRoot.querySelector("#abortbtn");
                     var closeButton = this.shadowRoot.querySelector("#closebtn");
                     this.runButton.onclick = function() {
-                        var mainFramePMCComponents = parent._pmcMainEditor.getAllPMCComponents();
+                        var mainFrameHtkComponents = parent._htkMainEditor.getAllHtkComponents();
                         for (var i=0; i<this.transformations.length; i++) {
                             var transformation = this.transformations[i];
                             transformation.progressBar.value = 0;
@@ -51,7 +51,7 @@
                             for (var j=0; j<outputKeys.length; j++) {
                                 var mapname = transformation.outputs[outputKeys[j]];
                                 if (mapname !== undefined) {
-                                    var comps = mainFramePMCComponents[mapname];
+                                    var comps = mainFrameHtkComponents[mapname];
                                     if (comps !== undefined) {
                                         for (var z=0; z<comps.length; z++) {
                                             //Reset the components
@@ -78,11 +78,11 @@
                     var inputVariables = Object.keys(transformation.inputs);
                     var inputs = {};
                     var ok = true;
-                    var mainFramePMCComponents = parent._pmcMainEditor.getAllPMCComponents();
+                    var mainFrameHtkComponents = parent._htkMainEditor.getAllHtkComponents();
                     for (var i=0; (i<inputVariables.length) && (ok); i++) {
                         var varname = inputVariables[i];
                         var mapname = transformation.inputs[varname];
-                        var comp = mainFramePMCComponents[mapname];
+                        var comp = mainFrameHtkComponents[mapname];
                         if (comp !== undefined) {
                             inputs[varname] = comp[0].getValue();
                         }
@@ -134,7 +134,7 @@
                 }
 
                 transformationUpdated(transformationInfo) {
-                    var mainFramePMCComponents = parent._pmcMainEditor.getAllPMCComponents();
+                    var mainFrameHtkComponents = parent._htkMainEditor.getAllHtkComponents();
                     for (var i=0; i<this.transformations.length; i++) {
                         var transformation = this.transformations[i];
                         if (transformation.uid === transformationInfo["transformationUID"]) {
@@ -148,7 +148,7 @@
                                 //Map the transformation output (i.e. the variable name has seen by the transformation) to the variable name in the UI
                                 var mapname = transformation.outputs[outputKeys[j]];
                                 if (mapname !== undefined) {
-                                    var comps = mainFramePMCComponents[mapname];
+                                    var comps = mainFrameHtkComponents[mapname];
                                     if (comps !== undefined) {
                                         for (var z=0; z<comps.length; z++) {
                                             comps[z].setValue(outputs[outputKeys[j]]);
@@ -166,8 +166,8 @@
                 }
             }
 
-            document.registerElement("pmc-transformations", {
-                prototype: PMCTransformations.prototype,
+            document.registerElement("htk-transformations", {
+                prototype: HtkTransformations.prototype,
             });
 
         }());

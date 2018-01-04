@@ -1,13 +1,13 @@
 <html>
     <head>
-        <link rel="import" href="pmc-constants.html">
-        <link rel="import" href="pmc-wait-dialog.html">
+        <link rel="import" href="htk-constants.html">
+        <link rel="import" href="htk-wait-dialog.html">
     </head>
     <script>
 
         function showWaitDialog() {
             if (_waitDialog == null) {
-                _waitDialog = document.createElement("pmc-wait-dialog");
+                _waitDialog = document.createElement("htk-wait-dialog");
                 document.body.appendChild(_waitDialog);
             }
             _waitDialog.showModal();
@@ -51,10 +51,10 @@
         }
 
         function updatePlant(pgName) {
-            var allPMCDataJSon = {};
-            var mainFramePMCComponents = parent._pmcMainEditor.getAllPMCComponents();
-            $.each(mainFramePMCComponents, function (i, pmcComp) {
-                allPMCDataJSon[pmcComp[0].id] = pmcComp[0].getValue();
+            var allHtkDataJSon = {};
+            var mainFrameHtkComponents = parent._htkMainEditor.getAllHtkComponents();
+            $.each(mainFrameHtkComponents, function (i, htkComp) {
+                allHtkDataJSon[htkComp[0].id] = htkComp[0].getValue();
             });
             $.ajax({
                 type: "post",
@@ -63,16 +63,16 @@
                     token: parent._currentToken,
                     tid: parent._remoteServerTid,
                     pageName: pgName,
-                    variables: JSON.stringify(allPMCDataJSon)
+                    variables: JSON.stringify(allHtkDataJSon)
                 },
                 success: function (response) {
                     if (response == "ok") {
                         alert("Plant updated successfully. Do not forget to load.");
-                        var pmcComp;
+                        var htkComp;
                         //The same id can be used to store multiple instances
-                        $.each(mainFramePMCComponents, function (i, pmcCompArray) {
-                            $.each(pmcCompArray, function (j, pmcComp) {
-                                pmcComp.setInitialValue(pmcComp.getValue());
+                        $.each(mainFrameHtkComponents, function (i, htkCompArray) {
+                            $.each(htkCompArray, function (j, htkComp) {
+                                htkComp.setInitialValue(htkComp.getValue());
                             });
                         });
                     } 
@@ -188,13 +188,13 @@
         }
 
         function displayPlant() {
-            var mainFramePMCComponents = parent._pmcMainEditor.getAllPMCComponents();
-            $.each(mainFramePMCComponents, function (i, pmcCompArray) {
-                $.each(pmcCompArray, function (j, pmcComp) {
-                    pmcComp.setReadOnly(true);
-                    var value = pmcComp.getPlantValue();
+            var mainFrameHtkComponents = parent._htkMainEditor.getAllHtkComponents();
+            $.each(mainFrameHtkComponents, function (i, htkCompArray) {
+                $.each(htkCompArray, function (j, htkComp) {
+                    htkComp.setReadOnly(true);
+                    var value = htkComp.getPlantValue();
                     if (value !== undefined) {
-                        pmcComp.setValue(value, false);
+                        htkComp.setValue(value, false);
                     }
                 });
             });
@@ -203,23 +203,23 @@
         function setReference(currentReference) {
             if (currentReference === NONE_NAME) {
                 //Reset all the values to N/A
-                var pmcComp;
-                var mainFramePMCComponents = parent._pmcMainEditor.getAllPMCComponents();
-                $.each(mainFramePMCComponents, function (i, pmcCompArray) {
-                    $.each(pmcCompArray, function (j, pmcComp) {
-                        pmcComp.setReferenceValue("N/A");
-                        pmcComp.setReference(currentReference);
+                var htkComp;
+                var mainFrameHtkComponents = parent._htkMainEditor.getAllHtkComponents();
+                $.each(mainFrameHtkComponents, function (i, htkCompArray) {
+                    $.each(htkCompArray, function (j, htkComp) {
+                        htkComp.setReferenceValue("N/A");
+                        htkComp.setReference(currentReference);
                     });
                 });
             }
             else if (currentReference === PLANT_NAME) {
                 //Reset all the values to N/A
-                var pmcComp;
-                var mainFramePMCComponents = parent._pmcMainEditor.getAllPMCComponents();
-                $.each(mainFramePMCComponents, function (i, pmcCompArray) {
-                    $.each(pmcCompArray, function (j, pmcComp) {
-                        pmcComp.setReferenceValue(pmcComp.getPlantValue());
-                        pmcComp.setReference(currentReference);
+                var htkComp;
+                var mainFrameHtkComponents = parent._htkMainEditor.getAllHtkComponents();
+                $.each(mainFrameHtkComponents, function (i, htkCompArray) {
+                    $.each(htkCompArray, function (j, htkComp) {
+                        htkComp.setReferenceValue(htkComp.getPlantValue());
+                        htkComp.setReference(currentReference);
                     });
                 });
             }
@@ -234,11 +234,11 @@
                     success: function (response) {
                         var variables = $.parseJSON(response);
                         var keys = Object.keys(variables);
-                        var mainFramePMCComponents = parent._pmcMainEditor.getAllPMCComponents();
+                        var mainFrameHtkComponents = parent._htkMainEditor.getAllHtkComponents();
                         for (var i in keys) { 
                             var variableName = keys[i];
                             var variableValue = variables[keys[i]];
-                            var targetElements = mainFramePMCComponents[variableName];
+                            var targetElements = mainFrameHtkComponents[variableName];
                             if (targetElements != null) {
                                 $.each(targetElements, function (i, targetElement) {
                                     targetElement.setReferenceValue(variableValue);
@@ -266,11 +266,11 @@
                 success: function (response) {
                     variables = $.parseJSON(response);
                     var keys = Object.keys(variables);
-                    var mainFramePMCComponents = parent._pmcMainEditor.getAllPMCComponents();
+                    var mainFrameHtkComponents = parent._htkMainEditor.getAllHtkComponents();
                     for (var i in keys) { 
                         var variableName = keys[i];
                         var variableValue = variables[keys[i]];
-                        var targetElements = mainFramePMCComponents[variableName];
+                        var targetElements = mainFrameHtkComponents[variableName];
                         if (targetElements != null) {
                             $.each(targetElements, function (i, targetElement) {
                                 if (resetValue) {
@@ -300,10 +300,10 @@
                     variables:JSON.stringify(parent._scheduleValuesToCommit)
                 },
                 success: function (response) {
-                    var mainFramePMCComponents = parent._pmcMainEditor.getAllPMCComponents();
-                    $.each(mainFramePMCComponents, function (i, pmcCompArray) {
-                        $.each(pmcCompArray, function (j, pmcComp) {
-                            pmcComp.setInitialValue(pmcComp.getValue());
+                    var mainFrameHtkComponents = parent._htkMainEditor.getAllHtkComponents();
+                    $.each(mainFrameHtkComponents, function (i, htkCompArray) {
+                        $.each(htkCompArray, function (j, htkComp) {
+                            htkComp.setInitialValue(htkComp.getValue());
                         });
                     });
                     parent._scheduleValuesToCommit = {};
@@ -316,10 +316,10 @@
         }
 
         function undoAllChangesToSchedule() {
-            var mainFramePMCComponents = parent._pmcMainEditor.getAllPMCComponents();
-            $.each(mainFramePMCComponents, function (i, pmcCompArray) {
-                $.each(pmcCompArray, function (j, pmcComp) {
-                    pmcComp.setValue(pmcComp.getInitialValue());
+            var mainFrameHtkComponents = parent._htkMainEditor.getAllHtkComponents();
+            $.each(mainFrameHtkComponents, function (i, htkCompArray) {
+                $.each(htkCompArray, function (j, htkComp) {
+                    htkComp.setValue(htkComp.getInitialValue());
                 });
             });
         }
@@ -396,8 +396,8 @@
         //The same component id in the dictionary can be used to store multiple instances, i.e. id : []
         var _currentScheduleUID = undefined;
         var _currentToken = undefined;
-        //This reference to the main editor can be used to listen to page events for components that e.g. do not inherit from PMCComponent
-        var _pmcMainEditor = undefined;
+        //This reference to the main editor can be used to listen to page events for components that e.g. do not inherit from HtkComponent
+        var _htkMainEditor = undefined;
         var _waitDialog = null;
         //All the system users
         var _allUsers = [];

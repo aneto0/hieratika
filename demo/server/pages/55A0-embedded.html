@@ -1,16 +1,16 @@
 <html>
     <head>
         <link rel="import" href="libraries.html">
-        <link rel="import" href="pmc-array-editor.html">
-        <link rel="import" href="pmc-cubicle-editor.html">
-        <link rel="import" href="pmc-discrete-coils-2d.html">
-        <link rel="import" href="pmc-loop-coils-3d.html">
-        <link rel="import" href="pmc-filter-editor.html">
-        <link rel="import" href="pmc-input.html">
-        <link rel="import" href="pmc-library-button.html">
-        <link rel="import" href="pmc-struct-browser.html">
-        <link rel="import" href="pmc-switch.html">
-        <link rel="import" href="pmc-switch-editor.html">
+        <link rel="import" href="htk-array-editor.html">
+        <link rel="import" href="htk-cubicle-editor.html">
+        <link rel="import" href="htk-discrete-coils-2d.html">
+        <link rel="import" href="htk-loop-coils-3d.html">
+        <link rel="import" href="htk-filter-editor.html">
+        <link rel="import" href="htk-input.html">
+        <link rel="import" href="htk-library-button.html">
+        <link rel="import" href="htk-struct-browser.html">
+        <link rel="import" href="htk-switch.html">
+        <link rel="import" href="htk-switch-editor.html">
     </head>
     <body onload="loadTables()">
         <script>
@@ -18,7 +18,7 @@
                 //ES6 uses backticks ` to allow to declare multi-line strings
                 var cellTemplate = `
                         <td>{NAMEKEY}</td> 
-                        <td><pmc-library-button id="{KEY}@LIBRARY" name="{KEY}@LIBRARY" data-library-editor="libraries/55A0-embedded-lib.html" data-library-variables='{"VARNAME":"{KEY}","WO-id":"{KEY}@WO", "EO-id":"{KEY}@EO", "CHOPPERF-id":"{KEY}@CHOPPERF", "CHOPPEREQRISE-id":"{KEY}@CHOPPEREQIN", "CHOPPEREQFALL-id":"{KEY}@CHOPPEREQOUT", "FILTER-id":"{KEY}@FILTER"}'></pmc-library-button></td>
+                        <td><htk-library-button id="{KEY}@LIBRARY" name="{KEY}@LIBRARY" data-library-editor="libraries/55A0-embedded-lib.html" data-library-variables='{"VARNAME":"{KEY}","WO-id":"{KEY}@WO", "EO-id":"{KEY}@EO", "CHOPPERF-id":"{KEY}@CHOPPERF", "CHOPPEREQRISE-id":"{KEY}@CHOPPEREQIN", "CHOPPEREQFALL-id":"{KEY}@CHOPPEREQOUT", "FILTER-id":"{KEY}@FILTER"}'></htk-library-button></td>
                         `;
                 var htmlToReturn = "";
                 var reg = new RegExp("{KEY}", "g");

@@ -51,7 +51,7 @@ def printVariable(variableJSon, fullVariableName = "", idx = ""):
 
 
 
-jsonFileName = "/home/aneto/Projects/pmc-proto/pmc-server/java2json/Plant55A0.json"
+jsonFileName = "/home/aneto/Projects/htk-proto/htk-server/java2json/Plant55A0.json"
 with open(jsonFileName) as jsonFile:
     plantVariablesDBJSon = json.load(jsonFile)
     variablesJSon = plantVariablesDBJSon["variables"]

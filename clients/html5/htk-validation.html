@@ -1,10 +1,10 @@
 <html>
     <head>
-        <link rel="import" href="pmc-constants.html">
+        <link rel="import" href="htk-constants.html">
         <link rel="import" href="libraries.html">
     </head>
     <script>
-        class PMCValidation {
+        class HtkValidation {
 
             constructor(validationFunction) {
                 this.validationFunction = validationFunction;
@@ -19,7 +19,7 @@
             }
         }
 
-        class PMCValidationMath extends PMCValidation {
+        class HtkValidationMath extends HtkValidation {
 
             constructor(validationFunction) {
                 super(validationFunction);
@@ -51,7 +51,7 @@
         }
 
 
-        class PMCValidationType extends PMCValidation {
+        class HtkValidationType extends HtkValidation {
             
             constructor(comp) {
                 super("checkType");

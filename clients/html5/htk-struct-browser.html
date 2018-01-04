@@ -1,11 +1,11 @@
 <html>
     <head>
         <link rel="import" href="libraries.html">
-        <link rel="import" href="pmc-array-editor.html">
-        <link rel="import" href="pmc-component.html">
-        <link rel="import" href="pmc-enum.html">
-        <link rel="import" href="pmc-input.html">
-        <link rel="import" href="pmc-library-button.html">
+        <link rel="import" href="htk-array-editor.html">
+        <link rel="import" href="htk-component.html">
+        <link rel="import" href="htk-enum.html">
+        <link rel="import" href="htk-input.html">
+        <link rel="import" href="htk-library-button.html">
     </head>
     <body>
         <template id="tstructbrowser">
@@ -39,7 +39,7 @@
             (function () {
                 var importDoc = document.currentScript.ownerDocument; // importee
                 //Constructor
-                class PMCStructBrowser extends PMCComponent {
+                class HtkStructBrowser extends HtkComponent {
                     constructor() {
                         super();
                     }
@@ -97,17 +97,17 @@
                                     var memberNameValidCSS = "P" + memberName.replace(/[|&;$%@"<>()+,]/g, "");
                                     memberNameValidCSS = memberNameValidCSS.replace(/:/g, "");
                                     if (member.numberOfElements > 1) {
-                                        this.treeHTML += callerMemberName + ": <pmc-array-editor id=\"" + fullMemberName + "\" name=\"" + fullMemberName + "\" class=\"" + memberNameValidCSS + "\"></pmc-array-editor>\n";
+                                        this.treeHTML += callerMemberName + ": <htk-array-editor id=\"" + fullMemberName + "\" name=\"" + fullMemberName + "\" class=\"" + memberNameValidCSS + "\"></htk-array-editor>\n";
                                     }
                                     else {
                                         if (member.type === "enum") {
-                                            this.treeHTML += callerMemberName + ": <pmc-enum id=\"" + fullMemberName + "\" name=\"" + fullMemberName + "\" class=\"" + memberNameValidCSS + "\"></pmc-enum>\n";
+                                            this.treeHTML += callerMemberName + ": <htk-enum id=\"" + fullMemberName + "\" name=\"" + fullMemberName + "\" class=\"" + memberNameValidCSS + "\"></htk-enum>\n";
                                         }
                                         else if (member.type === "library") {
-                                            this.treeHTML += callerMemberName + ": <pmc-library-button id=\"" + fullMemberName + "\" name=\"" + fullMemberName + "\" class=\"" + memberNameValidCSS + "\"></pmc-library-button>\n";
+                                            this.treeHTML += callerMemberName + ": <htk-library-button id=\"" + fullMemberName + "\" name=\"" + fullMemberName + "\" class=\"" + memberNameValidCSS + "\"></htk-library-button>\n";
                                         }
                                         else {
-                                            this.treeHTML += callerMemberName + ": <pmc-input id=\"" + fullMemberName + "\" name=\"" + fullMemberName + "\" class=\"" + memberNameValidCSS + "\"></pmc-input>\n";
+                                            this.treeHTML += callerMemberName + ": <htk-input id=\"" + fullMemberName + "\" name=\"" + fullMemberName + "\" class=\"" + memberNameValidCSS + "\"></htk-input>\n";
                                         }
                                     }
                                     this.treeHTML += "</div></li>\n";
@@ -183,8 +183,8 @@
                         CollapsibleLists.applyTo(tree);
                     }
                 }
-                document.registerElement("pmc-struct-browser", {
-                    prototype: PMCStructBrowser.prototype,
+                document.registerElement("htk-struct-browser", {
+                    prototype: HtkStructBrowser.prototype,
                 });
             })(); 
         </script>

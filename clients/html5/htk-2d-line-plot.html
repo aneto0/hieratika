@@ -1,7 +1,7 @@
 <html>
     <head>
         <link rel="import" href="libraries.html">
-        <link rel="import" href="pmc-component.html">
+        <link rel="import" href="htk-component.html">
     </head>
     <body>
         <template id="t2dplot">
@@ -11,7 +11,7 @@
         //This is enclosure is required to protect the importDoc
         (function () {
             var importDoc = document.currentScript.ownerDocument; // importee
-            class PMC2DLinePlot extends PMCComponent {
+            class Htk2DLinePlot extends HtkComponent {
                 constructor () {
                     super();
                 }
@@ -182,8 +182,8 @@
                 }
             }
 
-            document.registerElement("pmc-2d-line-plot", {
-                prototype: PMC2DLinePlot.prototype
+            document.registerElement("htk-2d-line-plot", {
+                prototype: Htk2DLinePlot.prototype
             });
 
        })();

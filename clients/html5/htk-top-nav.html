@@ -2,13 +2,13 @@
 <html>
 <head>
     <link rel="import" href="libraries.html">
-    <link rel="import" href="pmc-helper.html">
-    <link rel="import" href="pmc-login.html">
-    <link rel="import" href="pmc-main-editor.html">
-    <link rel="import" href="pmc-page-selector.html">
-    <link rel="import" href="pmc-schedule-selector.html">
-    <link rel="import" href="pmc-stream.html">
-    <link rel="import" href="pmc-transformations.html">
+    <link rel="import" href="htk-helper.html">
+    <link rel="import" href="htk-login.html">
+    <link rel="import" href="htk-main-editor.html">
+    <link rel="import" href="htk-page-selector.html">
+    <link rel="import" href="htk-schedule-selector.html">
+    <link rel="import" href="htk-stream.html">
+    <link rel="import" href="htk-transformations.html">
 </head>
 <body>
     <script>
@@ -54,17 +54,17 @@
             <span class="w3-bar-item w3-right" id="username">(login first)</span>
             <span class="w3-bar-item w3-right w3-border-left">Username: </span>
         </div>
-        <pmc-login id="pmclogin"></pmc-login>
-        <pmc-page-selector id="pageselector"></pmc-page-selector>
-        <pmc-schedule-selector id="scheduleselector"></pmc-schedule-selector>
-        <pmc-transformations id="transformations"></pmc-transformations>
+        <htk-login id="htklogin"></htk-login>
+        <htk-page-selector id="pageselector"></htk-page-selector>
+        <htk-schedule-selector id="scheduleselector"></htk-schedule-selector>
+        <htk-transformations id="transformations"></htk-transformations>
     </template>
 
     <script>
         //This is enclosure is required to protect the importDoc
         (function () {
             var importDoc = document.currentScript.ownerDocument; // importee
-            class PMCTopNav extends HTMLElement {
+            class HtkTopNav extends HTMLElement {
                 constructor() {
                     super();
                 }
@@ -121,7 +121,7 @@
 
                     this.pageSelectButton = this.shadowRoot.querySelector("#pageselectbtn");
                     this.loginButton = this.shadowRoot.querySelector("#loginbtn");
-                    this.loginDialog = this.shadowRoot.querySelector("#pmclogin");
+                    this.loginDialog = this.shadowRoot.querySelector("#htklogin");
                     this.loginDialog.addLoginListener(this);
                     this.loginButton.onclick = function() {
                         this.hideSideBar();
@@ -229,10 +229,10 @@
                     this.copyFromReferencePlantButton.onclick = function () {
                         this.hideSideBar();
                         this.handleAccordionClick(copyAccordion);
-                        var mainFramePMCComponents = parent._pmcMainEditor.getAllPMCComponents();
-                        $.each(mainFramePMCComponents, function (i, pmcCompArray) {
-                            $.each(pmcCompArray, function (j, pmcComp) {
-                                pmcComp.setValue(pmcComp.getPlantValue());
+                        var mainFrameHtkComponents = parent._htkMainEditor.getAllHtkComponents();
+                        $.each(mainFrameHtkComponents, function (i, htkCompArray) {
+                            $.each(htkCompArray, function (j, htkComp) {
+                                htkComp.setValue(htkComp.getPlantValue());
                             });
                         });
                     }.bind(this);
@@ -439,8 +439,8 @@
 
             }
 
-            document.registerElement("pmc-top-nav", {
-                prototype: PMCTopNav.prototype,
+            document.registerElement("htk-top-nav", {
+                prototype: HtkTopNav.prototype,
             });
 
         }());

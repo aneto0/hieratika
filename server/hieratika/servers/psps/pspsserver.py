@@ -859,7 +859,7 @@ class PSPSServer(HieratikaServer):
         """
         html = """ <html>
                     <head>
-                     <link rel='import' href='/pmc-struct-browser.html'>
+                     <link rel='import' href='/htk-struct-browser.html'>
                     </head>
                     <body>
                """
@@ -869,7 +869,7 @@ class PSPSServer(HieratikaServer):
             plantSystemsRootXml = xmlRoot.findall(".//ns0:plantSystem", self.xmlns)
             for plantSystemXml in plantSystemsRootXml:
                 plantSystemName = plantSystemXml.find("./ns0:name", self.xmlns).text
-                html += "<pmc-struct-browser id='{0}' name='{0}'></pmc-struct-browser>".format(plantSystemName)
+                html += "<htk-struct-browser id='{0}' name='{0}'></htk-struct-browser>".format(plantSystemName)
 
             html += """ </body>
                        </html>

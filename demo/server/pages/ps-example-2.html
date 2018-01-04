@@ -1,14 +1,14 @@
 <html>
     <head>
         <link rel="import" href="libraries.html">
-        <link rel="import" href="pmc-component.html">
+        <link rel="import" href="htk-component.html">
         <link rel="import" href="libraries.html">
-        <link rel="import" href="pmc-array-editor.html">
-        <link rel="import" href="pmc-loop-coils-3d.html">
-        <link rel="import" href="pmc-discrete-coils-2d.html">
-        <link rel="import" href="pmc-helper.html">
-        <link rel="import" href="pmc-input.html">
-        <link rel="import" href="pmc-library-button.html">
+        <link rel="import" href="htk-array-editor.html">
+        <link rel="import" href="htk-loop-coils-3d.html">
+        <link rel="import" href="htk-discrete-coils-2d.html">
+        <link rel="import" href="htk-helper.html">
+        <link rel="import" href="htk-input.html">
+        <link rel="import" href="htk-library-button.html">
     </head>
     <body onload="loadTables()">
         <script>
@@ -21,13 +21,13 @@
                             <td colspan="2">{KEY}</td>
                         </tr>
                         <tr>
-                            <td>r (m)</td><td><pmc-input id="{KEY}@r" name="{KEY}@r"></pmc-input></td>
+                            <td>r (m)</td><td><htk-input id="{KEY}@r" name="{KEY}@r"></htk-input></td>
                         </tr>
                         <tr>
-                            <td>z (m)</td><td><pmc-input id="{KEY}@z" name="{KEY}@z"></pmc-input></td>
+                            <td>z (m)</td><td><htk-input id="{KEY}@z" name="{KEY}@z"></htk-input></td>
                         </tr>
                         <tr>
-                            <td>angle (deg)</td><td><pmc-input id="{KEY}@angle" name="{KEY}@angle"></pmc-input></td>
+                            <td>angle (deg)</td><td><htk-input id="{KEY}@angle" name="{KEY}@angle"></htk-input></td>
                         </tr>
                     </table>`;
                 var reg = new RegExp("{KEY}", "g");
@@ -180,7 +180,7 @@
                 <td>
                 </td>
                 <td>
-                    <pmc-loop-coils-3d> </pmc-loop-coils-3d>
+                    <htk-loop-coils-3d> </htk-loop-coils-3d>
                 </td>
             </tr>
         </table>
@@ -191,7 +191,7 @@
                     <table id="tableAA1" style="border-width: 1px; background-color: transparent" ></table>
                 </td>
                 <td>
-                    <pmc-discrete-coils-2d id="vesselAA1" data-coil-variables='{"ids": ["55A0::MLFS@AA@M1001", "55A0::MLFS@AA@M1002", "55A0::MLFS@AA@M1003", "55A0::MLFS@AA@M1004", "55A0::MLFS@AA@M1005", "55A0::MLFS@AA@M1006", "55A0::MLFS@AA@M1007", "55A0::MLFS@AA@M1008", "55A0::MLFS@AA@M1009", "55A0::MLFS@AA@M1010", "55A0::MLFS@AA@M1011", "55A0::MLFS@AA@M1012", "55A0::MLFS@AA@M1013", "55A0::MLFS@AA@M1014", "55A0::MLFS@AA@M1015", "55A0::MLFS@AA@M1016", "55A0::MLFS@AA@M1017", "55A0::MLFS@AA@M1018", "55A0::MLFS@AA@M1020", "55A0::MLFS@AA@M1021", "55A0::MLFS@AA@M1022", "55A0::MLFS@AA@M1023", "55A0::MLFS@AA@M1024", "55A0::MLFS@AA@M1025"]}'></pmc-discrete-coils-2d>
+                    <htk-discrete-coils-2d id="vesselAA1" data-coil-variables='{"ids": ["55A0::MLFS@AA@M1001", "55A0::MLFS@AA@M1002", "55A0::MLFS@AA@M1003", "55A0::MLFS@AA@M1004", "55A0::MLFS@AA@M1005", "55A0::MLFS@AA@M1006", "55A0::MLFS@AA@M1007", "55A0::MLFS@AA@M1008", "55A0::MLFS@AA@M1009", "55A0::MLFS@AA@M1010", "55A0::MLFS@AA@M1011", "55A0::MLFS@AA@M1012", "55A0::MLFS@AA@M1013", "55A0::MLFS@AA@M1014", "55A0::MLFS@AA@M1015", "55A0::MLFS@AA@M1016", "55A0::MLFS@AA@M1017", "55A0::MLFS@AA@M1018", "55A0::MLFS@AA@M1020", "55A0::MLFS@AA@M1021", "55A0::MLFS@AA@M1022", "55A0::MLFS@AA@M1023", "55A0::MLFS@AA@M1024", "55A0::MLFS@AA@M1025"]}'></htk-discrete-coils-2d>
                 </td>
             </tr>
         </table>
@@ -202,7 +202,7 @@
                     <table id="tableAA2" style="border-width: 1px; background-color: transparent" ></table>
                 </td>
                 <td>
-                    <pmc-discrete-coils-2d id="vesselAA2" data-coil-variables='{"ids": ["55A0::MLFS@AA@M2001", "55A0::MLFS@AA@M2002", "55A0::MLFS@AA@M2003", "55A0::MLFS@AA@M2004", "55A0::MLFS@AA@M2005", "55A0::MLFS@AA@M2006", "55A0::MLFS@AA@M2007", "55A0::MLFS@AA@M2008", "55A0::MLFS@AA@M2009", "55A0::MLFS@AA@M2020", "55A0::MLFS@AA@M2011", "55A0::MLFS@AA@M2012", "55A0::MLFS@AA@M2013", "55A0::MLFS@AA@M2014", "55A0::MLFS@AA@M2015", "55A0::MLFS@AA@M2016", "55A0::MLFS@AA@M2017", "55A0::MLFS@AA@M2018", "55A0::MLFS@AA@M2020", "55A0::MLFS@AA@M2021", "55A0::MLFS@AA@M2022", "55A0::MLFS@AA@M2023", "55A0::MLFS@AA@M2024", "55A0::MLFS@AA@M2025"]}'></pmc-discrete-coils-2d>
+                    <htk-discrete-coils-2d id="vesselAA2" data-coil-variables='{"ids": ["55A0::MLFS@AA@M2001", "55A0::MLFS@AA@M2002", "55A0::MLFS@AA@M2003", "55A0::MLFS@AA@M2004", "55A0::MLFS@AA@M2005", "55A0::MLFS@AA@M2006", "55A0::MLFS@AA@M2007", "55A0::MLFS@AA@M2008", "55A0::MLFS@AA@M2009", "55A0::MLFS@AA@M2020", "55A0::MLFS@AA@M2011", "55A0::MLFS@AA@M2012", "55A0::MLFS@AA@M2013", "55A0::MLFS@AA@M2014", "55A0::MLFS@AA@M2015", "55A0::MLFS@AA@M2016", "55A0::MLFS@AA@M2017", "55A0::MLFS@AA@M2018", "55A0::MLFS@AA@M2020", "55A0::MLFS@AA@M2021", "55A0::MLFS@AA@M2022", "55A0::MLFS@AA@M2023", "55A0::MLFS@AA@M2024", "55A0::MLFS@AA@M2025"]}'></htk-discrete-coils-2d>
                 </td>
             </tr>
         </table>
@@ -213,7 +213,7 @@
                     <table id="tableAA4" style="border-width: 1px; background-color: transparent" ></table>
                 </td>
                 <td>
-                    <pmc-discrete-coils-2d id="vesselAA4" data-coil-variables='{"ids": ["55A0::MLFS@AA@M4001", "55A0::MLFS@AA@M4002", "55A0::MLFS@AA@M4003", "55A0::MLFS@AA@M4004", "55A0::MLFS@AA@M4005", "55A0::MLFS@AA@M4006", "55A0::MLFS@AA@M4007", "55A0::MLFS@AA@M4008", "55A0::MLFS@AA@M4009", "55A0::MLFS@AA@M4010", "55A0::MLFS@AA@M4011", "55A0::MLFS@AA@M4012", "55A0::MLFS@AA@M4013", "55A0::MLFS@AA@M4014", "55A0::MLFS@AA@M4015", "55A0::MLFS@AA@M4016", "55A0::MLFS@AA@M4017", "55A0::MLFS@AA@M4018", "55A0::MLFS@AA@M4020", "55A0::MLFS@AA@M4021", "55A0::MLFS@AA@M4022", "55A0::MLFS@AA@M4023", "55A0::MLFS@AA@M4024", "55A0::MLFS@AA@M4025"]}'></pmc-discrete-coils-2d>
+                    <htk-discrete-coils-2d id="vesselAA4" data-coil-variables='{"ids": ["55A0::MLFS@AA@M4001", "55A0::MLFS@AA@M4002", "55A0::MLFS@AA@M4003", "55A0::MLFS@AA@M4004", "55A0::MLFS@AA@M4005", "55A0::MLFS@AA@M4006", "55A0::MLFS@AA@M4007", "55A0::MLFS@AA@M4008", "55A0::MLFS@AA@M4009", "55A0::MLFS@AA@M4010", "55A0::MLFS@AA@M4011", "55A0::MLFS@AA@M4012", "55A0::MLFS@AA@M4013", "55A0::MLFS@AA@M4014", "55A0::MLFS@AA@M4015", "55A0::MLFS@AA@M4016", "55A0::MLFS@AA@M4017", "55A0::MLFS@AA@M4018", "55A0::MLFS@AA@M4020", "55A0::MLFS@AA@M4021", "55A0::MLFS@AA@M4022", "55A0::MLFS@AA@M4023", "55A0::MLFS@AA@M4024", "55A0::MLFS@AA@M4025"]}'></htk-discrete-coils-2d>
                 </td>
             </tr>
         </table>
@@ -224,7 +224,7 @@
                     <table id="tableAA5" style="border-width: 1px; background-color: transparent" ></table>
                 </td>
                 <td>
-                    <pmc-discrete-coils-2d id="vesselAA5" data-coil-variables='{"ids": ["55A0::MLFS@AA@M5001", "55A0::MLFS@AA@M5002", "55A0::MLFS@AA@M5003", "55A0::MLFS@AA@M5004", "55A0::MLFS@AA@M5005", "55A0::MLFS@AA@M5006", "55A0::MLFS@AA@M5007", "55A0::MLFS@AA@M5008", "55A0::MLFS@AA@M5009", "55A0::MLFS@AA@M5010", "55A0::MLFS@AA@M5011", "55A0::MLFS@AA@M5012", "55A0::MLFS@AA@M5013", "55A0::MLFS@AA@M5014", "55A0::MLFS@AA@M5015", "55A0::MLFS@AA@M5016", "55A0::MLFS@AA@M5017", "55A0::MLFS@AA@M5018", "55A0::MLFS@AA@M5020", "55A0::MLFS@AA@M5021", "55A0::MLFS@AA@M5022", "55A0::MLFS@AA@M5023", "55A0::MLFS@AA@M5024", "55A0::MLFS@AA@M5025"]}'></pmc-discrete-coils-2d>
+                    <htk-discrete-coils-2d id="vesselAA5" data-coil-variables='{"ids": ["55A0::MLFS@AA@M5001", "55A0::MLFS@AA@M5002", "55A0::MLFS@AA@M5003", "55A0::MLFS@AA@M5004", "55A0::MLFS@AA@M5005", "55A0::MLFS@AA@M5006", "55A0::MLFS@AA@M5007", "55A0::MLFS@AA@M5008", "55A0::MLFS@AA@M5009", "55A0::MLFS@AA@M5010", "55A0::MLFS@AA@M5011", "55A0::MLFS@AA@M5012", "55A0::MLFS@AA@M5013", "55A0::MLFS@AA@M5014", "55A0::MLFS@AA@M5015", "55A0::MLFS@AA@M5016", "55A0::MLFS@AA@M5017", "55A0::MLFS@AA@M5018", "55A0::MLFS@AA@M5020", "55A0::MLFS@AA@M5021", "55A0::MLFS@AA@M5022", "55A0::MLFS@AA@M5023", "55A0::MLFS@AA@M5024", "55A0::MLFS@AA@M5025"]}'></htk-discrete-coils-2d>
                 </td>
             </tr>
         </table>
@@ -235,7 +235,7 @@
                     <table id="tableAA7" style="border-width: 1px; background-color: transparent" ></table>
                 </td>
                 <td>
-                    <pmc-discrete-coils-2d id="vesselAA7" data-coil-variables='{"ids": ["55A0::MLFS@AA@M7001", "55A0::MLFS@AA@M7002", "55A0::MLFS@AA@M7003", "55A0::MLFS@AA@M7004", "55A0::MLFS@AA@M7005", "55A0::MLFS@AA@M7006", "55A0::MLFS@AA@M7007", "55A0::MLFS@AA@M7008", "55A0::MLFS@AA@M7009", "55A0::MLFS@AA@M7010", "55A0::MLFS@AA@M7011", "55A0::MLFS@AA@M7012", "55A0::MLFS@AA@M7013", "55A0::MLFS@AA@M7014", "55A0::MLFS@AA@M7015", "55A0::MLFS@AA@M7016", "55A0::MLFS@AA@M7017", "55A0::MLFS@AA@M7018", "55A0::MLFS@AA@M7020", "55A0::MLFS@AA@M7021", "55A0::MLFS@AA@M7022", "55A0::MLFS@AA@M7023", "55A0::MLFS@AA@M7024", "55A0::MLFS@AA@M7025"]}'></pmc-discrete-coils-2d>
+                    <htk-discrete-coils-2d id="vesselAA7" data-coil-variables='{"ids": ["55A0::MLFS@AA@M7001", "55A0::MLFS@AA@M7002", "55A0::MLFS@AA@M7003", "55A0::MLFS@AA@M7004", "55A0::MLFS@AA@M7005", "55A0::MLFS@AA@M7006", "55A0::MLFS@AA@M7007", "55A0::MLFS@AA@M7008", "55A0::MLFS@AA@M7009", "55A0::MLFS@AA@M7010", "55A0::MLFS@AA@M7011", "55A0::MLFS@AA@M7012", "55A0::MLFS@AA@M7013", "55A0::MLFS@AA@M7014", "55A0::MLFS@AA@M7015", "55A0::MLFS@AA@M7016", "55A0::MLFS@AA@M7017", "55A0::MLFS@AA@M7018", "55A0::MLFS@AA@M7020", "55A0::MLFS@AA@M7021", "55A0::MLFS@AA@M7022", "55A0::MLFS@AA@M7023", "55A0::MLFS@AA@M7024", "55A0::MLFS@AA@M7025"]}'></htk-discrete-coils-2d>
                 </td>
             </tr>
         </table>
@@ -246,7 +246,7 @@
                     <table id="tableAA8" style="border-width: 1px; background-color: transparent" ></table>
                 </td>
                 <td>
-                    <pmc-discrete-coils-2d id="vesselAA8" data-coil-variables='{"ids": ["55A0::MLFS@AA@M8001", "55A0::MLFS@AA@M8002", "55A0::MLFS@AA@M8003", "55A0::MLFS@AA@M8004", "55A0::MLFS@AA@M8005", "55A0::MLFS@AA@M8006", "55A0::MLFS@AA@M8007", "55A0::MLFS@AA@M8008", "55A0::MLFS@AA@M8009", "55A0::MLFS@AA@M8010", "55A0::MLFS@AA@M8011", "55A0::MLFS@AA@M8012", "55A0::MLFS@AA@M8013", "55A0::MLFS@AA@M8014", "55A0::MLFS@AA@M8015", "55A0::MLFS@AA@M8016", "55A0::MLFS@AA@M8017", "55A0::MLFS@AA@M8018", "55A0::MLFS@AA@M8020", "55A0::MLFS@AA@M8021", "55A0::MLFS@AA@M8022", "55A0::MLFS@AA@M8023", "55A0::MLFS@AA@M8024", "55A0::MLFS@AA@M8025"]}'></pmc-discrete-coils-2d>
+                    <htk-discrete-coils-2d id="vesselAA8" data-coil-variables='{"ids": ["55A0::MLFS@AA@M8001", "55A0::MLFS@AA@M8002", "55A0::MLFS@AA@M8003", "55A0::MLFS@AA@M8004", "55A0::MLFS@AA@M8005", "55A0::MLFS@AA@M8006", "55A0::MLFS@AA@M8007", "55A0::MLFS@AA@M8008", "55A0::MLFS@AA@M8009", "55A0::MLFS@AA@M8010", "55A0::MLFS@AA@M8011", "55A0::MLFS@AA@M8012", "55A0::MLFS@AA@M8013", "55A0::MLFS@AA@M8014", "55A0::MLFS@AA@M8015", "55A0::MLFS@AA@M8016", "55A0::MLFS@AA@M8017", "55A0::MLFS@AA@M8018", "55A0::MLFS@AA@M8020", "55A0::MLFS@AA@M8021", "55A0::MLFS@AA@M8022", "55A0::MLFS@AA@M8023", "55A0::MLFS@AA@M8024", "55A0::MLFS@AA@M8025"]}'></htk-discrete-coils-2d>
                 </td>
             </tr>
         </table>
@@ -259,7 +259,7 @@
                     <table id="tableAB1" style="border-width: 1px; background-color: transparent" ></table>
                 </td>
                 <td>
-                    <pmc-discrete-coils-2d id="vesselAB1" data-coil-variables='{"ids": ["55A0::MLFS@AB@M1101", "55A0::MLFS@AB@M1102", "55A0::MLFS@AB@M1103", "55A0::MLFS@AB@M1104", "55A0::MLFS@AB@M1105", "55A0::MLFS@AB@M1106", "55A0::MLFS@AB@M1107", "55A0::MLFS@AB@M1108", "55A0::MLFS@AB@M1109", "55A0::MLFS@AB@M1110", "55A0::MLFS@AB@M1111", "55A0::MLFS@AB@M1112"]}'></pmc-discrete-coils-2d>
+                    <htk-discrete-coils-2d id="vesselAB1" data-coil-variables='{"ids": ["55A0::MLFS@AB@M1101", "55A0::MLFS@AB@M1102", "55A0::MLFS@AB@M1103", "55A0::MLFS@AB@M1104", "55A0::MLFS@AB@M1105", "55A0::MLFS@AB@M1106", "55A0::MLFS@AB@M1107", "55A0::MLFS@AB@M1108", "55A0::MLFS@AB@M1109", "55A0::MLFS@AB@M1110", "55A0::MLFS@AB@M1111", "55A0::MLFS@AB@M1112"]}'></htk-discrete-coils-2d>
                 </td>
             </tr>
         </table>
@@ -270,7 +270,7 @@
                     <table id="tableAB2" style="border-width: 1px; background-color: transparent" ></table>
                 </td>
                 <td>
-                    <pmc-discrete-coils-2d id="vesselAB2" data-coil-variables='{"ids": ["55A0::MLFS@AB@M2101", "55A0::MLFS@AB@M2102", "55A0::MLFS@AB@M2103", "55A0::MLFS@AB@M2104", "55A0::MLFS@AB@M2105", "55A0::MLFS@AB@M2106", "55A0::MLFS@AB@M2107", "55A0::MLFS@AB@M2108", "55A0::MLFS@AB@M2109", "55A0::MLFS@AB@M2110", "55A0::MLFS@AB@M2111", "55A0::MLFS@AB@M2112"]}'></pmc-discrete-coils-2d>
+                    <htk-discrete-coils-2d id="vesselAB2" data-coil-variables='{"ids": ["55A0::MLFS@AB@M2101", "55A0::MLFS@AB@M2102", "55A0::MLFS@AB@M2103", "55A0::MLFS@AB@M2104", "55A0::MLFS@AB@M2105", "55A0::MLFS@AB@M2106", "55A0::MLFS@AB@M2107", "55A0::MLFS@AB@M2108", "55A0::MLFS@AB@M2109", "55A0::MLFS@AB@M2110", "55A0::MLFS@AB@M2111", "55A0::MLFS@AB@M2112"]}'></htk-discrete-coils-2d>
                 </td>
             </tr>
         </table>
@@ -281,7 +281,7 @@
                     <table id="tableAB4" style="border-width: 1px; background-color: transparent" ></table>
                 </td>
                 <td>
-                    <pmc-discrete-coils-2d id="vesselAB4" data-coil-variables='{"ids": ["55A0::MLFS@AB@M4101", "55A0::MLFS@AB@M4102", "55A0::MLFS@AB@M4103", "55A0::MLFS@AB@M4104", "55A0::MLFS@AB@M4105", "55A0::MLFS@AB@M4106", "55A0::MLFS@AB@M4107", "55A0::MLFS@AB@M4108", "55A0::MLFS@AB@M4109", "55A0::MLFS@AB@M4110", "55A0::MLFS@AB@M4111", "55A0::MLFS@AB@M4112"]}'></pmc-discrete-coils-2d>
+                    <htk-discrete-coils-2d id="vesselAB4" data-coil-variables='{"ids": ["55A0::MLFS@AB@M4101", "55A0::MLFS@AB@M4102", "55A0::MLFS@AB@M4103", "55A0::MLFS@AB@M4104", "55A0::MLFS@AB@M4105", "55A0::MLFS@AB@M4106", "55A0::MLFS@AB@M4107", "55A0::MLFS@AB@M4108", "55A0::MLFS@AB@M4109", "55A0::MLFS@AB@M4110", "55A0::MLFS@AB@M4111", "55A0::MLFS@AB@M4112"]}'></htk-discrete-coils-2d>
                 </td>
             </tr>
         </table>
@@ -292,7 +292,7 @@
                     <table id="tableAB5" style="border-width: 1px; background-color: transparent" ></table>
                 </td>
                 <td>
-                    <pmc-discrete-coils-2d id="vesselAB5" data-coil-variables='{"ids": ["55A0::MLFS@AB@M5101", "55A0::MLFS@AB@M5102", "55A0::MLFS@AB@M5103", "55A0::MLFS@AB@M5104", "55A0::MLFS@AB@M5105", "55A0::MLFS@AB@M5106", "55A0::MLFS@AB@M5107", "55A0::MLFS@AB@M5108", "55A0::MLFS@AB@M5109", "55A0::MLFS@AB@M5110", "55A0::MLFS@AB@M5111", "55A0::MLFS@AB@M5112"]}'></pmc-discrete-coils-2d>
+                    <htk-discrete-coils-2d id="vesselAB5" data-coil-variables='{"ids": ["55A0::MLFS@AB@M5101", "55A0::MLFS@AB@M5102", "55A0::MLFS@AB@M5103", "55A0::MLFS@AB@M5104", "55A0::MLFS@AB@M5105", "55A0::MLFS@AB@M5106", "55A0::MLFS@AB@M5107", "55A0::MLFS@AB@M5108", "55A0::MLFS@AB@M5109", "55A0::MLFS@AB@M5110", "55A0::MLFS@AB@M5111", "55A0::MLFS@AB@M5112"]}'></htk-discrete-coils-2d>
                 </td>
             </tr>
         </table>
@@ -303,7 +303,7 @@
                     <table id="tableAB7" style="border-width: 1px; background-color: transparent" ></table>
                 </td>
                 <td>
-                    <pmc-discrete-coils-2d id="vesselAB7" data-coil-variables='{"ids": ["55A0::MLFS@AB@M7101", "55A0::MLFS@AB@M7102", "55A0::MLFS@AB@M7103", "55A0::MLFS@AB@M7104", "55A0::MLFS@AB@M7105", "55A0::MLFS@AB@M7106", "55A0::MLFS@AB@M7107", "55A0::MLFS@AB@M7108", "55A0::MLFS@AB@M7109", "55A0::MLFS@AB@M7110", "55A0::MLFS@AB@M7111", "55A0::MLFS@AB@M7112"]}'></pmc-discrete-coils-2d>
+                    <htk-discrete-coils-2d id="vesselAB7" data-coil-variables='{"ids": ["55A0::MLFS@AB@M7101", "55A0::MLFS@AB@M7102", "55A0::MLFS@AB@M7103", "55A0::MLFS@AB@M7104", "55A0::MLFS@AB@M7105", "55A0::MLFS@AB@M7106", "55A0::MLFS@AB@M7107", "55A0::MLFS@AB@M7108", "55A0::MLFS@AB@M7109", "55A0::MLFS@AB@M7110", "55A0::MLFS@AB@M7111", "55A0::MLFS@AB@M7112"]}'></htk-discrete-coils-2d>
                 </td>
             </tr>
         </table>
@@ -314,7 +314,7 @@
                     <table id="tableAB8" style="border-width: 1px; background-color: transparent" ></table>
                 </td>
                 <td>
-                    <pmc-discrete-coils-2d id="vesselAB8" data-coil-variables='{"ids": ["55A0::MLFS@AB@M8101", "55A0::MLFS@AB@M8102", "55A0::MLFS@AB@M8103", "55A0::MLFS@AB@M8104", "55A0::MLFS@AB@M8105", "55A0::MLFS@AB@M8106", "55A0::MLFS@AB@M8107", "55A0::MLFS@AB@M8108", "55A0::MLFS@AB@M8109", "55A0::MLFS@AB@M8110", "55A0::MLFS@AB@M8111", "55A0::MLFS@AB@M8112"]}'></pmc-discrete-coils-2d>
+                    <htk-discrete-coils-2d id="vesselAB8" data-coil-variables='{"ids": ["55A0::MLFS@AB@M8101", "55A0::MLFS@AB@M8102", "55A0::MLFS@AB@M8103", "55A0::MLFS@AB@M8104", "55A0::MLFS@AB@M8105", "55A0::MLFS@AB@M8106", "55A0::MLFS@AB@M8107", "55A0::MLFS@AB@M8108", "55A0::MLFS@AB@M8109", "55A0::MLFS@AB@M8110", "55A0::MLFS@AB@M8111", "55A0::MLFS@AB@M8112"]}'></htk-discrete-coils-2d>
                 </td>
             </tr>
         </table>

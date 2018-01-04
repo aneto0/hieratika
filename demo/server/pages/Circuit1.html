@@ -1,9 +1,9 @@
 <html>
     <head>
         <link rel="import" href="/libraries.html">
-        <link rel="import" href="/pmc-2d-line-plot.html">
-        <link rel="import" href="/pmc-component.html">
-        <link rel="import" href="/pmc-input.html">
+        <link rel="import" href="/htk-2d-line-plot.html">
+        <link rel="import" href="/htk-component.html">
+        <link rel="import" href="/htk-input.html">
     </head>
     <body>
         <div>
@@ -17,16 +17,16 @@
                             <td colspan="2">Simulation parameters</td>
                         </tr>
                         <tr>
-                            <td>Start frequency (rad/s)</td><td><pmc-input id="CC@SIM@FS"></pmc-input></td>
+                            <td>Start frequency (rad/s)</td><td><htk-input id="CC@SIM@FS"></htk-input></td>
                         </tr>
                         <tr>
-                            <td>End frequency (rad/s)</td><td><pmc-input id="CC@SIM@FE"></pmc-input></td>
+                            <td>End frequency (rad/s)</td><td><htk-input id="CC@SIM@FE"></htk-input></td>
                         </tr>
                         <tr>
-                            <td>Number of points</td><td><pmc-input id="CC@SIM@PTS"></pmc-input></td>
+                            <td>Number of points</td><td><htk-input id="CC@SIM@PTS"></htk-input></td>
                         </tr>
                         <tr>
-                            <td>V1 (V)</td><td><pmc-input id='CC@SIM@V1'></pmc-input></td>
+                            <td>V1 (V)</td><td><htk-input id='CC@SIM@V1'></htk-input></td>
                         </tr>
                     </table>`
                 </td>
@@ -36,40 +36,40 @@
                             <td colspan="2">Circuit parameters</td>
                         </tr>
                         <tr>
-                            <td>R1 (&#8486;)</td><td><pmc-input id="CC@CIRC@R1"></pmc-input></td>
+                            <td>R1 (&#8486;)</td><td><htk-input id="CC@CIRC@R1"></htk-input></td>
                         </tr>
                         <tr>
-                            <td>L1 (H)</td><td><pmc-input id="CC@CIRC@L1"></pmc-input></td>
+                            <td>L1 (H)</td><td><htk-input id="CC@CIRC@L1"></htk-input></td>
                         </tr>
                         <tr>
-                            <td>C1 (F)</td><td><pmc-input id="CC@CIRC@C1"></pmc-input></td>
+                            <td>C1 (F)</td><td><htk-input id="CC@CIRC@C1"></htk-input></td>
                         </tr>
                         <tr>
-                            <td>L2 (H)</td><td><pmc-input id="CC@CIRC@L2"></pmc-input></td>
+                            <td>L2 (H)</td><td><htk-input id="CC@CIRC@L2"></htk-input></td>
                         </tr>
                         <tr>
-                            <td>C2 (F)</td><td><pmc-input id="CC@CIRC@C2"></pmc-input></td>
+                            <td>C2 (F)</td><td><htk-input id="CC@CIRC@C2"></htk-input></td>
                         </tr>
                         <tr>
-                            <td>L3 (H)</td><td><pmc-input id="CC@CIRC@L3"></pmc-input></td>
+                            <td>L3 (H)</td><td><htk-input id="CC@CIRC@L3"></htk-input></td>
                         </tr>
                         <tr>
-                            <td>C3 (F)</td><td><pmc-input id="CC@CIRC@C3"></pmc-input></td>
+                            <td>C3 (F)</td><td><htk-input id="CC@CIRC@C3"></htk-input></td>
                         </tr>
                         <tr>
-                            <td>L4 (H)</td><td><pmc-input id="CC@CIRC@L4"></pmc-input></td>
+                            <td>L4 (H)</td><td><htk-input id="CC@CIRC@L4"></htk-input></td>
                         </tr>
                         <tr>
-                            <td>C4 (F)</td><td><pmc-input id="CC@CIRC@C4"></pmc-input></td>
+                            <td>C4 (F)</td><td><htk-input id="CC@CIRC@C4"></htk-input></td>
                         </tr>
                         <tr>
-                            <td>L5 (H)</td><td><pmc-input id="CC@CIRC@L5"></pmc-input></td>
+                            <td>L5 (H)</td><td><htk-input id="CC@CIRC@L5"></htk-input></td>
                         </tr>
                         <tr>
-                            <td>C5 (F)</td><td><pmc-input id="CC@CIRC@C5"></pmc-input></td>
+                            <td>C5 (F)</td><td><htk-input id="CC@CIRC@C5"></htk-input></td>
                         </tr>
                         <tr>
-                            <td>R2 (F)</td><td><pmc-input id="CC@CIRC@R2"></pmc-input></td>
+                            <td>R2 (F)</td><td><htk-input id="CC@CIRC@R2"></htk-input></td>
                         </tr>
                     </table>
                 </td>
@@ -79,11 +79,11 @@
                             <td colspan="2" style="background-color:#B22222; color: white;">Expected output</td>
                         </tr>
                         <tr>
-<!--                            <td>V<sub>OUT</sub></td><td><pmc-input id="CC@SIM@VOUT"></pmc-input></td>-->
-                            <td><pmc-2d-line-plot id="CC@SIM@VOUT" data-xlabel="Hz" data-ylabel="Vout (V)" data-xtype="linear" data-append="true" data-append="true" data-show-plant="false" data-show-reference="false"></pmc-2d-line-plot></td>
+<!--                            <td>V<sub>OUT</sub></td><td><htk-input id="CC@SIM@VOUT"></htk-input></td>-->
+                            <td><htk-2d-line-plot id="CC@SIM@VOUT" data-xlabel="Hz" data-ylabel="Vout (V)" data-xtype="linear" data-append="true" data-append="true" data-show-plant="false" data-show-reference="false"></htk-2d-line-plot></td>
                         </tr>
                         <tr>
-                            <td><pmc-2d-line-plot id="CC@SIM@VANGLE" data-xlabel="Hz" data-ylabel="(rad)" data-xtype="linear" data-append="true" data-show-plant="false" data-show-reference="false"></pmc-2d-line-plot></td>
+                            <td><htk-2d-line-plot id="CC@SIM@VANGLE" data-xlabel="Hz" data-ylabel="(rad)" data-xtype="linear" data-append="true" data-show-plant="false" data-show-reference="false"></htk-2d-line-plot></td>
                         </tr>
 
                     </table>

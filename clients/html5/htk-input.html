@@ -1,7 +1,7 @@
 <html>
     <head>
         <link rel="import" href="libraries.html">
-        <link rel="import" href="pmc-abstract-input.html">
+        <link rel="import" href="htk-abstract-input.html">
     </head>
     <body>
         <template id="ttinput">
@@ -13,7 +13,7 @@
             (function () {
                 var importDoc = document.currentScript.ownerDocument; // importee
                 //Constructor
-                class PMCInput extends PMCAbstractInput {
+                class HtkInput extends HtkAbstractInput {
                     constructor() {
                         super();
                     }
@@ -47,8 +47,8 @@
                         this.textInput.disabled = isReadOnly;
                     }
                 }
-                document.registerElement("pmc-input", {
-                    prototype: PMCInput.prototype,
+                document.registerElement("htk-input", {
+                    prototype: HtkInput.prototype,
                 });
             })(); 
         </script>

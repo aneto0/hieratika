@@ -5,7 +5,7 @@ import dataset
 #To serialize arrays into the database
 import pickle
 
-db = dataset.connect('sqlite:////tmp/pmc-server.db')
+db = dataset.connect('sqlite:////tmp/htk-server.db')
 
 #Create all the tables
 users = db["users"]
@@ -232,7 +232,7 @@ validation["parameters"] = pickle.dumps("allPMCComponents[\"PLANT1::VAR1\"].getP
 validations.upsert(validation, ["variable_id", "fun"])
 
 with open("static/ps-example-2.html", "w") as f:
-    f.write("<table border=\"0\">\n<tr><td><pmc-input id=\"PLANT1::VAR1\" name=\"PLANT1::VAR1\"></pmc-input></td></tr><tr>\n") 
+    f.write("<table border=\"0\">\n<tr><td><htk-input id=\"PLANT1::VAR1\" name=\"PLANT1::VAR1\"></htk-input></td></tr><tr>\n") 
     idx = 1
     while (idx < maxIdxHTML):
         if (idx % nCols == 0):
@@ -242,7 +242,7 @@ with open("static/ps-example-2.html", "w") as f:
 
         varName = destPlantId + "::" + "VAR" + str(idx)
         f.write("<td>" + varName + "</td>")
-        f.write("<td><pmc-input id=\"" + varName + "\" name=\"" + varName + "\"></pmc-input></td>")
+        f.write("<td><htk-input id=\"" + varName + "\" name=\"" + varName + "\"></htk-input></td>")
         idx = idx + 1
     f.write("</table>\n") 
 

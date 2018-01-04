@@ -14,7 +14,7 @@
             (function () {
                 var importDoc = document.currentScript.ownerDocument; // importee
                 //Constructor
-                class PMCWaitDialog extends HTMLElement {
+                class HtkWaitDialog extends HTMLElement {
                     constructor() {
                         super();
                     }
@@ -38,8 +38,8 @@
                         }
                     }
                 }
-                document.registerElement("pmc-wait-dialog", {
-                    prototype: PMCWaitDialog.prototype,
+                document.registerElement("htk-wait-dialog", {
+                    prototype: HtkWaitDialog.prototype,
                 });
             })(); 
         </script>

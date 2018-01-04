@@ -1,16 +1,16 @@
     <head>
-        <link rel="import" href="pmc-component.html">
+        <link rel="import" href="htk-component.html">
         <link rel="import" href="libraries.html">
-        <link rel="import" href="pmc-array-editor.html">
-        <link rel="import" href="pmc-cubicle-editor.html">
-        <link rel="import" href="pmc-discrete-coils-2d.html">
-        <link rel="import" href="pmc-loop-coils-3d.html">
-        <link rel="import" href="pmc-filter-editor.html">
-        <link rel="import" href="pmc-input.html">
-        <link rel="import" href="pmc-library-button.html">
-        <link rel="import" href="pmc-struct-browser.html">
-        <link rel="import" href="pmc-switch.html">
-        <link rel="import" href="pmc-switch-editor.html">
+        <link rel="import" href="htk-array-editor.html">
+        <link rel="import" href="htk-cubicle-editor.html">
+        <link rel="import" href="htk-discrete-coils-2d.html">
+        <link rel="import" href="htk-loop-coils-3d.html">
+        <link rel="import" href="htk-filter-editor.html">
+        <link rel="import" href="htk-input.html">
+        <link rel="import" href="htk-library-button.html">
+        <link rel="import" href="htk-struct-browser.html">
+        <link rel="import" href="htk-switch.html">
+        <link rel="import" href="htk-switch-editor.html">
 
     </head>
 
@@ -18,88 +18,88 @@
 <table border="0">
     <!--<tr>
         <td>TEST0::VAR3@var2@var3@2,1,2@var3</td>
-        <td><pmc-input id="TEST0::VAR3@var2@var3@2,1,2@var3" name="TEST0::VAR3@var2@var3@2,1,2@var3"></pmc-input></td>
+        <td><htk-input id="TEST0::VAR3@var2@var3@2,1,2@var3" name="TEST0::VAR3@var2@var3@2,1,2@var3"></htk-input></td>
     </tr>
     <tr>
         <td>TEST0::VAR1</td>
-        <td><pmc-input id="TEST0::VAR1" name="TEST0::VAR1"></pmc-input></td>
+        <td><htk-input id="TEST0::VAR1" name="TEST0::VAR1"></htk-input></td>
     </tr>-->
     <tr>
         <td>TEST0::VAR2</td>
-        <td><pmc-array-editor id="TEST0::VAR2" name="TEST0::VAR2"></pmc-array-editor></td>
+        <td><htk-array-editor id="TEST0::VAR2" name="TEST0::VAR2"></htk-array-editor></td>
     </tr>
 <!--    <tr>
         <td>TEST0::VAR3</td>
-        <td><pmc-struct-browser id="TEST0::VAR3" name="TEST0::VAR3"></pmc-struct-browser></td>
+        <td><htk-struct-browser id="TEST0::VAR3" name="TEST0::VAR3"></htk-struct-browser></td>
     </tr>
     <tr>
         <td>TEST0::VAR3@var2@var3@2,1,2</td>
-        <td><pmc-struct-browser id="TEST0::VAR3@var2@var3@2,1,2" name="TEST0::VAR3@var2@var3@2,1,2"></pmc-struct-browser></td>
+        <td><htk-struct-browser id="TEST0::VAR3@var2@var3@2,1,2" name="TEST0::VAR3@var2@var3@2,1,2"></htk-struct-browser></td>
     </tr>
     <tr>
         <td>TEST0::VAR4</td>
-        <td><pmc-struct-browser id="TEST0::VAR4" name="TEST0::VAR4"></pmc-struct-browser></td>
+        <td><htk-struct-browser id="TEST0::VAR4" name="TEST0::VAR4"></htk-struct-browser></td>
     </tr>-->
     <tr>
         <td>TEST0::VAR5</td>
-        <td><pmc-library-button id="TEST0::VAR5" name="TEST0::VAR5" data-library-editor="libraries/example1.html" data-library-variables='{"VAR1":"TEST0::VAR5","VAR2-id":"TEST0::VAR6", "VAR2-name":"Variable 6", "VAR3-id":"TEST0::VAR7", "VAR3-name":"Variable 7", "VAR4-id":"TEST0::VAR9", "VAR4-name":"Variable 9"}'></pmc-library-button></td>
+        <td><htk-library-button id="TEST0::VAR5" name="TEST0::VAR5" data-library-editor="libraries/example1.html" data-library-variables='{"VAR1":"TEST0::VAR5","VAR2-id":"TEST0::VAR6", "VAR2-name":"Variable 6", "VAR3-id":"TEST0::VAR7", "VAR3-name":"Variable 7", "VAR4-id":"TEST0::VAR9", "VAR4-name":"Variable 9"}'></htk-library-button></td>
     </tr>
     <tr>
         <td>TEST0::VAR8</td>
-        <td><pmc-filter-editor id="TEST0::VAR8" name="TEST0::VAR8"></pmc-filter-editor></td>
+        <td><htk-filter-editor id="TEST0::VAR8" name="TEST0::VAR8"></htk-filter-editor></td>
     </tr>
     <tr>
         <td>TEST0::VAR10</td>
         <td>
-            <pmc-cubicle-editor id="TEST0::VAR11">
-                <pmc-switch id="TEST0::VAR12"  data-library-editor="libraries/standard-switch.html" data-library-variables='{"VAR1":"TEST0::VAR10","VAR2-id":"TEST0::VAR10", "VAR2-name":"Variable 10"}'   data-library-editor="pmc-switch-editor" data-location-cubicle="0"></pmc-switch>
-<!--                <pmc-switch id="PLANT1::VAR10" data-library-editor="pmc-switch-editor" data-location-cubicle="2">
-                </pmc-switch>-->
-            </pmc-cubicle-editor>
+            <htk-cubicle-editor id="TEST0::VAR11">
+                <htk-switch id="TEST0::VAR12"  data-library-editor="libraries/standard-switch.html" data-library-variables='{"VAR1":"TEST0::VAR10","VAR2-id":"TEST0::VAR10", "VAR2-name":"Variable 10"}'   data-library-editor="htk-switch-editor" data-location-cubicle="0"></htk-switch>
+<!--                <htk-switch id="PLANT1::VAR10" data-library-editor="htk-switch-editor" data-location-cubicle="2">
+                </htk-switch>-->
+            </htk-cubicle-editor>
         </td>
     </tr>
 
 <!--    <tr>
         <td>WHATEVER 2</td>
-        <td><pmc-input id="PLANT2::VAR5" name="PLANT2::VAR5"></pmc-input></td>
+        <td><htk-input id="PLANT2::VAR5" name="PLANT2::VAR5"></htk-input></td>
     </tr>
     <tr>
         <td>WHATEVER</td>
-        <td><pmc-input id="PLANT1::VAR1" name="PLANT1::VAR1"></pmc-input></td>
+        <td><htk-input id="PLANT1::VAR1" name="PLANT1::VAR1"></htk-input></td>
     </tr>
     <tr>
         <td>PLANT1::VAR1</td>
-        <td><pmc-input id="PLANT1::VAR1" name="PLANT1::VAR1"></pmc-input></td>
+        <td><htk-input id="PLANT1::VAR1" name="PLANT1::VAR1"></htk-input></td>
     </tr>
     <tr>
         <td>PLANT1::VAR2</td>
-        <td><pmc-input id="PLANT1::VAR2" name="PLANT1::VAR2"></pmc-input></td>
+        <td><htk-input id="PLANT1::VAR2" name="PLANT1::VAR2"></htk-input></td>
     </tr>
         <tr>
             <td>PLANT1::VAR4</td>
-        <td><pmc-library-button data-library-editor="pmc-array-editor" id="PLANT1::VAR4" name="PLANT1::VAR4"></pmc-library-button></td>
+        <td><htk-library-button data-library-editor="htk-array-editor" id="PLANT1::VAR4" name="PLANT1::VAR4"></htk-library-button></td>
     </tr>
     <tr>
         <td>PLANT1::VAR7</td>
-        <td><pmc-library-button data-library-editor="pmc-filter-editor" id="PLANT1::VAR7" name="PLANT1::VAR7"></pmc-library-button></td>
+        <td><htk-library-button data-library-editor="htk-filter-editor" id="PLANT1::VAR7" name="PLANT1::VAR7"></htk-library-button></td>
     </tr>
     <tr>
         <td>PLANT1::VAR5</td>
-        <td><pmc-array-editor is="pmc" id="PLANT1::VAR5" name="PLANT1::VAR5"></pmc-array-editor></td>
+        <td><htk-array-editor is="htk" id="PLANT1::VAR5" name="PLANT1::VAR5"></htk-array-editor></td>
     </tr>
     <tr>
         <td>PLANT1::VAR6</td>
-        <td><pmc-filter-editor is="pmc" id="PLANT1::VAR6" name="PLANT1::VAR6"></pmc-filter-editor></td>
+        <td><htk-filter-editor is="htk" id="PLANT1::VAR6" name="PLANT1::VAR6"></htk-filter-editor></td>
     </tr>
     <tr>
         <td>PLANT1::VAR8</td>
         <td>
-            <pmc-cubicle-editor is="pmc" id="PLANT1::VAR8">
-                <pmc-switch is="pmc" id="PLANT1::VAR9" data-library-editor="pmc-switch-editor" data-location-cubicle="0">
-                </pmc-switch>
-                <pmc-switch is="pmc" id="PLANT1::VAR10" data-library-editor="pmc-switch-editor" data-location-cubicle="2">
-                </pmc-switch>
-            </pmc-cubicle-editor>
+            <htk-cubicle-editor is="htk" id="PLANT1::VAR8">
+                <htk-switch is="htk" id="PLANT1::VAR9" data-library-editor="htk-switch-editor" data-location-cubicle="0">
+                </htk-switch>
+                <htk-switch is="htk" id="PLANT1::VAR10" data-library-editor="htk-switch-editor" data-location-cubicle="2">
+                </htk-switch>
+            </htk-cubicle-editor>
         </td>
     </tr>-->
 </table>

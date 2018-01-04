@@ -8,7 +8,7 @@ import json
 import dataset
 import numpy
 
-db = dataset.connect('sqlite:////tmp/pmc-server.db')
+db = dataset.connect('sqlite:////tmp/htk-server.db')
 
 '''
     PMC::VAR1@0

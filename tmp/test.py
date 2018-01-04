@@ -71,7 +71,7 @@ class Server:
         ct = threading.current_thread()
         tid = self.getTid()
         if tid not in self.threadDBs:
-            self.threadDBs[tid] = dataset.connect('sqlite:////tmp/pmc-server.db')
+            self.threadDBs[tid] = dataset.connect('sqlite:////tmp/htk-server.db')
             if (ct not in self.allThreads):
                 self.allThreads.append(threading.current_thread())
 
@@ -495,8 +495,8 @@ class Server:
         if (not self.isTokenValid(request)):
             toReturn = "InvalidToken"
         else: 
-            pmcLibVariables = json.loads(request.form["variables"])
-            for variable in pmcLibVariables:
+            htkLibVariables = json.loads(request.form["variables"])
+            for variable in htkLibVariables:
                 libraries = tableLibraries.find(variable_id=variable)
                 for library in libraries:
                     if variable in librariesNames:

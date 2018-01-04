@@ -1,6 +1,6 @@
 <html>
 <head>
-    <link rel="import" href="pmc-helper.html">
+    <link rel="import" href="htk-helper.html">
 </head>
 </body>
     <template id="tscheduleselector">
@@ -70,7 +70,7 @@
         //This is enclosure is required to protect the importDoc
         (function () {
             var importDoc = document.currentScript.ownerDocument; // importee
-            class PMCScheduleSelector extends HTMLElement {
+            class HtkScheduleSelector extends HTMLElement {
                 constructor() {
                     super();
                 }
@@ -259,8 +259,8 @@
                 }
             }
 
-            document.registerElement("pmc-schedule-selector", {
-                prototype: PMCScheduleSelector.prototype,
+            document.registerElement("htk-schedule-selector", {
+                prototype: HtkScheduleSelector.prototype,
             });
 
         }());

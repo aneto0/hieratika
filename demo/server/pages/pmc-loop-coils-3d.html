@@ -24,7 +24,7 @@
                         var root = this.createShadowRoot();
                         root.appendChild(clone);
 
-                        parent._pmcMainEditor.addPlantInfoLoadedListener(this);
+                        parent._htkMainEditor.addPlantInfoLoadedListener(this);
                     }
         
                     attachedCallback() {
@@ -49,15 +49,15 @@
                                 var coil = {color:STANDARD_FCOLOR};
                                 $.each(props, function(p, prop) {
                                     var coilVariableId = coilVariable + "@" + prop;
-                                    var pmcCompArray = document._frameComponents[coilVariableId];
-                                    if (pmcCompArray !== undefined) {
-                                        coil[prop] = parseFloat(pmcCompArray[0].getValue());
-                                        $.each(pmcCompArray, function (j, pmcComp) {
-                                            pmcComp.addValueChangedListener(this);
-                                            pmcComp.addEventListener("mouseover", function (evt) {
+                                    var htkCompArray = document._frameComponents[coilVariableId];
+                                    if (htkCompArray !== undefined) {
+                                        coil[prop] = parseFloat(htkCompArray[0].getValue());
+                                        $.each(htkCompArray, function (j, htkComp) {
+                                            htkComp.addValueChangedListener(this);
+                                            htkComp.addEventListener("mouseover", function (evt) {
                                                 this.setCoilHighlighted(coilVariable, true);
                                             }.bind(this));
-                                            pmcComp.addEventListener("mouseout", function (evt) {
+                                            htkComp.addEventListener("mouseout", function (evt) {
                                                 this.setCoilHighlighted(coilVariable, false);
                                             }.bind(this));
                                         }.bind(this));
@@ -150,7 +150,7 @@
                     }
                 }
        
-                document.registerElement("pmc-loop-coils-3d", {
+                document.registerElement("htk-loop-coils-3d", {
                     prototype: PMCLoopCoils3D.prototype,
                 });
             })(); 

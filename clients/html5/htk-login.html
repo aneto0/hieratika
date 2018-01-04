@@ -1,6 +1,6 @@
 <html>
 <head>
-    <link rel="import" href="pmc-helper.html">
+    <link rel="import" href="htk-helper.html">
 </head>
 </body>
     <template id="tlogin">
@@ -32,7 +32,7 @@
         //This is enclosure is required to protect the importDoc
         (function () {
             var importDoc = document.currentScript.ownerDocument; // importee
-            class PMCLogin extends HTMLElement {
+            class HtkLogin extends HTMLElement {
                 constructor() {
                     super();
                 }
@@ -109,8 +109,8 @@
                 }
             }
 
-            document.registerElement("pmc-login", {
-                prototype: PMCLogin.prototype,
+            document.registerElement("htk-login", {
+                prototype: HtkLogin.prototype,
             });
 
         }());

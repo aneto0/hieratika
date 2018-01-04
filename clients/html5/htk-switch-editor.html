@@ -2,7 +2,7 @@
 <html>
     <head>
         <link rel="import" href="libraries.html">
-        <link rel="import" href="pmc-abstract-input.html">
+        <link rel="import" href="htk-abstract-input.html">
     </head>
     <body>
         <template id="tswitche">
@@ -13,7 +13,7 @@
             (function () {
                 var importDoc = document.currentScript.ownerDocument; // importee
 
-                class PMCSwitchEditor extends PMCAbstractInput {
+                class HtkSwitchEditor extends HtkAbstractInput {
                     constructor() {
                         super();
                     }
@@ -40,8 +40,8 @@
                         return this.txtArea.value;
                     }
                 }
-                document.registerElement("pmc-switch-editor", {
-                    prototype: PMCSwitchEditor.prototype,
+                document.registerElement("htk-switch-editor", {
+                    prototype: HtkSwitchEditor.prototype,
                 });
             })();
         </script>

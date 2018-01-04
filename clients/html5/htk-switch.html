@@ -1,11 +1,11 @@
 <html>
     <head>
         <link rel="import" href="libraries.html">
-        <link rel="import" href="pmc-component.html">
+        <link rel="import" href="htk-component.html">
     </head>
     <body>
         <template id="tswitch">
-            <pmc-library-editor id="tlibrary-editor"></pmc-library-editor>
+            <htk-library-editor id="tlibrary-editor"></htk-library-editor>
             <!--Export in inkscape with viewBox and with optimised svg!-->
             <?xml version="1.0" encoding="UTF-8" standalone="no"?>
             <!-- Created with Inkscape (http://www.inkscape.org/) -->
@@ -59,7 +59,7 @@
             (function () {
                 var importDoc = document.currentScript.ownerDocument; // importee
 
-                class PMCSwitch extends PMCLibrary {
+                class HtkSwitch extends HtkLibrary {
 
                     // Use Shadow DOM and a template.
                     createdCallback () {
@@ -121,8 +121,8 @@
                     }
                 }
 
-                document.registerElement("pmc-switch", {
-                    prototype: PMCSwitch.prototype
+                document.registerElement("htk-switch", {
+                    prototype: HtkSwitch.prototype
                 });
             })();
         </script>

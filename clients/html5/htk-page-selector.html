@@ -1,6 +1,6 @@
 <html>
 <head>
-    <link rel="import" href="pmc-helper.html">
+    <link rel="import" href="htk-helper.html">
 </head>
 </body>
     <template id="tpagesselector">
@@ -36,7 +36,7 @@
         //This is enclosure is required to protect the importDoc
         (function () {
             var importDoc = document.currentScript.ownerDocument; // importee
-            class PMCPageSelector extends HTMLElement {
+            class HtkPageSelector extends HTMLElement {
                 constructor() {
                     super();
                 }
@@ -106,8 +106,8 @@
                 }
             }
 
-            document.registerElement("pmc-page-selector", {
-                prototype: PMCPageSelector.prototype,
+            document.registerElement("htk-page-selector", {
+                prototype: HtkPageSelector.prototype,
             });
 
         }());

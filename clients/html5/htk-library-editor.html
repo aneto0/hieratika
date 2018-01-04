@@ -29,7 +29,7 @@
             (function () {
                 var importDoc = document.currentScript.ownerDocument; // importee
 
-                class PMCLibraryEditor extends HTMLElement {
+                class HtkLibraryEditor extends HTMLElement {
                     constructor() {
                         super();
                     }
@@ -302,7 +302,7 @@
                     }
                     
                     iFrameLoaded(libraryType) {
-                        //Note that we want PMCComponents to the scope of each iframe
+                        //Note that we want HtkComponents to the scope of each iframe
                         var editorComponents = this.iFrameEditor.contentDocument._frameComponents;
                         var allVariableIds = [];
                         for (var k in editorComponents) {
@@ -324,9 +324,9 @@
                             }.bind(this)
                         );
                         for (var i=0; i<editorComponents.length; i++) {
-                            var pmcCompArray = editorComponents[i];
-                            for (var j=0; j<pmcCompArray.length; j++) {
-                                pmcCompArray[j].domLoaded();
+                            var htkCompArray = editorComponents[i];
+                            for (var j=0; j<htkCompArray.length; j++) {
+                                htkCompArray[j].domLoaded();
                             }
                         }
                     }
@@ -351,9 +351,9 @@
                         var editorComponents = this.iFrameEditor.contentDocument._frameComponents;
                         if (editorComponents !== undefined) {
                             for (var i=0; i<editorComponents.length; i++) {
-                                var pmcCompArray = editorComponents[i];
-                                for (var j=0; j<pmcCompArray.length; j++) {
-                                    pmcCompArray[j].setReference(referenceToSet);
+                                var htkCompArray = editorComponents[i];
+                                for (var j=0; j<htkCompArray.length; j++) {
+                                    htkCompArray[j].setReference(referenceToSet);
                                 }
                             }
                         }
@@ -363,8 +363,8 @@
                         this.okButton.disabled = !isUserAllowedToWrite;
                     }
                 }
-                document.registerElement("pmc-library-editor", {
-                    prototype: PMCLibraryEditor.prototype
+                document.registerElement("htk-library-editor", {
+                    prototype: HtkLibraryEditor.prototype
                 });
             })();
         </script>
