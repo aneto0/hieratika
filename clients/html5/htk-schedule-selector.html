@@ -147,31 +147,27 @@
 
                         var okNewScheduleButton = this.shadowRoot.querySelector("#oknewschedulebtn");
                         okNewScheduleButton.onclick = function() {
-                            var schedule = {
-                                token: parent._currentToken,
-                                name: this.newScheduleName.value,
-                                description: this.newScheduleDescription.value,
-                                pageName: this.pageName
-                            }
-                            var user = JSON.parse(localStorage.user);
-                            schedule["username"] = user.username;
+                            parent.htkDialogs.showWaitDialog();
+                            var sourceScheduleUID = undefined;
                             if (this.newSchedulesSelect.selectedIndex > 0) {
-                                schedule["sourceScheduleUID"] = this.newSchedulesSelect[this.newSchedulesSelect.selectedIndex].value;
+                                sourceScheduleUID = this.newSchedulesSelect[this.newSchedulesSelect.selectedIndex].value;
                             }
-                            $.ajax({
-                                type: "post",
-                                url: "/createschedule",
-                                data: schedule,
-                                success: function (response) {
+                            parent.htkHelper.createSchedule(
+                                this.newScheduleName.value,
+                                this.newScheduleDescription.value,
+                                this.pageName,
+                                sourceScheduleUID,
+                                function () {
                                     this.scheduleDiv.removeAttribute("hidden");
                                     this.newScheduleDiv.setAttribute("hidden", "true");
                                     this.updateUserSchedules();
+                                    parent.htkDialogs.closeWaitDialog();
                                 }.bind(this),
-                                error: function (response) {
-                                    console.log(response);
-                                    alert(response);
+                                function (response) {
+                                    parent.htkDialogs.closeWaitDialog();
+                                    parent.htkDialogs.showErrorDialog("Failed to create the schedule. Unknown error, check the server logs.");
                                 }
-                            });
+                            );
                         }.bind(this); 
                     }
                 }
@@ -194,17 +190,12 @@
 
                 updateUserSchedules() {
                     if (this.userSelect.selectedIndex >= 0) {
+                        parent.htkDialogs.showWaitDialog();
                         var username = this.userSelect[this.userSelect.selectedIndex].value;
-                        $.ajax({
-                            type: "post",
-                            url: "/getschedules",
-                            data: {
-                                token: parent._currentToken,
-                                username : username,
-                                pageName: this.pageName
-                            },
-                            success: function (response) {
-                                var availableSchedules = $.parseJSON(response);
+                        parent.htkHelper.getSchedules(
+                            this.pageName, 
+                            username,
+                            function (availableSchedules) {
                                 this.scheduleSelect.innerHTML = "";
                                 if (availableSchedules.length === 0) {
                                     this.scheduleSelect.disabled = true;
@@ -224,12 +215,13 @@
                                         this.scheduleSelect.appendChild(option1);
                                     }
                                 }
+                                parent.htkDialogs.closeWaitDialog();
                             }.bind(this),
-                            error: function (response) {
-                                console.log(response);
-                                alert(response);
+                            function (response) {
+                                parent.htkDialogs.closeWaitDialog();
+                                parent.htkDialogs.showErrorDialog("Failed to retrieve the schedules. Unknown error, check the server logs.");
                             }
-                        });
+                        );
                     }
                 }
 
@@ -248,9 +240,10 @@
                     option1.text = "Select user";
                     option1.value = NONE_NAME;
                     this.scheduleSelect.appendChild(option1);
-                    for (var u in parent._allUsers) {
+                    var allUsers = parent.htkHelper.getAllUsers();
+                    for (var u in allUsers) {
                         option1 = document.createElement("option");
-                        var username = parent._allUsers[u].username;
+                        var username = allUsers[u].username;
                         option1.text = username;
                         option1.value = username;
                         this.userSelect.appendChild(option1);

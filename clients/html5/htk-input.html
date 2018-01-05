@@ -39,7 +39,7 @@
                     getValue() {
                         var txtValue = this.textInput.value;
                         var typeValue = this.getTypeValue();
-                        return textToTypeValue(txtValue, typeValue);
+                        return parent.htkHelper.textToTypeValue(txtValue, typeValue);
                     }
 
                     setReadOnly (isReadOnly) {

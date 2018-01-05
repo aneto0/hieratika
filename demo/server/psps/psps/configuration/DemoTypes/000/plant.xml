@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<configurationContainer
-    xmlns="http://www.iter.org/CODAC/PlantSystemConfig/2014" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<configurationContainer xmlns="http://www.iter.org/CODAC/PlantSystemConfig/2014" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <schemaVersion>1.2</schemaVersion>
     <version>00.00</version>
     <sddVersion>1</sddVersion>
@@ -105,8 +103,8 @@
                             <constraint>
                                 <name>Double limit</name>
                                 <description>Validates a double limit</description>
-                                <hint><![CDATA[Change the value of DT@BT@DBL<=1000]]></hint>
-                                <function name="schedule.validate"><![CDATA[='DT@BT@DBL'<=1000]]></function>
+                                <hint>Change the value of DT@BT@DBL&lt;=1000</hint>
+                                <function name="schedule.validate">='DT@BT@DBL'&lt;=1000</function>
                                 <origin>SDD</origin>
                             </constraint>
                         </constraints>

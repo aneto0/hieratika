@@ -42,7 +42,7 @@
                             var cell = row.cells[i];
                             if (cell !== undefined) {
                                 var cellValue = cell.innerHTML;
-                                var numberValue = textToTypeValue(cellValue, typeValue);
+                                var numberValue = parent.htkHelper.textToTypeValue(cellValue, typeValue);
                                 if (numberValue === undefined) {
                                     numberValue = cellValue;
                                 }

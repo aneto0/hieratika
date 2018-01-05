@@ -45,9 +45,9 @@
                     this.libraryEditor.setReadOnly(isReadOnly);
                 }
 
-                setUserAllowedToWrite (isUserAllowedToWrite) {
-                    super.setUserAllowedToWrite(isUserAllowedToWrite);
-                    this.libraryEditor.setUserAllowedToWrite(isUserAllowedToWrite);
+                checkUserAllowedToWrite (user) {
+                    super.checkUserAllowedToWrite(user);
+                    this.libraryEditor.setUserAllowedToWrite(this.isUserAllowedToWrite());
                 }
                 
                 setReference (referenceToSet) {

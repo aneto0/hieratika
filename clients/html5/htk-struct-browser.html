@@ -143,14 +143,7 @@
                                     memberNameValidCSS = memberNameValidCSS.replace(/:/g, "");
                                     var compMember = this.shadowRoot.querySelector(memberNameValidCSS);
                                     compMember.setVariable(member);
-                                    var userAllowed = false;
-                                    for (var g in user.groups) {
-                                        userAllowed = member.permissions.includes(user.groups[g]); 
-                                        if (userAllowed) {
-                                            break;
-                                        }
-                                    }
-                                    compMember.setUserAllowedToWrite(userAllowed);
+                                    compMember.checkUserAllowedToWrite(user);
                                 }
                             }
                         }

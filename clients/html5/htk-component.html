@@ -26,8 +26,7 @@
     /**
      * @brief The root in Hieratika HTML5 components class hierarchy.
      * @details All the Hieratika HTML5 user-interface components shall inherit from HtkComponent. 
-     * This component is responsible for implementing all the logical interfaces to the hieratika server, so that components 
-     * inheriting from this component will (mostly) have to handle only with appropriate data transformation for user display.
+     * This component is responsible for implementing all the logical interfaces to the hieratika server, so that components inheriting from this component will (mostly) have to handle only with appropriate data transformation for user display (by implementing the refresh method and querying the getValue()).
      *
      * Typically an HtkComponent is associated and represents an Hieratika variable (identified by a unique name). See setVariable.
      */
@@ -50,7 +49,7 @@
          * - isStruct (see isStruct)
          */
         setVariable (variable) {
-            this.setReference("none");
+            this.setReference(NONE_NAME);
             this.setTypeValue(variable.type);
             this.setValidations(variable.validations);
             this.setPermissionGroups(variable.permissions);
@@ -228,7 +227,7 @@
         }
 
         /**
-         * @brief Sets the name of the reference against which this component value is to be compared.
+         * @brief Sets the name of the reference against which this component value is to be compared against.
          * @details After setting the value, a fireValueChanged event with VALUE_CHANGED_REFERENCE_NAME will be triggered and the component will be asked to refresh.
          * @param[in] referenceToSet the name of the new reference.
          */
@@ -504,11 +503,19 @@
         }
 
         /**
-         * @brief Sets if this is user is allowed to change the value of the variable represented by this component.
-         * @param[in] allowed true if the user is to be allowed to change the value of the variable.
+         * @brief Checks if this is user is allowed to change the value of the variable represented by this component.
+         * @details If the user is allowed to write .isUserAllowedToWrite() will return true.
+         * @param[in] user the user to verify.
          */
-        setUserAllowedToWrite(allowed) {
-            this.userAllowedToWrite = allowed;
+        checkUserAllowedToWrite(user) {
+            var userAllowed = false;
+            for (var g in user.groups) {
+                userAllowed = this.permissionGroups.includes(user.groups[g]); 
+                if (userAllowed) {
+                    break;
+                }
+            }
+            this.userAllowedToWrite = userAllowed;
             this.refresh();
         }
     }

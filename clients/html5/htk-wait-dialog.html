@@ -29,7 +29,9 @@
                     }
                     
                     showModal() {
-                        this.diag.showModal();
+                        if (!this.diag.open) {
+                            this.diag.showModal();
+                        }
                     }
                 
                     close() {

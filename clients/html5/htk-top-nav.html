@@ -108,14 +108,16 @@
 
                     this.setPlantButton = this.shadowRoot.querySelector("#setplantbtn");
                     this.setPlantButton.onclick = function() {
-                        updatePlant(this.selectedPage.name);
                         this.hideSideBar();
+                        parent.htkDialogs.showWaitDialog();
+                        parent.htkHelper.updatePlant(this.selectedPage.name, this.updatePlantCompleted, this.updatePlantError);
                     }.bind(this);
         
                     this.loadIntoPlantButton = this.shadowRoot.querySelector("#loadintoplantbtn");
                     this.loadIntoPlantButton.onclick = function() {
-                        loadIntoPlant(this.selectedPage.name);
                         this.hideSideBar();
+                        parent.htkDialogs.showWaitDialog();
+                        parent.htkHelper.loadIntoPlant(this.selectedPage.name, this.loadIntoPlantCompleted, this.loadIntoPlantError);
                     }.bind(this);
 
 
@@ -177,7 +179,7 @@
                         this.copyFromReferencePlantButton.disabled = true;
                         this.commitButton.disabled = true;
                         this.undoButton.disabled = true;
-                        displayPlant();
+                        parent.htkHelper.displayPlant();
                     }.bind(this);
 
                     this.usernameDisplay = this.shadowRoot.querySelector("#username");
@@ -189,7 +191,7 @@
                     }
                     else {
                         var user = JSON.parse(localStorage.user);
-                        parent._currentToken = localStorage.currentToken;
+                        parent.htkHelper.setToken(localStorage.currentToken);
                         this.loginSuccessful(user);
                     }
                     this.pageSelect = this.shadowRoot.querySelector("#pageselect");
@@ -198,7 +200,7 @@
                     this.referenceSelectNoneButton.onclick = function () {
                         this.hideSideBar();
                         this.handleAccordionClick(refAccordion);
-                        setReference(NONE_NAME);
+                        this.setReference(NONE_NAME);
                         this.currentReference.innerHTML = NONE_NAME; 
                         this.currentReference.style.color = NONE_COLOR;
                     }.bind(this);
@@ -207,7 +209,7 @@
                     this.referenceSelectPlantButton.onclick = function () {
                         this.hideSideBar();
                         this.handleAccordionClick(refAccordion);
-                        setReference(PLANT_NAME);
+                        this.setReference(PLANT_NAME);
                         this.currentReference.innerHTML = PLANT_NAME; 
                     }.bind(this);
 
@@ -230,24 +232,28 @@
                         this.hideSideBar();
                         this.handleAccordionClick(copyAccordion);
                         var mainFrameHtkComponents = parent._htkMainEditor.getAllHtkComponents();
-                        $.each(mainFrameHtkComponents, function (i, htkCompArray) {
-                            $.each(htkCompArray, function (j, htkComp) {
+                        var keys = Object.keys(mainFrameHtkComponents);
+                        for (var i=0; i<keys.length; i++) {
+                            var htkCompArray = mainFrameHtkComponents[keys[i]];
+                            for (var j=0; j<htkCompArray.length; j++) {
+                                var htkComp = htkCompArray[j];
                                 htkComp.setValue(htkComp.getPlantValue());
-                            });
-                        });
+                            }
+                        }
                     }.bind(this);
 
 
                     this.commitButton = this.shadowRoot.querySelector("#commitbtn");
                     this.commitButton.onclick = function () {
                         this.hideSideBar();
-                        commitAllChangesToSchedule();
+                        parent.htkDialogs.showWaitDialog();
+                        parent.htkHelper.commitAllChangesToSchedule(this.commitCompleted, this.commitError);
                     }.bind(this);
 
                     this.undoButton = this.shadowRoot.querySelector("#undobtn");
                     this.undoButton.onclick = function () {
                         this.hideSideBar();
-                        undoAllChangesToSchedule();
+                        this.undoAllChangesToSchedule();
                     }.bind(this);
 
                     this.transformationsViewer = this.shadowRoot.querySelector("#transformations");
@@ -258,6 +264,8 @@
 
 
                     this.streamer.addTransformationListener(this.transformationsViewer);
+
+                    parent.htkHelper.addInvalidTokenListener(this);
                     this.pageListeners = [this];
                     this.userLogoutListeners = [this];
                     this.addPageListener(this.scheduleSelector);
@@ -268,6 +276,62 @@
                     if (this.standalone) {
                         this.loginDialog.loginToServer("", "");
                     }
+                }
+
+                /**
+                 * @brief Callback function that is called when the load of the variables into the plant has been (asynchronously) completed successfully.
+                 */
+                loadIntoPlantCompleted() {
+                    parent.htkDialogs.closeWaitDialog();
+                    parent.htkDialogs.showInformationDialog("Plant loaded successfully");
+                }
+
+                /**
+                 * @brief Callback function that is called when the load of the variables into the plant has been (asynchronously) completed with an error.
+                 */
+                loadIntoPlantError() {
+                    parent.htkDialogs.closeWaitDialog();
+                    parent.htkDialogs.showErrorDialog("Failed to load the values into the plant. Unknown error, check the server logs.");
+                }
+
+                /**
+                 * @brief Callback function that is called when the update of the variables into the plant has been (asynchronously) completed successfully.
+                 */
+                updatePlantCompleted() {
+                    parent.htkDialogs.closeWaitDialog();
+                    parent.htkDialogs.showInformationDialog("Plant updated successfully. Do not forget to load.");
+                }
+
+                /**
+                 * @brief Callback function that is called when the update of the variables into the plant has been (asynchronously) completed with an error.
+                 */
+                updatePlantError() {
+                    parent.htkDialogs.closeWaitDialog();
+                    parent.htkDialogs.showErrorDialog("Failed to update plant values. Unknown error, check the server logs.");
+                }
+
+                /**
+                 * @brief Callback function that is called when the commit of the variables into the schedule has been (asynchronously) completed successfully.
+                 */
+                commitCompleted() {
+                    var mainFrameHtkComponents = parent._htkMainEditor.getAllHtkComponents();
+                    var keys = Object.keys(mainFrameHtkComponents);
+                    for (var i=0; i<keys.length; i++) {
+                        var htkCompArray = mainFrameHtkComponents[keys[i]];
+                        for (var j=0; j<htkCompArray.length; j++) {
+                            var htkComp = htkCompArray[j];
+                            htkComp.setInitialValue(htkComp.getValue());
+                        }
+                    }
+                    parent.htkDialogs.closeWaitDialog();
+                }
+
+                /**
+                 * @brief Callback function that is called when the commit of the variables into the schedule has been (asynchronously) completed with an error.
+                 */
+                commitError() {
+                    parent.htkDialogs.closeWaitDialog();
+                    parent.htkDialogs.showErrorDialog("Failed to commit the schedule. Unknown error, check the server logs.");
                 }
 
                 handleAccordionClick(acc) {
@@ -291,30 +355,19 @@
 
                 loginSuccessful(user) {
                     this.user = user;
-                    $.ajax({
-                        type: "post",
-                        url: "/getusers",
-                        data: {
-                            token : parent._currentToken
-                        },
-                        success: function (response) {
-                            if (response !== INVALID_TOKEN) {
-                                this.streamer.start();
-                                parent._allUsers = $.parseJSON(response);
-                                this.usernameDisplay.innerHTML = this.user.username; 
-                                this.usernameDisplay.title = "username: " + this.user.username;
-                                this.loginButton.innerHTML = "<i class='fa fa-user-o'> Logout</i>";
-                                this.pageSelectButton.disabled = false;
-                            }
-                            else {
-                                this.fireUserLogout();
-                            }
+                    parent.htkHelper.getUsers(
+                        function (allUsers) {
+                            this.streamer.start();
+                            this.usernameDisplay.innerHTML = this.user.username; 
+                            this.usernameDisplay.title = "username: " + this.user.username;
+                            this.loginButton.innerHTML = "<i class='fa fa-user-o'> Logout</i>";
+                            this.pageSelectButton.disabled = false;
                         }.bind(this),
-                        error: function (response) {
+                        function (response) {
                             console.log(response);
                             alert(response);
                         }
-                    });
+                    );
                 }
                 
                 firePageChanged(page) {
@@ -329,25 +382,38 @@
                     }
                 }
 
+                /**
+                 * @brief Callback function which is called when an invalid token is received from the server.
+                 */
+                invalidTokenReceived() {
+                    parent.htkDialogs.closeWaitDialog();
+                    parent.htkDialogs.showErrorDialog("You have been logged out from the server. Please login again.");
+                    this.fireUserLogout();
+                }
+
+                /**
+                 * @brief Logsout a user from the system.
+                 */
                 userLogout() {
-                    $.ajax({
-                        type: "post",
-                        url: "/logout",
-                        data: "token=" + parent._currentToken
-                    });
-                    localStorage.removeItem("user");
-                    localStorage.removeItem("schedule");
-                    this.usernameDisplay.innerHTML = "(login first)"
-                    this.currentDisplay.innerHTML = NONE_NAME; 
-                    this.currentDisplay.style.color = NONE_COLOR; 
-                    this.currentReference.innerHTML = NONE_NAME; 
-                    this.currentReference.style.color = NONE_COLOR; 
-                    this.loginButton.innerHTML = "<i class='fa fa-user-o'> Login</i>";
-                    this.pageSelectButton.disabled = true;
-                    this.disableAllButPageSelect();
-                    if (!this.standalone) {
-                        this.streamer.stop();
-                    }
+                    parent.htkHelper.logout(
+                        function() {
+                            localStorage.removeItem("user");
+                            localStorage.removeItem("schedule");
+                            this.usernameDisplay.innerHTML = "(login first)"
+                            this.currentDisplay.innerHTML = NONE_NAME; 
+                            this.currentDisplay.style.color = NONE_COLOR; 
+                            this.currentReference.innerHTML = NONE_NAME; 
+                            this.currentReference.style.color = NONE_COLOR; 
+                            this.loginButton.innerHTML = "<i class='fa fa-user-o'> Login</i>";
+                            this.pageSelectButton.disabled = true;
+                            this.disableAllButPageSelect();
+                            if (!this.standalone) {
+                                this.streamer.stop();
+                            }
+                        }.bind(this),
+                        function() {
+                        }
+                    );
                 }
 
                 disableAllButPageSelect() {
@@ -367,15 +433,10 @@
                 }
 
                 getTransformations() {
-                    $.ajax({
-                        type: "post",
-                        url: "/gettransformationsinfo",
-                        data: {
-                            token: parent._currentToken,
-                            pageName: this.selectedPage.name
-                        },
-                        success: function (response) {
-                            var transformations = JSON.parse(response);
+                    parent.htkDialogs.showWaitDialog();
+                    parent.htkHelper.getTransformations(
+                        this.selectedPage.name,
+                        function (transformations) {
                             this.transformationsViewer.setTransformations(transformations);
                             this.editScheduleButton.disabled = false;
                             this.loadIntoPlantButton.disabled = false;
@@ -385,12 +446,13 @@
                             this.referenceSelectScheduleButton.disabled = false;
                             this.referenceSelectNoneButton.disabled = false;
                             this.referenceSelectPlantButton.disabled = false;
+                            parent.htkDialogs.closeWaitDialog();
                         }.bind(this),
-                        error: function (response) {
-                            console.log(response);
-                            alert(response);
+                        function (response) {
+                            parent.htkDialogs.closeWaitDialog();
+                            parent.htkDialogs.showErrorDialog("Failed to getTransformations. Unknown error, check the server logs.");
                         }
-                    });
+                    );
                 }
 
                 pageChanged(page) {
@@ -400,16 +462,16 @@
 
                 refererenceScheduleChanged(schedule) {
                     this.currentReference.innerHTML = schedule.name; 
-                    setReference(schedule.uid);
+                    this.setReference(schedule.uid);
                 }
 
                 copyFromScheduleChanged(schedule) {
-                    copyFromSchedule(schedule.uid, false, true, false);
+                    this.copyFromSchedule(schedule.uid, false, true, false);
                 }
 
                 editScheduleChanged(schedule) {
                     this.currentDisplay.innerHTML = schedule.name; 
-                    copyFromSchedule(schedule.uid, true, false, false);
+                    this.copyFromSchedule(schedule.uid, true, false, false);
                     parent._currentScheduleUID = schedule.uid;
                     this.setPlantButton.disabled = false;
                     this.copyFromReferenceScheduleButton.disabled = false;
@@ -420,7 +482,7 @@
 
                 viewScheduleChanged(schedule) {
                     this.currentDisplay.innerHTML = schedule.name; 
-                    copyFromSchedule(schedule.uid, true, false, true);
+                    this.copyFromSchedule(schedule.uid, true, false, true);
                     parent._currentScheduleUID = schedule.uid;
                     this.setPlantButton.disabled = false;
                     this.copyFromReferenceScheduleButton.disabled = true;
@@ -437,6 +499,118 @@
                     this.userLogoutListeners.push(listener);
                 }
 
+                /**
+                 * @brief Updates the reference on all the hieratika components.
+                 * @param[in] currentReference the reference to set as one of:
+                 *  - NONE_NAME (resets the reference to NONE)
+                 *  - PLANT_NAME (sets the reference as the plant)
+                 *  - currentReference a reference with the name currentReference
+                 */
+                setReference(currentReference) {
+                    parent.htkDialogs.showWaitDialog();
+                    var mainFrameHtkComponents = parent._htkMainEditor.getAllHtkComponents();
+                    var keys = Object.keys(mainFrameHtkComponents);
+                    var htkComp;
+                    if (currentReference === NONE_NAME) {
+                        //Reset all the values to N/A
+                        for (var i=0; i<keys.length; i++) {
+                            var htkCompArray = mainFrameHtkComponents[keys[i]];
+                            for (var j=0; j<htkCompArray.length; j++) {
+                                var htkComp = htkCompArray[j];
+                                htkComp.setReferenceValue("N/A");
+                                htkComp.setReference(currentReference);
+                            }
+                        }
+                        parent.htkDialogs.closeWaitDialog();
+                    }
+                    else if (currentReference === PLANT_NAME) {
+                        for (var i=0; i<keys.length; i++) {
+                            var htkCompArray = mainFrameHtkComponents[keys[i]];
+                            for (var j=0; j<htkCompArray.length; j++) {
+                                var htkComp = htkCompArray[j];
+                                htkComp.setReferenceValue(htkComp.getPlantValue());
+                                htkComp.setReference(currentReference);
+                            }
+                        }
+                        parent.htkDialogs.closeWaitDialog();
+                    }
+                    else {
+                        parent.htkHelper.getScheduleVariablesValues(
+                            currentReference,
+                            function(variables) {
+                                var keys = Object.keys(variables);
+                                for (var i in keys) { 
+                                    var variableName = keys[i];
+                                    var variableValue = variables[keys[i]];
+                                    var htkCompArray = mainFrameHtkComponents[variableName];
+                                    for (var j=0; j<htkCompArray.length; j++) {
+                                        var htkComp = htkCompArray[j];
+                                        htkComp.setReferenceValue(variableValue);
+                                        htkComp.setReference(currentReference);
+                                    }
+                                }
+                                parent.htkDialogs.closeWaitDialog();
+                            },
+                            function () {
+                                parent.htkDialogs.closeWaitDialog();
+                                parent.htkDialogs.showErrorDialog("Failed to update plant values. Unknown error, check the server logs.");
+                            }
+                        );
+                    }
+                }
+                
+                /**
+                 * @brief Copies the values from a given schedule into all the components.
+                 * @param[in] schUID the schedule identifier (i.e. the schedule name).
+                 * @param[in] resetValue if true, for all the components, the initial value will be set against the retrieved schedule value.
+                 * @param[in] updateRemote if true, for all the components, the update will be propagated to the server (see HtkComponent.setValue).
+                 * @param[in] setReadOnly if true, for all the components, the component will be set as read-only.
+                 */
+                copyFromSchedule(schUID, resetValue, updateRemote, setReadOnly) {
+                    parent.htkDialogs.showWaitDialog();
+                    parent.htkHelper.getScheduleVariablesValues(
+                        schUID, 
+                        function (variables) {
+                            var keys = Object.keys(variables);
+                            var mainFrameHtkComponents = parent._htkMainEditor.getAllHtkComponents();
+                            for (var i in keys) { 
+                                var variableName = keys[i];
+                                var variableValue = variables[keys[i]];
+                                var targetElements = mainFrameHtkComponents[variableName];
+                                if (targetElements != null) {
+                                    for (var j=0; j<targetElements.length; j++) {
+                                        var targetElement = targetElements[j];
+                                        if (resetValue) {
+                                            targetElement.setInitialValue(variableValue);
+                                        }
+                                        targetElement.setValue(variableValue, updateRemote);
+                                        targetElement.setReadOnly(setReadOnly);
+                                    }
+                                }
+                            }
+                            parent.htkDialogs.closeWaitDialog();
+                        },
+                        function () {
+                            parent.htkDialogs.closeWaitDialog();
+                            parent.htkDialogs.showErrorDialog("Failed to copy from the schedule. Unknown error, check the server logs.");
+                        }
+                    );
+                }
+
+                /**
+                 * @brief Undos all the changes that were made to a given schedule.
+                 */
+                undoAllChangesToSchedule() {
+                    var mainFrameHtkComponents = parent._htkMainEditor.getAllHtkComponents();
+                    var keys = Object.keys(mainFrameHtkComponents);
+                    for (var i=0; i<keys.length; i++) {
+                        var htkCompArray = mainFrameHtkComponents[keys[i]];
+                        for (var j=0; j<htkCompArray.length; j++) {
+                            var htkComp = htkCompArray[j];
+                            htkComp.setValue(htkComp.getInitialValue());
+                        }
+                    }
+                }
             }
 
             document.registerElement("htk-top-nav", {

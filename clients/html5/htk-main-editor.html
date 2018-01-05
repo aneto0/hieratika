@@ -1,20 +1,7 @@
 <html>
     <head>
-        <link rel="import" href="libraries.html">
-        <link rel="import" href="htk-component.html">
-        <link rel="import" href="libraries.html">
-        <link rel="import" href="htk-array-editor.html">
-        <link rel="import" href="htk-cubicle-editor.html">
-        <link rel="import" href="htk-discrete-coils-2d.html">
-        <link rel="import" href="htk-enum.html">
-        <link rel="import" href="htk-helper.html">
-        <link rel="import" href="htk-filter-editor.html">
-        <link rel="import" href="htk-input.html">
-        <link rel="import" href="htk-library-button.html">
-        <link rel="import" href="htk-loop-coils-3d.html">
-        <link rel="import" href="htk-struct-browser.html">
-        <link rel="import" href="htk-switch.html">
-        <link rel="import" href="htk-switch-editor.html">
+        <link rel="import" href="/libraries.html">
+        <link rel="import" href="/htk-component.html">
     </head>
     <body>
         <template id="tmaineditor">
@@ -62,7 +49,7 @@
                     }
 
                     loadPlantInfo(pageName) {
-                        showWaitDialog();
+                        parent.htkDialogs.showWaitDialog();
                         var allVariableIds = [];
                         var allLiveVariableIds = [];
                         var mainFrameComponents = this.mainEditorIFrame.contentDocument._frameComponents;
@@ -77,36 +64,50 @@
                                 }
                             }
                         }
-                        getLiveVariablesInfo(allLiveVariableIds, function (response) {
-                            var pvInfos = $.parseJSON(response);
-                            var user = JSON.parse(localStorage.user);
-                            for (var i in pvInfos) {
-                                var pvInfo = pvInfos[i];
-                                var targetElements = this.mainEditorIFrame.contentDocument._frameComponents[pvInfo.name];
-                                if (targetElements != null) {
-                                    for (var j in targetElements) {
-                                        populateComponentInfo(targetElements[j], pvInfo, user);                    
-                                    }
-                                }
-                            }
-                            getVariablesInfo(pageName, allVariableIds, function (response) {
-                                var pvInfos = $.parseJSON(response);
+                        parent.htkHelper.getLiveVariablesInfo(
+                            allLiveVariableIds, 
+                            function (variables) {
                                 var user = JSON.parse(localStorage.user);
-                                for (var i in pvInfos) {
-                                    var pvInfo = pvInfos[i];
-                                    var targetElements = this.mainEditorIFrame.contentDocument._frameComponents[pvInfo.name];
+                                for (var i in variables) {
+                                    var variable = variables[i];
+                                    var targetElements = this.mainEditorIFrame.contentDocument._frameComponents[variable.name];
                                     if (targetElements != null) {
                                         for (var j in targetElements) {
-                                            populateComponentInfo(targetElements[j], pvInfo, user);                    
+                                            targetElements[j].setVariable(variable);
+                                            targetElements[j].checkUserAllowedToWrite(user);
                                         }
                                     }
                                 }
+                                parent.htkHelper.getVariablesInfo(
+                                    pageName,
+                                    allVariableIds, 
+                                    function (variables) {
+                                        var user = JSON.parse(localStorage.user);
+                                        for (var i in variables) {
+                                            var variable = variables[i];
+                                            var targetElements = this.mainEditorIFrame.contentDocument._frameComponents[variable.name];
+                                            if (targetElements != null) {
+                                                for (var j in targetElements) {
+                                                    targetElements[j].setVariable(variable);
+                                                    targetElements[j].checkUserAllowedToWrite(user);
+                                                }
+                                            }
+                                        }
 
-                                this.firePlantInfoLoaded();
-                                closeWaitDialog();
+                                        this.firePlantInfoLoaded();
+                                        parent.htkDialogs.closeWaitDialog();
+                                    }.bind(this),
+                                    function () {
+                                        parent.htkDialogs.showErrorDialog("Failed to get variables info. Unknown error, check the server logs.");
+                                        parent.htkDialogs.closeWaitDialog();
+                                    }.bind(this)
+                                );
+                            }.bind(this),
+                            function () {
+                                parent.htkDialogs.showErrorDialog("Failed to get live variables info. Unknown error, check the server logs.");
+                                parent.htkDialogs.closeWaitDialog();
                             }.bind(this)
-                            );
-                        }.bind(this)
+
                         );
                     }
 
@@ -132,7 +133,7 @@
                     }
    
                     plantInfoLoaded() {
-                        displayPlant();
+                        parent.htkHelper.displayPlant();
                     } 
 
                     userLogout () {

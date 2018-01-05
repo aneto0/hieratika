@@ -75,6 +75,7 @@
                 }
         
                 runTransformation (transformation) {
+                    parent.htkDialogs.showWaitDialog();
                     var inputVariables = Object.keys(transformation.inputs);
                     var inputs = {};
                     var ok = true;
@@ -92,23 +93,18 @@
                         }
                     }
                     if (ok) {
-                        $.ajax({
-                            type: "post",
-                            url: "/transform",
-                            data: {
-                                token: parent._currentToken,
-                                fun: transformation.fun,
-                                inputs: JSON.stringify(inputs)
-                            },
-                            success: function (response) {
-                                transformation["uid"] = "" + response;
-                            },
-                            error: function (response) {
-                                console.log(response);
-                                alert(response);
+                        parent.htkHelper.transform(
+                            transformation.fun,
+                            inputs,
+                            function (uid) {
+                                transformation["uid"] = "" + uid;
+                                parent.htkDialogs.closeWaitDialog();
+                            }.bind(this),
+                            function (response) {
+                                parent.htkDialogs.closeWaitDialog();
+                                parent.htkDialogs.showErrorDialog("Failed to trigger the transformation. Unknown error, check the server logs.");
                             }
-                        });
-
+                        );
                     }
                 }
 

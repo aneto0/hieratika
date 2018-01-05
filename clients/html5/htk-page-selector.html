@@ -80,14 +80,9 @@
                     this.pageSelect.innerHTML = "";
                     this.okCallbackFunction = okCallbackFun;
                     this.okButton.disabled = true;
-                    $.ajax({
-                        type: "post",
-                        url: "/getpages",
-                        data: {
-                            token: parent._currentToken,
-                        },
-                        success: function (response) {
-                            var pagesJson = $.parseJSON(response);
+                    parent.htkDialogs.showWaitDialog();
+                    parent.htkHelper.getPages(
+                        function (pagesJson) {
                             for (var p in pagesJson) {
                                 var option1 = document.createElement("option");
                                 var pageName = pagesJson[p].name;
@@ -96,13 +91,14 @@
                                 option1.pageInfo = pagesJson[p];
                                 this.pageSelect.appendChild(option1);
                             }
+                            parent.htkDialogs.closeWaitDialog();
                             this.diag.showModal();
                         }.bind(this),
-                        error: function (response) {
-                            console.log(response);
-                            alert(response);
+                        function () {
+                            parent.htkDialogs.closeWaitDialog();
+                            parent.htkDialogs.showErrorDialog("Failed to get the pages. Unknown error, check the server logs.");
                         }
-                    });
+                    );
                 }
             }
 

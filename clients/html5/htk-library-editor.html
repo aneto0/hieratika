@@ -1,6 +1,6 @@
 <html>
     <head>
-        <link rel="import" href="libraries.html">
+        <link rel="import" href="/libraries.html">
     </head>
     <body>
         <template id="tselector">
@@ -47,16 +47,11 @@
                     }
 
                     populateLibraries (username, readyFun) {
-                        $.ajax({
-                            type: "post",
-                            url: "/getlibraries",
-                            data: {
-                                token: parent._currentToken,
-                                username: username,
-                                type: this.owner.getLibraryType()
-                            },
-                            success: function (response) {
-                                this.availableLibraries = $.parseJSON(response);
+                        parent.htkHelper.getLibraries(
+                            this.owner.getLibraryType(),
+                            username,
+                            function (availableLibraries) {
+                                this.availableLibraries = availableLibraries;
                                 this.librarySelector.innerHTML = "";
                                 for (var i=0; i<this.availableLibraries.length; i++) {
                                     var library = this.availableLibraries[i];
@@ -69,18 +64,19 @@
                                 }
                                 readyFun();
                             }.bind(this),
-                            error: function (response) {
+                            function (response) {
                                 console.log(response);
                                 alert(response);
                             }
-                        });
+                        );
                     }
 
                     populateUsers(libraryUser) {
                         if (this.userSelector.options.length === 0) {
-                            for (var u in parent._allUsers) {
+                            var allUsers = parent.htkHelper.getAllUsers();
+                            for (var u in allUsers) {
                                 var option1 = document.createElement("option");
-                                var username = parent._allUsers[u].username;
+                                var username = allUsers[u].username;
                                 option1.text = username;
                                 option1.value = username;
                                 this.userSelector.appendChild(option1);
@@ -90,33 +86,28 @@
                     }
 
                     showEditor (libraryUser, libraryValue) {
-                        showWaitDialog();
+                        parent.htkDialogs.showWaitDialog();
                         this.populateUsers(libraryUser); 
                         this.populateLibraries(libraryUser, function() {
                             this.librarySelector.value = libraryValue;
                             this.editLibrary();
                             this.diag.showModal();
+                            parent.htkDialogs.closeWaitDialog();
                         }.bind(this));
-                        closeWaitDialog();
                     }
 
                     getLibrary(libraryName, successFn) {
                         var libraryUID = this.getLibraryUID(libraryName);
                         if (libraryUID !== undefined) {
                             if (libraryName.length > 0) {
-                                $.ajax({
-                                    type: "post",
-                                    url: "/getlibraryvariablesvalues",
-                                    data: {
-                                        token: parent._currentToken,
-                                        libraryUID: libraryUID 
-                                    },
-                                    success: successFn.bind(this),
-                                    error: function (response) {
-                                        console.log(response);
-                                        alert(response);
+                                parent.htkHelper.getLibraryVariablesInfo(
+                                    libraryUID, 
+                                    successFn,
+                                    function (response) {
+                                        parent.htkDialogs.closeWaitDialog();
+                                        parent.htkDialogs.showErrorDialog("Failed to get library variables values. Unknown error, check the server logs.");
                                     }
-                                });
+                                );
                             }
                         }
                     }
@@ -131,8 +122,8 @@
                                 var ownerPlantValue = this.owner.getPlantValue();
                                 if (ownerReference !== "none") {
                                     if (ownerReferenceValue !== undefined) {
-                                        this.getLibrary(ownerReferenceValue, function (response) {
-                                            var variables = $.parseJSON(response);
+                                        parent.htkDialogs.showWaitDialog();
+                                        this.getLibrary(ownerReferenceValue, function (variables) {
                                             var keys = Object.keys(variables);
                                             for (var i in keys) { 
                                                 var variableName = keys[i];
@@ -142,12 +133,13 @@
                                                     comps[c].setReferenceValue(variableValue);
                                                 }
                                             }
-                                        });
+                                            parent.htkDialogs.closeWaitDialog();
+                                        }.bind(this));
                                     }
                                 }
                                 if (ownerInitialValue !== undefined) {
-                                    this.getLibrary(ownerInitialValue, function (response) {
-                                        var variables = $.parseJSON(response);
+                                    parent.htkDialogs.showWaitDialog();
+                                    this.getLibrary(ownerInitialValue, function (variables) {
                                         var keys = Object.keys(variables);
                                         for (var i in keys) { 
                                             var variableName = keys[i];
@@ -157,11 +149,12 @@
                                                 comps[c].setInitialValue(variableValue);
                                             }
                                         }
-                                    });
+                                        parent.htkDialogs.closeWaitDialog();
+                                    }.bind(this));
                                 }
                                 if (ownerPlantValue !== undefined) {
-                                    this.getLibrary(ownerPlantValue, function (response) {
-                                        var variables = $.parseJSON(response);
+                                    parent.htkDialogs.showWaitDialog();
+                                    this.getLibrary(ownerPlantValue, function (variables) {
                                         var keys = Object.keys(variables);
                                         for (var i in keys) { 
                                             var variableName = keys[i];
@@ -171,14 +164,15 @@
                                                 comps[c].setPlantValue(variableValue);
                                             }
                                         }
-                                    });
+                                        parent.htkDialogs.closeWaitDialog();
+                                    }.bind(this));
                                 }
                             } 
                             if (this.librarySelector.selectedIndex >= 0) {
+                                parent.htkDialogs.showWaitDialog();
                                 var option = this.librarySelector.options[this.librarySelector.selectedIndex];
                                 var libraryName = option.text;
-                                this.getLibrary(libraryName, function (response) {
-                                    var variables = $.parseJSON(response);
+                                this.getLibrary(libraryName, function (variables) {
                                     var keys = Object.keys(variables);
                                     for (var i in keys) { 
                                         var variableName = keys[i];
@@ -190,7 +184,8 @@
                                     }
                                     this.saveAsLibraryName.value = libraryName;
                                     this.descriptionTextArea.value = option.description;
-                                });
+                                    parent.htkDialogs.closeWaitDialog();
+                                }.bind(this));
                             } 
                         }
                     }
@@ -227,6 +222,7 @@
                         }.bind(this); //bind is needed to make sure that the "this" is still valid in the context of the callback
 
                         this.userSelector.onchange = function() {
+                            parent.htkDialogs.showWaitDialog();
                             var selectedUser = this.userSelector.options[this.userSelector.selectedIndex].text;
                             this.populateLibraries(selectedUser, function() {
                                 if (this.availableLibraries.length > 0) {
@@ -234,6 +230,7 @@
                                     this.librarySelector.value = selectedLibrary;
                                 }
                                 this.editLibrary();
+                                parent.htkDialogs.closeWaitDialog();
                             }.bind(this));
                         }.bind(this);
 
@@ -246,7 +243,6 @@
                             var editorComponents = this.iFrameEditor.contentDocument._frameComponents;
                             var saveAsName = this.saveAsLibraryName.value;
                             var description = this.descriptionTextArea.value;
-                            var user = JSON.parse(localStorage.user);
                             var variables = {};
                             for (var key in editorComponents) {
                                 var comps = editorComponents[key];
@@ -259,19 +255,13 @@
                                 alert("Please introduce a library name");
                             }
                             else {
-                                $.ajax({
-                                    type: "post",
-                                    url: "/savelibrary",
-                                    data: {
-                                        token: parent._currentToken,
-                                        type: this.owner.getLibraryType(),
-                                        name: saveAsName,
-                                        description: description,
-                                        username: user.username, 
-                                        variables: JSON.stringify(variables)
-                                    },
-                                    success: function (response) {
-                                        var library = $.parseJSON(response);
+                                parent.htkDialogs.showWaitDialog();
+                                parent.htkHelper.saveLibrary(
+                                    this.owner.getLibraryType(),
+                                    saveAsName,
+                                    description,
+                                    variables,
+                                    function (library) {
                                         if (library.uid !== undefined) {
                                             var optionsAsArray = Array.apply(null, this.librarySelector.options).map(function(el){return el.text;});
                                             if(optionsAsArray.indexOf(saveAsName) == -1) {
@@ -286,12 +276,13 @@
                                             }
                                             alert("Library updated successfully!");
                                         }
+                                        parent.htkDialogs.hideWaitDialog();
                                     }.bind(this),
-                                    error: function (response) {
-                                        console.log(response);
-                                        alert(response);
+                                    function (response) {
+                                        parent.htkDialogs.showErrorDialog("Failed to save the library variables info. Unknown error, check the server logs.");
+                                        parent.htkDialogs.hideWaitDialog();
                                     }
-                                });
+                                );
                             }
                         }.bind(this);
                     }
@@ -308,20 +299,25 @@
                         for (var k in editorComponents) {
                             allVariableIds.push(k)
                         }
-                        getLibraryVariablesInfo(libraryType, allVariableIds, 
-                            function (response) {
-                                var pvInfos = $.parseJSON(response);
+                        parent.htkHelper.getLibraryVariablesInfo(
+                            libraryType, 
+                            allVariableIds, 
+                            function (variables) {
                                 var user = JSON.parse(localStorage.user);
-                                for (var i in pvInfos) {
-                                    var pvInfo = pvInfos[i];
-                                    var targetElements = editorComponents[pvInfo.name];
+                                for (var i in variables) {
+                                    var variable = variables[i];
+                                    var targetElements = editorComponents[variable.name];
                                     if (targetElements != null) {
                                         for (var j in targetElements) {
-                                            populateComponentInfo(targetElements[j], pvInfo, user);                    
+                                            targetElements[j].setVariable(variable);
+                                            targetElements[j].checkUserAllowedToWrite(user);
                                         }
                                     }
                                 }
-                            }.bind(this)
+                            }.bind(this),
+                            function () {
+                                parent.htkDialogs.showErrorDialog("Failed to get library variables info. Unknown error, check the server logs.");
+                            }
                         );
                         for (var i=0; i<editorComponents.length; i++) {
                             var htkCompArray = editorComponents[i];

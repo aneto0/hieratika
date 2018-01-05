@@ -61,14 +61,22 @@
 
                 class HtkSwitch extends HtkLibrary {
 
+                    cubicleUnitsToPixels(units) {
+                        return CU_UNITS_TO_INCHES * INCHES_TO_PX * units;
+                    } 
+
+                    inchesToPixels(inches) {
+                        return INCHES_TO_PX * inches;
+                    } 
+
                     // Use Shadow DOM and a template.
                     createdCallback () {
                         super.createdCallback();
                         this.svg = this.shadowRoot.querySelector("svg");
-                        this.svg.setAttribute("width", inchesToPixels(19));
-                        this.svg.setAttribute("height", cubicleUnitsToPixels(1));
+                        this.svg.setAttribute("width", this.inchesToPixels(19));
+                        this.svg.setAttribute("height", this.cubicleUnitsToPixels(1));
                         var cuLocation = parseInt(this.getAttribute("data-location-cubicle"));
-                        this.svg.setAttribute("y", cubicleUnitsToPixels(cuLocation));
+                        this.svg.setAttribute("y", this.cubicleUnitsToPixels(cuLocation));
                         this.attachLibraryHandler();
                         this.layerChanges1 = this.shadowRoot.querySelector("#layerChanges1");
                         this.layerChanges1.setAttribute("opacity", "0");
