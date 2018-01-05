@@ -126,7 +126,9 @@ class HieratikaAuth(object):
             for k in keys:
                 if ((currentTime - self.tokens[k][1])  > self.loginMonitorMaxInactivityTime):
                     log.info("User {0} was not active for the last {1} seconds. User will be logout".format(self.tokens[k][0], self.loginMonitorMaxInactivityTime))
+                    self.mux.release()
                     self.logout(k) 
+                    self.mux.acquire()
             self.mux.release()
             #Print current server info
             self.printInfo()
@@ -148,6 +150,7 @@ class HieratikaAuth(object):
             self.mux.acquire()
             log.debug("Checking if tokenId: {0} is in the tokens list {1}".format(tokenId, self.tokens))
             ok = (self.tokens.has_key(tokenId))
+            log.debug("--Checking if tokenId: {0} is in the tokens list {1}".format(tokenId, self.tokens))
             if (ok):
                 username = self.tokens.get(tokenId)[0]
                 interactionTime = time.time()
