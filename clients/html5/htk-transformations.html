@@ -43,7 +43,7 @@
                     var abortButton = this.shadowRoot.querySelector("#abortbtn");
                     var closeButton = this.shadowRoot.querySelector("#closebtn");
                     this.runButton.onclick = function() {
-                        var mainFrameHtkComponents = parent._htkMainEditor.getAllHtkComponents();
+                        var mainFrameHtkComponents = parent.htkHelper.getAllMainFrameHtkComponents();
                         for (var i=0; i<this.transformations.length; i++) {
                             var transformation = this.transformations[i];
                             transformation.progressBar.value = 0;
@@ -79,7 +79,7 @@
                     var inputVariables = Object.keys(transformation.inputs);
                     var inputs = {};
                     var ok = true;
-                    var mainFrameHtkComponents = parent._htkMainEditor.getAllHtkComponents();
+                    var mainFrameHtkComponents = parent.htkHelper.getAllMainFrameHtkComponents();
                     for (var i=0; (i<inputVariables.length) && (ok); i++) {
                         var varname = inputVariables[i];
                         var mapname = transformation.inputs[varname];
@@ -130,7 +130,7 @@
                 }
 
                 transformationUpdated(transformationInfo) {
-                    var mainFrameHtkComponents = parent._htkMainEditor.getAllHtkComponents();
+                    var mainFrameHtkComponents = parent.htkHelper.getAllMainFrameHtkComponents();
                     for (var i=0; i<this.transformations.length; i++) {
                         var transformation = this.transformations[i];
                         if (transformation.uid === transformationInfo["transformationUID"]) {

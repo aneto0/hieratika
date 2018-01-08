@@ -151,7 +151,8 @@ class WServer:
             - value: string encoded variable value.
             - and * N member variables (with the information above) if the variable being returned is structured.
         """
-       
+      
+        print request.form
         toReturn = ""
         try: 
             libraryType = request.form["libraryType"]

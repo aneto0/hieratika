@@ -58,10 +58,10 @@
                             var scheduleUID = jsonData["scheduleUID"];
                             var updateLive = (jsonData["live"] !== undefined);
                             var updateSchedule = (scheduleUID !== undefined);
-                            var updateThisSchedule = (scheduleUID === parent._currentScheduleUID);
+                            var updateThisSchedule = (scheduleUID === parent.htkHelper.getCurrentScheduleUID());
                             var updatePlant = ((!updateLive) && (scheduleUID === undefined));
                             //variables is a dictionary with name:value pairs
-                            var mainFrameHtkComponents = parent._htkMainEditor.getAllHtkComponents();
+                            var mainFrameHtkComponents = parent.htkHelper.getAllMainFrameHtkComponents();
                             //If it is to update a schedule and this is not the correct uid, do not even try
                             if ((updateLive) || (updateSchedule && updateThisSchedule) || (updatePlant)) {
                                 for (var name in variables) {
@@ -73,7 +73,7 @@
                                             if ((updateSchedule) || (updateLive)) {
                                                 targetElements[i].setValue(value, false);
                                                 //Someone else changed but might not have commited!
-                                                parent._scheduleValuesToCommit[name] = value;
+                                                parent.htkHelper.updateScheduleValuesToCommit(name, value);
                                             }
                                             else {
                                                 targetElement.setPlantValue(value);

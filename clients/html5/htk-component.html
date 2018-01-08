@@ -18,8 +18,9 @@
 <!-- Standard imports -->
 
 <!-- Project imports -->
-<link rel="import" href="libraries.html">
-<link rel="import" href="htk-validation.html">
+<link rel="import" href="/libraries.html">
+<link rel="import" href="/htk-helper.html">
+<link rel="import" href="/htk-validation.html">
 
 <!-- Class definiton-->
 <script type="text/javascript">
@@ -332,8 +333,8 @@
             $.each(othersSameId, function (j, otherHtkComp) {
                 otherHtkComp.setValue(valueToUpdate, false);
             });
-            if (parent._currentScheduleUID !== undefined) {
-                parent._valuesToSynchroniseRemote.push(valueToUpdateR);
+            if (parent.htkHelper.getCurrentScheduleUID() !== undefined) {
+                parent.htkHelper.synchroniseRemote(valueToUpdateR);
             }
         }
 

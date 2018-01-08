@@ -37,6 +37,60 @@
                 this.token = "";
                 this.allUsers = [];
                 this.invalidTokenListeners = [];
+                //This reference to the main editor can be used to listen to page events for components that e.g. do not inherit from HtkComponent
+                this.htkMainEditor = undefined;
+                this.valuesToSynchroniseRemote = [];
+                this.scheduleValuesToCommit = {};
+                this.currentScheduleUID = undefined;
+            }
+
+            /**
+             * @brief Gets the UID of the schedule currently opened by the user.
+             * @return the UID of the schedule currently opened by the user.
+             */
+            getCurrentScheduleUID() {
+                return this.currentScheduleUID;
+            }
+
+            /**
+             * @brief Sets the UID of the schedule currently opened by the user.
+             * @param[in] scheduleUIDIn the UID of the schedule currently opened by the user.
+             */
+            setCurrentScheduleUID(scheduleUIDIn) {
+                this.scheduleUID = scheduleUIDIn;
+            }
+
+            /**
+             * @brief Updates the list of values that are to be commited.
+             * @param[in] name the name of the variable to be (eventually commited).
+             * @param[in] value the variable value.
+             */
+            updateScheduleValuesToCommit(name, value) {
+                this.scheduleValuesToCommit[name] = value;
+            }
+            
+            /**
+             * @brief Informs that a value is to be synchronised remote.
+             * @param[in] variable the variable to synchronise.
+             */
+            synchroniseRemote(variable) {
+                this.valuesToSynchroniseRemote.push(variable);
+            }
+
+            /**
+             * @brief Sets the htk-main-editor (which is the owner of the main frame components).
+             * @param[in] htkMainEditorIn the owner of the main frame components.
+             */
+            setHtkMainEditor(htkMainEditorIn) {
+                this.htkMainEditor = htkMainEditorIn;
+            }
+
+            /**
+             * @brief Gets all the main frame components.
+             * @return all the components that belong to the main frame.
+             */
+            getAllMainFrameHtkComponents() {
+                return this.htkMainEditor.getAllMainFrameHtkComponents();
             }
 
             /**
@@ -81,7 +135,7 @@
             updatePlant(configName, successFun, errorFun) {
                 var allHtkDataJSon = {};
                 //Get the values of all the HtkComponents that are displayed in the main frame.
-                var mainFrameHtkComponents = parent._htkMainEditor.getAllHtkComponents();
+                var mainFrameHtkComponents = this.htkMainEditor.getAllMainFrameHtkComponents();
                 var keys = Object.keys(mainFrameHtkComponents);
                 for (var i=0; i<keys.length; i++) {
                     var htkComp = mainFrameHtkComponents[keys[i]];
@@ -235,7 +289,7 @@
              * @brief Sets on all components the value as the plant value and sets them as read-only.
              */
             displayPlant() {
-                var mainFrameHtkComponents = parent._htkMainEditor.getAllHtkComponents();
+                var mainFrameHtkComponents = this.htkMainEditor.getAllMainFrameHtkComponents();
                 var keys = Object.keys(mainFrameHtkComponents);
                 for (var i=0; i<keys.length; i++) {
                     var htkCompArray = mainFrameHtkComponents[keys[i]];
@@ -262,13 +316,13 @@
                     data: {
                         token: this.token,
                         tid: this.remoteServerTid,
-                        scheduleUID:parent._currentScheduleUID,
-                        variables:JSON.stringify(parent._scheduleValuesToCommit)
+                        scheduleUID:this.currentScheduleUID,
+                        variables:JSON.stringify(this.scheduleValuesToCommit)
                     },
                     success: function (response) {
                         if (this.checkServerResponse(response)) {
                             successFun();
-                            parent._scheduleValuesToCommit = {};
+                            this.scheduleValuesToCommit = {};
                         }
                     }.bind(this),
                     error: function (response) {
@@ -439,9 +493,7 @@
                         token : this.token
                     },
                     success: function (response) {
-                        if (this.checkServerResponse(response)) {
-                            successFun();
-                        }
+                        successFun();
                     }.bind(this),
                     error: function (response) {
                         this.showCriticalError(response);
@@ -606,16 +658,16 @@
              * @param[in] period time interval in milliseconds at which the component values shall be synchronised remotely.
              */
             synchroniseRemote(period) {
-                if (parent._currentScheduleUID !== undefined) {
-                    var toPop = parent._valuesToSynchroniseRemote.length;
+                if (this.currentScheduleUID !== undefined) {
+                    var toPop = this.valuesToSynchroniseRemote.length;
                     if (toPop > 0) {
                         var variablesToSend = {};
                         //Not perfectly safe, but worst comes to the worst I send twice the same thing from time to time
                         var i = 0;
                         while (i < toPop) {
-                            var valueToSynch = parent._valuesToSynchroniseRemote.shift();//not pop since we want to remove the oldest (i.e. the first) before
+                            var valueToSynch = this.valuesToSynchroniseRemote.shift();//not pop since we want to remove the oldest (i.e. the first) before
                             variablesToSend[valueToSynch.id] = valueToSynch.value;
-                            parent._scheduleValuesToCommit[valueToSynch.id] = valueToSynch.value;
+                            this.scheduleValuesToCommit[valueToSynch.id] = valueToSynch.value;
                             i++;
                         }
                         $.ajax({
@@ -624,7 +676,7 @@
                             data: {
                                 token: this.token,
                                 tid: this.remoteServerTid,
-                                scheduleUID:parent._currentScheduleUID,
+                                scheduleUID:this.currentScheduleUID,
                                 variables:JSON.stringify(variablesToSend)
                             },
                             success: function (response) {
@@ -715,21 +767,10 @@
                 return this.allUsers;
             }
         }
-        //IMPORTANT! Remember when accessing to these global variables to prefix with parent. so that they can be accessed from an iframe
+        //IMPORTANT! Remember when accessing to these global variables to prefix with parent, so that they can be accessed from an iframe
         htkHelper = new HtkHelper();
         htkHelper.synchroniseRemote();
         
-
-        //TODO re-write this as a class, e.g. singleton
-        //IMPORTANT! Remember when accessing to these global variables to prefix with parent. so that they can be accessed from an iframe
-        var _valuesToSynchroniseRemote = [];
-        var _scheduleValuesToCommit = {};
-        //The same component id in the dictionary can be used to store multiple instances, i.e. id : []
-        var _currentScheduleUID = undefined;
-        //This reference to the main editor can be used to listen to page events for components that e.g. do not inherit from HtkComponent
-        var _htkMainEditor = undefined;
-        var _waitDialog = null;
-        //All the system users
     
     </script>
 </html>

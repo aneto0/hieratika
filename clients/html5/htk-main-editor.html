@@ -25,7 +25,7 @@
                         var root = this.createShadowRoot();
                         root.appendChild(clone);
                         this.plantInfoLoadedListeners = [this];
-                        parent._htkMainEditor = this;
+                        parent.htkHelper.setHtkMainEditor(this);
                         this.mainEditorIFrame = this.shadowRoot.querySelector("#dmaineditor");
                         this.mainEditorIFrame.src = "/help.html?" + new Date().getTime(); //new Date... to force reloading with no caching
                     }
@@ -143,7 +143,11 @@
 
                     }
 
-                    getAllHtkComponents() {
+                    /**
+                     * @brief Gets all the components that are registered in the main frame of hieratika.
+                     * @return The components that are registered in the main frame of hieratika.
+                     */
+                    getAllMainFrameHtkComponents() {
                         return this.mainEditorIFrame.contentDocument._frameComponents;
                     }
                 }
