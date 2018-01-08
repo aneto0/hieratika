@@ -1,263 +1,314 @@
+<!-- 
+ date: 04/01/2018
+ author: Andre' Neto
+ 
+ copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
+ the Development of Fusion Energy ('Fusion for Energy').
+ Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ by the European Commission - subsequent versions of the EUPL (the "Licence")
+ You may not use this work except in compliance with the Licence.
+ You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+ 
+ warning: Unless required by applicable law or agreed to in writing, 
+ software distributed under the Licence is distributed on an "AS IS"
+ basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ or implied. See the Licence permissions and limitations under the Licence.
+--> 
+
 <html>
-<head>
-    <link rel="import" href="htk-helper.html">
-</head>
-</body>
-    <template id="tscheduleselector">
-        <dialog id="dscheduleselector">
-            <div id="divschedule">
+    <head>
+        <!-- Standard imports -->
+
+        <!-- Project imports -->
+        <link rel="import" href="/htk-helper.html">
+    </head>
+    </body>
+        <!-- HTML5 component template-->
+        <template id="tscheduleselector">
+            <dialog id="dscheduleselector">
+                <div id="divschedule">
+                    <table style="border-style:solid;border-width:1px;width: 100%">
+                        <tr>
+                            <td>
+                                User
+                            </td>
+                            <td>
+                                Schedules 
+                            </td>
+                            <td>
+                                Description
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><select id="userselect" size="20" style="width:150px;overflow-x:scroll"></select></td>
+                            <td><select id="scheduleselect" size="20" style="width:150px;overflow-x:scroll"></select></td>
+                            <td id="descriptionarea" style="width:250px;vertical-align:top;background-color:#F5F5F5"></td>
+                        </tr>
+                    </table>
+                    <table style="border-style:solid;border-width:0px;width: 100%">
+                        <tr>
+                            <td style="padding-top:20px;">
+                                <button title="OK" id="okbtn">OK</button>
+                                <button title="Cancel" id="cancelbtn">Cancel</button>
+                            </td>
+                             <td style="padding-top:20px;text-align:right;">
+                                <button title="Create a new schedule..." id="createschedulebtn">New schedule...</button>
+                            </td>
+                       </tr>
+                    </table>
+                </dialog>
+            </div>
+            <div id="divnewschedule" hidden>
                 <table style="border-style:solid;border-width:1px;width: 100%">
                     <tr>
-                        <td>
-                            User
-                        </td>
-                        <td>
-                            Schedules 
-                        </td>
-                        <td>
-                            Description
-                        </td>
+                        <td>Schedule name:</td>
+                        <td><input type="text" id="newschedulename"></input></td>
                     </tr>
                     <tr>
-                        <td><select id="userselect" size="20" style="width:150px;overflow-x:scroll"></select></td>
-                        <td><select id="scheduleselect" size="20" style="width:150px;overflow-x:scroll"></select></td>
-                        <td id="descriptionarea" style="width:250px;vertical-align:top;background-color:#F5F5F5"></td>
+                        <td>Schedule description:</td>
+                        <td><textarea rows="4" cols="30" id="newscheduledescription" title="Description"></textarea></td>
+                    </tr>
+                    <tr>
+                        <td>Copy from:</td>
+                        <td>
+                            <select id="newschedulesselect" name="newschedulesselect">
+                            </select>
+                        </td>
                     </tr>
                 </table>
                 <table style="border-style:solid;border-width:0px;width: 100%">
                     <tr>
                         <td style="padding-top:20px;">
-                            <button title="OK" id="okbtn">OK</button>
-                            <button title="Cancel" id="cancelbtn">Cancel</button>
+                            <button title="OK" id="oknewschedulebtn">OK</button>
+                            <button title="Cancel" id="cancelnewschedulebtn">Cancel</button>
                         </td>
-                         <td style="padding-top:20px;text-align:right;">
-                            <button title="Create a new schedule..." id="createschedulebtn">New schedule...</button>
-                        </td>
-                   </tr>
+                    </tr>
                 </table>
-            </dialog>
-        </div>
-        <div id="divnewschedule" hidden>
-            <table style="border-style:solid;border-width:1px;width: 100%">
-                <tr>
-                    <td>Schedule name:</td>
-                    <td><input type="text" id="newschedulename"></input></td>
-                </tr>
-                <tr>
-                    <td>Schedule description:</td>
-                    <td><textarea rows="4" cols="30" id="newscheduledescription" title="Description"></textarea></td>
-                </tr>
-                <tr>
-                    <td>Copy from:</td>
-                    <td>
-                        <select id="newschedulesselect" name="newschedulesselect">
-                        </select>
-                    </td>
-                </tr>
-            </table>
-            <table style="border-style:solid;border-width:0px;width: 100%">
-                <tr>
-                    <td style="padding-top:20px;">
-                        <button title="OK" id="oknewschedulebtn">OK</button>
-                        <button title="Cancel" id="cancelnewschedulebtn">Cancel</button>
-                    </td>
-                </tr>
-            </table>
-        </div>
-    </template>
+            </div>
+        </template>
 
-    <script>
-        //This is enclosure is required to protect the importDoc
-        (function () {
-            var importDoc = document.currentScript.ownerDocument; // importee
-            class HtkScheduleSelector extends HTMLElement {
-                constructor() {
-                    super();
-                }
+        <script>
+            //This is enclosure is required to protect the importDoc
+            (function () {
+                var importDoc = document.currentScript.ownerDocument; // importee
 
-                createdCallback () {
-                    var template = importDoc.querySelector("#tscheduleselector");
-                    if (template !== undefined) {
-                        // import template into
-                        var clone = document.importNode(template.content, true);
-                        var root = this.createShadowRoot();
-                        root.appendChild(clone);
-                  
-                        this.pageName = ""; 
-                        this.diag = this.shadowRoot.querySelector("#dscheduleselector");
-                        this.userSelect = this.shadowRoot.querySelector("#userselect");
-                        this.userSelect.onclick = function() {
-                            this.okButton.disabled = true;
-                            this.updateUserSchedules(); 
-                        }.bind(this);
+                /**
+                 * @brief A dialog which allows to select a schedule (from the ones available for this page).
+                 * @details This dialog allows to select an existent schedule (from this or any other Hieratika user) or to create a new schedule (for this user).
+                 */
+                class HtkScheduleSelector extends HTMLElement {
 
-                        this.scheduleSelect = this.shadowRoot.querySelector("#scheduleselect");
-                        this.scheduleSelect.onclick = function() {
-                            this.updateScheduleDescription();
-                        }.bind(this);
-                        
-                        this.descriptionArea = this.shadowRoot.querySelector("#descriptionarea");
-                        this.okButton = this.shadowRoot.querySelector("#okbtn");
-                        this.okButton.onclick = function() {
-                            var schedule = this.scheduleSelect[this.scheduleSelect.selectedIndex].scheduleInfo;
-                            this.okCallbackFunction(schedule);
-                            this.diag.close();
-                        }.bind(this);
+                    /**
+                     * @brief Constructor. NOOP.
+                     */
+                    constructor() {
+                        super();
+                    }
 
-                        var cancelButton = this.shadowRoot.querySelector("#cancelbtn");
-                        cancelButton.onclick = function() {
-                            this.diag.close();
-                        }.bind(this); 
+                    /**
+                     * @brief Registers the dialog.
+                     */
+                    createdCallback () {
+                        var template = importDoc.querySelector("#tscheduleselector");
+                        if (template !== undefined) {
+                            // import template into
+                            var clone = document.importNode(template.content, true);
+                            var root = this.createShadowRoot();
+                            root.appendChild(clone);
+                      
+                            this.pageName = ""; 
+                            this.diag = this.shadowRoot.querySelector("#dscheduleselector");
+                            this.userSelect = this.shadowRoot.querySelector("#userselect");
+                            this.userSelect.onclick = function() {
+                                this.okButton.disabled = true;
+                                this.updateUserSchedules(); 
+                            }.bind(this);
 
-                        this.scheduleDiv = this.shadowRoot.querySelector("#divschedule");
-                        this.newScheduleDiv = this.shadowRoot.querySelector("#divnewschedule");
-                        this.newSchedulesSelect = this.shadowRoot.querySelector("#newschedulesselect");
-                        this.newScheduleName = this.shadowRoot.querySelector("#newschedulename")
-                        this.newScheduleDescription = this.shadowRoot.querySelector("#newscheduledescription")
-                        var createNewSchedule = this.shadowRoot.querySelector("#createschedulebtn");
-                        createNewSchedule.onclick = function() {
-                            this.scheduleDiv.setAttribute("hidden", "true");
-                            this.newScheduleDiv.removeAttribute("hidden");
-                            this.newScheduleName.value = (new Date().toISOString());
-                            this.newScheduleDescription.value = "Schedule created on the " + this.newScheduleName.value;
-
-                            this.newSchedulesSelect.innerHTML = "";
-                            var option1 = document.createElement("option");
-                            var scheduleName = PLANT_NAME;
-                            option1.text = scheduleName;
-                            option1.value = scheduleName;
-                            this.newSchedulesSelect.appendChild(option1);
+                            this.scheduleSelect = this.shadowRoot.querySelector("#scheduleselect");
+                            this.scheduleSelect.onclick = function() {
+                                this.updateScheduleDescription();
+                            }.bind(this);
                             
-                            if ((this.userSelect.selectedIndex >= 0) && (this.scheduleSelect.selectedIndex >= 0)) {
-                                var username = this.userSelect[this.userSelect.selectedIndex].value;
+                            this.descriptionArea = this.shadowRoot.querySelector("#descriptionarea");
+                            this.okButton = this.shadowRoot.querySelector("#okbtn");
+                            this.okButton.onclick = function() {
                                 var schedule = this.scheduleSelect[this.scheduleSelect.selectedIndex].scheduleInfo;
-                                option1 = document.createElement("option");
-                                scheduleName = schedule.name + " (owner: " + username + ")";
+                                this.okCallbackFunction(schedule);
+                                this.diag.close();
+                            }.bind(this);
+
+                            var cancelButton = this.shadowRoot.querySelector("#cancelbtn");
+                            cancelButton.onclick = function() {
+                                this.diag.close();
+                            }.bind(this); 
+
+                            this.scheduleDiv = this.shadowRoot.querySelector("#divschedule");
+                            this.newScheduleDiv = this.shadowRoot.querySelector("#divnewschedule");
+                            this.newSchedulesSelect = this.shadowRoot.querySelector("#newschedulesselect");
+                            this.newScheduleName = this.shadowRoot.querySelector("#newschedulename")
+                            this.newScheduleDescription = this.shadowRoot.querySelector("#newscheduledescription")
+                            var createNewSchedule = this.shadowRoot.querySelector("#createschedulebtn");
+                            createNewSchedule.onclick = function() {
+                                this.scheduleDiv.setAttribute("hidden", "true");
+                                this.newScheduleDiv.removeAttribute("hidden");
+                                this.newScheduleName.value = (new Date().toISOString());
+                                this.newScheduleDescription.value = "Schedule created on the " + this.newScheduleName.value;
+
+                                this.newSchedulesSelect.innerHTML = "";
+                                var option1 = document.createElement("option");
+                                var scheduleName = PLANT_NAME;
                                 option1.text = scheduleName;
-                                option1.value = schedule.uid;
+                                option1.value = scheduleName;
                                 this.newSchedulesSelect.appendChild(option1);
+                                
+                                if ((this.userSelect.selectedIndex >= 0) && (this.scheduleSelect.selectedIndex >= 0)) {
+                                    var username = this.userSelect[this.userSelect.selectedIndex].value;
+                                    var schedule = this.scheduleSelect[this.scheduleSelect.selectedIndex].scheduleInfo;
+                                    option1 = document.createElement("option");
+                                    scheduleName = schedule.name + " (owner: " + username + ")";
+                                    option1.text = scheduleName;
+                                    option1.value = schedule.uid;
+                                    this.newSchedulesSelect.appendChild(option1);
+                                }
+                            }.bind(this); 
+
+                            var cancelNewScheduleButton = this.shadowRoot.querySelector("#cancelnewschedulebtn");
+                            cancelNewScheduleButton.onclick = function() {
+                                this.scheduleDiv.removeAttribute("hidden");
+                                this.newScheduleDiv.setAttribute("hidden", "true");
+                            }.bind(this); 
+
+                            var okNewScheduleButton = this.shadowRoot.querySelector("#oknewschedulebtn");
+                            okNewScheduleButton.onclick = function() {
+                                parent.htkDialogs.showWaitDialog();
+                                var sourceScheduleUID = undefined;
+                                if (this.newSchedulesSelect.selectedIndex > 0) {
+                                    sourceScheduleUID = this.newSchedulesSelect[this.newSchedulesSelect.selectedIndex].value;
+                                }
+                                parent.htkHelper.createSchedule(
+                                    this.newScheduleName.value,
+                                    this.newScheduleDescription.value,
+                                    this.pageName,
+                                    sourceScheduleUID,
+                                    function () {
+                                        this.scheduleDiv.removeAttribute("hidden");
+                                        this.newScheduleDiv.setAttribute("hidden", "true");
+                                        this.updateUserSchedules();
+                                        parent.htkDialogs.closeWaitDialog();
+                                    }.bind(this),
+                                    function (response) {
+                                        parent.htkDialogs.closeWaitDialog();
+                                        parent.htkDialogs.showErrorDialog("Failed to create the schedule. Unknown error, check the server logs.");
+                                    }
+                                );
+                            }.bind(this); 
+                        }
+                    }
+
+                    /**
+                     * @brief Updates the schedule description against the current (schedule) selection.
+                     */
+                    updateScheduleDescription() {
+                        if (this.userSelect.selectedIndex >= 0) {
+                            var username = this.userSelect[this.userSelect.selectedIndex].value;
+                            if (this.scheduleSelect.selectedIndex >= 0) {
+                                if (this.currentUsername !== undefined) {
+                                    this.okButton.disabled = (this.currentUsername !== username);
+                                }
+                                else {
+                                    this.okButton.disabled = false;
+                                }
+                                this.descriptionArea.innerHTML = this.scheduleSelect[this.scheduleSelect.selectedIndex].scheduleInfo.description;
                             }
-                        }.bind(this); 
+                        }
 
-                        var cancelNewScheduleButton = this.shadowRoot.querySelector("#cancelnewschedulebtn");
-                        cancelNewScheduleButton.onclick = function() {
-                            this.scheduleDiv.removeAttribute("hidden");
-                            this.newScheduleDiv.setAttribute("hidden", "true");
-                        }.bind(this); 
+                    }
 
-                        var okNewScheduleButton = this.shadowRoot.querySelector("#oknewschedulebtn");
-                        okNewScheduleButton.onclick = function() {
+                    /**
+                     * @brief Show only the schedules that are available for a given user.
+                     */
+                    updateUserSchedules() {
+                        if (this.userSelect.selectedIndex >= 0) {
                             parent.htkDialogs.showWaitDialog();
-                            var sourceScheduleUID = undefined;
-                            if (this.newSchedulesSelect.selectedIndex > 0) {
-                                sourceScheduleUID = this.newSchedulesSelect[this.newSchedulesSelect.selectedIndex].value;
-                            }
-                            parent.htkHelper.createSchedule(
-                                this.newScheduleName.value,
-                                this.newScheduleDescription.value,
-                                this.pageName,
-                                sourceScheduleUID,
-                                function () {
-                                    this.scheduleDiv.removeAttribute("hidden");
-                                    this.newScheduleDiv.setAttribute("hidden", "true");
-                                    this.updateUserSchedules();
+                            var username = this.userSelect[this.userSelect.selectedIndex].value;
+                            parent.htkHelper.getSchedules(
+                                this.pageName, 
+                                username,
+                                function (availableSchedules) {
+                                    this.scheduleSelect.innerHTML = "";
+                                    if (availableSchedules.length === 0) {
+                                        this.scheduleSelect.disabled = true;
+                                        var option1 = document.createElement("option");
+                                        option1.text = "No schedule available...";
+                                        option1.value = NONE_NAME;
+                                        this.scheduleSelect.appendChild(option1);
+                                    }
+                                    else {
+                                        this.scheduleSelect.disabled = false;
+                                        for (var s in availableSchedules) {
+                                            var scheduleName = String(availableSchedules[s].name);
+                                            var option1 = document.createElement("option");
+                                            option1.text = scheduleName;
+                                            option1.value = scheduleName;
+                                            option1.scheduleInfo = availableSchedules[s];
+                                            this.scheduleSelect.appendChild(option1);
+                                        }
+                                    }
                                     parent.htkDialogs.closeWaitDialog();
                                 }.bind(this),
                                 function (response) {
                                     parent.htkDialogs.closeWaitDialog();
-                                    parent.htkDialogs.showErrorDialog("Failed to create the schedule. Unknown error, check the server logs.");
+                                    parent.htkDialogs.showErrorDialog("Failed to retrieve the schedules. Unknown error, check the server logs.");
                                 }
                             );
-                        }.bind(this); 
-                    }
-                }
-
-                updateScheduleDescription() {
-                    if (this.userSelect.selectedIndex >= 0) {
-                        var username = this.userSelect[this.userSelect.selectedIndex].value;
-                        if (this.scheduleSelect.selectedIndex >= 0) {
-                            if (this.currentUsername !== undefined) {
-                                this.okButton.disabled = (this.currentUsername !== username);
-                            }
-                            else {
-                                this.okButton.disabled = false;
-                            }
-                            this.descriptionArea.innerHTML = this.scheduleSelect[this.scheduleSelect.selectedIndex].scheduleInfo.description;
                         }
                     }
 
-                }
+                    /**
+                     * @brief Sets the new page being handled by the Hieratika UI.
+                     * @param[in] page the new page being displayed.
+                     */
+                    pageChanged(page) {
+                        this.pageName = page.name;
+                    }
 
-                updateUserSchedules() {
-                    if (this.userSelect.selectedIndex >= 0) {
-                        parent.htkDialogs.showWaitDialog();
-                        var username = this.userSelect[this.userSelect.selectedIndex].value;
-                        parent.htkHelper.getSchedules(
-                            this.pageName, 
-                            username,
-                            function (availableSchedules) {
-                                this.scheduleSelect.innerHTML = "";
-                                if (availableSchedules.length === 0) {
-                                    this.scheduleSelect.disabled = true;
-                                    var option1 = document.createElement("option");
-                                    option1.text = "No schedule available...";
-                                    option1.value = NONE_NAME;
-                                    this.scheduleSelect.appendChild(option1);
-                                }
-                                else {
-                                    this.scheduleSelect.disabled = false;
-                                    for (var s in availableSchedules) {
-                                        var scheduleName = String(availableSchedules[s].name);
-                                        var option1 = document.createElement("option");
-                                        option1.text = scheduleName;
-                                        option1.value = scheduleName;
-                                        option1.scheduleInfo = availableSchedules[s];
-                                        this.scheduleSelect.appendChild(option1);
-                                    }
-                                }
-                                parent.htkDialogs.closeWaitDialog();
-                            }.bind(this),
-                            function (response) {
-                                parent.htkDialogs.closeWaitDialog();
-                                parent.htkDialogs.showErrorDialog("Failed to retrieve the schedules. Unknown error, check the server logs.");
-                            }
-                        );
+                    /**
+                     * @brief Shows the dialog.
+                     * @param[in] okCallbackFun the function to call if the user selects OK.
+                     * @param[in] currentUsername the user to select.
+                     */
+                    show(okCallbackFun, currentUsername = undefined) {
+                        this.currentUsername = currentUsername;
+                        this.okCallbackFunction = okCallbackFun;
+                        this.okButton.disabled = true;
+                        this.scheduleSelect.disabled = true;
+                        this.userSelect.innerHTML = "";
+                        this.scheduleSelect.innerHTML = "";
+                        var option1 = document.createElement("option");
+                        option1.text = "Select user";
+                        option1.value = NONE_NAME;
+                        this.scheduleSelect.appendChild(option1);
+                        var allUsers = parent.htkHelper.getAllUsers();
+                        for (var u in allUsers) {
+                            option1 = document.createElement("option");
+                            var username = allUsers[u].username;
+                            option1.text = username;
+                            option1.value = username;
+                            this.userSelect.appendChild(option1);
+                        }
+                        this.diag.showModal();
                     }
                 }
 
-                pageChanged(page) {
-                    this.pageName = page.name;
-                }
+                /**
+                 * @brief Registers the element.
+                 */ 
+                document.registerElement("htk-schedule-selector", {
+                    prototype: HtkScheduleSelector.prototype,
+                });
 
-                show(okCallbackFun, currentUsername = undefined) {
-                    this.currentUsername = currentUsername;
-                    this.okCallbackFunction = okCallbackFun;
-                    this.okButton.disabled = true;
-                    this.scheduleSelect.disabled = true;
-                    this.userSelect.innerHTML = "";
-                    this.scheduleSelect.innerHTML = "";
-                    var option1 = document.createElement("option");
-                    option1.text = "Select user";
-                    option1.value = NONE_NAME;
-                    this.scheduleSelect.appendChild(option1);
-                    var allUsers = parent.htkHelper.getAllUsers();
-                    for (var u in allUsers) {
-                        option1 = document.createElement("option");
-                        var username = allUsers[u].username;
-                        option1.text = username;
-                        option1.value = username;
-                        this.userSelect.appendChild(option1);
-                    }
-                    this.diag.showModal();
-                }
-            }
-
-            document.registerElement("htk-schedule-selector", {
-                prototype: HtkScheduleSelector.prototype,
-            });
-
-        }());
-    </script>
+            }());
+        </script>
 
     </body>
 </html>

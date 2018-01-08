@@ -25,7 +25,6 @@
         <link rel="import" href="htk-wait-dialog.html">
     </head>
 
-    <!-- Class definiton-->
     <script>
         /**
          * Collection of helper functions for the hieratika client components.
@@ -477,6 +476,37 @@
                         this.showCriticalError(response);
                         errorFun();
                     }.bind(this)
+                });
+            }
+
+            /**
+             * @brief Logs a user into the system.
+             * @param[in] usernameToSend the username.
+             * @param[in] passwordToSend the user password.
+             * @param[in] successFun function with prototype (void) f(user), that will be called if the user was successfully logged in.
+             * @param[in] errorFun function with prototype (void) f(void), that will be called if the user could not be logged in.
+             */
+            loginToServer(usernameToSend, passwordToSend, successFun, errorFun) {
+                $.ajax({
+                    type: "post",
+                    url: "/login",
+                    data: {
+                        username: usernameToSend,
+                        password: passwordToSend
+                    },
+                    success: function (response) {
+                        var user = $.parseJSON(response);
+                        if (user.id !== "") {
+                            successFun(user); 
+                        }
+                        else {
+                            errorFun();
+                        }            
+                    }.bind(this),
+                    error: function (response) {
+                        this.showCriticalError(response);
+                        errorFun();
+                    }
                 });
             }
 

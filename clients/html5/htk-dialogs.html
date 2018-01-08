@@ -15,21 +15,25 @@
  or implied. See the Licence permissions and limitations under the Licence.
 --> 
 
-<!-- Collection of Hieratika standard dialogs-->
 <html>
     <head>
         <!-- Standard imports -->
 
         <!-- Project imports -->
-        <link rel="import" href="htk-constants.html">
-        <link rel="import" href="htk-wait-dialog.html">
+        <link rel="import" href="/htk-constants.html">
+        <link rel="import" href="/htk-wait-dialog.html">
     </head>
     <body>
-    <!-- Class definiton-->
     <script>
 
+        /**
+         * @brief Collection of Hieratika standard dialogs.
+         */
         class HtkDialogs { 
 
+            /**
+             * @brief Constructor. NOOP.
+             */
             constructor() {
                 this.waitDialog = document.createElement("htk-wait-dialog");
                 document.body.appendChild(this.waitDialog);

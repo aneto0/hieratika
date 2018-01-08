@@ -1,8 +1,29 @@
+<!-- 
+ date: 04/01/2018
+ author: Andre' Neto
+ 
+ copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
+ the Development of Fusion Energy ('Fusion for Energy').
+ Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ by the European Commission - subsequent versions of the EUPL (the "Licence")
+ You may not use this work except in compliance with the Licence.
+ You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+ 
+ warning: Unless required by applicable law or agreed to in writing, 
+ software distributed under the Licence is distributed on an "AS IS"
+ basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ or implied. See the Licence permissions and limitations under the Licence.
+--> 
+
 <html>
     <head>
+        <!-- Standard imports -->
+
+        <!-- Project imports -->
         <link rel="import" href="/libraries.html">
     </head>
     <body>
+        <!-- HTML5 component template-->
         <template id="tselector">
             <dialog id="dselector">
                 <iframe id="iframeeditor" style="width: 100%;border-style:solid;border-width:1px;"></iframe>
@@ -29,11 +50,23 @@
             (function () {
                 var importDoc = document.currentScript.ownerDocument; // importee
 
+                /**
+                 * @brief An editor which is capable of rendering a library content (by displaying its associated page) and of managing libraries (creation, deletion, ...). 
+                 * @details The editor must be owned by a component which inherits from HtkLibrary.
+                 * @details The library content is to be edited by the page returned by /pages/[librarytype].html where librarytype is the value returned by owner.getLibraryType().
+                 */
                 class HtkLibraryEditor extends HTMLElement {
+        
+                    /**
+                     * @brief Constructor. NOOP.
+                     */
                     constructor() {
                         super();
                     }
 
+                    /**
+                     * @brief Gets the UID of the library currently selected by the user.
+                     */
                     getLibraryUID (libraryName) {
                         var allLibraries = this.availableLibraries;
                         var lib = allLibraries.find(function (element) {
@@ -46,6 +79,11 @@
                         return libUID;
                     }
 
+                    /**
+                     * @brief Queries all the variables that are available for a given user.
+                     * @param[in] username the username to query.
+                     * @param[in] readyFun the function to be called when the libraries are available to be shown.
+                     */
                     populateLibraries (username, readyFun) {
                         parent.htkHelper.getLibraries(
                             this.owner.getLibraryType(),
@@ -66,11 +104,14 @@
                             }.bind(this),
                             function (response) {
                                 console.log(response);
-                                alert(response);
                             }
                         );
                     }
 
+                    /**
+                     * @brief Gets all the users that are available in the system and selected the libraryUser.
+                     * @param[in] libraryUser the user that is to be selected.
+                     */
                     populateUsers(libraryUser) {
                         if (this.userSelector.options.length === 0) {
                             var allUsers = parent.htkHelper.getAllUsers();
@@ -85,6 +126,11 @@
                         this.userSelector.value = libraryUser;
                     }
 
+                    /**
+                     * @brief Opens the editor and displays the selected library (libraryValue of libraryUser).
+                     * @param[in] libraryUser the owner of the library.
+                     * @param[in] libraryValue the name of the library.
+                     */
                     showEditor (libraryUser, libraryValue) {
                         parent.htkDialogs.showWaitDialog();
                         this.populateUsers(libraryUser); 
@@ -96,6 +142,11 @@
                         }.bind(this));
                     }
 
+                    /**
+                     * @brief Retrieves the library values for the library with name libraryName.
+                     * @param[in] libraryName the name of the library.
+                     * @param[in] successFn the function to be called when the libraries are available.
+                     */
                     getLibrary(libraryName, successFn) {
                         var libraryUID = this.getLibraryUID(libraryName);
                         if (libraryUID !== undefined) {
@@ -112,6 +163,10 @@
                         }
                     }
 
+                    /**
+                     * @brief Populates the editor components with the values that are stored for a given library instance and if required (valueOnly = false) also retrieve and set the plant and reference values.
+                     * @param[in] valueOnly if false, retrieve and set the plant and reference values. 
+                     */
                     editLibrary (valueOnly = false) {
                         var editorComponents = this.iFrameEditor.contentDocument._frameComponents;
                         if (editorComponents !== undefined) {
@@ -190,6 +245,9 @@
                         }
                     }
 
+                    /**
+                     * @brief See HtkComponents.createdCallbace.
+                     */
                     createdCallback() {
                         // Get template 
                         var template = importDoc.querySelector("#tselector");
@@ -287,11 +345,24 @@
                         }.bind(this);
                     }
 
+                    /**
+                     * @brief Sets the HtkLibrary component that is managing this editor.
+                     * @param[in] owner an HtkLibrary component.
+                     */
                     setOwnerComponent(owner) {
                         this.owner = owner;
-                        this.loadEditor(owner.getLibraryType());
+                        var editorUrl = "/pages/" + owner.getLibraryType() + ".html?" + new Date().getTime(); //new Date... to force reloading with no caching
+                        this.iFrameEditor.onload = function(evt) {
+                            this.iFrameLoaded(libraryType);
+                        }.bind(this);
+                        this.iFrameEditor.src = editorUrl;
+
                     }
-                    
+                   
+                    /**
+                     * @brief Callback function which is called when the iframe that displays the library type has loaded.
+                     * @param[in] libraryType the type of the library.
+                     */ 
                     iFrameLoaded(libraryType) {
                         //Note that we want HtkComponents to the scope of each iframe
                         var editorComponents = this.iFrameEditor.contentDocument._frameComponents;
@@ -327,22 +398,18 @@
                         }
                     }
 
-                    loadEditor(libraryType) {
-                        var editorUrl = "/pages/" + libraryType + ".html?" + new Date().getTime(); //new Date... to force reloading with no caching
-                        this.iFrameEditor.onload = function(evt) {
-                            this.iFrameLoaded(libraryType);
-                        }.bind(this);
-                        this.iFrameEditor.src = editorUrl;
-                    }
-
-                    getEditor() {
-                        return this.editor;
-                    }
-
+                    /**
+                     * @brief Enables/disables the button which allows to select a new library.
+                     * @param[in] isReadOnly see HtkComponents.setReadOnly
+                     */
                     setReadOnly (isReadOnly) {
                         this.okButton.disabled = isReadOnly;
                     }
 
+                    /**
+                     * @brief Updates the reference on all the private iframe HtkComponents.
+                     * @param[in] referenceToSet the new reference against which to compare the components values.
+                     */
                     setReference(referenceToSet) {
                         var editorComponents = this.iFrameEditor.contentDocument._frameComponents;
                         if (editorComponents !== undefined) {
@@ -355,10 +422,18 @@
                         }
                     }
 
+                    /**
+                     * @brief Enables/disables the button which allows to select a new library.
+                     * @param[in] isUserAllowedToWrite see HtkComponents.setUserAllowedToWrite
+                     */
                     setUserAllowedToWrite (isUserAllowedToWrite) {
                         this.okButton.disabled = !isUserAllowedToWrite;
                     }
                 }
+
+                /**
+                 * @brief Registers the element.
+                 */ 
                 document.registerElement("htk-library-editor", {
                     prototype: HtkLibraryEditor.prototype
                 });

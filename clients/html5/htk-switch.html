@@ -1,9 +1,30 @@
+<!-- 
+ date: 04/01/2018
+ author: Andre' Neto
+ 
+ copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
+ the Development of Fusion Energy ('Fusion for Energy').
+ Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ by the European Commission - subsequent versions of the EUPL (the "Licence")
+ You may not use this work except in compliance with the Licence.
+ You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+ 
+ warning: Unless required by applicable law or agreed to in writing, 
+ software distributed under the Licence is distributed on an "AS IS"
+ basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ or implied. See the Licence permissions and limitations under the Licence.
+--> 
+
 <html>
     <head>
-        <link rel="import" href="libraries.html">
-        <link rel="import" href="htk-component.html">
+        <!-- Standard imports -->
+
+        <!-- Project imports -->
+        <link rel="import" href="/libraries.html">
+        <link rel="import" href="/htk-component.html">
     </head>
     <body>
+        <!-- HTML5 component template-->
         <template id="tswitch">
             <htk-library-editor id="tlibrary-editor"></htk-library-editor>
             <!--Export in inkscape with viewBox and with optimised svg!-->
@@ -59,17 +80,28 @@
             (function () {
                 var importDoc = document.currentScript.ownerDocument; // importee
 
+                /**
+                 * @brief A switch display component. Still TODO, but a good example on how to use svg and an HtkLibrary.
+                 */
                 class HtkSwitch extends HtkLibrary {
 
+                    /**
+                     * @return CU_UNITS_TO_INCHES * INCHES_TO_PX * units.
+                     */
                     cubicleUnitsToPixels(units) {
                         return CU_UNITS_TO_INCHES * INCHES_TO_PX * units;
                     } 
 
+                    /** 
+                     * @return INCHES_TO_PX * inches;
+                     */
                     inchesToPixels(inches) {
                         return INCHES_TO_PX * inches;
                     } 
 
-                    // Use Shadow DOM and a template.
+                    /**
+                     * @brief See HtkComponent.createdCallback .
+                     */
                     createdCallback () {
                         super.createdCallback();
                         this.svg = this.shadowRoot.querySelector("svg");
@@ -84,22 +116,34 @@
                         this.layerChanges2.setAttribute("opacity", "0");
                     }
 
+                    /**
+                     * @brief See HtkComponent.attachedCallback .
+                     */
                     attachedCallback () {
                         this.svg.addEventListener("click", function(e) {
                             this.showLibraryEditor();
                         }.bind(this));
                     }
 
+                    /**
+                     * @brief See HtkComponent.getTemplate.
+                     */
                     getTemplate() {
                         var template = importDoc.querySelector("#tswitch");
                         return template;
                     }
 
+                    /**
+                     * @brief See HtkLibrary.libraryChanged
+                     */
                     libraryChanged (libraryOwner, newLibraryName) {
                         this.value = libraryOwner + "/" + newLibraryName;
                         this.checkValues();
                     }
 
+                    /**
+                     * @brief Updates the switch display against the current component values.
+                     */
                     checkValues () {
                         //If the current value does not match the initial value set the font color blue
                         if(!this.compareValues(this.getValue(), this.getInitialValue())) {
@@ -129,6 +173,9 @@
                     }
                 }
 
+                /**
+                 * @brief Registers the element.
+                 */ 
                 document.registerElement("htk-switch", {
                     prototype: HtkSwitch.prototype
                 });

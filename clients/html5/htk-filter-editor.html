@@ -1,9 +1,30 @@
+<!-- 
+ date: 04/01/2018
+ author: Andre' Neto
+ 
+ copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
+ the Development of Fusion Energy ('Fusion for Energy').
+ Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ by the European Commission - subsequent versions of the EUPL (the "Licence")
+ You may not use this work except in compliance with the Licence.
+ You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+ 
+ warning: Unless required by applicable law or agreed to in writing, 
+ software distributed under the Licence is distributed on an "AS IS"
+ basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ or implied. See the Licence permissions and limitations under the Licence.
+--> 
+
 <html>
     <head>
-        <link rel="import" href="libraries.html">
-        <link rel="import" href="htk-component.html">
+        <!-- Standard imports -->
+
+        <!-- Project imports -->
+        <link rel="import" href="/libraries.html">
+        <link rel="import" href="/htk-component.html">
     </head>
     <body>
+        <!-- HTML5 component template-->
         <template id="tfilter">
             <style>
                 @import url("/js/jqmath-0.4.3.css")
@@ -34,11 +55,24 @@
         //This is enclosure is required to protect the importDoc
         (function () {
             var importDoc = document.currentScript.ownerDocument; // importee
+
+            /**
+             * @brief A simple filter editor where the user is allowed to specify the zeros and the poles of the filter. The transfer function is plot using chartjs.
+             * @details In this implementation the data type is assumed to be a 2d array where the transfer function numerator is the first row of the array ([0][i]) and the denominator the second row of the array ([1][i]).
+             */
             class HtkFilterEditor extends HtkComponent {
+
+                /**
+                 * @brief Constructor. NOOP.
+                 */
                 constructor () {
                     super();
                 }
 
+                /**
+                 * @brief Helper function which renders the specified polynomial in mathml.
+                 * @param[in] pol the polynomial to render.
+                 */
                 generatePolynomialMathML(pol) {
                     var polynomialInnerHTML = "<mrow>";
                     for (var i=0; i<pol.length; i++) {
@@ -74,6 +108,11 @@
                     return polynomialInnerHTML;
                 }
 
+                /**
+                 * @brief Helper function which renders the transfer funtion in mathml.
+                 * @param[in] num the transfer function numerator polynomial.
+                 * @param[in] den the transfer function denominator polynomial.
+                 */
                 generateTransferFunctionMathML(num, den) {
                     var transferFunctionInnerHTML = "<math>";
                     transferFunctionInnerHTML += "<mi>H(s)</mi>";
@@ -86,6 +125,11 @@
                     return transferFunctionInnerHTML;
                 } 
 
+                /**
+                 * @brief Gets the transfer function filter response by evaluating the function for N frequencyStep and up to the selected maxFrequency.
+                 * @param[in] num the transfer function numerator polynomial.
+                 * @param[in] den the transfer function denominator polynomial.
+                 */
                 getFilterResponse(num, den) {
                     var numberOfFrequencies = Math.floor(this.maxFrequency / this.frequencyStep);
                     var w = new Array(numberOfFrequencies);
@@ -131,6 +175,10 @@
                     return amplitude;
                 }
 
+                /**
+                 * @brief Returns a string representation of the transfer function.
+                 * @return a string representation of the transfer function.
+                 */
                 toString () {
                     var currentValueTxt = undefined;
                     var currentValue = this.getValue();
@@ -170,6 +218,10 @@
                     return "Current: " + currentValueTxt + " Plant: " + plantValueTxt + " Reference: " + referenceValueTxt + " Initial: " + initialValueTxt;
                 }
 
+                /**
+                 * @brief Checks if the plot should be updated due to a value change (of the component itself or from the reference).
+                 * @param[in] userChanged true if the value update was triggered by a user action.
+                 */
                 checkValues (userChanged = true) {
                     if (this.chart !== undefined) {
                         this.chart.data.datasets[0].data = [];
@@ -259,19 +311,31 @@
                     this.title = this.toString();
                 }
 
+                /**
+                 * @brief See HtkComponent.setValue
+                 */
                 setValue (elementsToSet, updateRemote=true) {
                     super.setValue(elementsToSet.slice(0), updateRemote);
                 }
 
+                /**
+                 * @brief Calls checkValues
+                 */
                 refresh() {
                     this.checkValues(false);
                 }
 
+                /**
+                 * @brief See HtkComponent.getTemplate
+                 */
                 getTemplate() {
                     var template = importDoc.querySelector("#tfilter");
                     return template;
                 }
 
+                /**
+                 * @brief See HtkComponent.createdCallback
+                 */
                 createdCallback () {
                     super.createdCallback();
                     this.numeratorInput = this.shadowRoot.querySelector("#numeratorInput");
@@ -302,12 +366,19 @@
                     }
                 }
 
+                /**
+                 * @brief See HtkComponent.setReadOnly.
+                 * @details When isReadOnly = false, the user is not allowed to edit the numerator/denominator.
+                 */
                 setReadOnly (isReadOnly) {
                     super.setReadOnly(isReadOnly);
                     this.numeratorInput.disabled = isReadOnly;
                     this.denominatorInput.disabled = isReadOnly;
                 }
 
+                /**
+                 * @brief See HtkComponent.attachedCallback.
+                 */
                 attachedCallback () {
                     super.attachedCallback();
                     var ctx = this.shadowRoot.querySelector("#tcanvas");
@@ -363,6 +434,9 @@
                 }
             }
 
+            /**
+             * @brief Registers the element.
+             */ 
             document.registerElement("htk-filter-editor", {
                 prototype: HtkFilterEditor.prototype
             });
