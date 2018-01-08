@@ -1,9 +1,30 @@
+<!-- 
+ date: 04/01/2018
+ author: Andre' Neto
+ 
+ copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
+ the Development of Fusion Energy ('Fusion for Energy').
+ Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ by the European Commission - subsequent versions of the EUPL (the "Licence")
+ You may not use this work except in compliance with the Licence.
+ You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+ 
+ warning: Unless required by applicable law or agreed to in writing, 
+ software distributed under the Licence is distributed on an "AS IS"
+ basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ or implied. See the Licence permissions and limitations under the Licence.
+--> 
+
 <html>
     <head>
+        <!-- Standard imports -->
+
+        <!-- Project imports -->
         <link rel="import" href="/libraries.html">
         <link rel="import" href="/htk-component.html">
     </head>
     <body>
+        <!-- HTML5 component template-->
         <template id="tmaineditor">
             <iframe id="dmaineditor" style="position: absolute; height: 100%; width: 100%; border: none">
             </iframe>
@@ -13,12 +34,22 @@
             //This is enclosure is required to protect the importDoc
             (function () {
                 var importDoc = document.currentScript.ownerDocument; // importee
-                //Constructor
+
+                /**
+                 * @brief Hieratika main editor. Offers the iframe that contains all the components that represent a given Hieratika page.
+                 */
                 class HtkMainEditor extends HTMLElement {
+
+                    /**
+                     * @brief Constructor. NOOP.
+                     */
                     constructor() {
                         super();
                     }
 
+                    /**
+                     * @brief See HTMLElement.createdCallback.
+                     */
                     createdCallback () {
                         var template = importDoc.querySelector("#tmaineditor");
                         var clone = document.importNode(template.content, true);
@@ -30,6 +61,9 @@
                         this.mainEditorIFrame.src = "/help.html?" + new Date().getTime(); //new Date... to force reloading with no caching
                     }
 
+                    /**
+                     * @brief See HTMLElement.attachedCallback.
+                     */
                     attachedCallback() {
                         var topNav = document.getElementById("top-nav");
                         topNav.addPageListener(this); 
@@ -38,10 +72,17 @@
                         this.addPlantInfoLoadedListener(topNav);
                     }
 
+                    /**
+                     * @brief Registers a component that wants to know about page load events.
+                     * @param[in] listener the component to register.
+                     */
                     addPlantInfoLoadedListener(listener) {
                         this.plantInfoLoadedListeners.push(listener);
                     }
 
+                    /**
+                     * @brief Informs all the registered components (see addPlantInfoLoadedListener) that a new page has been loaded.
+                     */
                     firePlantInfoLoaded() {
                         for(var l in this.plantInfoLoadedListeners) {
                             this.plantInfoLoadedListeners[l].plantInfoLoaded();
@@ -136,6 +177,9 @@
                         parent.htkHelper.displayPlant();
                     } 
 
+                    /**
+                     * @brief Function called when a user logsout from the system. Displays the help page.
+                     */  
                     userLogout () {
                         this.mainEditorIFrame.onload = function(evt) {
                         }.bind(this);
@@ -151,6 +195,11 @@
                         return this.mainEditorIFrame.contentDocument._frameComponents;
                     }
                 }
+
+
+                /**
+                 * @brief Registers the element.
+                 */ 
                 document.registerElement("htk-main-editor", {
                     prototype: HtkMainEditor.prototype,
                 });
