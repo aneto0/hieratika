@@ -24,7 +24,7 @@
 
 <script type="text/javascript">
     /**
-     * @brief The root in Hieratika HTML5 components class hierarchy.
+     * @brief The root of the Hieratika HTML5 components class hierarchy.
      * @details All the Hieratika HTML5 user-interface components shall inherit from HtkComponent. 
      * This component is responsible for implementing all the logical interfaces to the hieratika server, so that components inheriting from this component will (mostly) have to handle only with appropriate data transformation for user display (by implementing the refresh method and querying the getValue()).
      *
@@ -426,6 +426,9 @@
 
         /**
          * @brief HTML5 createdCallback function. Initialise all the component variables and register the component to listen for information from the server.
+         * @details Note that the component will be registered in a dictionary that is private to the document (_frameComponents) so that it can be accessed from an iframe. Also note 
+         * that the _frameComponents dictionary variable must be private to the iframe (i.e. to the document), otherwise there will be name clashes between different instance of libraries of the same type (given that each of them
+            renders the contents in a iframe and the components are the same for the same library type).
          */
         createdCallback() {
             var template = this.getTemplate();

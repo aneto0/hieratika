@@ -55,7 +55,7 @@
                         var clone = document.importNode(template.content, true);
                         var root = this.createShadowRoot();
                         root.appendChild(clone);
-                        this.plantInfoLoadedListeners = [this];
+                        this.variablesInfoLoadedListeners = [this];
                         parent.htkHelper.setHtkMainEditor(this);
                         this.mainEditorIFrame = this.shadowRoot.querySelector("#dmaineditor");
                         this.mainEditorIFrame.src = "/help.html?" + new Date().getTime(); //new Date... to force reloading with no caching
@@ -65,7 +65,7 @@
                      * @brief See HTMLElement.attachedCallback.
                      */
                     attachedCallback() {
-                        var topNav = document.getElementById("top-nav");
+                        var topNav = document.getElementById("nav-pane");
                         topNav.addPageListener(this); 
                         topNav.addUserLogoutListener(this);
                         //Cannot be done from the topNav since the topNav createdCallback and attachedCallback are called before the mainEditor created and attached callbacks
@@ -73,23 +73,27 @@
                     }
 
                     /**
-                     * @brief Registers a component that wants to know about page load events.
+                     * @brief Registers a component that wants to informed when all the variables information, for a given page, have been loaded.
                      * @param[in] listener the component to register.
                      */
-                    addPlantInfoLoadedListener(listener) {
-                        this.plantInfoLoadedListeners.push(listener);
+                    addVariablesInfoLoadedListener(listener) {
+                        this.variablesInfoLoadedListeners.push(listener);
                     }
 
                     /**
                      * @brief Informs all the registered components (see addPlantInfoLoadedListener) that a new page has been loaded.
                      */
-                    firePlantInfoLoaded() {
-                        for(var l in this.plantInfoLoadedListeners) {
-                            this.plantInfoLoadedListeners[l].plantInfoLoaded();
+                    fireVariablesInfoLoaded() {
+                        for(var l in this.variablesInfoLoadedListeners) {
+                            this.variablesInfoLoadedListeners[l].variablesInfoLoaded();
                         }
                     }
 
-                    loadPlantInfo(pageName) {
+                    /**
+                     * @brief Loads a new page into the main iframe display.
+                     * @param[in] pageName the page to display.
+                     */
+                    loadVariablesInfo(pageName) {
                         parent.htkDialogs.showWaitDialog();
                         var allVariableIds = [];
                         var allLiveVariableIds = [];
@@ -135,7 +139,7 @@
                                             }
                                         }
 
-                                        this.firePlantInfoLoaded();
+                                        this.fireVariablesInfoLoaded();
                                         parent.htkDialogs.closeWaitDialog();
                                     }.bind(this),
                                     function () {
@@ -152,8 +156,12 @@
                         );
                     }
 
+                    /**
+                     * @brief Callback function called when the page has finished loading (onload event).
+                     * @param[in] pageName the page that was loaded.
+                     */
                     iFrameLoaded(pageName) {
-                        this.loadPlantInfo(pageName); 
+                        this.loadVariablesInfo(pageName); 
 
                         $.each(this.mainEditorIFrame.contentDocument._frameComponents, function (i, htkCompArray) {
                             $.each(htkCompArray, function (j, htkComp) {
@@ -162,18 +170,25 @@
                         });
                     }
 
+                    /**
+                     * @brief Callback function that is called when the page has been changed by the user (see addPageListener on htk-nav-pane).
+                     * @param[in] page the page that was loaded.
+                     */
                     pageChanged (page) {
                         this.mainEditorIFrame.contentDocument._frameComponents = {};
-                        //Remove all the listeners (apart from this and the htk-top-nav)
-                        this.plantInfoLoadedListeners = this.plantInfoLoadedListeners.slice(0, 2);
+                        //Remove all the listeners (apart from this and the htk-nav)
+                        this.variablesInfoLoadedListeners = this.variablesInfoLoadedListeners.slice(0, 2);
                         var pageUrl = "pages/" + page.url + ".html?" + new Date().getTime(); //new Date... to force reloading with no caching
                         this.mainEditorIFrame.onload = function(evt) {
                             this.iFrameLoaded(page.name);
                         }.bind(this);
                         this.mainEditorIFrame.src = pageUrl;
                     }
-   
-                    plantInfoLoaded() {
+  
+                    /**
+                     * @brief Callback function that is called when all the variables information has been loaded.
+                     */ 
+                    variablesInfoLoaded() {
                         parent.htkHelper.displayPlant();
                     } 
 
