@@ -345,4 +345,3 @@ class HieratikaServer(object):
             An instance of the new library is successfully saved/created, None otherwise.
         """
         pass
-

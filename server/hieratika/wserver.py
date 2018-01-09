@@ -26,6 +26,7 @@ import logging
 ##
 # Project imports
 ##
+from hieratika.hconstants import HieratikaConstants
 from hieratika.page import Page
 from hieratika.user import User
 from hieratika.usergroup import UserGroup
@@ -108,7 +109,7 @@ class WServer:
            request.form["pageName"]: name of the page (which corresponds to the name of the configuration).
            request.form["variables"]: identifiers of the variables to be queried.
         Returns:
-            A json encoded list of variables or InvalidToken if the token is not valid.
+            A json encoded list of variables or HieratikaConstants.INVALID_TOKEN if the token is not valid.
             The following information is retrieved for any given variable:
             - name: the full variable name (containing any structure naming information, encoded as with a structure separator);
             - alias: a free format text which provides a meaningful name to the variable.
@@ -129,7 +130,7 @@ class WServer:
             toReturn = json.dumps(variablesStr)
         except KeyError as e:
             log.critical(str(e))
-            toReturn = "InvalidParameters"
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
 
         return toReturn 
 
@@ -140,7 +141,7 @@ class WServer:
            request.form["libraryType"]: name of the page (which corresponds to the name of the configuration).
            request.form["variables"]: identifiers of the variables to be queried.
         Returns:
-            A json encoded list of variables or InvalidToken if the token is not valid.
+            A json encoded list of variables or HieratikaConstants.INVALID_TOKEN if the token is not valid.
             The following information is retrieved for any given variable:
             - name: the full variable name (containing any structure naming information, encoded as with a structure separator);
             - alias: a free format text which provides a meaningful name to the variable.
@@ -162,7 +163,7 @@ class WServer:
             toReturn = json.dumps(variablesStr)
         except KeyError as e:
             log.critical(str(e))
-            toReturn = "InvalidParameters"
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
 
         return toReturn 
 
@@ -172,7 +173,7 @@ class WServer:
         Args:
            request.form["pageName"]: name of the page (which corresponds to the name of the configuration).
         Returns:
-            A json encoded list of transformations (see TransformationFunction) or InvalidToken if the token is not valid.
+            A json encoded list of transformations (see TransformationFunction) or HieratikaConstants.INVALID_TOKEN if the token is not valid.
         """
        
         toReturn = ""
@@ -183,7 +184,7 @@ class WServer:
             toReturn = json.dumps(transformationsStr)
         except KeyError as e:
             log.critical(str(e))
-            toReturn = "InvalidParameters"
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
 
         return toReturn 
 
@@ -219,7 +220,7 @@ class WServer:
                 self.serverImpl.queueStreamData(json.dumps(toStream))
         except KeyError as e:
             log.critical(str(e))
-            toReturn = "InvalidParameters"
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
         return toReturn
 
     def getLibraries(self, request):
@@ -243,7 +244,7 @@ class WServer:
             log.debug("For {0} in {1} returning: {2}".format(username, htype, toReturn))
         except KeyError as e:
             log.critical(str(e))
-            toReturn = "InvalidParameters"
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
         return toReturn
 
 
@@ -271,7 +272,7 @@ class WServer:
         log.debug("For {0} in {1} returning: {2}".format(username, pageName, toReturn))
 #        except Exception as e:
 #            log.critical(str(e))
-#            toReturn = "InvalidParameters"
+#            toReturn = HieratikaConstants.INVALID_PARAMETERS
         return toReturn
 
     def getSchedule(self, request):
@@ -291,7 +292,7 @@ class WServer:
                 log.debug("Returning schedule: {0}".format(toReturn))
         except KeyError as e:
             log.critical(str(e))
-            toReturn = "InvalidParameters"
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
         return toReturn
 
     def getScheduleVariablesValues(self, request):
@@ -310,7 +311,7 @@ class WServer:
             toReturn = json.dumps(variables)
         except KeyError as e:
             log.critical(str(e))
-            toReturn = "InvalidParameters"
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
         return toReturn
 
     def getLibraryVariablesValues(self, request):
@@ -329,7 +330,7 @@ class WServer:
             toReturn = json.dumps(variables)
         except KeyError as e:
             log.critical(str(e))
-            toReturn = "InvalidParameters"
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
         return toReturn
 
 
@@ -366,7 +367,7 @@ class WServer:
 
         except KeyError as e:
             log.critical(str(e))
-            toReturn = "InvalidParameters"
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
         return toReturn
 
     def createSchedule(self, request):
@@ -380,7 +381,7 @@ class WServer:
             request.form["sourceScheduleUID"]: create the schedule by copying from the schedule with the unique identifier given by sourceScheduleUID. If sourceSchedule is not set, copy from the plant.
 
         Returns:
-            The unique identifier of the created schedule or InvalidParameters if the schedule could not be created.
+            The unique identifier of the created schedule or HieratikaConstants.INVALID_PARAMETERS if the schedule could not be created.
         """
         try:
             name = request.form["name"]
@@ -393,11 +394,28 @@ class WServer:
             log.critical("{0}".format(request.form))
             toReturn = self.serverImpl.createSchedule(name, description, username, pageName, sourceScheduleUID) 
             if (toReturn == None):
-                toReturn = "InvalidParameters"
+                toReturn = HieratikaConstants.INVALID_PARAMETERS
         except KeyError as e:
             log.critical(e)
-            toReturn = "InvalidParameters"
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
         return toReturn
+
+    def deleteSchedule(self, request):
+        """ Deletes an existent schedule. 
+
+        Args:
+            request.form["scheduleUID"]: the schedule identifier.
+        Returns:
+            HieratikaConstants.OK if the schedule was successfully delete, HieratikaConstants.NOT_FOUND if the schedule was not found or HieratikaConstants.IN_USE if the schedule was already used and thus cannot be deleted.
+        """
+        try:
+            scheduleUID = request.form["scheduleUID"]
+            toReturn = self.serverImpl.deleteSchedule(scheduleUID) 
+        except KeyError as e:
+            log.critical(e)
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
+        return toReturn
+
 
     def getUsers(self, request):
         """
@@ -427,7 +445,7 @@ class WServer:
                 log.debug("Returning user: {0}".format(toReturn))
         except KeyError as e:
             log.critical(str(e))
-            toReturn = "InvalidParameters"
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
         return toReturn
 
     def getPages(self, request):
@@ -446,7 +464,7 @@ class WServer:
         Args:
            request.form["pageName"]: shall contain the page name.
         Returns:
-            A page with a given name or InvalidToken if the token is not valid.
+            A page with a given name or HieratikaConstants.INVALID_TOKEN if the token is not valid.
         """
 
         try: 
@@ -457,7 +475,7 @@ class WServer:
             toReturn = json.dumps(page.__dict__)
         except KeyError as e:
             log.critical(str(e))
-            toReturn = "InvalidParameters"
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
         return toReturn
 
     def setPagesFolder(self, pagesFolder):
@@ -499,7 +517,7 @@ class WServer:
             log.debug("{0}".format(str(user)))
         except KeyError as e:
             log.critical("Missing field ({0})".format(e))
-            toReturn = "InvalidParameters"
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
         return toReturn
 
     def logout(self, request):
@@ -548,7 +566,7 @@ class WServer:
             toReturn = "ok"
         except KeyError as e:
             log.critical(str(e))
-            toReturn = "InvalidParameters"
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
         return toReturn
 
     def saveLibrary(self, request):
@@ -576,6 +594,6 @@ class WServer:
                 toReturn = json.dumps(lib.__dict__)
         except KeyError as e:
             log.critical(str(e))
-            toReturn = "InvalidParameters"
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
         return toReturn
 
