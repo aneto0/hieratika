@@ -1,11 +1,11 @@
 TODO
 -   Design and implement the concept of pulses (DAP) - NOT DONE
 -   Create the statistics backend
+-   Design and implement smart reference counter for libraries/schedules usage (in order to avoid deletion)
+-   Allow users to organise schedules/libraries in folders.
+-   Allow users to delete schedules/libraries.
 -   Rename the page concept to configuration model/object - NOT DONE
--   Make sure that every action goes through the auth module - NOT DONE
--   Clean and restructure the html5 client code - SOME WORK DONE BUT NOT COMPLETE
 -   Document the design - NOT DONE
--   Document the html5 client - NOT DONE
 -   Write unit tests for the server - NOT DONE
 -   Port the sqlite backend - NOT DONE
 -   Setup the unit testing infrastructure for the client - NOT DONE
