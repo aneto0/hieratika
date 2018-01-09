@@ -83,7 +83,7 @@
                             loginButton.onclick = function() {
                                 var usernameTxt = this.shadowRoot.querySelector("#username");
                                 var passwordTxt = this.shadowRoot.querySelector("#password");
-                                this.htkHelper.loginToServer(
+                                parent.htkHelper.loginToServer(
                                     usernameTxt.value, 
                                     passwordTxt.value,
                                     function(user) { 

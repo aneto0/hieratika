@@ -351,7 +351,8 @@
                      */
                     setOwnerComponent(owner) {
                         this.owner = owner;
-                        var editorUrl = "/pages/" + owner.getLibraryType() + ".html?" + new Date().getTime(); //new Date... to force reloading with no caching
+                        var libraryType = owner.getLibraryType();
+                        var editorUrl = "/pages/" + libraryType + ".html?" + new Date().getTime(); //new Date... to force reloading with no caching
                         this.iFrameEditor.onload = function(evt) {
                             this.iFrameLoaded(libraryType);
                         }.bind(this);
