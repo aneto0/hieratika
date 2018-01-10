@@ -39,6 +39,7 @@ from lxml import etree
 ##
 # Project imports
 ##
+from hieratika.hconstants import HieratikaConstants
 from hieratika.hlibrary import HLibrary
 from hieratika.page import Page
 from hieratika.schedule import Schedule
@@ -596,36 +597,197 @@ class PSPSServer(HieratikaServer):
             xmlId = self.getXmlId(xmlFile)
             self.lockPool.acquire(xmlId)
             tree = self.getCachedXmlTree(xmlFile)
+            obsolete = False
             if (tree is not None):
                 xmlRoot = tree.getroot()
                 description = xmlRoot.find("./ns0:description", self.xmlns)
                 if (description is not None):
                     description = description.text
+                obsoleteXml = xmlRoot.find("./ns0:obsolete", self.xmlns)
+                if (obsoleteXml is not None):
+                    obsoleteTxt = obsoleteXml.text
+                    obsolete = obsoleteTxt in ("true", "yes", "1") 
+
             self.lockPool.release(xmlId)
             filePath = xmlFile.split("/")
             name = filePath[-1]
             name = name.split(".xml")
             if (len(name) > 1):
                 name = name[-2]
-            schedule = Schedule(xmlFile, name, pageName, username, description)
+            schedule = Schedule(xmlFile, name, pageName, username, description, obsolete)
             schedules.append(schedule);
 
         return schedules
 
     def getSchedule(self, scheduleUID):
         schedule = None
-        xmlId = self.getXmlId(xmlFile)
+        xmlId = self.getXmlId(scheduleUID)
         self.lockPool.acquire(xmlId)
-        tree = self.getCachedXmlTree(xmlFile)
+        tree = self.getCachedXmlTree(scheduleUID)
+        obsolete = False
         if (tree is not None):
             xmlRoot = tree.getroot()
             description = xmlRoot.find("./ns0:description", self.xmlns)
             if (description is not None):
                 description = description.text
+            obsoleteXml = xmlRoot.find("./ns0:obsolete", self.xmlns)
+            if (obsoleteXml is not None):
+                obsoleteTxt = obsoleteXml.text
+                obsolete = obsoleteTxt in ("true", "yes", "1") 
+
             filePath = xmlFile.split("/")
-            schedule = Schedule(xmlFile, filePath[-1], pageName, username, description)
+            schedule = Schedule(xmlFile, filePath[-1], pageName, username, description, obsolete)
         self.lockPool.release(xmlId)
         return schedule
+
+    def deleteSchedule(self, scheduleUID):
+        ret = HieratikaConstants.OK
+        xmlId = self.getXmlId(scheduleUID)
+        self.lockPool.acquire(xmlId)
+        tree = self.getCachedXmlTree(scheduleUID)
+        if (tree is not None):
+            log.info("Deleting schedule with UID: {0}".format(scheduleUID))
+            xmlRoot = tree.getroot()
+            referenceCounter = 0
+            refCounterXml = xmlRoot.find("./ns0:references/ns0:counter", self.xmlns)
+            if (refCounterXml is None):
+                referenceCounter = int(refCounterXml.text)
+
+            if (referenceCounter == 0):
+                if (os.path.isfile(scheduleUID)):
+                    #Delete any cached xml paths
+                    try:
+                        del(self.cachedXmls[scheduleUID])
+                    except Exception as e:
+                        pass
+
+                    try:
+                        os.remove(scheduleUID)
+                        log.info("Deleted schedule with UID: {0}".format(scheduleUID))
+                    except Exception as e:
+                        ret = HieratikaConstants.UNKNOWN_ERROR
+                        log.critical("Failed deleting schedule with UID: {0}".format(scheduleUID))
+                    
+                else:
+                    ret = HieratikaConstants.NOT_FOUND
+            else:
+                log.critical("Could not delete schedule with UID: {0} since there are {1} references using this schedule".format(scheduleUID, referenceCounter))
+                ret = HieratikaConstants.IN_USE
+        else:
+            ret = HieratikaConstants.NOT_FOUND
+        self.lockPool.release(xmlId)
+        return ret
+
+    def obsoleteSchedule(self, scheduleUID):
+        ret = HieratikaConstants.OK
+        xmlId = self.getXmlId(scheduleUID)
+        self.lockPool.acquire(xmlId)
+        tree = self.getCachedXmlTree(scheduleUID)
+        if (tree is not None):
+            xmlRoot = tree.getroot()
+            obsoleteXml = xmlRoot.find("./ns0:obsolete", self.xmlns)
+            if (obsoleteXml is None):
+                obsoleteXml = etree.SubElement(xmlRoot, "{{{0}}}obsolete".format(self.xmlns["ns0"]))
+            obsoleteXml.text = "true"
+            tree.write(scheduleUID)
+        else:
+            ret = HieratikaConstants.NOT_FOUND
+        self.lockPool.release(xmlId)
+        return ret
+
+    def incrementReferenceCounter(self, xmlUID):
+        #Helper function that assumes that the access to this library has been locked!
+        tree = self.getCachedXmlTree(xmlUID)
+        if (tree is not None):
+            xmlRoot = tree.getroot()
+            referenceCounter = 0
+            refCounterXml = xmlRoot.find("./ns0:references/ns0:counter", self.xmlns)
+            if (refCounterXml is None):
+                refsCounterXml = etree.SubElement(xmlRoot, "{{{0}}}references".format(self.xmlns["ns0"]))
+                refCounterXml = etree.SubElement(refsCounterXml, "{{{0}}}counter".format(self.xmlns["ns0"]))
+                refCounterXml.text = "0"
+                
+            referenceCounter = int(refCounterXml.text)
+            referenceCounter = referenceCounter + 1
+            refCounterXml.text = "{0}".format(referenceCounter)
+            tree.write(xmlUID)
+            log.debug("New reference counter for object with UID: {0} is {1}".format(xmlUID, referenceCounter))
+
+    def decrementReferenceCounter(self, xmlUID):
+        #Helper function that assumes that the access to this library has been locked!
+        tree = self.getCachedXmlTree(xmlUID)
+        if (tree is not None):
+            xmlRoot = tree.getroot()
+            referenceCounter = 0
+            refCounterXml = xmlRoot.find("./ns0:references/ns0:counter", self.xmlns)
+            if (refCounterXml is None):
+                refsCounterXml = etree.SubElement(xmlRoot, "{{{0}}}references".format(self.xmlns["ns0"]))
+                refCounterXml = etree.SubElement(refsCounterXml, "{{{0}}}counter".format(self.xmlns["ns0"]))
+                refCounterXml.text = "0"
+                
+            referenceCounter = int(refCounterXml.text)
+            referenceCounter = referenceCounter - 1
+            if (referenceCounter < 0):
+                referenceCounter = 0
+            refCounterXml.text = "{0}".format(referenceCounter)
+            tree.write(xmlUID)
+            log.debug("New reference counter for object with UID: {0} is {1}".format(xmlUID, referenceCounter))
+
+
+    def deleteLibrary(self, libraryUID):
+        ret = HieratikaConstants.OK
+        xmlId = self.getXmlId(libraryUID)
+        self.lockPool.acquire(xmlId)
+        tree = self.getCachedXmlTree(libraryUID)
+        if (tree is not None):
+            log.info("Deleting library with UID: {0}".format(libraryUID))
+            xmlRoot = tree.getroot()
+            referenceCounter = 0
+            refCounterXml = xmlRoot.find("./ns0:references/ns0:counter", self.xmlns)
+            if (refCounterXml is None):
+                referenceCounter = int(refCounterXml.text)
+
+            if (referenceCounter == 0):
+                if (os.path.isfile(libraryUID)):
+                    #Delete any cached xml paths
+                    try:
+                        del(self.cachedXmls[libraryUID])
+                    except Exception as e:
+                        pass
+
+                    try:
+                        os.remove(libraryUID)
+                        log.info("Deleted library with UID: {0}".format(libraryUID))
+                    except Exception as e:
+                        ret = HieratikaConstants.UNKNOWN_ERROR
+                        log.critical("Failed deleting library with UID: {0}".format(libraryUID))
+                    
+                else:
+                    ret = HieratikaConstants.NOT_FOUND
+            else:
+                log.critical("Could not delete library with UID: {0} since there are {1} references using this library".format(libraryUID, referenceCounter))
+                ret = HieratikaConstants.IN_USE
+        else:
+            ret = HieratikaConstants.NOT_FOUND
+        self.lockPool.release(xmlId)
+        return ret
+
+    def obsoleteLibrary(self, libraryUID):
+        ret = HieratikaConstants.OK
+        xmlId = self.getXmlId(libraryUID)
+        self.lockPool.acquire(xmlId)
+        tree = self.getCachedXmlTree(libraryUID)
+        if (tree is not None):
+            xmlRoot = tree.getroot()
+            obsoleteXml = xmlRoot.find("./ns0:obsolete", self.xmlns)
+            if (obsoleteXml is None):
+                obsoleteXml = etree.SubElement(xmlRoot, "{{{0}}}obsolete".format(self.xmlns["ns0"]))
+            obsoleteXml.text = "true"
+            tree.write(libraryUID)
+        else:
+            ret = HieratikaConstants.NOT_FOUND
+        self.lockPool.release(xmlId)
+        return ret
 
     def getScheduleVariablesValues(self, scheduleUID):
         log.debug("Return schedule variables values for UID: {0}".format(scheduleUID))
@@ -921,7 +1083,7 @@ class PSPSServer(HieratikaServer):
         self.mux.release()
         return ret
 
-    def updateLibrary(self, rec, root, variableValue):
+    def updateLibrary(self, rec, root, variableValue, oldVariableValue):
         """ Updates the values of the variables mapped in a library.
 
         Args:
@@ -935,7 +1097,7 @@ class PSPSServer(HieratikaServer):
         ok = True
         variableValueOwnerLibName = variableValue.split("/")
         if (len(variableValueOwnerLibName) < 2):
-            log.critical("The library variable value shall contain the owner username and the name of the variable separated by a /")
+            log.critical("The library variable value shall contain the owner username and the name of the library separated by a /")
             ok = False 
         #The variable name i the 
         libraryXml = rec.find("./ns0:library", self.xmlns)
@@ -980,6 +1142,10 @@ class PSPSServer(HieratikaServer):
                         directory = "{0}/users/{1}/libraries/{2}".format(self.baseDir, username, libraryType)
 
                     libraryUID = "{0}/{1}.xml".format(directory, libraryName)
+                    xmlId = self.getXmlId(libraryUID)
+                    self.lockPool.acquire(xmlId)
+                    self.incrementReferenceCounter(libraryUID)
+                    self.lockPool.release(xmlId)
                     libraryVariables = self.getLibraryVariablesValues(libraryUID)
                     for (source, destination) in zip(sourceLibraryVariables, destinationPlantScheduleVariables):
                         if (source in libraryVariables):
@@ -987,8 +1153,19 @@ class PSPSServer(HieratikaServer):
                             updatedVariables = updatedVariables + self.updateVariable(destination, root, libraryVariables[source])
                         else:
                             log.critical("{0} could not be found in {1}".format(source, libraryName))
-                else:
-                    log.critical("Number of source variables ({0}) is different from number of destination variables ({1})".format(len(sourceLibraryVariables), len(destinationPlantScheduleVariables)))
+
+                    if (oldVariableValue is not None):
+                        oldVariableValueOwnerLibName = oldVariableValue.split("/")
+                        if (len(oldVariableValueOwnerLibName) < 2):
+                            log.critical("The library variable value shall contain the owner username and the name of the library separated by a /")
+                        else:
+                            #Remove any "
+                            oldLibraryName = oldVariableValueOwnerLibName[1].strip("\"")
+                            oldLibraryUID = "{0}/{1}.xml".format(directory, oldLibraryName)
+                            xmlId = self.getXmlId(oldLibraryUID)
+                            self.lockPool.acquire(xmlId)
+                            self.decrementReferenceCounter(oldLibraryUID)
+                            self.lockPool.release(xmlId)
             else:
                 log.critical("ns0:library could not be found {0}".format(libraryName))
 
@@ -1030,7 +1207,11 @@ class PSPSServer(HieratikaServer):
             recordXml = r.find(fullVariablePath, self.xmlns)
             if (recordXml is not None):
                 valuesXml = recordXml.find("./ns0:values", self.xmlns)
+                oldValue = None
                 if (valuesXml is not None):
+                    oldValueXml = valuesXml.find("./ns0:value", self.xmlns)
+                    if (oldValueXml is not None):
+                        oldValue = oldValueXml.text 
                     recordXml.remove(valuesXml)
                 valuesXml = etree.SubElement(recordXml, "{{{0}}}values".format(self.xmlns["ns0"]))
                 valueXml = etree.SubElement(valuesXml, "{{{0}}}value".format(self.xmlns["ns0"]))
@@ -1039,7 +1220,7 @@ class PSPSServer(HieratikaServer):
                 updatedVariables.append((variableName, variableValue))
                 if (typeFromXml == "library"):
                     #+ provides list concatenation
-                    updatedVariables = updatedVariables + self.updateLibrary(recordXml, root, variableValue)
+                    updatedVariables = updatedVariables + self.updateLibrary(recordXml, root, variableValue, oldValue)
             else:
                 log.critical("Could not find {0} . Failed while looking for {1}".format(variableName, fullVariablePath))
         else:

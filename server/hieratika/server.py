@@ -331,6 +331,50 @@ class HieratikaServer(object):
         pass
 
     @abstractmethod
+    def deleteSchedule(self, scheduleUID):
+        """ Deletes an existent schedule. 
+
+        Args:
+            scheduleUID (str): unique schedule identifier
+        Returns:
+            HieratikaConstants.OK if the schedule was successfully delete, HieratikaConstants.NOT_FOUND if the schedule was not found or HieratikaConstants.IN_USE if the schedule is being (or was already used) and thus cannot be deleted.
+        """
+        pass
+
+    @abstractmethod
+    def obsoleteSchedule(self, scheduleUID):
+        """ Obsoletes an existent schedule. 
+
+        Args:
+            scheduleUID (str): unique schedule identifier
+        Returns:
+            HieratikaConstants.OK if the schedule was successfully delete, HieratikaConstants.NOT_FOUND if the schedule was not found or HieratikaConstants.IN_USE if the schedule is being (or was already used) and thus cannot be deleted.
+        """
+        pass
+
+    @abstractmethod
+    def deleteLibrary(self, libraryUID):
+        """ Deletes an existent library. 
+
+        Args:
+            libraryUID (str): unique library identifier
+        Returns:
+            HieratikaConstants.OK if the library was successfully delete, HieratikaConstants.NOT_FOUND if the library was not found or HieratikaConstants.IN_USE if the library is being (or was already used) and thus cannot be deleted.
+        """
+        pass
+
+    @abstractmethod
+    def obsoleteLibrary(self, libraryUID):
+        """ Obsoletes an existent library. 
+
+        Args:
+            libraryUID (str): unique library identifier
+        Returns:
+            HieratikaConstants.OK if the library was successfully delete, HieratikaConstants.NOT_FOUND if the library was not found or HieratikaConstants.IN_USE if the library is being (or was already used) and thus cannot be deleted.
+        """
+        pass
+
+    @abstractmethod
     def saveLibrary(self, htype, name, description, username, variables):
         """ Saves (and creates if needed) a library of the given type, with the given name, for the provided user. 
     

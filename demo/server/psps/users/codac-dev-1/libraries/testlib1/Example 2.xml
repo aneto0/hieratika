@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<configurationContainer
-    xmlns="http://www.iter.org/CODAC/PlantSystemConfig/2014" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<configurationContainer xmlns="http://www.iter.org/CODAC/PlantSystemConfig/2014" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <schemaVersion>1.2</schemaVersion>
     <version>00.00</version>
     <sddVersion>1</sddVersion>
@@ -45,8 +43,8 @@
                             <constraint>
                                 <name>Double limit</name>
                                 <description>Validates a double limit</description>
-                                <hint><![CDATA[Change the value of AA@BB@CC<=10]]></hint>
-                                <function name="schedule.validate"><![CDATA[='AA@BB@CC'<=10]]></function>
+                                <hint>Change the value of AA@BB@CC&lt;=10</hint>
+                                <function name="schedule.validate">='AA@BB@CC'&lt;=10</function>
                                 <origin>SDD</origin>
                             </constraint>
                         </constraints>
@@ -59,4 +57,4 @@
             </sdnTopics>
         </plantSystem>
     </plantSystems>
-</configurationContainer>
+<references><counter>3</counter></references></configurationContainer>

@@ -41,6 +41,7 @@
                 this.valuesToSynchroniseRemote = [];
                 this.scheduleValuesToCommit = {};
                 this.currentScheduleUID = undefined;
+                this.idxx = new Date().toISOString();
             }
 
             /**
@@ -56,7 +57,7 @@
              * @param[in] scheduleUIDIn the UID of the schedule currently opened by the user.
              */
             setCurrentScheduleUID(scheduleUIDIn) {
-                this.scheduleUID = scheduleUIDIn;
+                this.currentScheduleUID = scheduleUIDIn;
             }
 
             /**
@@ -72,7 +73,7 @@
              * @brief Informs that a value is to be synchronised remote.
              * @param[in] variable the variable to synchronise.
              */
-            synchroniseRemote(variable) {
+            addVariableToSynchroniseRemote(variable) {
                 this.valuesToSynchroniseRemote.push(variable);
             }
 
@@ -685,42 +686,40 @@
 
             /**
              * @brief Updates the schedule remotely with any values that have changed in the last period.
-             * @param[in] period time interval in milliseconds at which the component values shall be synchronised remotely.
              */
-            synchroniseRemote(period) {
-                if (this.currentScheduleUID !== undefined) {
-                    var toPop = this.valuesToSynchroniseRemote.length;
+            synchroniseRemote() {
+                //This is because in the context of the setInterval callback the this is the Window
+                var _this = htkHelper;
+                if (_this.currentScheduleUID !== undefined) {
+                    var toPop = _this.valuesToSynchroniseRemote.length;
                     if (toPop > 0) {
                         var variablesToSend = {};
                         //Not perfectly safe, but worst comes to the worst I send twice the same thing from time to time
                         var i = 0;
                         while (i < toPop) {
-                            var valueToSynch = this.valuesToSynchroniseRemote.shift();//not pop since we want to remove the oldest (i.e. the first) before
+                            var valueToSynch = _this.valuesToSynchroniseRemote.shift();//not pop since we want to remove the oldest (i.e. the first) before
                             variablesToSend[valueToSynch.id] = valueToSynch.value;
-                            this.scheduleValuesToCommit[valueToSynch.id] = valueToSynch.value;
+                            _this.scheduleValuesToCommit[valueToSynch.id] = valueToSynch.value;
                             i++;
                         }
                         $.ajax({
                             type: "post",
                             url: "/updateschedule",
                             data: {
-                                token: this.token,
-                                tid: this.remoteServerTid,
-                                scheduleUID:this.currentScheduleUID,
+                                token: _this.token,
+                                tid: _this.remoteServerTid,
+                                scheduleUID:_this.currentScheduleUID,
                                 variables:JSON.stringify(variablesToSend)
                             },
                             success: function (response) {
-                                setTimeout(this.synchroniseRemote, period);
-                            }.bind(this),
+                            }.bind(_this),
                             error: function (response) {
-                                setTimeout(this.synchroniseRemote, period);
                                 console.log(response);
                                 alert(response);
-                            }.bind(this)
+                            }.bind(_this)
                         });
                     }
                 }
-                setTimeout(this.synchroniseRemote, period);
             }
 
             /**
@@ -798,9 +797,11 @@
             }
         }
         //IMPORTANT! Remember when accessing to these global variables to prefix with parent, so that they can be accessed from an iframe
-        htkHelper = new HtkHelper();
-        htkHelper.synchroniseRemote();
-        
+        htkHelper = undefined;
+        if (htkHelper === undefined) {
+            htkHelper = new HtkHelper();
+            setInterval(htkHelper.synchroniseRemote, 2000);
+        }
     
     </script>
 </html>

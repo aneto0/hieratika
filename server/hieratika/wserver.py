@@ -200,7 +200,7 @@ class WServer:
         Returns:
             The string ok if the values are successfully updated.
         """
-        toReturn = "ok"
+        toReturn = HieratikaConstants.OK
         try:
             pageName = request.form["pageName"]
             variables = request.form["variables"]
@@ -345,7 +345,7 @@ class WServer:
         Returns:
             ok if the schedule is successfully updated or an empty string otherwise.
         """
-        toReturn = "ok"
+        toReturn = HieratikaConstants.OK
         try: 
             tid = request.form["tid"]
             scheduleUID = request.form["scheduleUID"]
@@ -406,11 +406,59 @@ class WServer:
         Args:
             request.form["scheduleUID"]: the schedule identifier.
         Returns:
-            HieratikaConstants.OK if the schedule was successfully delete, HieratikaConstants.NOT_FOUND if the schedule was not found or HieratikaConstants.IN_USE if the schedule was already used and thus cannot be deleted.
+            HieratikaConstants.OK if the schedule was successfully delete, HieratikaConstants.NOT_FOUND if the schedule was not found or HieratikaConstants.IN_USE if the schedule is being (or was already) used and thus cannot be deleted.
         """
         try:
             scheduleUID = request.form["scheduleUID"]
             toReturn = self.serverImpl.deleteSchedule(scheduleUID) 
+        except KeyError as e:
+            log.critical(e)
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
+        return toReturn
+
+    def obsoleteSchedule(self, request):
+        """ Obsoletes an existent schedule. 
+
+        Args:
+            request.form["scheduleUID"]: the schedule identifier.
+        Returns:
+            HieratikaConstants.OK if the schedule was successfully obsoleted, HieratikaConstants.NOT_FOUND if the schedule was not found or HieratikaConstants.IN_USE if the schedule is being (or was already) used and thus cannot be deleted.
+        """
+        try:
+            scheduleUID = request.form["scheduleUID"]
+            toReturn = self.serverImpl.obsoleteSchedule(scheduleUID) 
+        except KeyError as e:
+            log.critical(e)
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
+        return toReturn
+
+    def deleteLibrary(self, request):
+        """ Deletes an existent library. 
+
+        Args:
+            request.form["libraryUID"]: the library identifier.
+        Returns:
+            HieratikaConstants.OK if the library was successfully delete, HieratikaConstants.NOT_FOUND if the library was not found or HieratikaConstants.IN_USE if the library is being (or was already) used and thus cannot be deleted.
+        """
+        try:
+            libraryUID = request.form["libraryUID"]
+            toReturn = self.serverImpl.deleteLibrary(libraryUID) 
+        except KeyError as e:
+            log.critical(e)
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
+        return toReturn
+
+    def obsoleteLibrary(self, request):
+        """ Obsoletes an existent library. 
+
+        Args:
+            request.form["libraryUID"]: the library identifier.
+        Returns:
+            HieratikaConstants.OK if the library was successfully obsoleted, HieratikaConstants.NOT_FOUND if the library was not found or HieratikaConstants.IN_USE if the library is being (or was already) used and thus cannot be deleted.
+        """
+        try:
+            libraryUID = request.form["libraryUID"]
+            toReturn = self.serverImpl.obsoleteLibrary(libraryUID) 
         except KeyError as e:
             log.critical(e)
             toReturn = HieratikaConstants.INVALID_PARAMETERS
@@ -563,7 +611,7 @@ class WServer:
                 for k in keys[i: i + n]:
                     toStream["variables"][k] = variablesToStream[k]
                 self.serverImpl.queueStreamData(json.dumps(toStream))
-            toReturn = "ok"
+            toReturn = HieratikaConstants.OK
         except KeyError as e:
             log.critical(str(e))
             toReturn = HieratikaConstants.INVALID_PARAMETERS

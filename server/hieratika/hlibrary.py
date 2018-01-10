@@ -47,7 +47,7 @@ class HLibrary(object):
         A library which is locked cannot be modified nor deleted from the system. This is to avoid that a given library definition is used in a given configuration and is later overriden.
     """
 
-    def __init__(self, htype, uid, name, owner, description = ""):
+    def __init__(self, htype, uid, name, owner, description = "", obsolete = False):
         """ Constructs an HLibrary object against a uid, name, owner and description.
         
         Args:
@@ -56,6 +56,7 @@ class HLibrary(object):
             name (str): the name of the library.
             owner (str): the username of the User which owns the library.
             description (str): a description of the library.
+            obsolete (bool): True if the schedule has been marked as obsolete.
         """
         self.htype = htype
         self.uid = uid
@@ -64,6 +65,7 @@ class HLibrary(object):
         self.description = description
         self.locked = False
         self.lastModified = 0
+        self.obsolete = obsolete
 
     def getUID(self):
         """ 
@@ -128,6 +130,12 @@ class HLibrary(object):
         """
         self.lastModified = lastModified
 
+    def isObsolete(self):
+        """ 
+        Returns:
+            Returns true if the library has been marked as obsolete.
+        """
+        return self.obsolete
 
     def __eq__(self, another):
         """ Two libraries are equal if they have the same uid.

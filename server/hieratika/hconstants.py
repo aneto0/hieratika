@@ -45,7 +45,10 @@ class HieratikaConstants:
     INVALID_PARAMETERS = "InvalidParameters"
 
     # Invalid security token was used.
-    INVALID_TOKEN = "InvalidToken"a
+    INVALID_TOKEN = "InvalidToken"
+
+    # Unknown error
+    UNKNOWN_ERROR = "UnknownError"
 
     # OK
     OK = "ok"

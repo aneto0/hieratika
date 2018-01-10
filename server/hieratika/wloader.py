@@ -61,7 +61,7 @@ class WLoader:
         Args:
             request.form["pageNames"]: the name of the configuration models that are to be loaded.
         Returns:
-            "ok" if all the configurations are successfully loaded.
+            HieratikaConstants.OK if all the configurations are successfully loaded.
         """
         toReturn = "InvalidParameters"
         try:
@@ -85,7 +85,7 @@ class WLoader:
                 if (not ok):
                     break
             if (ok):
-                toReturn = "ok"            
+                toReturn = HieratikaConstants.OK            
         except KeyError as e:
             log.critical(e)
         return toReturn

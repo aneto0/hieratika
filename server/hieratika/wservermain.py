@@ -353,6 +353,29 @@ def savelibrary():
     else:
         return HieratikaConstants.INVALID_TOKEN
 
+#Deletes an existent library 
+@application.route("/deletelibrary", methods=["POST", "GET"])
+def deletelibrary():
+    log.debug("/deletelibrary")
+    if (wserver.isTokenValid(request)):
+        log.debug("/IN deletelibrary")
+        ret = wserver.deleteLibrary(request)
+        log.debug("/OUT deletelibrary")
+        return ret
+    else:
+        return HieratikaConstants.INVALID_TOKEN
+
+#Obsoletes an existent library
+@application.route("/obsoletelibrary", methods=["POST", "GET"])
+def obsoletelibrary():
+    log.debug("/obsoletelibrary")
+    if (wserver.isTokenValid(request)):
+        log.debug("/IN obsoletelibrary")
+        ret = wserver.obsoleteLibrary(request)
+        log.debug("/OUT obsoletelibrary")
+        return ret
+    else:
+        return HieratikaConstants.INVALID_TOKEN
     
 #Return the available schedules
 @application.route("/getschedules", methods=["POST", "GET"])
