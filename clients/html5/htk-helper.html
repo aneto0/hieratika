@@ -20,9 +20,9 @@
         <!-- Standard imports -->
 
         <!-- Project imports -->
-        <link rel="import" href="htk-constants.html">
-        <link rel="import" href="htk-dialogs.html">
-        <link rel="import" href="htk-wait-dialog.html">
+        <link rel="import" href="/htk-constants.html">
+        <link rel="import" href="/htk-dialogs.html">
+        <link rel="import" href="/htk-wait-dialog.html">
     </head>
 
     <script>
@@ -456,6 +456,18 @@
             }
 
             /**
+             * @brief Gets the current logged in user.
+             * @return the current logged in user.
+             */
+            getUser() {
+                var user = localStorage.user;
+                if (user !== undefined) {
+                    user = JSON.parse(user);
+                }
+                return user;
+            }
+
+            /**
              * @brief Gets all the available users.
              * @param[in] successFun function with prototype (void) f(users), that will be called if the users were successfully retrieved.
              * @param[in] errorFun function with prototype (void) f(void), that will be called if the users could not be retrieved.
@@ -630,8 +642,8 @@
              * @param[in] successFun function with prototype (void) f(library), that will be called if the library was successfully saved.
              * @param[in] errorFun function with prototype (void) f(void), that will be called if the libraries variables values could not be saved.
              */
-            saveLibrary(libraryType, libraryName, libraryDescription, variables) {
-                var user = JSON.parse(localStorage.user);
+            saveLibrary(libraryType, libraryName, libraryDescription, variables, successFun, errorFun) {
+                var user = this.getUser();
                 $.ajax({
                     type: "post",
                     url: "/savelibrary",
@@ -645,8 +657,18 @@
                     },
                     success: function (response) {
                         if(this.checkServerResponse(response)) {
-                            var library = $.parseJSON(response);
-                            successFun(library);
+                            if (response === HTK_IN_USE) {
+                                parent.htkDialogs.showErrorDialog("Library is being used in other schedules and thus cannot be overwritten (note that it might being used by this same variable. If so unselect if first).");
+                                errorFun();
+                            } 
+                            else if (response === HTK_UNKNOWN_ERROR) {
+                                parent.htkDialogs.showErrorDialog("Unkown error while saving the library in the server");
+                                errorFun();
+                            }
+                            else {
+                                var library = $.parseJSON(response);
+                                successFun(library);
+                            }
                         }
                     }.bind(this),
                     error: function (response) {
@@ -657,19 +679,63 @@
             }
 
             /**
-             * @brief Checks if the response from the server is valid (i.e. if the server has not replied with INVALID_TOKEN). If it returned with INVALID_TOKEN calls fireInvalidToken().
-             * @return true if the response from the server is not INVALID_TOKEN.
+             * @brief Deletes a library.
+             * @details This is an asynchronous call.
+             * @param[in] libraryUID the library unique identifier. 
+             * @param[in] successFun function with prototype (void) f(), that will be called if the library was successfully deleted.
+             * @param[in] errorFun function with prototype (void) f(void), that will be called if the library could not be deleted.
+             */
+            deleteLibrary(libraryUID, successFun, errorFun) {
+                $.ajax({
+                    type: "post",
+                    url: "/deletelibrary",
+                    data: {
+                        token: this.token,
+                        libraryUID: libraryUID
+                    },
+                    success: function (response) {
+                        if(this.checkServerResponse(response)) { 
+                            if (response === HTK_OK) {
+                                successFun();
+                            }
+                            else {
+                                if (response === HTK_IN_USE) {
+                                    parent.htkDialogs.showErrorDialog("Library is being used in other schedules and thus cannot be deleted.");
+                                    errorFun();
+                                } 
+                                else if (response === HTK_NOT_FOUND) {
+                                    parent.htkDialogs.showErrorDialog("Library could not be found in the server!");
+                                    errorFun();
+                                }
+                                else {
+                                    parent.htkDialogs.showErrorDialog("Unkown error while deleting the library in the server");
+                                    errorFun();
+                                }
+                            }
+                        }
+                    }.bind(this),
+                    error: function (response) {
+                        this.showCriticalError(response);
+                        errorFun();
+                    }.bind(this)
+                });
+            }
+
+            /**
+             * @brief Checks if the response from the server is valid (i.e. if the server has not replied with HTK_INVALID_TOKEN). If it returned with HTK_INVALID_TOKEN calls fireInvalidToken().
+             * @return true if the response from the server is not HTK_INVALID_TOKEN.
              */
             checkServerResponse(response) {
-                var ok = (response !== INVALID_TOKEN);
-                if (!ok) {
+                var ok = true;
+                if (response === HTK_INVALID_TOKEN) {
+                    ok = false;
                     this.fireInvalidToken();
                 }
                 return ok;
             }
 
             /**
-             * @brief Registers a component that is interested in being notified if an INVALID_TOKEN is received from the server.
+             * @brief Registers a component that is interested in being notified if an HTK_INVALID_TOKEN is received from the server.
              */ 
             addInvalidTokenListener(listener) {
                 this.invalidTokenListeners.push(listener);

@@ -3,7 +3,7 @@
     <version>00.00</version>
     <sddVersion>1</sddVersion>
     <name>Example 2</name>
-    <description>A library test</description>
+    <description/>
     <plantSystems>
         <plantSystem>
             <name>AA</name>
@@ -18,18 +18,12 @@
                                 <name>CC</name>
                                 <alias>CC</alias>
                                 <description>Double value</description>
-                                <values>
-                                  <value>3.0</value>
-                                </values>
-                            </record>
+                                <values><value>-2</value></values></record>
                             <record size="1" xsi:type="recordDouble">
                                 <name>DD</name>
                                 <alias>DD</alias>
                                 <description>Double value</description>
-                                <values>
-                                  <value>-2.0</value>
-                                </values>
-                            </record>
+                                <values><value>3</value></values></record>
                         </records>
                     </folder>
                </folders>
@@ -57,4 +51,4 @@
             </sdnTopics>
         </plantSystem>
     </plantSystems>
-<references><counter>3</counter></references></configurationContainer>
+<references><counter>0</counter></references></configurationContainer>

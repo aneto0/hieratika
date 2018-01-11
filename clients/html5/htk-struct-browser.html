@@ -207,7 +207,7 @@
                         this.addMember(this, this.name);
                         this.treeHTML += "</ul>";
                         this.mainDiv.innerHTML = this.treeHTML;
-                        var user = JSON.parse(localStorage.user);
+                        var user = parent.htkHelper.getUser();
                         this.populateComponentInfo(this, user);
                         var tree = this.shadowRoot.querySelector("#struct-tree");
                         CollapsibleLists.applyTo(tree);

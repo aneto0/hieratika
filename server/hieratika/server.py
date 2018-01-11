@@ -386,6 +386,6 @@ class HieratikaServer(object):
             variables ({variableName1:value1, variableName2:value2, ...}):  dictionary with the library variables to be stored.
 
         Returns:
-            An instance of the new library is successfully saved/created, None otherwise.
+            A tupple where the first element is one of HieratikaConstants.OK, HieratikaConstants.IN_USE or HieratikaConstants, and the second element is the new library if successfully saved/created, None otherwise.
         """
         pass

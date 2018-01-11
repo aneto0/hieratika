@@ -628,7 +628,7 @@ class WServer:
             request.form["variables"]: a dictionary with the list of variables to be updated in the form {variableName1:variableValue1, ...}
 
         Returns:
-            A json representation of the new library instance or an empty string if the library could not be saved.
+            A json representation of the new library instance or one of HieratikaConstants.IN_USE, HieratikaConstants.UNKNOWN_ERROR if the library could not be saved.
         """
         toReturn = ""
         try: 
@@ -638,8 +638,10 @@ class WServer:
             username = request.form["username"]
             variables = json.loads(request.form["variables"])
             lib = self.serverImpl.saveLibrary(htype, name, description, username, variables)
-            if (lib is not None):
-                toReturn = json.dumps(lib.__dict__)
+            if (lib[0] == HieratikaConstants.OK):
+                toReturn = json.dumps(lib[1].__dict__)
+            else:
+                toReturn = lib[1]
         except KeyError as e:
             log.critical(str(e))
             toReturn = HieratikaConstants.INVALID_PARAMETERS

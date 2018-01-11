@@ -112,7 +112,7 @@
                         parent.htkHelper.getLiveVariablesInfo(
                             allLiveVariableIds, 
                             function (variables) {
-                                var user = JSON.parse(localStorage.user);
+                                var user = parent.htkHelper.getUser();
                                 for (var i in variables) {
                                     var variable = variables[i];
                                     var targetElements = this.mainEditorIFrame.contentDocument._frameComponents[variable.name];
@@ -127,7 +127,7 @@
                                     pageName,
                                     allVariableIds, 
                                     function (variables) {
-                                        var user = JSON.parse(localStorage.user);
+                                        var user = parent.htkHelper.getUser();
                                         for (var i in variables) {
                                             var variable = variables[i];
                                             var targetElements = this.mainEditorIFrame.contentDocument._frameComponents[variable.name];
