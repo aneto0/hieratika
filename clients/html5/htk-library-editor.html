@@ -385,6 +385,7 @@
                             var selectedUser = this.userSelector.options[this.userSelector.selectedIndex].text;
                             var user = parent.htkHelper.getUser();
                             this.deleteButton.disabled = (selectedUser !== user.username);
+                            this.obsoleteButton.disabled = (selectedUser !== user.username);
                             this.populateLibraries(selectedUser, function() {
                                 if (this.availableLibraries.length > 0) {
                                     var selectedLibrary = this.availableLibraries[0].name;

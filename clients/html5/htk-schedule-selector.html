@@ -186,6 +186,25 @@
                             this.deleteScheduleButton = this.shadowRoot.querySelector("#deleteschedulebtn");
                             this.deleteScheduleButton.disabled = true;
                             this.deleteScheduleButton.onclick = function() {
+                                if (this.scheduleSelect.selectedIndex >= 0) {
+                                    var schedule = this.scheduleSelect[this.scheduleSelect.selectedIndex].scheduleInfo;
+                                    var ok = parent.htkDialogs.showConfirmDialog("Are you sure you want to delete the schedule " + schedule.name + "?");
+                                    if (ok) {
+                                        parent.htkDialogs.showWaitDialog();
+                                        parent.htkHelper.deleteSchedule(
+                                            schedule.uid,
+                                            function () {
+                                                this.updateUserSchedules(); 
+                                            }.bind(this),
+                                            function (response) {
+                                                parent.htkDialogs.closeWaitDialog();
+                                            }
+                                        );
+                                    }
+                                }
+                                else {
+                                    parent.htkDialogs.showErrorDialog("Please select a schedule first");
+                                }
                             }.bind(this); 
 
                             this.obsoleteScheduleButton = this.shadowRoot.querySelector("#obsoleteschedulebtn");
@@ -244,9 +263,9 @@
                                     this.obsoleteScheduleButton.disabled = notThisUsername;
                                 }
                                 else {
-                                    this.okButton.disabled = false;
-                                    this.deleteScheduleButton = false;
-                                    this.obsoleteScheduleButton = false;
+                                    this.okButton.disabled = true;
+                                    this.deleteScheduleButton.disabled = true;
+                                    this.obsoleteScheduleButton.disabled = true;
                                 }
                                 this.descriptionArea.innerHTML = this.scheduleSelect[this.scheduleSelect.selectedIndex].scheduleInfo.description;
                             }

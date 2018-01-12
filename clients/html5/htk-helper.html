@@ -679,6 +679,49 @@
             }
 
             /**
+             * @brief Deletes a schedule.
+             * @details This is an asynchronous call.
+             * @param[in] scheduleUID the schedule unique identifier. 
+             * @param[in] successFun function with prototype (void) f(), that will be called if the schedule was successfully deleted.
+             * @param[in] errorFun function with prototype (void) f(void), that will be called if the schedule could not be deleted.
+             */
+            deleteSchedule(scheduleUID, successFun, errorFun) {
+                $.ajax({
+                    type: "post",
+                    url: "/deleteschedule",
+                    data: {
+                        token: this.token,
+                        scheduleUID: scheduleUID 
+                    },
+                    success: function (response) {
+                        if(this.checkServerResponse(response)) { 
+                            if (response === HTK_OK) {
+                                successFun();
+                            }
+                            else {
+                                if (response === HTK_IN_USE) {
+                                    parent.htkDialogs.showErrorDialog("Schedule is being used in other schedules and thus cannot be deleted.");
+                                    errorFun();
+                                } 
+                                else if (response === HTK_NOT_FOUND) {
+                                    parent.htkDialogs.showErrorDialog("Schedule could not be found in the server!");
+                                    errorFun();
+                                }
+                                else {
+                                    parent.htkDialogs.showErrorDialog("Unkown error while deleting the schedule in the server");
+                                    errorFun();
+                                }
+                            }
+                        }
+                    }.bind(this),
+                    error: function (response) {
+                        this.showCriticalError(response);
+                        errorFun();
+                    }.bind(this)
+                });
+            }
+
+            /**
              * @brief Deletes a library.
              * @details This is an asynchronous call.
              * @param[in] libraryUID the library unique identifier. 
