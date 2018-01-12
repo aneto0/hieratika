@@ -58,6 +58,7 @@ class SUPLoader(HieratikaLoader):
         log.info("Loading {0}".format(pageName)) 
         ok = True
         try:
+            xmlPath = "{0}/psps/configuration/{1}/000/plant.xml".format(self.baseDir, pageName)
             SupConfigurationRPCClient.apply(xmlPath)
         except pvaccess.PvaException as e:
             log.error("RPC Exception: %s" % e.message)
