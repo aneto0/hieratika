@@ -51,4 +51,4 @@
             </sdnTopics>
         </plantSystem>
     </plantSystems>
-</configurationContainer>
+<obsolete>true</obsolete></configurationContainer>

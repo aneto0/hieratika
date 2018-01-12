@@ -51,8 +51,19 @@
                                 <button title="OK" id="okbtn">OK</button>
                                 <button title="Cancel" id="cancelbtn">Cancel</button>
                             </td>
-                             <td style="padding-top:20px;text-align:right;">
-                                <button title="Create a new schedule..." id="createschedulebtn">New schedule...</button>
+                            <td style="padding-top:20px;text-align:right;">
+                                <table style="border-style:solid;border-width:0px;width: 100%">
+                                    <tr>
+                                        <td style="text-align:right;">
+                                            <button title="Create a new schedule..." id="createschedulebtn">+</button>
+                                            <button title="Delete schedule..." id="deleteschedulebtn">-</button>
+                                            <button title="Obsolete schedule..." id="obsoleteschedulebtn">*</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align:right;"><input type="checkbox" id="showobsoletecheckbox" value="obsolete">Show obsolete?</input></td>
+                                    </tr>
+                                </table>
                             </td>
                        </tr>
                     </table>
@@ -126,7 +137,7 @@
 
                             this.scheduleSelect = this.shadowRoot.querySelector("#scheduleselect");
                             this.scheduleSelect.onclick = function() {
-                                this.updateScheduleDescription();
+                                this.updateShownScheduleProperties();
                             }.bind(this);
                             
                             this.descriptionArea = this.shadowRoot.querySelector("#descriptionarea");
@@ -172,6 +183,20 @@
                                 }
                             }.bind(this); 
 
+                            this.deleteScheduleButton = this.shadowRoot.querySelector("#deleteschedulebtn");
+                            this.deleteScheduleButton.disabled = true;
+                            this.deleteScheduleButton.onclick = function() {
+                            }.bind(this); 
+
+                            this.obsoleteScheduleButton = this.shadowRoot.querySelector("#obsoleteschedulebtn");
+                            this.obsoleteScheduleButton.disabled = true;
+                            this.obsoleteScheduleButton.onclick = function() {
+                            }.bind(this); 
+
+                            this.showObsoleteCheckBox = this.shadowRoot.querySelector("#showobsoletecheckbox");
+                            this.showObsoleteCheckBox.onclick = function() {
+                            }.bind(this); 
+
                             var cancelNewScheduleButton = this.shadowRoot.querySelector("#cancelnewschedulebtn");
                             cancelNewScheduleButton.onclick = function() {
                                 this.scheduleDiv.removeAttribute("hidden");
@@ -206,17 +231,22 @@
                     }
 
                     /**
-                     * @brief Updates the schedule description against the current (schedule) selection.
+                     * @brief Updates the visible schedule propreties against the current (schedule) selection.
                      */
-                    updateScheduleDescription() {
+                    updateShownScheduleProperties() {
                         if (this.userSelect.selectedIndex >= 0) {
                             var username = this.userSelect[this.userSelect.selectedIndex].value;
                             if (this.scheduleSelect.selectedIndex >= 0) {
                                 if (this.currentUsername !== undefined) {
-                                    this.okButton.disabled = (this.currentUsername !== username);
+                                    var notThisUsername = (this.currentUsername !== username);
+                                    this.okButton.disabled = notThisUsername;
+                                    this.deleteScheduleButton.disabled = notThisUsername;
+                                    this.obsoleteScheduleButton.disabled = notThisUsername;
                                 }
                                 else {
                                     this.okButton.disabled = false;
+                                    this.deleteScheduleButton = false;
+                                    this.obsoleteScheduleButton = false;
                                 }
                                 this.descriptionArea.innerHTML = this.scheduleSelect[this.scheduleSelect.selectedIndex].scheduleInfo.description;
                             }
@@ -246,12 +276,14 @@
                                     else {
                                         this.scheduleSelect.disabled = false;
                                         for (var s in availableSchedules) {
-                                            var scheduleName = String(availableSchedules[s].name);
-                                            var option1 = document.createElement("option");
-                                            option1.text = scheduleName;
-                                            option1.value = scheduleName;
-                                            option1.scheduleInfo = availableSchedules[s];
-                                            this.scheduleSelect.appendChild(option1);
+                                            if ((!s.obsolete) || (s.obsolete && this.showObsoleteCheckBox.checked)) {
+                                                var scheduleName = String(availableSchedules[s].name);
+                                                var option1 = document.createElement("option");
+                                                option1.text = scheduleName;
+                                                option1.value = scheduleName;
+                                                option1.scheduleInfo = availableSchedules[s];
+                                                this.scheduleSelect.appendChild(option1);
+                                            }
                                         }
                                     }
                                     parent.htkDialogs.closeWaitDialog();

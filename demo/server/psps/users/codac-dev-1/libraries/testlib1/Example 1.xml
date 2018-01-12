@@ -51,4 +51,4 @@
             </sdnTopics>
         </plantSystem>
     </plantSystems>
-<references><counter>1</counter></references></configurationContainer>
+<references><counter>1</counter></references><obsolete>true</obsolete></configurationContainer>

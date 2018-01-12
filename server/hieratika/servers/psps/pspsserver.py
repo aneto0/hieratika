@@ -581,9 +581,15 @@ class PSPSServer(HieratikaServer):
                 description = xmlRoot.find("./ns0:description", self.xmlns)
                 if (description is not None):
                     description = description.text
+                obsolete = False
+                obsoleteXml = xmlRoot.find("./ns0:obsolete", self.xmlns)
+                if (obsoleteXml is not None):
+                    obsoleteTxt = obsoleteXml.text
+                    obsolete = obsoleteTxt in ("true", "yes", "1") 
+
             self.lockPool.release(xmlId)
             filePath = xmlFile.split("/")
-            library = HLibrary(htype, xmlFile, name, username, description)
+            library = HLibrary(htype, xmlFile, name, username, description, obsolete)
             libraries.append(library);
 
         return libraries

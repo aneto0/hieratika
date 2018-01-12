@@ -36,7 +36,7 @@ class HLibrary(object):
     """ Describes a hieratika parameter library.
         An HLibrary is a collection of values that can be assigned to different variables. 
         A typical example is a waveform definition.
-        The same waveform definition (i.e. the actual values) might be used by many parameters. As a consequence these parameters need only to link
+        The same waveform definition (i.e. the actual values) might be used by many parameters. As a consequence these parameters need only to link (refer)
         to this waveform definition (by name) in order to be configured (as opposed to be individually configured with the same values).
         Note that this is not the place where to define structured types. The same structured type might be used by many libraries. As an example, 
         a waveform structured type might be used by a library for selecting power supply references and by a library for selecting data acquisition time windows.

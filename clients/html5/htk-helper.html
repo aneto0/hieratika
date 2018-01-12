@@ -722,6 +722,46 @@
             }
 
             /**
+             * @brief Obsoletes a library.
+             * @details This is an asynchronous call.
+             * @param[in] libraryUID the library unique identifier. 
+             * @param[in] successFun function with prototype (void) f(), that will be called if the library was successfully obsoleted.
+             * @param[in] errorFun function with prototype (void) f(void), that will be called if the library could not be obsoleted.
+             */
+            obsoleteLibrary(libraryUID, successFun, errorFun) {
+                $.ajax({
+                    type: "post",
+                    url: "/obsoletelibrary",
+                    data: {
+                        token: this.token,
+                        libraryUID: libraryUID
+                    },
+                    success: function (response) {
+                        if(this.checkServerResponse(response)) { 
+                            if (response === HTK_OK) {
+                                successFun();
+                            }
+                            else {
+                                if (response === HTK_NOT_FOUND) {
+                                    parent.htkDialogs.showErrorDialog("Library could not be found in the server!");
+                                    errorFun();
+                                }
+                                else {
+                                    parent.htkDialogs.showErrorDialog("Unkown error while obsoleting the library in the server");
+                                    errorFun();
+                                }
+                            }
+                        }
+                    }.bind(this),
+                    error: function (response) {
+                        this.showCriticalError(response);
+                        errorFun();
+                    }.bind(this)
+                });
+            }
+
+
+            /**
              * @brief Checks if the response from the server is valid (i.e. if the server has not replied with HTK_INVALID_TOKEN). If it returned with HTK_INVALID_TOKEN calls fireInvalidToken().
              * @return true if the response from the server is not HTK_INVALID_TOKEN.
              */

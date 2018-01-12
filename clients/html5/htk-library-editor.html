@@ -40,7 +40,7 @@
                         <td><input type="checkbox" id="obsoleteCheckBox" value="obsolete">Show obsolete?</input></td>
                     </tr>
                     <tr>
-                        <td colspan="6"><textarea rows="2" cols="60" id="descriptionTextArea" title="Description"></textarea></td>
+                        <td colspan="7"><textarea rows="2" cols="60" id="descriptionTextArea" title="Description"></textarea></td>
                     </tr>
                     <tr>
                     </tr>
@@ -101,12 +101,18 @@
                                 this.librarySelector.innerHTML = "";
                                 for (var i=0; i<this.availableLibraries.length; i++) {
                                     var library = this.availableLibraries[i];
-                                    var option = document.createElement( 'option' );
-                                    option.uid = library.uid;
-                                    option.value = library.name;
-                                    option.text = library.name;
-                                    option.description = library.description;
-                                    this.librarySelector.add(option);
+                                    if ((!library.obsolete) || (library.obsolete && this.obsoleteCheckBox.checked)) {
+                                        var option = document.createElement( 'option' );
+                                        option.uid = library.uid;
+                                        option.value = library.name;
+                                        option.text = library.name;
+                                        option.obsolete = library.obsolete;
+                                        if (library.obsolete) {
+                                            option.style = "color:red";
+                                        }
+                                        option.description = library.description;
+                                        this.librarySelector.add(option);
+                                    }
                                 }
                                 readyFun();
                             }.bind(this),
@@ -142,6 +148,7 @@
                     showEditor (libraryUser, libraryValue) {
                         var user = parent.htkHelper.getUser();
                         this.deleteButton.disabled = (libraryUser !== user.username);
+                        this.obsoleteButton.disabled = (libraryUser !== user.username);
 
                         parent.htkDialogs.showWaitDialog();
                         this.populateUsers(libraryUser); 
@@ -276,8 +283,11 @@
                         var cancelButton = this.shadowRoot.querySelector("#tselectorCancel");
                         this.saveButton = this.shadowRoot.querySelector("#saveButton");
                         this.deleteButton = this.shadowRoot.querySelector("#deleteButton");
+                        this.obsoleteButton = this.shadowRoot.querySelector("#obsoleteButton");
+                        this.obsoleteCheckBox = this.shadowRoot.querySelector("#obsoleteCheckBox");
                         this.descriptionTextArea = this.shadowRoot.querySelector("#descriptionTextArea");
                         this.deleteButton.disabled = true;
+                        this.obsoleteButton.disabled = true;
 
                         this.okButton.onclick = function() {
                             var selectedUser = this.userSelector.options[this.userSelector.selectedIndex].text;
@@ -285,7 +295,6 @@
                             this.owner.libraryChanged(selectedUser, selectedLibrary);
                             this.diag.close();
                         }.bind(this); //bind is needed to make sure that the "this" is still valid in the context of the callback
-
 
                         this.deleteButton.onclick = function() {
                             var libraryName = "";
@@ -301,7 +310,7 @@
                                         function () {
                                             var user = parent.htkHelper.getUser();
                                             this.populateLibraries(user.username, function() {
-                                                    if (this.availableLibraries.length > 0) {
+                                                if (this.availableLibraries.length > 0) {
                                                     var selectedLibrary = this.availableLibraries[0].name;
                                                     this.librarySelector.value = selectedLibrary;
                                                 }
@@ -319,6 +328,53 @@
                                 parent.htkDialogs.showErrorDialog("Please select a library first");
                             }
                         }.bind(this);
+
+                        this.obsoleteCheckBox.onclick = function() {
+                            parent.htkDialogs.showWaitDialog();
+                            var user = parent.htkHelper.getUser();
+                            this.populateLibraries(user.username, function() {
+                                if (this.availableLibraries.length > 0) {
+                                    var selectedLibrary = this.availableLibraries[0].name;
+                                    this.librarySelector.value = selectedLibrary;
+                                }
+                                this.editLibrary();
+                                parent.htkDialogs.closeWaitDialog();
+                            }.bind(this));
+                        }.bind(this);
+
+                        this.obsoleteButton.onclick = function() {
+                            var libraryName = "";
+                            if (this.librarySelector.selectedIndex >= 0) {
+                                var option = this.librarySelector.options[this.librarySelector.selectedIndex];
+                                var libraryName = option.text;
+                                var ok = parent.htkDialogs.showConfirmDialog("Are you sure you want to obsolete the library " + libraryName + "?");
+                                if (ok) {
+                                    parent.htkDialogs.showWaitDialog();
+                                    var libraryUID = this.getLibraryUID(libraryName);
+                                    parent.htkHelper.obsoleteLibrary(
+                                        libraryUID,
+                                        function () {
+                                            var user = parent.htkHelper.getUser();
+                                            this.populateLibraries(user.username, function() {
+                                                if (this.availableLibraries.length > 0) {
+                                                    var selectedLibrary = this.availableLibraries[0].name;
+                                                    this.librarySelector.value = selectedLibrary;
+                                                }
+                                                this.editLibrary();
+                                                parent.htkDialogs.closeWaitDialog();
+                                            }.bind(this));
+                                        }.bind(this),
+                                        function (response) {
+                                            parent.htkDialogs.closeWaitDialog();
+                                        }
+                                    );
+                                }
+                            }
+                            else {
+                                parent.htkDialogs.showErrorDialog("Please select a library first");
+                            }
+                        }.bind(this);
+
 
                         cancelButton.onclick = function() {
                             this.diag.close();
