@@ -1185,7 +1185,7 @@ class PSPSServer(HieratikaServer):
                     for name in variables:
                         value = variables[name]
                         updatedVariable = self.updateVariable(name, root, value)
-                        ok = (len(updateVariable) > 0) 
+                        ok = (len(updatedVariable) > 0) 
                         if (not ok):
                             break
             tree.write(libraryInstanceXmlFileLocation)
