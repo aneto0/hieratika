@@ -247,32 +247,54 @@ class WServer:
             toReturn = HieratikaConstants.INVALID_PARAMETERS
         return toReturn
 
-
-    def getSchedules(self, request):
-        """ Gets all the schedules that are avaiable for a given user in a given page.
+    def getScheduleFolders(self, request):
+        """ Gets all the folders that are avaiable for a given user in a given page and in a given folder.
 
         Args:
            request.form["username"]: the username to which the returned schedules belong to. 
            request.form["pageName"]: the name of the page associated to the schedule.
+           request.form["parentFolders"]: the list of the parent folders of the schedules to be retrieved.
+        Returns:
+            A list with all the folders found.
+        """
+        toReturn = ""
+        try:
+            pageName = request.form["pageName"]
+            username = request.form["username"]
+            parentFolders = json.loads(request.form["parentFolders"])
+            
+            folders = self.serverImpl.getScheduleFolders(username, pageName, parentFolders)
+            toReturn = json.dumps(folders)
+            log.debug("For {0} in {1} returning: {2}".format(username, pageName, toReturn))
+        except Exception as e:
+            log.critical(str(e))
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
+        return toReturn
+
+    def getSchedules(self, request):
+        """ Gets all the schedules that are avaiable for a given user in a given page and in a given folder.
+
+        Args:
+           request.form["username"]: the username to which the returned schedules belong to. 
+           request.form["pageName"]: the name of the page associated to the schedule.
+           request.form["parentFolders"]: the list of the parent folders of the schedules to be retrieved.
         Returns:
             A json representation of all the schedules that are available for the requested user in the 
             specified page.
         """
         toReturn = ""
-#        try:
-        pageName = request.form["pageName"]
-        if "username" in request.form:
+        try:
+            pageName = request.form["pageName"]
             username = request.form["username"]
-        else:
-            username = ""
-        
-        schedules = self.serverImpl.getSchedules(username, pageName)
-        schedulesStr = [s.__dict__ for s in schedules]
-        toReturn = json.dumps(schedulesStr)
-        log.debug("For {0} in {1} returning: {2}".format(username, pageName, toReturn))
-#        except Exception as e:
-#            log.critical(str(e))
-#            toReturn = HieratikaConstants.INVALID_PARAMETERS
+            parentFolders = json.loads(request.form["parentFolders"])
+            
+            schedules = self.serverImpl.getSchedules(username, pageName, parentFolders)
+            schedulesStr = [s.__dict__ for s in schedules]
+            toReturn = json.dumps(schedulesStr)
+            log.debug("For {0} in {1} returning: {2}".format(username, pageName, toReturn))
+        except Exception as e:
+            log.critical(str(e))
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
         return toReturn
 
     def getSchedule(self, request):
@@ -378,6 +400,7 @@ class WServer:
             request.form["description"]: the description of the schedule to create.
             request.form["username"]: the owner of the schedule.
             request.form["pageName"]: name of the page to which the schedule belongs to.
+            request.form["parentFolders"]: a list of the parent folders of the folder to be created.
             request.form["sourceScheduleUID"]: create the schedule by copying from the schedule with the unique identifier given by sourceScheduleUID. If sourceSchedule is not set, copy from the plant.
 
         Returns:
@@ -388,11 +411,11 @@ class WServer:
             description = request.form["description"]
             username = request.form["username"]
             pageName = request.form["pageName"]
+            parentFolders = json.loads(request.form["parentFolders"])
             sourceScheduleUID = None
             if "sourceScheduleUID" in request.form:
                 sourceScheduleUID = request.form["sourceScheduleUID"]
-            log.critical("{0}".format(request.form))
-            toReturn = self.serverImpl.createSchedule(name, description, username, pageName, sourceScheduleUID) 
+            toReturn = self.serverImpl.createSchedule(name, description, username, pageName, parentFolders, sourceScheduleUID) 
             if (toReturn == None):
                 toReturn = HieratikaConstants.INVALID_PARAMETERS
         except KeyError as e:
@@ -431,6 +454,29 @@ class WServer:
             log.critical(e)
             toReturn = HieratikaConstants.INVALID_PARAMETERS
         return toReturn
+
+    def createScheduleFolder(self, request):
+        """ Creates a new schedule folder. 
+
+        Args:
+            request.form["name"]: the name of the schedule folder to create.
+            request.form["username"]: the owner of the folder.
+            request.form["parentFolders"]: a list of the parent folders of the folder to be created.
+            request.form["pageName"]: name of the page to which the schedule folder belongs to.
+        Returns:
+            HieratikaConstants.OK if the schedule was successfully created, HieratikaConstants.NOT_FOUND if the parent folders do not exist or HieratikaConstants.UNKNOWN_ERROR if case of any other error.
+        """
+        try:
+            name = request.form["name"]
+            username = request.form["username"]
+            parentFolders = json.loads(request.form["parentFolders"])
+            pageName = request.form["pageName"]
+            toReturn = self.serverImpl.createScheduleFolder(name, username, parentFolders, pageName) 
+        except KeyError as e:
+            log.critical(e)
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
+        return toReturn
+
 
     def deleteLibrary(self, request):
         """ Deletes an existent library. 

@@ -594,9 +594,9 @@ class PSPSServer(HieratikaServer):
 
         return libraries
 
-    def getSchedules(self, username, pageName):
+    def getSchedules(self, username, pageName, parentFolders):
         schedules = []
-        allSchedulesXml = self.getAllSchedulesXmls(username, pageName)
+        allSchedulesXml = self.getAllSchedulesXmls(username, pageName, parentFolders)
 
         for xmlFile in allSchedulesXml:
             description = ""
@@ -656,7 +656,7 @@ class PSPSServer(HieratikaServer):
             xmlRoot = tree.getroot()
             referenceCounter = 0
             refCounterXml = xmlRoot.find("./ns0:references/ns0:counter", self.xmlns)
-            if (refCounterXml is None):
+            if (refCounterXml is not None):
                 referenceCounter = int(refCounterXml.text)
 
             if (referenceCounter == 0):
@@ -848,40 +848,36 @@ class PSPSServer(HieratikaServer):
         self.lockPool.release(xmlId)
         return updatedVariables 
 
-    def createSchedule(self, name, description, username, pageName, sourceScheduleUID):
-        ok = True
+    
+    def createSchedule(self, name, description, username, pageName, parentFolders, sourceScheduleUID):
         log.info("Creating a new schedule for user: {0} for page: {1} with name: {2}".format(username, pageName, name))
+        parentFoldersPath = self.getParentFoldersPath(parentFolders)
         if (sourceScheduleUID is None):
             sourceScheduleUID = "{0}/psps/configuration/{1}/000/plant.xml".format(self.baseDir, pageName)
-            destFolderNumber = "000"
         else: 
             filePath = sourceScheduleUID.split("/")
-            if (len(filePath) < 2):
-                log.critical("Could not parse the sourceScheduleUID {0} to find the last folder name (which should be a number)".format(sourceScheduleUID))
-                ok = False
-            destFolderNumber = filePath[-2]
 
-        if (ok):
-            if (not name.endswith(".xml")):
-                name = name + ".xml"
-            if (self.standalone):
-                destScheduleDirs = "{0}/psps/configuration/{1}/{2}/".format(self.baseDir, pageName, destFolderNumber)
-                destScheduleUID = "{0}/psps/configuration/{1}/{2}/{3}".format(self.baseDir, pageName, destFolderNumber, name)
-            else:
-                destScheduleDirs = "{0}/users/{1}/configuration/{2}/{3}/".format(self.baseDir, username, pageName, destFolderNumber)
-                destScheduleUID = "{0}/users/{1}/configuration/{2}/{3}/{4}".format(self.baseDir, username, pageName, destFolderNumber, name)
-            try:
-                os.makedirs(destScheduleDirs)
-            except OSError as e:
-                if (e.errno != errno.EEXIST):
-                    #Ignore the file exists error
-                    log.critical("Failed to create schedule directory {0}".format(e))
-            
-            try:
-                shutil.copy2(sourceScheduleUID, destScheduleUID) 
-            except IOError as e:
-                log.critical("Failed to create schedule {0}".format(e))
-                ok = False
+        ok = True
+        if (not name.endswith(".xml")):
+            name = name + ".xml"
+        if (self.standalone):
+            destScheduleDirs = "{0}/psps/configuration/{1}/{2}/".format(self.baseDir, pageName, parentFoldersPath)
+            destScheduleUID = "{0}/psps/configuration/{1}/{2}/{3}".format(self.baseDir, pageName, parentFoldersPath, name)
+        else:
+            destScheduleDirs = "{0}/users/{1}/configuration/{2}/{3}/".format(self.baseDir, username, pageName, parentFoldersPath)
+            destScheduleUID = "{0}/users/{1}/configuration/{2}/{3}/{4}".format(self.baseDir, username, pageName, parentFoldersPath, name)
+        try:
+            os.makedirs(destScheduleDirs)
+        except OSError as e:
+            if (e.errno != errno.EEXIST):
+                #Ignore the file exists error
+                log.critical("Failed to create schedule directory {0}".format(e))
+        
+        try:
+            shutil.copy2(sourceScheduleUID, destScheduleUID) 
+        except IOError as e:
+            log.critical("Failed to create schedule {0}".format(e))
+            ok = False
 
         if (ok):
             xmlId = self.getXmlId(destScheduleUID)
@@ -901,6 +897,27 @@ class PSPSServer(HieratikaServer):
                 log.critical("Failed to create schedule with uid {0}".format(destScheduleUID))
             self.lockPool.release(xmlId)
         return destScheduleUID
+
+    def createScheduleFolder(self, name, username, parentFolders, pageName):
+        log.info("Creating a new schedule folder with name: {0} for page: {1}".format(name, pageName))
+        parentFoldersPath = self.getParentFoldersPath(parentFolders)
+        if (self.standalone):
+            newFolderPath = "{0}/psps/configuration/{1}/{2}/{3}".format(self.baseDir, pageName, parentFoldersPath, name)
+        else:
+            newFolderPath = "{0}/users/{1}/configuration/{2}/{3}/{4}".format(self.baseDir, username, pageName, parentFoldersPath, name)
+
+        log.info("New folder path: {0}".format(newFolderPath))
+
+        ok = HieratikaConstants.OK
+        try:
+            os.makedirs(newFolderPath)
+        except OSError as e:
+            if (e.errno != errno.EEXIST):
+                #Ignore the file exists error
+                log.critical("Failed to create schedule folder {0}".format(e))
+                ok = HieratikaConstants.UNKNOWN_ERROR
+        return ok 
+
 
     def convertVariableTypeFromXml(self, xmlVariableType):
         """ Helper function which converts a psps record type to a hieratika type.
@@ -946,8 +963,24 @@ class PSPSServer(HieratikaServer):
                 matches.append(os.path.join(root, filename))
         return matches
 
+    def getScheduleFolders(self, username, pageName, parentFolders):
+        log.debug("Parent folder: {0}".format(parentFolders))
+        parentFoldersPath = self.getParentFoldersPath(parentFolders)
+        
+        matches = []
+        if (self.standalone):
+            directory = "{0}/psps/configuration/{1}/{2}".format(self.baseDir, pageName, parentFoldersPath)
+        else:
+            directory = "{0}/users/{1}/configuration/{2}/{3}".format(self.baseDir, username, pageName, parentFoldersPath)
 
-    def getAllSchedulesXmls(self, username, pageName):
+        log.debug("Getting folders for directory: {0}".format(directory))
+        for item in os.listdir(directory):
+            if (os.path.isdir(os.path.join(directory, item))):
+                matches.append(item)
+        log.debug("Returning folders: {0}".format(matches))
+        return matches
+
+    def getAllSchedulesXmls(self, username, pageName, parentFolders):
         """ Helper function which gets all psps configurations associated to a given page for a given user.
        
         Args:
@@ -956,15 +989,24 @@ class PSPSServer(HieratikaServer):
         Returns:
             All the schedules files found for a given configuration.
         """
+
+        parentFoldersPath = self.getParentFoldersPath(parentFolders)
         matches = []
         if (self.standalone):
-            directory = "{0}/psps/configuration/{1}".format(self.baseDir, pageName)
+            directory = "{0}/psps/configuration/{1}/{2}".format(self.baseDir, pageName, parentFoldersPath)
         else:
-            directory = "{0}/users/{1}/configuration/{2}".format(self.baseDir, username, pageName)
-        for root, dirnames, filenames in os.walk(directory):
-            for filename in fnmatch.filter(filenames, '*.xml'):
-                if (filename != "plant.xml"):
-                    matches.append(os.path.join(root, filename))
+            directory = "{0}/users/{1}/configuration/{2}/{3}".format(self.baseDir, username, pageName, parentFoldersPath)
+
+        #for root, dirnames, filenames in os.walk(directory):
+        #    for filename in fnmatch.filter(filenames, '*.xml'):
+        #        if (filename != "plant.xml"):
+        #            matches.append(os.path.join(root, filename))
+        for item in os.listdir(directory):
+            if (item != "plant.xml"):
+                fullname = os.path.join(directory, item)
+                if (os.path.isfile(fullname)):
+                    matches.append(fullname)
+ 
         return matches
 
     def loadPages(self):
@@ -1400,4 +1442,19 @@ class PSPSServer(HieratikaServer):
             library = HLibrary(htype, libraryInstanceXmlFileLocation, name, username, description)
         return (ok, library)
 
- 
+    def getParentFoldersPath(self, parentFolders):
+        """ Helper function which converts a list of parent folders into a path
+        
+        Args:
+            parentFolders([str]): the list of parent folders.
+        Returns:
+            The path formed by the list.
+        """
+
+        parentFoldersPath = ""
+        for p in parentFolders:
+            parentFoldersPath = "{0}/{1}".format(parentFoldersPath, p)
+
+        return parentFoldersPath
+
+

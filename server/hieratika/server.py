@@ -209,12 +209,28 @@ class HieratikaServer(object):
         pass
 
     @abstractmethod
-    def getSchedules(self, username, pageName):
+    def getScheduleFolders(self, username, pageName, parentFolders):
+        """ Gets all the schedule folders that are avaiable for a given user in a given page.
+
+        Args:
+           username (str): the username to which the returned schedules belong to. 
+           pageName (str): the name of the page associated to the schedule.
+           parentFolders ([str]): list of the parent folders of the folders to be retrieved.
+        Returns:
+            An array with all the schedules that are available for the requested user in the 
+            specified page.
+        """
+        pass
+
+
+    @abstractmethod
+    def getSchedules(self, username, pageName, parentFolders):
         """ Gets all the schedules that are avaiable for a given user in a given page.
 
         Args:
-           username: the username to which the returned schedules belong to. 
-           pageName: the name of the page associated to the schedule.
+           username (str): the username to which the returned schedules belong to. 
+           pageName (str): the name of the page associated to the schedule.
+           parentFolders ([str]): list of the parent folders of the folders to be retrieved.
         Returns:
             An array with all the schedules that are available for the requested user in the 
             specified page.
@@ -226,8 +242,8 @@ class HieratikaServer(object):
         """ Gets all the libraries (for a given type) that are avaiable for a given user.
 
         Args:
-           username: the username to which the returned libraries belong to. 
-           htype: the library type.
+           username (str): the username to which the returned libraries belong to. 
+           htype (str): the library type.
         Returns:
             An array with all the libraries (of the requested type) that are available for the requested user.
         """
@@ -315,7 +331,7 @@ class HieratikaServer(object):
         pass
 
     @abstractmethod
-    def createSchedule(self, name, description, username, pageName, sourceScheduleUID = None):
+    def createSchedule(self, name, description, username, pageName, parentFolders, sourceScheduleUID = None):
         """ Creates a new schedule either based on a existing schedule (if sourceSchedule is not None) or from the plant. 
 
         Args:
@@ -323,6 +339,7 @@ class HieratikaServer(object):
             description (str): the description of the schedule to create.
             username (str): the owner of the schedule.
             pageName (str): name of the page to which the schedule belongs to.
+            parentFolders ([str]): list of the parent folders of the new schedule to be created.
             sourceScheduleUID (str): create the schedule by copying from the schedule with this unique identifier. If sourceScheduleUID is None, copy from the plant.
 
         Returns:
@@ -351,6 +368,21 @@ class HieratikaServer(object):
             HieratikaConstants.OK if the schedule was successfully delete, HieratikaConstants.NOT_FOUND if the schedule was not found or HieratikaConstants.IN_USE if the schedule is being (or was already used) and thus cannot be deleted.
         """
         pass
+
+    @abstractmethod
+    def createScheduleFolder(self, name, username, parentFolders, pageName):
+        """ Creates a new schedule folder. 
+
+        Args:
+            name (str): the name of the folder to create.
+            username (str): the owner of the schedule folder.
+            parentFolders ([str]): list of the parent folders of the new folder to be created.
+            pageName (str): name of the page to which the schedule folder belongs to.
+        Returns:
+            HieratikaConstants.OK if the schedule was successfully created, HieratikaConstants.NOT_FOUND if the parent folders do not exist or HieratikaConstants.UNKNOWN_ERROR if case of any other error.
+        """
+        pass
+
 
     @abstractmethod
     def deleteLibrary(self, libraryUID):

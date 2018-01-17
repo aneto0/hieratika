@@ -359,20 +359,55 @@
             }
 
             /**
-             * @brief Gets all the schedules that belong to a given user.
+             * @brief Gets all the folders that belong to a given user in a given folder.
              * @param[in] configName the name of the configuration that is associated to the schedules to be retrieved.
              * @param[in] username the name of the user that owns the schedules.
+             * @param[in] parentFolders full path of the folder containing the schedules to be retrieved.
+             * @param[in] successFun function with prototype (void) f(folders), that will be called if the folders could be retrieved.
+             * @param[in] errorFun function with prototype (void) f(void), that will be called if the folders could not be retrieved.
+             */
+            getScheduleFolders(configName, username, parentFolders, successFun, errorFun) {
+                console.log(parentFolders);
+                $.ajax({
+                    type: "post",
+                    url: "/getschedulefolders",
+                    data: {
+                        token: this.token,
+                        pageName: configName,
+                        username : username,
+                        parentFolders: JSON.stringify(parentFolders)
+                    },
+                    success: function (response) {
+                        if (this.checkServerResponse(response)) {
+                            var availableFolders = $.parseJSON(response);
+                            successFun(availableFolders);
+                        }
+                    }.bind(this),
+                    error: function (response) {
+                        this.showCriticalError(response);
+                        errorFun();
+                    }.bind(this)
+                });
+            }
+
+
+            /**
+             * @brief Gets all the schedules that belong to a given user in a given folder.
+             * @param[in] configName the name of the configuration that is associated to the schedules to be retrieved.
+             * @param[in] username the name of the user that owns the schedules.
+             * @param[in] parentFolders full path of the folder containing the schedules to be retrieved.
              * @param[in] successFun function with prototype (void) f(schedules), that will be called if the schedules could be retrieved.
              * @param[in] errorFun function with prototype (void) f(void), that will be called if the schedules could not be retrieved.
              */
-            getSchedules(configName, username, successFun, errorFun) {
+            getSchedules(configName, username, parentFolders, successFun, errorFun) {
                 $.ajax({
                     type: "post",
                     url: "/getschedules",
                     data: {
                         token: this.token,
                         pageName: configName,
-                        username : username
+                        username : username,
+                        parentFolders: JSON.stringify(parentFolders)
                     },
                     success: function (response) {
                         if (this.checkServerResponse(response)) {
@@ -394,15 +429,17 @@
              * @param[in] scheduleName the name of the schedule to create.
              * @param[in] scheduleDescription the description of the schedule to create.
              * @param[in] configName the name of the configuration that is associated to this schedule.
+             * @param[in] parentFolders full path of the folder that will contain the new schedule.
              * @param[in] sourceScheduleUID the identifier of the schedule that is being used as a basis (i.e. where to copy from) for this schedule, or undefined if it is not applicable.
              * @param[in] successFun function with prototype (void) f(void), that will be called if the schedule was successfully created.
              * @param[in] errorFun function with prototype (void) f(void), that will be called if the schedule could not be created.
              */
-            createSchedule(scheduleName, scheduleDescription, configName, sourceScheduleUID, successFun, errorFun) {
+            createSchedule(scheduleName, scheduleDescription, configName, parentFolders, sourceScheduleUID, successFun, errorFun) {
                 var schedule = {
                     token: this.token,
                     name: scheduleName,
                     description: scheduleDescription,
+                    parentFolders: JSON.stringify(parentFolders),
                     pageName: configName 
                 }
                 var user = JSON.parse(localStorage.user);
@@ -414,6 +451,40 @@
                     type: "post",
                     url: "/createschedule",
                     data: schedule,
+                    success: function (response) {
+                        if (this.checkServerResponse(response)) {
+                            successFun();
+                        }
+                    }.bind(this),
+                    error: function (response) {
+                        this.showCriticalError(response);
+                        errorFun();
+                    }.bind(this)
+                });
+            }
+
+            /**
+             * @brief Creates a new schedule folder.
+             * @details This is an asynchronous call.
+             * @param[in] name the name of the folder to create.
+             * @param[in] parentFolders full path of the folder that will contain the new schedule.
+             * @param[in] sourceScheduleUID the identifier of the schedule that is being used as a basis (i.e. where to copy from) for this schedule, or undefined if it is not applicable.
+             * @param[in] successFun function with prototype (void) f(void), that will be called if the schedule was successfully created.
+             * @param[in] errorFun function with prototype (void) f(void), that will be called if the schedule could not be created.
+             */
+            createScheduleFolder(folderName, configName, parentFolders, successFun, errorFun) {
+                var user = JSON.parse(localStorage.user);
+                var scheduleFolder = {
+                    token: this.token,
+                    name: folderName,
+                    parentFolders: JSON.stringify(parentFolders),
+                    username: user.username,
+                    pageName: configName 
+                }
+                $.ajax({
+                    type: "post",
+                    url: "/createschedulefolder",
+                    data: scheduleFolder,
                     success: function (response) {
                         if (this.checkServerResponse(response)) {
                             successFun();
@@ -679,47 +750,105 @@
             }
 
             /**
-             * @brief Deletes a schedule.
+             * @brief Deletes a set of schedules.
              * @details This is an asynchronous call.
-             * @param[in] scheduleUID the schedule unique identifier. 
+             * @param[in] scheduleUID the schedule unique identifiers. 
              * @param[in] successFun function with prototype (void) f(), that will be called if the schedule was successfully deleted.
              * @param[in] errorFun function with prototype (void) f(void), that will be called if the schedule could not be deleted.
              */
-            deleteSchedule(scheduleUID, successFun, errorFun) {
-                $.ajax({
-                    type: "post",
-                    url: "/deleteschedule",
-                    data: {
-                        token: this.token,
-                        scheduleUID: scheduleUID 
-                    },
-                    success: function (response) {
-                        if(this.checkServerResponse(response)) { 
-                            if (response === HTK_OK) {
-                                successFun();
-                            }
-                            else {
-                                if (response === HTK_IN_USE) {
-                                    parent.htkDialogs.showErrorDialog("Schedule is being used in other schedules and thus cannot be deleted.");
-                                    errorFun();
-                                } 
-                                else if (response === HTK_NOT_FOUND) {
-                                    parent.htkDialogs.showErrorDialog("Schedule could not be found in the server!");
-                                    errorFun();
+            deleteSchedule(scheduleUIDs, successFun, errorFun) {
+                if (scheduleUIDs.length > 0) {
+                    var scheduleUID = scheduleUIDs[0];
+                    $.ajax({
+                        type: "post",
+                        url: "/deleteschedule",
+                        data: {
+                            token: this.token,
+                            scheduleUID: scheduleUID
+                        },
+                        success: function (response) {
+                            if(this.checkServerResponse(response)) { 
+                                if (response === HTK_OK) {
+                                    scheduleUIDs.shift();
+                                    if (scheduleUIDs.length > 0) {
+                                        this.deleteSchedule(scheduleUIDs, successFun, errorFun);
+                                    }
+                                    else {
+                                        successFun();
+                                    }
                                 }
                                 else {
-                                    parent.htkDialogs.showErrorDialog("Unkown error while deleting the schedule in the server");
-                                    errorFun();
+                                    if (response === HTK_IN_USE) {
+                                        parent.htkDialogs.showErrorDialog("Schedule " + scheduleUID + " is being used in other schedules and thus cannot be deleted.");
+                                        errorFun();
+                                    } 
+                                    else if (response === HTK_NOT_FOUND) {
+                                        parent.htkDialogs.showErrorDialog("Schedule " + scheduleUID + " could not be found in the server!");
+                                        errorFun();
+                                    }
+                                    else {
+                                        parent.htkDialogs.showErrorDialog("Unkown error while deleting the schedule " + scheduleUID + " in the server");
+                                        errorFun();
+                                    }
                                 }
                             }
-                        }
-                    }.bind(this),
-                    error: function (response) {
-                        this.showCriticalError(response);
-                        errorFun();
-                    }.bind(this)
-                });
+                        }.bind(this),
+                        error: function (response) {
+                            this.showCriticalError(response);
+                            errorFun();
+                        }.bind(this)
+                    });
+                }
             }
+
+            /**
+             * @brief Obsoletes a set of schedules.
+             * @details This is an asynchronous call.
+             * @param[in] scheduleUID the schedule unique identifiers. 
+             * @param[in] successFun function with prototype (void) f(), that will be called if the schedule was successfully obsoleted.
+             * @param[in] errorFun function with prototype (void) f(void), that will be called if the schedule could not be obsoleted.
+             */
+            obsoleteSchedule(scheduleUIDs, successFun, errorFun) {
+                if (scheduleUIDs.length > 0) {
+                    var scheduleUID = scheduleUIDs[0];
+                    $.ajax({
+                        type: "post",
+                        url: "/obsoleteschedule",
+                        data: {
+                            token: this.token,
+                            scheduleUID: scheduleUID 
+                        },
+                        success: function (response) {
+                            if(this.checkServerResponse(response)) { 
+                                if (response === HTK_OK) {
+                                    scheduleUIDs.shift();
+                                    if (scheduleUIDs.length > 0) {
+                                        this.obsoleteSchedule(scheduleUIDs, successFun, errorFun);
+                                    }
+                                    else {
+                                        successFun();
+                                    }
+                                }
+                                else {
+                                    if (response === HTK_NOT_FOUND) {
+                                        parent.htkDialogs.showErrorDialog("Schedule " + scheduleUID + " could not be found in the server!");
+                                        errorFun();
+                                    }
+                                    else {
+                                        parent.htkDialogs.showErrorDialog("Unkown error while obsoleting the schedule " + scheduleUID + " in the server");
+                                        errorFun();
+                                    }
+                                }
+                            }
+                        }.bind(this),
+                        error: function (response) {
+                            this.showCriticalError(response);
+                            errorFun();
+                        }.bind(this)
+                    });
+                }
+            }
+
 
             /**
              * @brief Deletes a library.
@@ -943,6 +1072,24 @@
              */
             getAllUsers() {
                 return this.allUsers;
+            }
+
+            /**
+             * @brief Helper function which gets all the selected options in any select (with or without multiple).
+             * @param[in] select the HTML select where to get the options from.
+             * @return all the selected options.
+             */
+            getSelectAllSelectedValues(select) {
+                var result = [];
+                var options = select && select.options;
+                var nOptions = options.length;
+                for (var i=0; i<nOptions; i++) {
+                    var opt = options[i];
+                    if (opt.selected) {
+                        result.push(opt);
+                    }
+                }
+                return result;
             }
         }
         //IMPORTANT! Remember when accessing to these global variables to prefix with parent, so that they can be accessed from an iframe

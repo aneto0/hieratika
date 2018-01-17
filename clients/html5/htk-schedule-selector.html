@@ -25,6 +25,11 @@
     </body>
         <!-- HTML5 component template-->
         <template id="tscheduleselector">
+            <style>
+                @import url("/css/w3.css");
+                @import url("/css/font-awesome-4.7.0/css/font-awesome.min.css");
+            </style>
+
             <dialog id="dscheduleselector">
                 <div id="divschedule">
                     <table style="border-style:solid;border-width:1px;width: 100%">
@@ -41,7 +46,7 @@
                         </tr>
                         <tr>
                             <td><select id="userselect" size="20" style="width:150px;overflow-x:scroll"></select></td>
-                            <td><select id="scheduleselect" size="20" style="width:150px;overflow-x:scroll"></select></td>
+                            <td><select multiple id="scheduleselect" size="20" style="width:150px;overflow-x:scroll"></select></td>
                             <td id="descriptionarea" style="width:250px;vertical-align:top;background-color:#F5F5F5"></td>
                         </tr>
                     </table>
@@ -55,13 +60,20 @@
                                 <table style="border-style:solid;border-width:0px;width: 100%">
                                     <tr>
                                         <td style="text-align:right;">
-                                            <button title="Create a new schedule..." id="createschedulebtn">+</button>
-                                            <button title="Delete schedule..." id="deleteschedulebtn">-</button>
-                                            <button title="Obsolete schedule..." id="obsoleteschedulebtn">*</button>
+                                            <button title="Create a new schedule..." id="createschedulebtn"><i class="fa fa-plus-square"></i></button>
+                                            <button title="Delete schedule..." id="deleteschedulebtn"><i class="fa fa-minus-square"></i></button>
+                                            <button title="Obsolete schedule..." id="obsoleteschedulebtn"><i class="fa fa-asterisk"></i></button>
+                                            <input type="checkbox" id="showobsoletecheckbox" value="obsolete" title="Show obsolete schedules?"><i class="fa fa-eye"></i></input>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td style="text-align:right;"><input type="checkbox" id="showobsoletecheckbox" value="obsolete">Show obsolete?</input></td>
+                                        <td style="text-align:right;">
+                                            <button title="Create a new folder..." id="createschedulefolderbtn"><i class="fa fa-folder"></i></button>
+                                            <button title="Delete a folder..." id="deleteschedulefolderbtn"><i class="fa fa-folder-o" style="color:red"></i></span></button>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
                                     </tr>
                                 </table>
                             </td>
@@ -132,14 +144,20 @@
                             this.userSelect = this.shadowRoot.querySelector("#userselect");
                             this.userSelect.onclick = function() {
                                 this.okButton.disabled = true;
+                                this.currentFolderPath = [];
                                 this.updateUserSchedules(); 
                             }.bind(this);
 
                             this.scheduleSelect = this.shadowRoot.querySelector("#scheduleselect");
                             this.scheduleSelect.onclick = function() {
-                                this.updateShownScheduleProperties();
+                                this.handleScheduleSelect();
                             }.bind(this);
-                            
+ 
+                            this.scheduleSelect.ondblclick = function() {
+                                this.handleScheduleSelectDblClick();
+                            }.bind(this);
+                           
+
                             this.descriptionArea = this.shadowRoot.querySelector("#descriptionarea");
                             this.okButton = this.shadowRoot.querySelector("#okbtn");
                             this.okButton.onclick = function() {
@@ -186,13 +204,18 @@
                             this.deleteScheduleButton = this.shadowRoot.querySelector("#deleteschedulebtn");
                             this.deleteScheduleButton.disabled = true;
                             this.deleteScheduleButton.onclick = function() {
-                                if (this.scheduleSelect.selectedIndex >= 0) {
-                                    var schedule = this.scheduleSelect[this.scheduleSelect.selectedIndex].scheduleInfo;
-                                    var ok = parent.htkDialogs.showConfirmDialog("Are you sure you want to delete the schedule " + schedule.name + "?");
+                                var selectedOptions = htkHelper.getSelectAllSelectedValues(this.scheduleSelect);
+                                var selectedSchedulesUIDs = [];
+                                for (var i=0; i<selectedOptions.length; i++) {
+                                    var schedule = selectedOptions[i].scheduleInfo;
+                                    selectedSchedulesUIDs.push(schedule.uid);
+                                }
+                                if (selectedSchedulesUIDs.length > 0) {
+                                    var ok = parent.htkDialogs.showConfirmDialog("Are you sure you want to delete the selected schedules?");
                                     if (ok) {
                                         parent.htkDialogs.showWaitDialog();
                                         parent.htkHelper.deleteSchedule(
-                                            schedule.uid,
+                                            selectedSchedulesUIDs,
                                             function () {
                                                 this.updateUserSchedules(); 
                                             }.bind(this),
@@ -210,10 +233,56 @@
                             this.obsoleteScheduleButton = this.shadowRoot.querySelector("#obsoleteschedulebtn");
                             this.obsoleteScheduleButton.disabled = true;
                             this.obsoleteScheduleButton.onclick = function() {
+                                var selectedOptions = htkHelper.getSelectAllSelectedValues(this.scheduleSelect);
+                                var selectedSchedulesUIDs = [];
+                                for (var i=0; i<selectedOptions.length; i++) {
+                                    var schedule = selectedOptions[i].scheduleInfo;
+                                    selectedSchedulesUIDs.push(schedule.uid);
+                                }
+                                if (selectedSchedulesUIDs.length > 0) {
+                                    var ok = parent.htkDialogs.showConfirmDialog("Are you sure you want to obsolete the selected schedules?");
+                                    if (ok) {
+                                        parent.htkDialogs.showWaitDialog();
+                                        parent.htkHelper.obsoleteSchedule(
+                                            selectedSchedulesUIDs,
+                                            function () {
+                                                this.updateUserSchedules(); 
+                                            }.bind(this),
+                                            function (response) {
+                                                parent.htkDialogs.closeWaitDialog();
+                                            }
+                                        );
+                                    }
+                                }
+                                else {
+                                    parent.htkDialogs.showErrorDialog("Please select a schedule first");
+                                }
                             }.bind(this); 
 
                             this.showObsoleteCheckBox = this.shadowRoot.querySelector("#showobsoletecheckbox");
                             this.showObsoleteCheckBox.onclick = function() {
+                                this.updateUserSchedules(); 
+                            }.bind(this); 
+
+                            var createNewScheduleFolder = this.shadowRoot.querySelector("#createschedulefolderbtn");
+                            createNewScheduleFolder.onclick = function() {
+                                var newFolderName = parent.htkDialogs.showInputDialog("Please insert the new folder name.");
+                                if (newFolderName !== null) {
+                                    parent.htkDialogs.showWaitDialog();
+                                    parent.htkHelper.createScheduleFolder(
+                                        newFolderName,
+                                        this.pageName,
+                                        this.currentFolderPath,
+                                        function () {
+                                            this.updateUserSchedules();
+                                            parent.htkDialogs.closeWaitDialog();
+                                        }.bind(this),
+                                        function (response) {
+                                            parent.htkDialogs.closeWaitDialog();
+                                            parent.htkDialogs.showErrorDialog("Failed to create the schedule folder. Unknown error, check the server logs.");
+                                        }
+                                    );
+                                }
                             }.bind(this); 
 
                             var cancelNewScheduleButton = this.shadowRoot.querySelector("#cancelnewschedulebtn");
@@ -233,6 +302,7 @@
                                     this.newScheduleName.value,
                                     this.newScheduleDescription.value,
                                     this.pageName,
+                                    this.currentFolderPath,
                                     sourceScheduleUID,
                                     function () {
                                         this.scheduleDiv.removeAttribute("hidden");
@@ -247,30 +317,56 @@
                                 );
                             }.bind(this); 
                         }
+
+                        this.currentFolderPath = [];
                     }
 
                     /**
-                     * @brief Updates the visible schedule propreties against the current (schedule) selection.
+                     * @brief Updates the visible schedule properties against the current (schedule/folder) selection.
                      */
-                    updateShownScheduleProperties() {
+                    handleScheduleSelect() {
                         if (this.userSelect.selectedIndex >= 0) {
                             var username = this.userSelect[this.userSelect.selectedIndex].value;
                             if (this.scheduleSelect.selectedIndex >= 0) {
-                                if (this.currentUsername !== undefined) {
-                                    var notThisUsername = (this.currentUsername !== username);
-                                    this.okButton.disabled = notThisUsername;
-                                    this.deleteScheduleButton.disabled = notThisUsername;
-                                    this.obsoleteScheduleButton.disabled = notThisUsername;
-                                }
-                                else {
+                                var currentUsername = htkHelper.getUser().username;
+                                var notThisUsername = (currentUsername !== username);
+                                var selectedOption = this.scheduleSelect[this.scheduleSelect.selectedIndex];
+                                if (selectedOption.folder) {
                                     this.okButton.disabled = true;
                                     this.deleteScheduleButton.disabled = true;
                                     this.obsoleteScheduleButton.disabled = true;
                                 }
-                                this.descriptionArea.innerHTML = this.scheduleSelect[this.scheduleSelect.selectedIndex].scheduleInfo.description;
+                                else {
+                                    this.okButton.disabled = notThisUsername;
+                                    this.deleteScheduleButton.disabled = notThisUsername;
+                                    this.obsoleteScheduleButton.disabled = notThisUsername;
+                                    this.descriptionArea.innerHTML = selectedOption.scheduleInfo.description;
+                                }
                             }
                         }
+                    }
 
+                    /**
+                     * @brief Handles a double click.
+                     */
+                    handleScheduleSelectDblClick() {
+                        if (this.userSelect.selectedIndex >= 0) {
+                            var username = this.userSelect[this.userSelect.selectedIndex].value;
+                            if (this.scheduleSelect.selectedIndex >= 0) {
+                                var selectedOption = this.scheduleSelect[this.scheduleSelect.selectedIndex];
+                                console.log(selectedOption.value);
+                                console.log(selectedOption.folder);
+                                if (selectedOption.folder) {
+                                    if (selectedOption.value === "..") {
+                                        this.currentFolderPath.pop();
+                                    }
+                                    else {
+                                        this.currentFolderPath.push(selectedOption.value);
+                                    }
+                                    this.updateUserSchedules();
+                                }
+                            }
+                        }
                     }
 
                     /**
@@ -280,39 +376,77 @@
                         if (this.userSelect.selectedIndex >= 0) {
                             parent.htkDialogs.showWaitDialog();
                             var username = this.userSelect[this.userSelect.selectedIndex].value;
-                            parent.htkHelper.getSchedules(
+                            parent.htkHelper.getScheduleFolders(
                                 this.pageName, 
                                 username,
-                                function (availableSchedules) {
+                                this.currentFolderPath,
+                                function (availableFolders) {
                                     this.scheduleSelect.innerHTML = "";
-                                    if (availableSchedules.length === 0) {
-                                        this.scheduleSelect.disabled = true;
+                                    if (this.currentFolderPath.length > 0) {
                                         var option1 = document.createElement("option");
-                                        option1.text = "No schedule available...";
-                                        option1.value = NONE_NAME;
+                                        option1.text = "..";
+                                        option1.value = "..";
+                                        option1.folder = true;
+                                        option1.style = "color:blue";
                                         this.scheduleSelect.appendChild(option1);
                                     }
-                                    else {
-                                        this.scheduleSelect.disabled = false;
-                                        for (var s in availableSchedules) {
-                                            if ((!s.obsolete) || (s.obsolete && this.showObsoleteCheckBox.checked)) {
-                                                var scheduleName = String(availableSchedules[s].name);
-                                                var option1 = document.createElement("option");
-                                                option1.text = scheduleName;
-                                                option1.value = scheduleName;
-                                                option1.scheduleInfo = availableSchedules[s];
-                                                this.scheduleSelect.appendChild(option1);
-                                            }
-                                        }
+
+                                    for (var i in availableFolders) {
+                                        var folder = availableFolders[i];
+                                        var option1 = document.createElement("option");
+                                        option1.text = folder;
+                                        option1.value = folder;
+                                        option1.folder = true;
+                                        option1.style = "color:blue";
+                                        this.scheduleSelect.appendChild(option1);
                                     }
-                                    parent.htkDialogs.closeWaitDialog();
+
+                                    parent.htkHelper.getSchedules(
+                                        this.pageName, 
+                                        username,
+                                        this.currentFolderPath,
+                                        function (availableSchedules) {
+                                            if (availableSchedules.length === 0) {
+                                                var atLeastOneFolder = (availableFolders.length > 0);
+                                                if (!atLeastOneFolder) {
+                                                    var option1 = document.createElement("option");
+                                                    option1.text = "No schedule available...";
+                                                    option1.value = NONE_NAME;
+                                                    this.scheduleSelect.appendChild(option1);
+                                                }
+                                            }
+                                            else {
+                                                for (var i in availableSchedules) {
+                                                    var schedule = availableSchedules[i];
+                                                    if ((!schedule.obsolete) || (schedule.obsolete && this.showObsoleteCheckBox.checked)) {
+                                                        var scheduleName = String(schedule.name);
+                                                        var option1 = document.createElement("option");
+                                                        option1.text = scheduleName;
+                                                        option1.value = scheduleName;
+                                                        option1.scheduleInfo = schedule;
+                                                        option1.obsolete = schedule.obsolete;
+                                                        option1.folder = false;
+                                                        if (schedule.obsolete) {
+                                                            option1.style = "color:red";
+                                                        }
+                                                        this.scheduleSelect.appendChild(option1);
+                                                    }
+                                                }
+                                            }
+                                            parent.htkDialogs.closeWaitDialog();
+                                        }.bind(this),
+                                        function (response) {
+                                            parent.htkDialogs.closeWaitDialog();
+                                            parent.htkDialogs.showErrorDialog("Failed to retrieve the schedules. Unknown error, check the server logs.");
+                                        }
+                                    );
                                 }.bind(this),
                                 function (response) {
                                     parent.htkDialogs.closeWaitDialog();
                                     parent.htkDialogs.showErrorDialog("Failed to retrieve the schedules. Unknown error, check the server logs.");
                                 }
                             );
-                        }
+                         }
                     }
 
                     /**
@@ -326,13 +460,10 @@
                     /**
                      * @brief Shows the dialog.
                      * @param[in] okCallbackFun the function to call if the user selects OK.
-                     * @param[in] currentUsername the user to select.
                      */
-                    show(okCallbackFun, currentUsername = undefined) {
-                        this.currentUsername = currentUsername;
+                    show(okCallbackFun) {
                         this.okCallbackFunction = okCallbackFun;
                         this.okButton.disabled = true;
-                        this.scheduleSelect.disabled = true;
                         this.userSelect.innerHTML = "";
                         this.scheduleSelect.innerHTML = "";
                         var option1 = document.createElement("option");
@@ -350,6 +481,8 @@
                         this.diag.showModal();
                     }
                 }
+
+
 
                 /**
                  * @brief Registers the element.

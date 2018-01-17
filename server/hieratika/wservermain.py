@@ -389,6 +389,19 @@ def getschedules():
     else:
         return HieratikaConstants.INVALID_TOKEN
 
+#Return the available schedule folders
+@application.route("/getschedulefolders", methods=["POST", "GET"])
+def getschedulefolders():
+    log.debug("/getschedulefolders")
+    if (wserver.isTokenValid(request)):
+        log.debug("/IN getschedulefolders")
+        ret = wserver.getScheduleFolders(request) 
+        log.debug("/OUT getschedulefolders")
+        return ret
+    else:
+        return HieratikaConstants.INVALID_TOKEN
+
+
 #Return the available users
 @application.route("/getusers", methods=["POST", "GET"])
 def getusers():
@@ -546,6 +559,18 @@ def obsoleteschedule():
         log.debug("/IN obsoleteschedule")
         ret = wserver.obsoleteSchedule(request)
         log.debug("/OUT obsoleteschedule")
+        return ret
+    else:
+        return HieratikaConstants.INVALID_TOKEN
+
+#Creates a new schedule folder
+@application.route("/createschedulefolder", methods=["POST", "GET"])
+def createschedulefolder():
+    log.debug("/createschedulefolder")
+    if (wserver.isTokenValid(request)):
+        log.debug("/IN createschedulefolder")
+        ret = wserver.createScheduleFolder(request)
+        log.debug("/OUT createschedulefolder")
         return ret
     else:
         return HieratikaConstants.INVALID_TOKEN

@@ -187,7 +187,7 @@
                         this.editScheduleButton = this.shadowRoot.querySelector("#editschedulebtn");
                         this.editScheduleButton.onclick = function() {
                             this.hideSideBar();
-                            this.scheduleSelector.show(this.editScheduleChanged.bind(this), this.user.id);
+                            this.scheduleSelector.show(this.editScheduleChanged.bind(this));
                         }.bind(this);
 
                         this.viewScheduleButton = this.shadowRoot.querySelector("#viewschedulebtn");
