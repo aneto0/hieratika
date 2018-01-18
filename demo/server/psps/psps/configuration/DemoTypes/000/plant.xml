@@ -92,6 +92,28 @@
                             </record>
                         </records>
                     </folder>
+                    <folder>
+                        <name>SCH</name>
+                        <records>
+                            <record size="1" xsi:type="recordSchedule">
+                                <name>SCH1</name>
+                                <alias>SCH1</alias>
+                                <description>Schedule</description>
+                                <values>
+                                  <value> </value>
+                                </values>
+                            </record>
+                            <record size="1" xsi:type="recordSchedule">
+                                <name>SCH2</name>
+                                <alias>SCH2</alias>
+                                <description>Schedule</description>
+                                <values>
+                                  <value> </value>
+                                </values>
+                            </record>
+                        </records>
+                    </folder>
+
                 </folders>
             </plantRecords>
             <plantConstraints>

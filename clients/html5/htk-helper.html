@@ -98,7 +98,7 @@
              * @details This is an asynchronous call.
              * @param[in] configName the name of the configuration that is to be load into the plant.
              * @param[in] successFun function with prototype (void) f(void), that will be called if the variables were successfully loaded into the plant.
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the variables were not loaded into the plant.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the variables were not loaded into the plant.
              */
             loadIntoPlant(configName, successFun, errorFun) {
                 $.ajax({
@@ -130,7 +130,7 @@
              * @details This is an asynchronous call.
              * @param[in] configName the name of the configuration that is to be load into the plant.
              * @param[in] successFun function with prototype (void) f(void), that will be called if the variables were successfully set as the variables to be uploaded into the plant.
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the variables were not set.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the variables were not set.
              */
             updatePlant(configName, successFun, errorFun) {
                 var allHtkDataJSon = {};
@@ -182,7 +182,7 @@
              * @param[in] configName the name of the configuration that is the owner of the variables.
              * @param[in] variablesNames the name of the variables that are to be queried.
              * @param[in] successFun function with prototype (void) f(variables), that will be called if the variables were successfully retrieved.
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the variables were not set.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the variables were not set.
              */
             getVariablesInfo(configName, variablesNames, successFun, errorFun) {
                 $.ajax({
@@ -212,7 +212,7 @@
              * @param[in] libraryType the type of library being queried.
              * @param[in] variablesNames the name of the variables that are to be queried.
              * @param[in] successFun function with prototype (void) f(variables), that will be called if the variables were successfully retrieved.
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the variables were not set.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the variables were not set.
              */
             getLibraryVariablesInfo(libraryType, variablesNames, successFun, errorFun) {
                 $.ajax({
@@ -241,7 +241,7 @@
              * @details This is an asynchronous call.
              * @param[in] variablesNames the name of the variables that are to be queried.
              * @param[in] successFun function with prototype (void) f(variables), that will be called if the variables were successfully retrieved.
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the variables were not set.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the variables were not set.
              */
             getLiveVariablesInfo(variablesNames, successFun, errorFun) {
                 $.ajax({
@@ -307,7 +307,7 @@
             /**
              * @brief Commits all the changes to the current schedule.
              * @param[in] successFun function with prototype (void) f(void), that will be called if the schedule is successfully commited.
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the schedule could not be commited.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be commited.
              */
             commitAllChangesToSchedule(successFun, errorFun) {
                 $.ajax({
@@ -336,7 +336,7 @@
              * @brief Gets the information about all the available pages.
              * @details This is an asynchronous call.
              * @param[in] successFun function with prototype (void) f(pages), that will be called if the pages were successfully retrieved.
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the pages could not be retrieved.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the pages could not be retrieved.
              */
             getPages(successFun, errorFun) {
                 $.ajax({
@@ -364,10 +364,9 @@
              * @param[in] username the name of the user that owns the schedules.
              * @param[in] parentFolders full path of the folder containing the schedules to be retrieved.
              * @param[in] successFun function with prototype (void) f(folders), that will be called if the folders could be retrieved.
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the folders could not be retrieved.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the folders could not be retrieved.
              */
             getScheduleFolders(configName, username, parentFolders, successFun, errorFun) {
-                console.log(parentFolders);
                 $.ajax({
                     type: "post",
                     url: "/getschedulefolders",
@@ -397,7 +396,7 @@
              * @param[in] username the name of the user that owns the schedules.
              * @param[in] parentFolders full path of the folder containing the schedules to be retrieved.
              * @param[in] successFun function with prototype (void) f(schedules), that will be called if the schedules could be retrieved.
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the schedules could not be retrieved.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the schedules could not be retrieved.
              */
             getSchedules(configName, username, parentFolders, successFun, errorFun) {
                 $.ajax({
@@ -422,6 +421,35 @@
                 });
             }
 
+            /**
+             * @brief Gets information about a given schedule.
+             * @param[in] scheduleUID the schedule unique identifier.
+             * @param[in] successFun function with prototype (void) f(schedule), the function that will be called if the schedule is successfully retrieved.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be retrieved.
+             */
+            getSchedule(scheduleUID, successFun, errorFun) {
+                $.ajax({
+                    type: "post",
+                    url: "/getschedule",
+                    data: {
+                        token: this.token,
+                        scheduleUID: scheduleUID
+                    },
+                    success: function (response) {
+                        if (this.checkServerResponse(response)) {
+                            var schedule = $.parseJSON(response);
+                            successFun(schedule);
+                        }
+                        else {
+                            errorFun(response);
+                        }
+                    }.bind(this),
+                    error: function (response) {
+                        this.showCriticalError(response);
+                        errorFun();
+                    }.bind(this)
+                });
+            }
 
             /**
              * @brief Creates a new schedule.
@@ -432,7 +460,7 @@
              * @param[in] parentFolders full path of the folder that will contain the new schedule.
              * @param[in] sourceScheduleUID the identifier of the schedule that is being used as a basis (i.e. where to copy from) for this schedule, or undefined if it is not applicable.
              * @param[in] successFun function with prototype (void) f(void), that will be called if the schedule was successfully created.
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the schedule could not be created.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be created.
              */
             createSchedule(scheduleName, scheduleDescription, configName, parentFolders, sourceScheduleUID, successFun, errorFun) {
                 var schedule = {
@@ -466,11 +494,11 @@
             /**
              * @brief Creates a new schedule folder.
              * @details This is an asynchronous call.
-             * @param[in] name the name of the folder to create.
+             * @param[in] folderName the name of the folder to create.
+             * @param[in] configName the name of the configuration that is associated to this schedule.
              * @param[in] parentFolders full path of the folder that will contain the new schedule.
-             * @param[in] sourceScheduleUID the identifier of the schedule that is being used as a basis (i.e. where to copy from) for this schedule, or undefined if it is not applicable.
              * @param[in] successFun function with prototype (void) f(void), that will be called if the schedule was successfully created.
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the schedule could not be created.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be created.
              */
             createScheduleFolder(folderName, configName, parentFolders, successFun, errorFun) {
                 var user = JSON.parse(localStorage.user);
@@ -498,12 +526,116 @@
             }
 
             /**
+             * @brief Deletes an existent list of schedule folders.
+             * @details This is an asynchronous call.
+             * @param[in] folderName the names of the folders to delete.
+             * @param[in] configName the name of the configuration that is associated to this schedule.
+             * @param[in] parentFolders full path of the folder that contains the schedule.
+             * @param[in] successFun function with prototype (void) f(void), that will be called if the schedule was successfully created.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be created.
+             */
+            deleteScheduleFolder(folderNames, configName, parentFolders, successFun, errorFun) {
+                if (folderNames.length > 0) {
+                    var folderName = folderNames[0];
+                    var user = JSON.parse(localStorage.user);
+                    var scheduleFolder = {
+                        token: this.token,
+                        name: folderName,
+                        parentFolders: JSON.stringify(parentFolders),
+                        username: user.username,
+                        pageName: configName 
+                    }
+                    $.ajax({
+                        type: "post",
+                        url: "/deleteschedulefolder",
+                        data: scheduleFolder,
+                        success: function (response) {
+                            if (this.checkServerResponse(response)) {
+                                if (response === HTK_OK) {
+                                    folderNames.shift();
+                                    if (folderNames.length > 0) {
+                                        this.deleteScheduleFolder(folderNames, configName, parentFolders, successFun, errorFun);
+                                    }
+                                    else {
+                                        successFun();
+                                    }
+                                }
+                                else {
+                                    parent.htkDialogs.showErrorDialog("Unkown error while deleting the folder " + folderName + " in the server. Is the folder empty?. Check the logs.");
+                                    errorFun();
+                                }
+                            }
+                        }.bind(this),
+                        error: function (response) {
+                            this.showCriticalError(response);
+                            errorFun();
+                        }.bind(this)
+                    });
+                }
+                else {
+                    successFun();
+                }
+            }
+
+            /**
+             * @brief Obsoletes an existent list of schedule folder.
+             * @details This is an asynchronous call.
+             * @param[in] folderNames the names of the folders to obsolete.
+             * @param[in] configName the name of the configuration that is associated to this schedule.
+             * @param[in] parentFolders full path of the folder that contains the schedule.
+             * @param[in] successFun function with prototype (void) f(void), that will be called if the schedule was successfully created.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be created.
+             */
+            obsoleteScheduleFolder(folderNames, configName, parentFolders, successFun, errorFun) {
+                if (folderNames.length > 0) {
+                    var folderName = folderNames[0];
+                    var user = JSON.parse(localStorage.user);
+                    var scheduleFolder = {
+                        token: this.token,
+                        name: folderName,
+                        parentFolders: JSON.stringify(parentFolders),
+                        username: user.username,
+                        pageName: configName 
+                    }
+                    $.ajax({
+                        type: "post",
+                        url: "/obsoleteschedulefolder",
+                        data: scheduleFolder,
+                        success: function (response) {
+                            if (this.checkServerResponse(response)) {
+                                if (response === HTK_OK) {
+                                    folderNames.shift();
+                                    if (folderNames.length > 0) {
+                                        this.obsoleteScheduleFolder(folderNames, configName, parentFolders, successFun, errorFun);
+                                    }
+                                    else {
+                                        successFun();
+                                    }
+                                }
+                                else {
+                                    parent.htkDialogs.showErrorDialog("Unkown error while obsoleting the folder " + folderName + " in the server. Check the server logs.");
+                                    errorFun();
+                                }
+                            }
+                        }.bind(this),
+                        error: function (response) {
+                            this.showCriticalError(response);
+                            errorFun();
+                        }.bind(this)
+                    });
+                }
+                else {
+                    successFun();
+                }
+            }
+
+            /**
              * @brief Triggers a transformation in the server.
              * @details This is an asynchronous call.
              * @param[in] funName the name of the transformationFunction.
              * @param[in] inputs the variables that are to be input to the transformation as variable/value key-pairs.
              * @param[in] successFun function with prototype (void) f(uid), that will be called if the transformation was successfully triggered.
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the transformation could not be triggered.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the transformation could not be triggered.
              */
             transform(funName, inputs, successFun, errorFun) {
                 $.ajax({
@@ -541,7 +673,7 @@
             /**
              * @brief Gets all the available users.
              * @param[in] successFun function with prototype (void) f(users), that will be called if the users were successfully retrieved.
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the users could not be retrieved.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the users could not be retrieved.
              */
             getUsers(successFun, errorFun) {
                 $.ajax({
@@ -568,7 +700,7 @@
              * @param[in] usernameToSend the username.
              * @param[in] passwordToSend the user password.
              * @param[in] successFun function with prototype (void) f(user), that will be called if the user was successfully logged in.
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the user could not be logged in.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the user could not be logged in.
              */
             loginToServer(usernameToSend, passwordToSend, successFun, errorFun) {
                 $.ajax({
@@ -597,7 +729,7 @@
             /**
              * @brief Logsout a user from the system.
              * @param[in] successFun function with prototype (void) f(void), that will be called if the user was successfully logged out.
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the users could not be logged out.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the users could not be logged out.
              */
             logout(successFun, errorFun) {
                 $.ajax({
@@ -622,7 +754,7 @@
              * @details This is an asynchronous call.
              * @param[in] configName the name of the configuration from where the transformations are to be retrieved. 
              * @param[in] successFun function with prototype (void) f(void), that will be called if the schedule was successfully created.
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the schedule could not be created.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be created.
              */
             getTransformations(configName, successFun, errorFun) {
                 $.ajax({
@@ -651,7 +783,7 @@
              * @param[in] libraryType the library type. 
              * @param[in] username the library owner. 
              * @param[in] successFun function with prototype (void) f(libraries), that will be called if the libraires were successfully retrieved .
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the libraries could not be retrieved.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the libraries could not be retrieved.
              */
             getLibraries(libraryType, username, successFun, errorFun) {
                 $.ajax({
@@ -680,7 +812,7 @@
              * @details This is an asynchronous call.
              * @param[in] uid the library unique identifier. 
              * @param[in] successFun function with prototype (void) f(variablesValues), that will be called if the library variables values were successfully retrieved .
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the libraries variables values could not be retrieved.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the libraries variables values could not be retrieved.
              */
             getLibraryVariablesValues(uid, successFun, errorFun) {
                 $.ajax({
@@ -711,7 +843,7 @@
              * @param[in] libraryDescription the library description. 
              * @param[in] variables the library variables/values key-pairs. 
              * @param[in] successFun function with prototype (void) f(library), that will be called if the library was successfully saved.
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the libraries variables values could not be saved.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the libraries variables values could not be saved.
              */
             saveLibrary(libraryType, libraryName, libraryDescription, variables, successFun, errorFun) {
                 var user = this.getUser();
@@ -753,8 +885,8 @@
              * @brief Deletes a set of schedules.
              * @details This is an asynchronous call.
              * @param[in] scheduleUID the schedule unique identifiers. 
-             * @param[in] successFun function with prototype (void) f(), that will be called if the schedule was successfully deleted.
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the schedule could not be deleted.
+             * @param[in] successFun function with prototype (void) f(void), that will be called if the schedule was successfully deleted.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be deleted.
              */
             deleteSchedule(scheduleUIDs, successFun, errorFun) {
                 if (scheduleUIDs.length > 0) {
@@ -799,14 +931,17 @@
                         }.bind(this)
                     });
                 }
+                else {
+                    successFun();
+                }
             }
 
             /**
              * @brief Obsoletes a set of schedules.
              * @details This is an asynchronous call.
              * @param[in] scheduleUID the schedule unique identifiers. 
-             * @param[in] successFun function with prototype (void) f(), that will be called if the schedule was successfully obsoleted.
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the schedule could not be obsoleted.
+             * @param[in] successFun function with prototype (void) f(void), that will be called if the schedule was successfully obsoleted.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be obsoleted.
              */
             obsoleteSchedule(scheduleUIDs, successFun, errorFun) {
                 if (scheduleUIDs.length > 0) {
@@ -847,6 +982,9 @@
                         }.bind(this)
                     });
                 }
+                else {
+                    successFun();
+                }
             }
 
 
@@ -854,8 +992,8 @@
              * @brief Deletes a library.
              * @details This is an asynchronous call.
              * @param[in] libraryUID the library unique identifier. 
-             * @param[in] successFun function with prototype (void) f(), that will be called if the library was successfully deleted.
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the library could not be deleted.
+             * @param[in] successFun function with prototype (void) f(void), that will be called if the library was successfully deleted.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the library could not be deleted.
              */
             deleteLibrary(libraryUID, successFun, errorFun) {
                 $.ajax({
@@ -897,8 +1035,8 @@
              * @brief Obsoletes a library.
              * @details This is an asynchronous call.
              * @param[in] libraryUID the library unique identifier. 
-             * @param[in] successFun function with prototype (void) f(), that will be called if the library was successfully obsoleted.
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the library could not be obsoleted.
+             * @param[in] successFun function with prototype (void) f(void), that will be called if the library was successfully obsoleted.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the library could not be obsoleted.
              */
             obsoleteLibrary(libraryUID, successFun, errorFun) {
                 $.ajax({
@@ -938,10 +1076,12 @@
              * @return true if the response from the server is not HTK_INVALID_TOKEN.
              */
             checkServerResponse(response) {
-                var ok = true;
-                if (response === HTK_INVALID_TOKEN) {
-                    ok = false;
-                    this.fireInvalidToken();
+                var ok = (response.length > 0);
+                if (ok) {
+                    if (response === HTK_INVALID_TOKEN) {
+                        ok = false;
+                        this.fireInvalidToken();
+                    }
                 }
                 return ok;
             }

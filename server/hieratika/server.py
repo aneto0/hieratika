@@ -217,7 +217,7 @@ class HieratikaServer(object):
            pageName (str): the name of the page associated to the schedule.
            parentFolders ([str]): list of the parent folders of the folders to be retrieved.
         Returns:
-            An array with all the schedules that are available for the requested user in the 
+            An array with all the ScheduleFolders that are available for the requested user in the 
             specified page.
         """
         pass
@@ -383,6 +383,33 @@ class HieratikaServer(object):
         """
         pass
 
+    @abstractmethod
+    def deleteScheduleFolder(self, name, username, parentFolders, pageName):
+        """ Delete a schedule folder. 
+
+        Args:
+            name (str): the name of the folder to delete.
+            username (str): the owner of the schedule folder.
+            parentFolders ([str]): list of the parent folders of the folder to be deleted.
+            pageName (str): name of the page to which the schedule folder belongs to.
+        Returns:
+            HieratikaConstants.OK if the schedule was successfully deleted or HieratikaConstants.UNKNOWN_ERROR if case of any other error.
+        """
+        pass
+
+    @abstractmethod
+    def obsoleteScheduleFolder(self, name, username, parentFolders, pageName):
+        """ Obsoletes a schedule folder. 
+
+        Args:
+            name (str): the name of the folder to obsolete.
+            username (str): the owner of the schedule folder.
+            parentFolders ([str]): list of the parent folders of the new folder to be obsolete.
+            pageName (str): name of the page to which the schedule folder belongs to.
+        Returns:
+            HieratikaConstants.OK if the schedule was successfully obsolete or HieratikaConstants.UNKNOWN_ERROR if case of any other error.
+        """
+        pass
 
     @abstractmethod
     def deleteLibrary(self, libraryUID):

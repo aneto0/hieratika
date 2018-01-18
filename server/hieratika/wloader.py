@@ -28,6 +28,7 @@ import threading
 ##
 # Project imports
 ##
+from hieratika.hconstants import HieratikaConstants
 
 ##
 # Logger configuration

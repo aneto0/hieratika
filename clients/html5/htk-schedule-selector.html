@@ -61,19 +61,11 @@
                                     <tr>
                                         <td style="text-align:right;">
                                             <button title="Create a new schedule..." id="createschedulebtn"><i class="fa fa-plus-square"></i></button>
-                                            <button title="Delete schedule..." id="deleteschedulebtn"><i class="fa fa-minus-square"></i></button>
-                                            <button title="Obsolete schedule..." id="obsoleteschedulebtn"><i class="fa fa-asterisk"></i></button>
-                                            <input type="checkbox" id="showobsoletecheckbox" value="obsolete" title="Show obsolete schedules?"><i class="fa fa-eye"></i></input>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="text-align:right;">
                                             <button title="Create a new folder..." id="createschedulefolderbtn"><i class="fa fa-folder"></i></button>
-                                            <button title="Delete a folder..." id="deleteschedulefolderbtn"><i class="fa fa-folder-o" style="color:red"></i></span></button>
+                                            <button title="Delete schedule/folder..." id="deleteschedulebtn"><i class="fa fa-minus-square"></i></button>
+                                            <button title="Obsolete schedule/folder..." id="obsoleteschedulebtn"><i class="fa fa-asterisk"></i></button>
+                                            <input type="checkbox" id="showobsoletecheckbox" value="obsolete" title="Show obsolete schedules and folders?"><i class="fa fa-eye"></i></input>
                                         </td>
-                                    </tr>
-
-                                    <tr>
                                     </tr>
                                 </table>
                             </td>
@@ -176,8 +168,8 @@
                             this.newSchedulesSelect = this.shadowRoot.querySelector("#newschedulesselect");
                             this.newScheduleName = this.shadowRoot.querySelector("#newschedulename")
                             this.newScheduleDescription = this.shadowRoot.querySelector("#newscheduledescription")
-                            var createNewSchedule = this.shadowRoot.querySelector("#createschedulebtn");
-                            createNewSchedule.onclick = function() {
+                            this.createNewScheduleButton = this.shadowRoot.querySelector("#createschedulebtn");
+                            this.createNewScheduleButton.onclick = function() {
                                 this.scheduleDiv.setAttribute("hidden", "true");
                                 this.newScheduleDiv.removeAttribute("hidden");
                                 this.newScheduleName.value = (new Date().toISOString());
@@ -202,60 +194,98 @@
                             }.bind(this); 
 
                             this.deleteScheduleButton = this.shadowRoot.querySelector("#deleteschedulebtn");
-                            this.deleteScheduleButton.disabled = true;
                             this.deleteScheduleButton.onclick = function() {
                                 var selectedOptions = htkHelper.getSelectAllSelectedValues(this.scheduleSelect);
                                 var selectedSchedulesUIDs = [];
+                                var selectedFolders = [];
                                 for (var i=0; i<selectedOptions.length; i++) {
                                     var schedule = selectedOptions[i].scheduleInfo;
-                                    selectedSchedulesUIDs.push(schedule.uid);
+                                    if (schedule !== undefined) {
+                                        selectedSchedulesUIDs.push(schedule.uid);
+                                    }
+                                    var folder = selectedOptions[i].folderInfo;
+                                    if (folder !== undefined) {
+                                        selectedFolders.push(folder.name);
+                                    }
                                 }
-                                if (selectedSchedulesUIDs.length > 0) {
-                                    var ok = parent.htkDialogs.showConfirmDialog("Are you sure you want to delete the selected schedules?");
+                                if ((selectedSchedulesUIDs.length > 0) || (selectedFolders.length > 0)) {
+                                    var ok = parent.htkDialogs.showConfirmDialog("Are you sure you want to delete the selected schedules / folders?");
                                     if (ok) {
                                         parent.htkDialogs.showWaitDialog();
                                         parent.htkHelper.deleteSchedule(
                                             selectedSchedulesUIDs,
                                             function () {
-                                                this.updateUserSchedules(); 
+                                                parent.htkHelper.deleteScheduleFolder (
+                                                    selectedFolders,
+                                                    this.pageName,
+                                                    this.currentFolderPath,
+                                                    function() {
+                                                        parent.htkDialogs.closeWaitDialog();
+                                                        this.updateUserSchedules(); 
+                                                    }.bind(this),
+                                                    function (response) {
+                                                        parent.htkDialogs.closeWaitDialog();
+                                                        this.updateUserSchedules(); 
+                                                    }.bind(this)
+                                                );
                                             }.bind(this),
                                             function (response) {
                                                 parent.htkDialogs.closeWaitDialog();
-                                            }
+                                                this.updateUserSchedules(); 
+                                            }.bind(this)
                                         );
                                     }
                                 }
                                 else {
-                                    parent.htkDialogs.showErrorDialog("Please select a schedule first");
+                                    parent.htkDialogs.showErrorDialog("Please select a schedule (or folder) first");
                                 }
                             }.bind(this); 
 
                             this.obsoleteScheduleButton = this.shadowRoot.querySelector("#obsoleteschedulebtn");
-                            this.obsoleteScheduleButton.disabled = true;
                             this.obsoleteScheduleButton.onclick = function() {
                                 var selectedOptions = htkHelper.getSelectAllSelectedValues(this.scheduleSelect);
                                 var selectedSchedulesUIDs = [];
+                                var selectedFolders = [];
                                 for (var i=0; i<selectedOptions.length; i++) {
                                     var schedule = selectedOptions[i].scheduleInfo;
-                                    selectedSchedulesUIDs.push(schedule.uid);
+                                    if (schedule !== undefined) {
+                                        selectedSchedulesUIDs.push(schedule.uid);
+                                    }
+                                    var folder = selectedOptions[i].folderInfo;
+                                    if (folder !== undefined) {
+                                        selectedFolders.push(folder.name);
+                                    }
                                 }
-                                if (selectedSchedulesUIDs.length > 0) {
-                                    var ok = parent.htkDialogs.showConfirmDialog("Are you sure you want to obsolete the selected schedules?");
+                                if ((selectedSchedulesUIDs.length > 0) || (selectedFolders.length > 0)) {
+                                    var ok = parent.htkDialogs.showConfirmDialog("Are you sure you want to obsolete the selected schedules / folders?");
                                     if (ok) {
                                         parent.htkDialogs.showWaitDialog();
                                         parent.htkHelper.obsoleteSchedule(
                                             selectedSchedulesUIDs,
                                             function () {
-                                                this.updateUserSchedules(); 
+                                                parent.htkHelper.obsoleteScheduleFolder(
+                                                    selectedFolders,
+                                                    this.pageName,
+                                                    this.currentFolderPath,
+                                                    function() {
+                                                        parent.htkDialogs.closeWaitDialog();
+                                                        this.updateUserSchedules(); 
+                                                    }.bind(this),
+                                                    function (response) {
+                                                        parent.htkDialogs.closeWaitDialog();
+                                                        this.updateUserSchedules(); 
+                                                    }.bind(this)
+                                                );
                                             }.bind(this),
                                             function (response) {
                                                 parent.htkDialogs.closeWaitDialog();
-                                            }
+                                                this.updateUserSchedules(); 
+                                            }.bind(this)
                                         );
                                     }
                                 }
                                 else {
-                                    parent.htkDialogs.showErrorDialog("Please select a schedule first");
+                                    parent.htkDialogs.showErrorDialog("Please select a schedule (or folder) first");
                                 }
                             }.bind(this); 
 
@@ -264,8 +294,8 @@
                                 this.updateUserSchedules(); 
                             }.bind(this); 
 
-                            var createNewScheduleFolder = this.shadowRoot.querySelector("#createschedulefolderbtn");
-                            createNewScheduleFolder.onclick = function() {
+                            this.createNewScheduleFolderButton = this.shadowRoot.querySelector("#createschedulefolderbtn");
+                            this.createNewScheduleFolderButton.onclick = function() {
                                 var newFolderName = parent.htkDialogs.showInputDialog("Please insert the new folder name.");
                                 if (newFolderName !== null) {
                                     parent.htkDialogs.showWaitDialog();
@@ -319,6 +349,8 @@
                         }
 
                         this.currentFolderPath = [];
+                        this.allowUserOK = true;
+                        this.allowUserScheduleManagement = true;
                     }
 
                     /**
@@ -328,22 +360,17 @@
                         if (this.userSelect.selectedIndex >= 0) {
                             var username = this.userSelect[this.userSelect.selectedIndex].value;
                             if (this.scheduleSelect.selectedIndex >= 0) {
-                                var currentUsername = htkHelper.getUser().username;
-                                var notThisUsername = (currentUsername !== username);
                                 var selectedOption = this.scheduleSelect[this.scheduleSelect.selectedIndex];
                                 if (selectedOption.folder) {
                                     this.okButton.disabled = true;
-                                    this.deleteScheduleButton.disabled = true;
-                                    this.obsoleteScheduleButton.disabled = true;
                                 }
                                 else {
-                                    this.okButton.disabled = notThisUsername;
-                                    this.deleteScheduleButton.disabled = notThisUsername;
-                                    this.obsoleteScheduleButton.disabled = notThisUsername;
                                     this.descriptionArea.innerHTML = selectedOption.scheduleInfo.description;
+                                    this.okButton.disabled = !this.allowUserOK;
                                 }
                             }
                         }
+                        
                     }
 
                     /**
@@ -354,8 +381,6 @@
                             var username = this.userSelect[this.userSelect.selectedIndex].value;
                             if (this.scheduleSelect.selectedIndex >= 0) {
                                 var selectedOption = this.scheduleSelect[this.scheduleSelect.selectedIndex];
-                                console.log(selectedOption.value);
-                                console.log(selectedOption.folder);
                                 if (selectedOption.folder) {
                                     if (selectedOption.value === "..") {
                                         this.currentFolderPath.pop();
@@ -376,6 +401,14 @@
                         if (this.userSelect.selectedIndex >= 0) {
                             parent.htkDialogs.showWaitDialog();
                             var username = this.userSelect[this.userSelect.selectedIndex].value;
+                            var currentUsername = htkHelper.getUser().username;
+                            var userIsTheOwner = (currentUsername === username);
+                            var allowScheduleManagement = ((this.allowUserScheduleManagement) && (userIsTheOwner));
+                            this.createNewScheduleButton.disabled = !allowScheduleManagement;
+                            this.createNewScheduleFolderButton.disabled = !allowScheduleManagement;
+                            this.deleteScheduleButton.disabled = !allowScheduleManagement;
+                            this.obsoleteScheduleButton.disabled = !allowScheduleManagement;
+                            this.showObsoleteCheckBox.disabled = !allowScheduleManagement;
                             parent.htkHelper.getScheduleFolders(
                                 this.pageName, 
                                 username,
@@ -393,12 +426,21 @@
 
                                     for (var i in availableFolders) {
                                         var folder = availableFolders[i];
-                                        var option1 = document.createElement("option");
-                                        option1.text = folder;
-                                        option1.value = folder;
-                                        option1.folder = true;
-                                        option1.style = "color:blue";
-                                        this.scheduleSelect.appendChild(option1);
+                                        if ((!folder.obsolete) || (folder.obsolete && this.showObsoleteCheckBox.checked)) {
+                                            var option1 = document.createElement("option");
+                                            option1.text = folder.name;
+                                            option1.value = folder.name;
+                                            option1.folderInfo = folder;
+                                            option1.obsolete = folder.obsolete;
+                                            option1.folder = true;
+                                            if (folder.obsolete) {
+                                                option1.style = "color:pink";
+                                            }
+                                            else {
+                                                option1.style = "color:blue";
+                                            }
+                                            this.scheduleSelect.appendChild(option1);
+                                        }
                                     }
 
                                     parent.htkHelper.getSchedules(
@@ -432,6 +474,7 @@
                                                         this.scheduleSelect.appendChild(option1);
                                                     }
                                                 }
+                                                
                                             }
                                             parent.htkDialogs.closeWaitDialog();
                                         }.bind(this),
@@ -458,11 +501,23 @@
                     }
 
                     /**
+                     * @brief Sets the page name of whose schedules are to be displayed by this component.
+                     * @param[in] pageName the page to which the schedules are associated.
+                     */
+                    setPageName(pageName) {
+                        this.pageName = pageName;
+                    }
+
+                    /**
                      * @brief Shows the dialog.
                      * @param[in] okCallbackFun the function to call if the user selects OK.
+                     * @param[in] allowUserOK if true allows the user to select OK and change the selected schedule (otherwise it used as read-only).
+                     * @param[in] allowUserScheduleManagement if true allow the user to create/delete schedules.
                      */
-                    show(okCallbackFun) {
+                    show(okCallbackFun, allowUserOK = true, allowUserScheduleManagement = true) {
                         this.okCallbackFunction = okCallbackFun;
+                        this.allowUserOK = allowUserOK;
+                        this.allowUserScheduleManagement = allowUserScheduleManagement;
                         this.okButton.disabled = true;
                         this.userSelect.innerHTML = "";
                         this.scheduleSelect.innerHTML = "";
@@ -478,6 +533,12 @@
                             option1.value = username;
                             this.userSelect.appendChild(option1);
                         }
+                        this.createNewScheduleButton.disabled = true;
+                        this.createNewScheduleFolderButton.disabled = true;
+                        this.deleteScheduleButton.disabled = true;
+                        this.obsoleteScheduleButton.disabled = true;
+                        this.showObsoleteCheckBox.disabled = true;
+
                         this.diag.showModal();
                     }
                 }

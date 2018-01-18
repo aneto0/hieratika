@@ -43,6 +43,7 @@ from hieratika.hconstants import HieratikaConstants
 from hieratika.hlibrary import HLibrary
 from hieratika.page import Page
 from hieratika.schedule import Schedule
+from hieratika.schedulefolder import ScheduleFolder
 from hieratika.server import HieratikaServer
 from hieratika.transformationfunction import TransformationFunction
 from hieratika.util.lockpool import LockPool
@@ -67,6 +68,8 @@ class PSPSServer(HieratikaServer):
     #Xml namespaces
     xmlns = {"ns0": "http://www.iter.org/CODAC/PlantSystemConfig/2014",
              "xsi": "http://www.w3.org/2001/XMLSchema-instance"}
+
+    OBSOLETE_FILENAME = "_obsolete_"
 
     def __init__(self):
         super(PSPSServer, self).__init__()
@@ -620,8 +623,8 @@ class PSPSServer(HieratikaServer):
             name = name.split(".xml")
             if (len(name) > 1):
                 name = name[-2]
-            schedule = Schedule(xmlFile, name, pageName, username, description, obsolete)
-            schedules.append(schedule);
+                schedule = Schedule(xmlFile, name, pageName, username, description, obsolete)
+                schedules.append(schedule);
 
         return schedules
 
@@ -633,6 +636,10 @@ class PSPSServer(HieratikaServer):
         obsolete = False
         if (tree is not None):
             xmlRoot = tree.getroot()
+            pageName = xmlRoot.find("./ns0:name", self.xmlns)
+            if (pageName is not None):
+                pageName = pageName.text
+
             description = xmlRoot.find("./ns0:description", self.xmlns)
             if (description is not None):
                 description = description.text
@@ -641,8 +648,17 @@ class PSPSServer(HieratikaServer):
                 obsoleteTxt = obsoleteXml.text
                 obsolete = obsoleteTxt in ("true", "yes", "1") 
 
-            filePath = xmlFile.split("/")
-            schedule = Schedule(xmlFile, filePath[-1], pageName, username, description, obsolete)
+            owner = ""
+            ownerXml = xmlRoot.find("./ns0:owner", self.xmlns)
+            if (ownerXml is not None):
+                owner = ownerXml.text
+
+            filePath = scheduleUID.split("/")
+            name = filePath[-1]
+            name = name.split(".xml")
+            if (len(name) > 1):
+                name = name[-2]
+                schedule = Schedule(scheduleUID, name, pageName, owner, description, obsolete)
         self.lockPool.release(xmlId)
         return schedule
 
@@ -891,6 +907,10 @@ class PSPSServer(HieratikaServer):
                 descriptionXml = xmlRoot.find("./ns0:description", self.xmlns)
                 if (descriptionXml is not None):
                     descriptionXml.text = description
+                ownerXml = xmlRoot.find("./ns0:owner", self.xmlns)
+                if (ownerXml is None):
+                    ownerXml = etree.SubElement(xmlRoot, "{{{0}}}owner".format(self.xmlns["ns0"]))
+                ownerXml.text = username 
                 tree.write(destScheduleUID)
                 log.info("Created schedule with uid {0}".format(destScheduleUID))
             else:
@@ -918,6 +938,50 @@ class PSPSServer(HieratikaServer):
                 ok = HieratikaConstants.UNKNOWN_ERROR
         return ok 
 
+    def deleteScheduleFolder(self, name, username, parentFolders, pageName):
+        parentFoldersPath = self.getParentFoldersPath(parentFolders)
+        if (self.standalone):
+            delFolderPath = "{0}/psps/configuration/{1}/{2}/{3}".format(self.baseDir, pageName, parentFoldersPath, name)
+        else:
+            delFolderPath = "{0}/users/{1}/configuration/{2}/{3}/{4}".format(self.baseDir, username, pageName, parentFoldersPath, name)
+
+        log.info("Deleting schedule folder with name: {0} ({1}) for page: {2}".format(name, delFolderPath, pageName))
+
+        #Check if the obsolete file exists (otherwise the directory will never be empty)
+        wasObsolete = False
+        obsoleteFile = os.path.join(delFolderPath, self.OBSOLETE_FILENAME)
+        if (os.path.isfile(obsoleteFile)):
+            wasObsolete = True
+            os.remove(obsoleteFile)
+
+        ok = HieratikaConstants.OK
+        try:
+            os.rmdir(delFolderPath)
+        except OSError as e:
+            #Ignore the file exists error
+            log.critical("Failed to delete schedule folder {0}".format(e))
+            ok = HieratikaConstants.UNKNOWN_ERROR
+            if (wasObsolete):
+                self.touchFile(obsoleteFile)
+        return ok 
+
+    def obsoleteScheduleFolder(self, name, username, parentFolders, pageName):
+        parentFoldersPath = self.getParentFoldersPath(parentFolders)
+        if (self.standalone):
+            obsoleteFolderPath = "{0}/psps/configuration/{1}/{2}/{3}".format(self.baseDir, pageName, parentFoldersPath, name)
+        else:
+            obsoleteFolderPath = "{0}/users/{1}/configuration/{2}/{3}/{4}".format(self.baseDir, username, pageName, parentFoldersPath, name)
+
+        log.info("Obsoleting schedule folder with name: {0} ({1}) for page: {2}".format(name, obsoleteFolderPath, pageName))
+
+        ok = HieratikaConstants.OK
+        try:
+            self.touchFile(os.path.join(obsoleteFolderPath, self.OBSOLETE_FILENAME))
+        except OSError as e:
+            #Ignore the file exists error
+            log.critical("Failed to obsolete schedule folder {0}".format(e))
+            ok = HieratikaConstants.UNKNOWN_ERROR
+        return ok 
 
     def convertVariableTypeFromXml(self, xmlVariableType):
         """ Helper function which converts a psps record type to a hieratika type.
@@ -940,6 +1004,8 @@ class PSPSServer(HieratikaServer):
             toReturn = "enum" 
         elif (xmlVariableType == "recordLibrary"):
             toReturn = "library" 
+        elif (xmlVariableType == "recordSchedule"):
+            toReturn = "schedule" 
         else:
             log.critical("Could not convert type {0}".format(xmlVariableType))
         return toReturn
@@ -975,8 +1041,12 @@ class PSPSServer(HieratikaServer):
 
         log.debug("Getting folders for directory: {0}".format(directory))
         for item in os.listdir(directory):
-            if (os.path.isdir(os.path.join(directory, item))):
-                matches.append(item)
+            folderName = os.path.join(directory, item)
+            if (os.path.isdir(folderName)):
+                obsolete = False
+                if (os.path.isfile(os.path.join(folderName, self.OBSOLETE_FILENAME))):
+                    obsolete = True
+                matches.append(ScheduleFolder(item, obsolete))
         log.debug("Returning folders: {0}".format(matches))
         return matches
 
@@ -1221,6 +1291,23 @@ class PSPSServer(HieratikaServer):
 
         return updatedVariables
 
+    def updateScheduleVariable(self, variableValue, oldVariableValue):
+        """ Marks a given schedule as being used.
+
+        Args:
+            variableValue (str): the variable value which shall contain the schedule UID 
+            oldVariableValue (str): the old variable value which shall contain the schedule UID 
+        Returns:
+            True if the schedule counter could be incremented.
+        """
+        xmlId = self.getXmlId(oldVariableValue)
+        self.lockPool.acquire(xmlId)
+        self.decrementReferenceCounter(oldVariableValue)
+        self.lockPool.release(xmlId)
+        xmlId = self.getXmlId(variableValue)
+        self.lockPool.acquire(xmlId)
+        self.incrementReferenceCounter(variableValue)
+        self.lockPool.release(xmlId)
 
     def updateVariable(self, variableName, root, variableValue):
         """ Updates the value of the a variable in a given xml (plant or schedule).
@@ -1271,6 +1358,9 @@ class PSPSServer(HieratikaServer):
                 if (typeFromXml == "library"):
                     #+ provides list concatenation
                     updatedVariables = updatedVariables + self.updateLibrary(recordXml, root, variableValue, oldValue)
+                elif (typeFromXml == "schedule"):
+                    self.updateScheduleVariable(variableValue, oldValue)
+                    
             else:
                 log.critical("Could not find {0} . Failed while looking for {1}".format(variableName, fullVariablePath))
         else:
@@ -1452,9 +1542,22 @@ class PSPSServer(HieratikaServer):
         """
 
         parentFoldersPath = ""
-        for p in parentFolders:
-            parentFoldersPath = "{0}/{1}".format(parentFoldersPath, p)
+        if (len(parentFolders) > 0):
+            parentFoldersPath = "{0}".format(parentFolders[0])
+            for p in parentFolders[1:]:
+                parentFoldersPath = "{0}/{1}".format(parentFoldersPath, p)
 
         return parentFoldersPath
 
+
+    def touchFile(self, filename):
+        """ Helper function which touches a file. 
+        
+        Args:
+            filename (str): the filename to be touched.
+        """
+        try:
+            os.utime(filename, None)
+        except OSError:
+            open(filename, 'a').close()
 

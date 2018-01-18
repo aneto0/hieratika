@@ -26,6 +26,7 @@
         <link rel="import" href="/htk-enum.html">
         <link rel="import" href="/htk-input.html">
         <link rel="import" href="/htk-library-button.html">
+        <link rel="import" href="/htk-schedule-button.html">
     </head>
     <body>
         <!-- HTML5 component template-->
@@ -146,6 +147,9 @@
                                         }
                                         else if (member.type === "library") {
                                             this.treeHTML += callerMemberName + ": <htk-library-button id=\"" + fullMemberName + "\" name=\"" + fullMemberName + "\" class=\"" + memberNameValidCSS + "\"></htk-library-button>\n";
+                                        }
+                                        else if (member.type === "schedule") {
+                                            this.treeHTML += callerMemberName + ": <htk-schedule-button id=\"" + fullMemberName + "\" name=\"" + fullMemberName + "\" class=\"" + memberNameValidCSS + "\"></htk-schedule-button>\n";
                                         }
                                         else {
                                             this.treeHTML += callerMemberName + ": <htk-input id=\"" + fullMemberName + "\" name=\"" + fullMemberName + "\" class=\"" + memberNameValidCSS + "\"></htk-input>\n";

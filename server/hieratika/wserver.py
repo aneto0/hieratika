@@ -264,7 +264,8 @@ class WServer:
             parentFolders = json.loads(request.form["parentFolders"])
             
             folders = self.serverImpl.getScheduleFolders(username, pageName, parentFolders)
-            toReturn = json.dumps(folders)
+            foldersStr = [f.__dict__ for f in folders]
+            toReturn = json.dumps(foldersStr)
             log.debug("For {0} in {1} returning: {2}".format(username, pageName, toReturn))
         except Exception as e:
             log.critical(str(e))
@@ -310,7 +311,7 @@ class WServer:
             scheduleUID = request.form["scheduleUID"]
             schedule = self.serverImpl.getSchedule(scheduleUID)
             if (schedule is not None):
-                toReturn = json.dumps(schedule)
+                toReturn = json.dumps(schedule.__dict__)
                 log.debug("Returning schedule: {0}".format(toReturn))
         except KeyError as e:
             log.critical(str(e))
@@ -472,6 +473,50 @@ class WServer:
             parentFolders = json.loads(request.form["parentFolders"])
             pageName = request.form["pageName"]
             toReturn = self.serverImpl.createScheduleFolder(name, username, parentFolders, pageName) 
+        except KeyError as e:
+            log.critical(e)
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
+        return toReturn
+
+    def deleteScheduleFolder(self, request):
+        """ Deletes a schedule folder. 
+
+        Args:
+            request.form["name"]: the name of the schedule folder to delete.
+            request.form["username"]: the owner of the folder.
+            request.form["parentFolders"]: a list of the parent folders of the folder to be deleted.
+            request.form["pageName"]: name of the page to which the schedule folder belongs to.
+        Returns:
+            HieratikaConstants.OK if the schedule was successfully deleted or HieratikaConstants.UNKNOWN_ERROR if case of any other error.
+        """
+        try:
+            name = request.form["name"]
+            username = request.form["username"]
+            parentFolders = json.loads(request.form["parentFolders"])
+            pageName = request.form["pageName"]
+            toReturn = self.serverImpl.deleteScheduleFolder(name, username, parentFolders, pageName) 
+        except KeyError as e:
+            log.critical(e)
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
+        return toReturn
+
+    def obsoleteScheduleFolder(self, request):
+        """ Creates a new schedule folder. 
+
+        Args:
+            request.form["name"]: the name of the schedule folder to obsolete.
+            request.form["username"]: the owner of the folder.
+            request.form["parentFolders"]: a list of the parent folders of the folder to be obsoleted.
+            request.form["pageName"]: name of the page to which the schedule folder belongs to.
+        Returns:
+            HieratikaConstants.OK if the schedule was successfully obsoleted or HieratikaConstants.UNKNOWN_ERROR if case of any other error.
+        """
+        try:
+            name = request.form["name"]
+            username = request.form["username"]
+            parentFolders = json.loads(request.form["parentFolders"])
+            pageName = request.form["pageName"]
+            toReturn = self.serverImpl.obsoleteScheduleFolder(name, username, parentFolders, pageName) 
         except KeyError as e:
             log.critical(e)
             toReturn = HieratikaConstants.INVALID_PARAMETERS

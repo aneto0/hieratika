@@ -575,6 +575,31 @@ def createschedulefolder():
     else:
         return HieratikaConstants.INVALID_TOKEN
 
+#Deletes an existent schedule folder
+@application.route("/deleteschedulefolder", methods=["POST", "GET"])
+def deleteschedulefolder():
+    log.debug("/deleteschedulefolder")
+    if (wserver.isTokenValid(request)):
+        log.debug("/IN deleteschedulefolder")
+        ret = wserver.deleteScheduleFolder(request)
+        log.debug("/OUT deleteschedulefolder")
+        return ret
+    else:
+        return HieratikaConstants.INVALID_TOKEN
+
+#Obsoletes an existent schedule folder
+@application.route("/obsoleteschedulefolder", methods=["POST", "GET"])
+def obsoleteschedulefolder():
+    log.debug("/obsoleteschedulefolder")
+    if (wserver.isTokenValid(request)):
+        log.debug("/IN obsoleteschedulefolder")
+        ret = wserver.obsoleteScheduleFolder(request)
+        log.debug("/OUT obsoleteschedulefolder")
+        return ret
+    else:
+        return HieratikaConstants.INVALID_TOKEN
+
+
 #Applies a transformation
 @application.route("/transform", methods=["POST", "GET"])
 def transform():
