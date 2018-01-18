@@ -93,6 +93,15 @@
                 return this.htkMainEditor.getAllMainFrameHtkComponents();
             }
 
+
+            /**
+             * @brief Registers a component that wants to informed when all the variables information, for a given page, have been loaded.
+             * @param[in] listener the component to register.
+             */
+            addVariablesInfoLoadedListener(listener) {
+                this.htkMainEditor.addVariablesInfoLoadedListener(listener);
+            }
+
             /**
              * @brief Loads the configuration variables into the plant.
              * @details This is an asynchronous call.

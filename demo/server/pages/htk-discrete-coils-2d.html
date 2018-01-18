@@ -1,6 +1,7 @@
 <html>
     <head>
-        <link rel="import" href="libraries.html">
+        <link rel="import" href="/libraries.html">
+        <link rel="import" href="/htk-helper.html">
     </head>
     <body>
         <template id="tdiscretecoils2d">
@@ -24,10 +25,10 @@
                         root.appendChild(clone);
 
                         this.canvas = this.shadowRoot.querySelector("#tcanvas");
-                        parent._htkMainEditor.addPlantInfoLoadedListener(this);
+                        parent.htkHelper.addVariablesInfoLoadedListener(this);
                     }
 
-                    plantInfoLoaded() {
+                    variablesInfoLoaded() {
                         var coilVariables = this.getAttribute("data-coil-variables");
                         this.coils = {}; 
                         this.canvasHeight = this.canvas.getAttribute("height");

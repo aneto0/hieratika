@@ -1,6 +1,7 @@
 <html>
     <head>
-        <link rel="import" href="libraries.html">
+        <link rel="import" href="/libraries.html">
+        <link rel="import" href="/htk-helper.html">
     </head>
     <body>
         <template id="tloopcoils3d">
@@ -24,7 +25,7 @@
                         var root = this.createShadowRoot();
                         root.appendChild(clone);
 
-                        parent._htkMainEditor.addPlantInfoLoadedListener(this);
+                        parent.htkHelper.addVariablesInfoLoadedListener(this);
                     }
         
                     attachedCallback() {
@@ -34,7 +35,7 @@
                         this.drawVessel(minPhi, maxPhi);
                     }
 
-                    plantInfoLoaded() {
+                    variablesInfoLoaded() {
                         this.controls = new THREE.TrackballControls( this.camera, this.div3d );
                         this.controls.minDistance = 0;
                         this.controls.maxDistance = 50;
