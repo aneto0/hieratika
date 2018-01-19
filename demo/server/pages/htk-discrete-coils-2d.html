@@ -79,15 +79,15 @@
                         var propChange = src.id.substring(src.id.lastIndexOf("@") + 1);
                         var coil;
                         var value;
-                        if (typeOfChange === VALUE_CHANGED) {
+                        if (typeOfChange === HtkComponent.VALUE_CHANGED) {
                             coil = this.coils[coilId];
                             value = parseFloat(src.getValue());
                         }
-                        else if (typeOfChange === VALUE_CHANGED_PLANT) {
+                        else if (typeOfChange === HtkComponent.VALUE_CHANGED_PLANT) {
                             coil = this.coils[coilId + "Plant"];
                             value = parseFloat(src.getPlantValue());
                         }
-                        else if (typeOfChange === VALUE_CHANGED_REFERENCE) {
+                        else if (typeOfChange === HtkComponent.VALUE_CHANGED_REFERENCE) {
                             coil = this.coils[coilId + "Ref"];
                             value = parseFloat(src.getReferenceValue());
                         }
