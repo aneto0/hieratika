@@ -680,7 +680,7 @@ class WServer:
             request.form["variables"]: a dictionary with the list of variables to be updated in the form {variableName1:variableValue1, ...}
 
         Returns:
-            ok if the schedule is successfully updated or an empty string otherwise.
+            HieratikaConstants.OK if the schedule was successfully commited, or one of HieratikaConstants.IN_USE, HieratikaConstants.UNKNOWN_ERROR if the library could not be saved.
         """
         toReturn = ""
         try: 
@@ -693,7 +693,9 @@ class WServer:
                 "scheduleUID": scheduleUID,
                 "variables": [] 
             }
-            variablesToStream = self.serverImpl.commitSchedule(tid, scheduleUID, variables)
+            ret = self.serverImpl.commitSchedule(tid, scheduleUID, variables)
+            toReturn = ret[0]
+            variablesToStream = ret[1]
             #Send 100 variables at the time in order not to overflow the queue size..
             keys = variablesToStream.keys()
             n = self.streamDataMaxVariables 
@@ -702,7 +704,6 @@ class WServer:
                 for k in keys[i: i + n]:
                     toStream["variables"][k] = variablesToStream[k]
                 self.serverImpl.queueStreamData(json.dumps(toStream))
-            toReturn = HieratikaConstants.OK
         except KeyError as e:
             log.critical(str(e))
             toReturn = HieratikaConstants.INVALID_PARAMETERS

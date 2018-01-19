@@ -827,23 +827,29 @@ class PSPSServer(HieratikaServer):
 
     def commitSchedule(self, tid, scheduleUID, variables):
         log.debug("Committing schedule {0} with variables: ({1})".format(scheduleUID, variables))
+        ok = HieratikaConstants.OK
         updatedVariables = {}
         xmlId = self.getXmlId(scheduleUID)
         self.lockPool.acquire(xmlId)
         tree = self.getCachedXmlTree(scheduleUID)
         if (tree is not None):
             root = tree.getroot()
-            for name in variables:
-                value = variables[name]
-                sucessfullyUpdatedVariables = self.updateVariable(name, root, value)
-                for var in sucessfullyUpdatedVariables:
-                    varName = var[0]
-                    varValue = var[1] 
-                    updatedVariables[varName] = varValue
-        tree.write(scheduleUID)
+            referenceCounter = self.getReferenceCounter(root)
+            if (referenceCounter > 0):
+                ok = HieratikaConstants.IN_USE
+                log.critical("Cannot update a schedule that is linked by any other schedule or was used in an experiment!")
+            else:
+                for name in variables:
+                    value = variables[name]
+                    sucessfullyUpdatedVariables = self.updateVariable(name, root, value)
+                    for var in sucessfullyUpdatedVariables:
+                        varName = var[0]
+                        varValue = var[1] 
+                        updatedVariables[varName] = varValue
+                tree.write(scheduleUID)
+                log.debug("Committed schedule variables {0}".format(updatedVariables))
         self.lockPool.release(xmlId)
-        log.debug("Committed schedule variables {0}".format(updatedVariables))
-        return updatedVariables 
+        return (ok, updatedVariables)
 
     def updatePlant(self, pageName, variables):
         updatedVariables = {}

@@ -330,8 +330,14 @@
                     },
                     success: function (response) {
                         if (this.checkServerResponse(response)) {
-                            successFun();
-                            this.scheduleValuesToCommit = {};
+                            if (response === HTK_IN_USE) {
+                                parent.htkDialogs.showErrorDialog("The schedule is being used in other schedules and thus cannot be overwritten (note that it might being used by this same variable. If so unselect if first).");
+                                errorFun();
+                            } 
+                            else {
+                                successFun();
+                                this.scheduleValuesToCommit = {};
+                            }
                         }
                     }.bind(this),
                     error: function (response) {

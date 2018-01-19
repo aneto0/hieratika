@@ -313,7 +313,7 @@ class HieratikaServer(object):
             variables ({variableName1:value1, variableName2:value2, ...}):  dictionary with variables to be updated.
 
         Returns:
-            The list of variables that were updated in the form of a dictionary {variableName1:value1, variableName2:value2, ...}
+            A tupple where the first element is one of HieratikaConstants.OK, HieratikaConstants.IN_USE and the second element the list of variables that were updated in the form of a dictionary {variableName1:value1, variableName2:value2, ...}
         """
         pass
 
