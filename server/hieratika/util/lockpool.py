@@ -56,7 +56,7 @@ class LockPool(object):
         When a key is released, if no more threads or processes are waiting on that key, the semaphore is returned to the pool.
 
     Args:
-        numberOfLocks (int): the maximum number of simultaneous locks (i.e. different keys) that is allowed to lock on this pool.
+        numberOfLocks (int): the maximum number of simultaneous locks (i.e. different keys) that are allowed to lock on this pool.
     """
 
     def __init__(self, numberOfLocks):

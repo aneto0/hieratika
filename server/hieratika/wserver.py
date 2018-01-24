@@ -39,7 +39,7 @@ log = logging.getLogger("{0}".format(__name__))
 ##
 # Class definition
 ##
-class WServer:
+class WServer(object):
     """ Provides an interface point between the specific server implementation (see HieratikaServer)
         and the webserver. In particular this class parses and transforms the web form parameters into 
         the list of the parameters that are expected by the HieratikaServer implementation.

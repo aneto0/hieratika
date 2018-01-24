@@ -29,6 +29,7 @@ import argparse
 import ast
 import ConfigParser
 import importlib
+import json
 import logging
 import multiprocessing
 import os
@@ -42,6 +43,7 @@ from hieratika.hconstants import HieratikaConstants
 from hieratika.wloader import WLoader
 from hieratika.wmonitor import WMonitor
 from hieratika.wserver import WServer
+from hieratika.wstatistics import WStatistics
 from hieratika.wtransformation import WTransformation
 
 ##
@@ -69,6 +71,9 @@ wloader = WLoader()
 
 # The WMonitor implementation
 wmonitor = WMonitor()
+
+# The WStatistics implementation
+wstatistics = WStatistics()
 
 def load(config):
     try:
@@ -152,6 +157,11 @@ def load(config):
             ok = auth.start()
         else:
             log.critical("Failed to load auth configuration")
+
+        if (ok):
+            ok = wstatistics.load(config)
+            if (not ok):
+                log.critical("Failed to load wstatistics")
 
         transformations = []
         if (ok):
@@ -491,14 +501,19 @@ def getlibraryvariablesvalues():
 @application.route("/login", methods=["POST", "GET"])
 def login():
     log.debug("/login")
-    return wserver.login(request) 
+    wstatistics.startUpdate("login")
+    ret = wserver.login(request) 
+    wstatistics.endUpdate("login")
+    return ret
 
 #Logout a user
 @application.route("/logout", methods=["POST", "GET"])
 def logout():
     log.debug("/logout")
     if (wserver.isTokenValid(request)):
+        wstatistics.startUpdate("logout")
         wserver.logout(request) 
+        wstatistics.endUpdate("logout")
         return ""
     else:
         return HieratikaConstants.INVALID_TOKEN
@@ -509,7 +524,9 @@ def updateschedule():
     log.debug("/updateschedule")
     if (wserver.isTokenValid(request)):
         log.debug("/IN updateschedule")
+        wstatistics.startUpdate("updateschedule")
         ret = wserver.updateSchedule(request)    
+        wstatistics.endUpdate("updateschedule")
         log.debug("/OUT updateschedule")
         return ret
     else:
@@ -521,7 +538,9 @@ def commitschedule():
     log.debug("/commitschedule")
     if (wserver.isTokenValid(request)):
         log.debug("/IN commitschedule")
+        wstatistics.startUpdate("commitschedule")
         ret = wserver.commitSchedule(request)    
+        wstatistics.endUpdate("commitschedule")
         log.debug("/OUT commitschedule")
         return ret
     else:
@@ -533,7 +552,9 @@ def createschedule():
     log.debug("/createschedule")
     if (wserver.isTokenValid(request)):
         log.debug("/IN createschedule")
+        wstatistics.startUpdate("createschedule")
         ret = wserver.createSchedule(request)
+        wstatistics.endUpdate("createschedule")
         log.debug("/OUT createschedule")
         return ret
     else:
@@ -545,7 +566,9 @@ def deleteschedule():
     log.debug("/deleteschedule")
     if (wserver.isTokenValid(request)):
         log.debug("/IN deleteschedule")
+        wstatistics.startUpdate("deleteschedule")
         ret = wserver.deleteSchedule(request)
+        wstatistics.endUpdate("deleteschedule")
         log.debug("/OUT deleteschedule")
         return ret
     else:
@@ -557,7 +580,9 @@ def obsoleteschedule():
     log.debug("/obsoleteschedule")
     if (wserver.isTokenValid(request)):
         log.debug("/IN obsoleteschedule")
+        wstatistics.startUpdate("obsoleteschedule")
         ret = wserver.obsoleteSchedule(request)
+        wstatistics.endUpdate("obsoleteschedule")
         log.debug("/OUT obsoleteschedule")
         return ret
     else:
@@ -569,7 +594,9 @@ def createschedulefolder():
     log.debug("/createschedulefolder")
     if (wserver.isTokenValid(request)):
         log.debug("/IN createschedulefolder")
+        wstatistics.startUpdate("createschedulefolder")
         ret = wserver.createScheduleFolder(request)
+        wstatistics.endUpdate("createschedulefolder")
         log.debug("/OUT createschedulefolder")
         return ret
     else:
@@ -581,7 +608,9 @@ def deleteschedulefolder():
     log.debug("/deleteschedulefolder")
     if (wserver.isTokenValid(request)):
         log.debug("/IN deleteschedulefolder")
+        wstatistics.startUpdate("deleteschedulefolder")
         ret = wserver.deleteScheduleFolder(request)
+        wstatistics.endUpdate("deleteschedulefolder")
         log.debug("/OUT deleteschedulefolder")
         return ret
     else:
@@ -593,7 +622,9 @@ def obsoleteschedulefolder():
     log.debug("/obsoleteschedulefolder")
     if (wserver.isTokenValid(request)):
         log.debug("/IN obsoleteschedulefolder")
+        wstatistics.startUpdate("obsoleteschedulefolder")
         ret = wserver.obsoleteScheduleFolder(request)
+        wstatistics.endUpdate("obsoleteschedulefolder")
         log.debug("/OUT obsoleteschedulefolder")
         return ret
     else:
@@ -606,7 +637,9 @@ def transform():
     log.debug("/transform")
     if (wserver.isTokenValid(request)):
         log.debug("/IN transform")
+        wstatistics.startUpdate("transform")
         ret = wtransformation.transform(request)
+        wstatistics.endUpdate("transform")
         log.debug("/OUT transform")
         return ret
     else:
@@ -625,6 +658,17 @@ def stream():
         if (username is not None): 
             #Note that this cannot be interfaced through the wserver (otherwise the yield reply will not work properly)
             return Response(wserver.getServer().streamData(username, tokenId), mimetype="text/event-stream")
+    else:
+        return HieratikaConstants.INVALID_TOKEN
+
+@application.route("/statistics", methods=["POST", "GET"])
+def statistics():
+    log.debug("/statistics")
+    if (wserver.isTokenValid(request)):
+        log.debug("/IN statistics")
+        ret = json.dumps(wstatistics.getStatistics()) 
+        log.debug("/OUT statistics")
+        return ret
     else:
         return HieratikaConstants.INVALID_TOKEN
 

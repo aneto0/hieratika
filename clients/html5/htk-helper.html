@@ -1085,6 +1085,32 @@
                 });
             }
 
+            /**
+             * @brief Gets statistics information regarding the system performance.
+             * @details This is an asynchronous call.
+             * @param[in] successFun function with prototype (void) f(statistics), that will be called if the variables were successfully retrieved.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the statistics could not be retrieved.
+             */
+            getStatistics(successFun, errorFun) {
+                $.ajax({
+                    type: "post",
+                    url: "/statistics",
+                    data: {
+                        token: localStorage.currentToken 
+                    },
+                    success: function (response) {
+                        if (this.checkServerResponse(response)) {
+                            var statistics = $.parseJSON(response);
+                            successFun(statistics);
+                        }
+                    }.bind(this),
+                    error: function (response) {
+                        this.showCriticalError(response);
+                        errorFun();
+                    }.bind(this)
+                });
+            }
+
 
             /**
              * @brief Checks if the response from the server is valid (i.e. if the server has not replied with HTK_INVALID_TOKEN). If it returned with HTK_INVALID_TOKEN calls fireInvalidToken().
