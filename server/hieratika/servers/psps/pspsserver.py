@@ -1046,13 +1046,16 @@ class PSPSServer(HieratikaServer):
             directory = "{0}/users/{1}/configuration/{2}/{3}".format(self.baseDir, username, pageName, parentFoldersPath)
 
         log.debug("Getting folders for directory: {0}".format(directory))
-        for item in os.listdir(directory):
-            folderName = os.path.join(directory, item)
-            if (os.path.isdir(folderName)):
-                obsolete = False
-                if (os.path.isfile(os.path.join(folderName, self.OBSOLETE_FILENAME))):
-                    obsolete = True
-                matches.append(ScheduleFolder(item, obsolete))
+        try:
+            for item in os.listdir(directory):
+                folderName = os.path.join(directory, item)
+                if (os.path.isdir(folderName)):
+                    obsolete = False
+                    if (os.path.isfile(os.path.join(folderName, self.OBSOLETE_FILENAME))):
+                        obsolete = True
+                    matches.append(ScheduleFolder(item, obsolete))
+        except Exception as e:
+            log.info("Could not get folders for directory: {0} {1}".format(directory, e))
         log.debug("Returning folders: {0}".format(matches))
         return matches
 
@@ -1077,11 +1080,14 @@ class PSPSServer(HieratikaServer):
         #    for filename in fnmatch.filter(filenames, '*.xml'):
         #        if (filename != "plant.xml"):
         #            matches.append(os.path.join(root, filename))
-        for item in os.listdir(directory):
-            if (item != "plant.xml"):
-                fullname = os.path.join(directory, item)
-                if (os.path.isfile(fullname)):
-                    matches.append(fullname)
+        try:
+            for item in os.listdir(directory):
+                if (item != "plant.xml"):
+                    fullname = os.path.join(directory, item)
+                    if (os.path.isfile(fullname)):
+                        matches.append(fullname)
+        except Exception as e:
+            log.info("Could not read directory {0} ({1})".format(directory, e))
  
         return matches
 
