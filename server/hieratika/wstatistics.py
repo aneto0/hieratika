@@ -116,7 +116,8 @@ class WStatistics:
                 if (key in self.statistics):
                     stats = self.statistics[key]
                     cnt = stats["cnt"]
-                    stats["cnt"] = cnt + 1
+                    cnt = cnt + 1
+                    stats["cnt"] = cnt 
                     stats["min"] = min(stats["min"], timeu)
                     stats["max"] = max(stats["max"], timeu)
                     acc = stats["acc"] + timeu

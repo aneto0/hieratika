@@ -267,7 +267,9 @@ def getvariablesinfo():
     log.debug("/getvariablesinfo")
     if (wserver.isTokenValid(request)):
         log.debug("/IN getvariablesinfo")
+        wstatistics.startUpdate("getvariablesinfo")
         ret = wserver.getVariablesInfo(request)
+        wstatistics.endUpdate("getvariablesinfo")
         log.debug("/OUT getvariablesinfo")
         return ret
     else:
@@ -279,7 +281,9 @@ def getlivevariablesinfo():
     log.debug("/getlivevariablesinfo")
     if (wserver.isTokenValid(request)):
         log.debug("/IN getlivevariablesinfo")
+        wstatistics.startUpdate("getlivevariablesinfo")
         ret = wmonitor.getLiveVariablesInfo(request)
+        wstatistics.endUpdate("getlivevariablesinfo")
         log.debug("/OUT getlivevariablesinfo")
         return ret
     else:
@@ -289,16 +293,13 @@ def getlivevariablesinfo():
 #Gets all the variables information for a given library
 @application.route("/getlibraryvariablesinfo", methods=["POST", "GET"])
 def getlibraryvariablesinfo():
-    perfStartTime = timeit.default_timer()
     log.debug("/getlibraryvariablesinfo")
     if (wserver.isTokenValid(request)):
-        perfElapsedTime = timeit.default_timer() - perfStartTime
-        log.info("Took {0} s to getlibraryvariablesinfo".format(perfElapsedTime))
-        log.debug("/getlibraryvariablesinfo2")
-        perfStartTime = timeit.default_timer()
+        log.debug("/IN getlibraryvariablesinfo")
+        wstatistics.startUpdate("getlibraryvariablesinfo")
         ret = wserver.getLibraryVariablesInfo(request)
-        perfElapsedTime = timeit.default_timer() - perfStartTime
-        log.info("Took {0} s to getlibraryvariablesinfo2".format(perfElapsedTime))
+        wstatistics.endUpdate("getlibraryvariablesinfo")
+        log.debug("/OUT getlibraryvariablesinfo")
         return ret
     else:
         return HieratikaConstants.INVALID_TOKEN
@@ -309,7 +310,9 @@ def gettransformationsinfo():
     log.debug("/gettransformationsinfo")
     if (wserver.isTokenValid(request)):
         log.debug("/IN gettransformationsinfo")
+        wstatistics.startUpdate("gettransformationsinfo")
         ret = wserver.getTransformationsInfo(request)
+        wstatistics.endUpdate("gettransformationsinfo")
         log.debug("/OUT gettransformationsinfo")
         return ret
     else:
@@ -321,7 +324,9 @@ def updateplant():
     log.debug("/updateplant")
     if (wserver.isTokenValid(request)):
         log.debug("/IN updateplant")
+        wstatistics.startUpdate("updateplant")
         ret = wserver.updatePlant(request)
+        wstatistics.endUpdate("updateplant")
         log.debug("/OUT updateplant")
         return ret
     else:
@@ -333,7 +338,9 @@ def loadintoplant():
     log.debug("/loadintoplant")
     if (wserver.isTokenValid(request)):
         log.debug("/IN loadintoplant")
+        wstatistics.startUpdate("loadintoplant")
         ret = wloader.loadIntoPlant(request)
+        wstatistics.endUpdate("loadintoplant")
         log.debug("/OUT loadintoplant")
         return ret
     else:
@@ -345,7 +352,9 @@ def getlibraries():
     log.debug("/getlibraries")
     if (wserver.isTokenValid(request)):
         log.debug("/IN getlibraries")
+        wstatistics.startUpdate("getlibraries")
         ret = wserver.getLibraries(request) 
+        wstatistics.endUpdate("getlibraries")
         log.debug("/OUT getlibraries")
         return ret
     else:
@@ -369,7 +378,9 @@ def deletelibrary():
     log.debug("/deletelibrary")
     if (wserver.isTokenValid(request)):
         log.debug("/IN deletelibrary")
+        wstatistics.startUpdate("deletelibrary")
         ret = wserver.deleteLibrary(request)
+        wstatistics.endUpdate("deletelibrary")
         log.debug("/OUT deletelibrary")
         return ret
     else:
@@ -381,7 +392,9 @@ def obsoletelibrary():
     log.debug("/obsoletelibrary")
     if (wserver.isTokenValid(request)):
         log.debug("/IN obsoletelibrary")
+        wstatistics.startUpdate("obsoletelibrary")
         ret = wserver.obsoleteLibrary(request)
+        wstatistics.endUpdate("obsoletelibrary")
         log.debug("/OUT obsoletelibrary")
         return ret
     else:
@@ -393,7 +406,9 @@ def getschedules():
     log.debug("/getschedules")
     if (wserver.isTokenValid(request)):
         log.debug("/IN getschedules")
+        wstatistics.startUpdate("getschedules")
         ret = wserver.getSchedules(request) 
+        wstatistics.endUpdate("getschedules")
         log.debug("/OUT getschedules")
         return ret
     else:
@@ -405,7 +420,9 @@ def getschedulefolders():
     log.debug("/getschedulefolders")
     if (wserver.isTokenValid(request)):
         log.debug("/IN getschedulefolders")
+        wstatistics.startUpdate("getschedulefolders")
         ret = wserver.getScheduleFolders(request) 
+        wstatistics.endUpdate("getschedulefolders")
         log.debug("/OUT getschedulefolders")
         return ret
     else:
@@ -418,7 +435,9 @@ def getusers():
     log.debug("/getusers")
     if (wserver.isTokenValid(request)):
         log.debug("/IN getusers")
+        wstatistics.startUpdate("getusers")
         ret = wserver.getUsers(request) 
+        wstatistics.endUpdate("getusers")
         log.debug("/OUT getusers")
         return ret
     else:
@@ -430,7 +449,9 @@ def getuser():
     log.debug("/getuser")
     if (wserver.isTokenValid(request)):
         log.debug("/IN getuser")
+        wstatistics.startUpdate("getuser")
         ret = wserver.getUser(request) 
+        wstatistics.endUpdate("getuser")
         log.debug("/OUT getuser")
         return ret
     else:
@@ -443,7 +464,9 @@ def getpages():
     log.debug("/getpages")
     if (wserver.isTokenValid(request)):
         log.debug("/IN getpages")
+        wstatistics.startUpdate("getpages")
         ret = wserver.getPages(request) 
+        wstatistics.endUpdate("getpages")
         log.debug("/OUT getpages")
         return ret
     else:
@@ -455,7 +478,9 @@ def getpage():
     log.debug("/getpage")
     if (wserver.isTokenValid(request)):
         log.debug("/IN getpage")
+        wstatistics.startUpdate("getpage")
         ret = wserver.getPage(request) 
+        wstatistics.endUpdate("getpage")
         log.debug("/OUT getpage")
         return ret
     else:
@@ -467,7 +492,9 @@ def getschedule():
     log.debug("/getschedule")
     if (wserver.isTokenValid(request)):
         log.debug("/IN getschedule")
+        wstatistics.startUpdate("getschedule")
         ret = wserver.getSchedule(request)    
+        wstatistics.endUpdate("getschedule")
         log.debug("/OUT getschedule")
         return ret
     else:
@@ -479,7 +506,9 @@ def getschedulevariablesValues():
     log.debug("/getschedulevariablesvalues")
     if (wserver.isTokenValid(request)):
         log.debug("/IN getschedulevariablesvalues")
+        wstatistics.startUpdate("getschedulevariablesvalues")
         ret = wserver.getScheduleVariablesValues(request)
+        wstatistics.endUpdate("getschedulevariablesvalues")
         log.debug("/OUT getschedulevariablesvalues")
         return ret
     else:
@@ -491,7 +520,9 @@ def getlibraryvariablesvalues():
     log.debug("/getlibraryvariablesvalues")
     if (wserver.isTokenValid(request)):
         log.debug("/IN getlibraryvariablesvalues")
+        wstatistics.startUpdate("getlibraryvariablesvalues")
         ret = wserver.getLibraryVariablesValues(request)
+        wstatistics.endUpdate("getlibraryvariablesvalues")
         log.debug("/OUT getlibraryvariablesvalues")
         return ret
     else:
@@ -500,20 +531,22 @@ def getlibraryvariablesvalues():
 #Tries to login a user
 @application.route("/login", methods=["POST", "GET"])
 def login():
-    log.debug("/login")
+    log.debug("/IN login")
     wstatistics.startUpdate("login")
     ret = wserver.login(request) 
     wstatistics.endUpdate("login")
+    log.debug("/OUT login")
     return ret
 
 #Logout a user
 @application.route("/logout", methods=["POST", "GET"])
 def logout():
-    log.debug("/logout")
+    log.debug("/IN logout")
     if (wserver.isTokenValid(request)):
         wstatistics.startUpdate("logout")
         wserver.logout(request) 
         wstatistics.endUpdate("logout")
+        log.debug("/OUT logout")
         return ""
     else:
         return HieratikaConstants.INVALID_TOKEN

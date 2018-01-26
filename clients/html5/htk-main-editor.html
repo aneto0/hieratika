@@ -209,6 +209,15 @@
                     getAllMainFrameHtkComponents() {
                         return this.mainEditorIFrame.contentDocument._frameComponents;
                     }
+
+                    /**
+                     * @brief Shows the statistics page.
+                     */
+                    showStatistics() {
+                        this.mainEditorIFrame.onload = function(evt) {
+                        }.bind(this);
+                        this.mainEditorIFrame.src = "/statistics.html?" + new Date().getTime(); //new Date... to force reloading with no caching
+                    }
                 }
 
 
