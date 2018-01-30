@@ -7,3 +7,5 @@ python-pam
 #lxml for psps server
 lxml
 
+#ahkab for the distributed.ini configuration
+ahkab
