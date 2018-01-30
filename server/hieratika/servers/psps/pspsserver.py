@@ -178,7 +178,7 @@ class PSPSServer(HieratikaServer):
                 else:
                     #Reached a record. This must the last name of the variable!
                     if (i != (len(path) - 1)):
-                        log.critical("Wrong xml structure. ns0:records were not expected at this location for variable {0}".format(variableName))
+                        log.critical("Wrong xml structure. ns0:records were not expected at this location for variable {0} i={1} len({2}) = {3}".format(variableName, i, path, len(path)))
                         return None
                     records = records.findall("./ns0:record", self.xmlns)
                     for rec in records:

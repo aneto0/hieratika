@@ -1,0 +1,98 @@
+ <html>
+    <head>
+     <link rel='import' href='/htk-struct-browser.html'>
+     <link rel='import' href='/htk-input.html'>
+     <link rel='import' href='/htk-textarea.html'>
+    </head>
+    <body onload="document.getElementById('defaultopen').click()">
+        <style>
+            /* Style the tab (from https://www.w3schools.com/howto/howto_js_tabs.asp)*/
+            div.tab {
+                overflow: hidden;
+                border: 1px solid #ccc;
+                background-color: #f1f1f1;
+            }
+
+            /* Style the buttons inside the tab */
+            div.tab button {
+                background-color: inherit;
+                float: left;
+                border: none;
+                outline: none;
+                cursor: pointer;
+                padding: 14px 16px;
+                transition: 0.3s;
+                font-size: 17px;
+            }
+
+            /* Change background color of buttons on hover */
+            div.tab button:hover {
+                background-color: #ddd;
+            }
+
+            /* Create an active/current tablink class */
+            div.tab button.active {
+                background-color: #ccc;
+            }
+
+            /* Style the tab content */
+            .tabcontent {
+                display: none;
+                padding: 6px 12px;
+                border: 1px solid #ccc;
+                border-top: none;
+            }
+        </style>
+
+        <script>
+            function openTab(evt, tabName) {
+                var i, tabcontent, tablinks;
+                tabcontent = document.getElementsByClassName("tabcontent");
+                for (i = 0; i < tabcontent.length; i++) {
+                    tabcontent[i].style.display = "none";
+                }
+                tablinks = document.getElementsByClassName("tablinks");
+                for (i = 0; i < tablinks.length; i++) {
+                    tablinks[i].className = tablinks[i].className.replace(" active", "");
+                }
+                document.getElementById(tabName).style.display = "block";
+                evt.currentTarget.className += " active";
+            }
+        </script>
+        <div class="tab">
+            <button class="tablinks" onclick="openTab(event, 'tabMain')" id="defaultopen">Main</button>
+            <button class="tablinks" onclick="openTab(event, 'tabExpert')">Expert</button>
+        </div>
+        <div id="tabMain" class="tabcontent"> 
+            <style>
+            .datagrid { width: fit-content; } 
+            <!-- Generated using http://tablestyler.com/-->
+            .datagrid table { border-collapse: collapse; text-align: left; } .datagrid {font: normal 12px/150% Arial, Helvetica, sans-serif; background: #fff; overflow: hidden; border: 1px solid #8C8C8C; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; }.datagrid table td, .datagrid table th { padding: 3px 10px; }.datagrid table thead th {background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #8C8C8C), color-stop(1, #7D7D7D) );background:-moz-linear-gradient( center top, #8C8C8C 5%, #7D7D7D 100% );filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#8C8C8C', endColorstr='#7D7D7D');background-color:#8C8C8C; color:#FFFFFF; font-size: 15px; font-weight: bold; border-left: 1px solid #A3A3A3; } .datagrid table thead th:first-child { border: none; }.datagrid table tbody td { color: #7D7D7D; border-left: 1px solid #DBDBDB;font-size: 12px;font-weight: normal; }.datagrid table tbody td:first-child { border-left: none; }.datagrid table tbody tr:last-child td { border-bottom: none; }
+            </style>
+            <div class="datagrid">
+                <table>
+                    <thead>
+                        <tr><th colspan="2">PID</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Kp</td><td><htk-input id='M1@WT@PID@Kp' name='M1@WT@PID@Kp'></htk-input></td></tr> 
+                        <tr><td>Kd</td><td><htk-input id='M1@WT@PID@Kd' name='M1@WT@PID@Kd'></htk-input></td></tr>
+                        <tr><td>Ki</td><td><htk-input id='M1@WT@PID@Ki' name='M1@WT@PID@Ki'></htk-input></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div id="tabExpert" class="tabcontent"> 
+            <table border="0">
+                <tr>
+                    <td><h3>Skeleton configuration file</h3></td>
+                    <td><h3>Generated configuration file</h3></td>
+                </tr>
+                <tr>
+                    <td><htk-textarea id='M1@WT@EXPERT@SKEL' name='M1@WT@EXPERT@SKEL' data-rows="50" data-cols="120"></htk-textarea></td>
+                    <td><htk-textarea id='M1@WT@EXPERT@CFG' name='M1@WT@EXPERT@CFG' data-rows="50" data-cols="120"></htk-textarea></td>
+                </tr>
+            </table>
+        </div>
+    </body>
+</html>

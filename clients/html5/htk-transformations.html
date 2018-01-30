@@ -156,7 +156,7 @@
                             var inputs = Object.keys(transformations[i].inputs).toString();
                             var outputs = Object.keys(transformations[i].outputs).toString();
                             var fuid = funName + inputs + outputs;
-                            fuid = fuid.replace(/[|&;$%@"<>()+,]/g, ""); 
+                            fuid = fuid.replace(/[|&;$%@"<>()+,.]/g, ""); 
                             var row = this.transformationsTable.insertRow();
                             var fName = row.insertCell(0);
                             fName.innerHTML = funName;
