@@ -38,7 +38,7 @@ log = logging.getLogger("{0}".format(__name__))
 ##
 # Class definition
 ##
-class WMonitor:
+class WMonitor(object):
     """ Provides an interface point between the specific monitor implementations (see HieratikaMonitor)
         and the webserver. In particular this class parses and transforms the web form parameters into 
         the list of the parameters that are expected by the HieratikaMonitor implementation.

@@ -29,6 +29,7 @@ import argparse
 import ast
 import ConfigParser
 import importlib
+import json
 import logging
 import multiprocessing
 import os
@@ -38,9 +39,11 @@ from flask import Flask, Response, request, send_from_directory
 ##
 # Project imports
 ##
+from hieratika.hconstants import HieratikaConstants
 from hieratika.wloader import WLoader
 from hieratika.wmonitor import WMonitor
 from hieratika.wserver import WServer
+from hieratika.wstatistics import WStatistics
 from hieratika.wtransformation import WTransformation
 
 ##
@@ -68,6 +71,9 @@ wloader = WLoader()
 
 # The WMonitor implementation
 wmonitor = WMonitor()
+
+# The WStatistics implementation
+wstatistics = WStatistics()
 
 def load(config):
     try:
@@ -151,6 +157,11 @@ def load(config):
             ok = auth.start()
         else:
             log.critical("Failed to load auth configuration")
+
+        if (ok):
+            ok = wstatistics.load(config)
+            if (not ok):
+                log.critical("Failed to load wstatistics")
 
         transformations = []
         if (ok):
@@ -256,11 +267,13 @@ def getvariablesinfo():
     log.debug("/getvariablesinfo")
     if (wserver.isTokenValid(request)):
         log.debug("/IN getvariablesinfo")
+        wstatistics.startUpdate("getvariablesinfo")
         ret = wserver.getVariablesInfo(request)
+        wstatistics.endUpdate("getvariablesinfo")
         log.debug("/OUT getvariablesinfo")
         return ret
     else:
-        return "InvalidToken"
+        return HieratikaConstants.INVALID_TOKEN
 
 #Gets information about a set of live variables
 @application.route("/getlivevariablesinfo", methods=["POST", "GET"])
@@ -268,29 +281,28 @@ def getlivevariablesinfo():
     log.debug("/getlivevariablesinfo")
     if (wserver.isTokenValid(request)):
         log.debug("/IN getlivevariablesinfo")
+        wstatistics.startUpdate("getlivevariablesinfo")
         ret = wmonitor.getLiveVariablesInfo(request)
+        wstatistics.endUpdate("getlivevariablesinfo")
         log.debug("/OUT getlivevariablesinfo")
         return ret
     else:
-        return "InvalidToken"
+        return HieratikaConstants.INVALID_TOKEN
 
   
 #Gets all the variables information for a given library
 @application.route("/getlibraryvariablesinfo", methods=["POST", "GET"])
 def getlibraryvariablesinfo():
-    perfStartTime = timeit.default_timer()
     log.debug("/getlibraryvariablesinfo")
     if (wserver.isTokenValid(request)):
-        perfElapsedTime = timeit.default_timer() - perfStartTime
-        log.info("Took {0} s to getlibraryvariablesinfo".format(perfElapsedTime))
-        log.debug("/getlibraryvariablesinfo2")
-        perfStartTime = timeit.default_timer()
+        log.debug("/IN getlibraryvariablesinfo")
+        wstatistics.startUpdate("getlibraryvariablesinfo")
         ret = wserver.getLibraryVariablesInfo(request)
-        perfElapsedTime = timeit.default_timer() - perfStartTime
-        log.info("Took {0} s to getlibraryvariablesinfo2".format(perfElapsedTime))
+        wstatistics.endUpdate("getlibraryvariablesinfo")
+        log.debug("/OUT getlibraryvariablesinfo")
         return ret
     else:
-        return "InvalidToken"
+        return HieratikaConstants.INVALID_TOKEN
 
 #Gets all the available transformations
 @application.route("/gettransformationsinfo", methods=["POST", "GET"])
@@ -298,11 +310,13 @@ def gettransformationsinfo():
     log.debug("/gettransformationsinfo")
     if (wserver.isTokenValid(request)):
         log.debug("/IN gettransformationsinfo")
+        wstatistics.startUpdate("gettransformationsinfo")
         ret = wserver.getTransformationsInfo(request)
+        wstatistics.endUpdate("gettransformationsinfo")
         log.debug("/OUT gettransformationsinfo")
         return ret
     else:
-        return "InvalidToken"
+        return HieratikaConstants.INVALID_TOKEN
 
 #Try to update the values in the plant
 @application.route("/updateplant", methods=["POST", "GET"])
@@ -310,11 +324,13 @@ def updateplant():
     log.debug("/updateplant")
     if (wserver.isTokenValid(request)):
         log.debug("/IN updateplant")
+        wstatistics.startUpdate("updateplant")
         ret = wserver.updatePlant(request)
+        wstatistics.endUpdate("updateplant")
         log.debug("/OUT updateplant")
         return ret
     else:
-        return "InvalidToken"
+        return HieratikaConstants.INVALID_TOKEN
 
 #Try to load the values into the plant
 @application.route("/loadintoplant", methods=["POST", "GET"])
@@ -322,11 +338,13 @@ def loadintoplant():
     log.debug("/loadintoplant")
     if (wserver.isTokenValid(request)):
         log.debug("/IN loadintoplant")
+        wstatistics.startUpdate("loadintoplant")
         ret = wloader.loadIntoPlant(request)
+        wstatistics.endUpdate("loadintoplant")
         log.debug("/OUT loadintoplant")
         return ret
     else:
-        return "InvalidToken"
+        return HieratikaConstants.INVALID_TOKEN
 
 #Return the available libraries (for a given user and a given library type)
 @application.route("/getlibraries", methods=["POST", "GET"])
@@ -334,11 +352,13 @@ def getlibraries():
     log.debug("/getlibraries")
     if (wserver.isTokenValid(request)):
         log.debug("/IN getlibraries")
+        wstatistics.startUpdate("getlibraries")
         ret = wserver.getLibraries(request) 
+        wstatistics.endUpdate("getlibraries")
         log.debug("/OUT getlibraries")
         return ret
     else:
-        return "InvalidToken"
+        return HieratikaConstants.INVALID_TOKEN
 
 #Saves/creates a library with new values
 @application.route("/savelibrary", methods=["POST", "GET"])
@@ -350,8 +370,35 @@ def savelibrary():
         log.debug("/OUT savelibrary")
         return ret
     else:
-        return "InvalidToken"
+        return HieratikaConstants.INVALID_TOKEN
 
+#Deletes an existent library 
+@application.route("/deletelibrary", methods=["POST", "GET"])
+def deletelibrary():
+    log.debug("/deletelibrary")
+    if (wserver.isTokenValid(request)):
+        log.debug("/IN deletelibrary")
+        wstatistics.startUpdate("deletelibrary")
+        ret = wserver.deleteLibrary(request)
+        wstatistics.endUpdate("deletelibrary")
+        log.debug("/OUT deletelibrary")
+        return ret
+    else:
+        return HieratikaConstants.INVALID_TOKEN
+
+#Obsoletes an existent library
+@application.route("/obsoletelibrary", methods=["POST", "GET"])
+def obsoletelibrary():
+    log.debug("/obsoletelibrary")
+    if (wserver.isTokenValid(request)):
+        log.debug("/IN obsoletelibrary")
+        wstatistics.startUpdate("obsoletelibrary")
+        ret = wserver.obsoleteLibrary(request)
+        wstatistics.endUpdate("obsoletelibrary")
+        log.debug("/OUT obsoletelibrary")
+        return ret
+    else:
+        return HieratikaConstants.INVALID_TOKEN
     
 #Return the available schedules
 @application.route("/getschedules", methods=["POST", "GET"])
@@ -359,11 +406,28 @@ def getschedules():
     log.debug("/getschedules")
     if (wserver.isTokenValid(request)):
         log.debug("/IN getschedules")
+        wstatistics.startUpdate("getschedules")
         ret = wserver.getSchedules(request) 
+        wstatistics.endUpdate("getschedules")
         log.debug("/OUT getschedules")
         return ret
     else:
-        return "InvalidToken"
+        return HieratikaConstants.INVALID_TOKEN
+
+#Return the available schedule folders
+@application.route("/getschedulefolders", methods=["POST", "GET"])
+def getschedulefolders():
+    log.debug("/getschedulefolders")
+    if (wserver.isTokenValid(request)):
+        log.debug("/IN getschedulefolders")
+        wstatistics.startUpdate("getschedulefolders")
+        ret = wserver.getScheduleFolders(request) 
+        wstatistics.endUpdate("getschedulefolders")
+        log.debug("/OUT getschedulefolders")
+        return ret
+    else:
+        return HieratikaConstants.INVALID_TOKEN
+
 
 #Return the available users
 @application.route("/getusers", methods=["POST", "GET"])
@@ -371,11 +435,13 @@ def getusers():
     log.debug("/getusers")
     if (wserver.isTokenValid(request)):
         log.debug("/IN getusers")
+        wstatistics.startUpdate("getusers")
         ret = wserver.getUsers(request) 
+        wstatistics.endUpdate("getusers")
         log.debug("/OUT getusers")
         return ret
     else:
-        return "InvalidToken"
+        return HieratikaConstants.INVALID_TOKEN
 
 #Returns the information about a given user
 @application.route("/getuser", methods=["POST", "GET"])
@@ -383,11 +449,13 @@ def getuser():
     log.debug("/getuser")
     if (wserver.isTokenValid(request)):
         log.debug("/IN getuser")
+        wstatistics.startUpdate("getuser")
         ret = wserver.getUser(request) 
+        wstatistics.endUpdate("getuser")
         log.debug("/OUT getuser")
         return ret
     else:
-        return "InvalidToken"
+        return HieratikaConstants.INVALID_TOKEN
 
 
 #Return the available pages
@@ -396,11 +464,13 @@ def getpages():
     log.debug("/getpages")
     if (wserver.isTokenValid(request)):
         log.debug("/IN getpages")
+        wstatistics.startUpdate("getpages")
         ret = wserver.getPages(request) 
+        wstatistics.endUpdate("getpages")
         log.debug("/OUT getpages")
         return ret
     else:
-        return "InvalidToken"
+        return HieratikaConstants.INVALID_TOKEN
 
 #Returns the properties of a given page 
 @application.route("/getpage", methods=["POST", "GET"])
@@ -408,11 +478,13 @@ def getpage():
     log.debug("/getpage")
     if (wserver.isTokenValid(request)):
         log.debug("/IN getpage")
+        wstatistics.startUpdate("getpage")
         ret = wserver.getPage(request) 
+        wstatistics.endUpdate("getpage")
         log.debug("/OUT getpage")
         return ret
     else:
-        return "InvalidToken"
+        return HieratikaConstants.INVALID_TOKEN
 
 #Returns the properties of a given schedule
 @application.route("/getschedule", methods=["POST", "GET"])
@@ -420,11 +492,13 @@ def getschedule():
     log.debug("/getschedule")
     if (wserver.isTokenValid(request)):
         log.debug("/IN getschedule")
+        wstatistics.startUpdate("getschedule")
         ret = wserver.getSchedule(request)    
+        wstatistics.endUpdate("getschedule")
         log.debug("/OUT getschedule")
         return ret
     else:
-        return "InvalidToken"
+        return HieratikaConstants.INVALID_TOKEN
 
 #Returns the variables associated to a given schedule
 @application.route("/getschedulevariablesvalues", methods=["POST", "GET"])
@@ -432,11 +506,13 @@ def getschedulevariablesValues():
     log.debug("/getschedulevariablesvalues")
     if (wserver.isTokenValid(request)):
         log.debug("/IN getschedulevariablesvalues")
+        wstatistics.startUpdate("getschedulevariablesvalues")
         ret = wserver.getScheduleVariablesValues(request)
+        wstatistics.endUpdate("getschedulevariablesvalues")
         log.debug("/OUT getschedulevariablesvalues")
         return ret
     else:
-        return "InvalidToken"
+        return HieratikaConstants.INVALID_TOKEN
 
 #Returns the variables associated to a given library (identified by its uid)
 @application.route("/getlibraryvariablesvalues", methods=["POST", "GET"])
@@ -444,27 +520,36 @@ def getlibraryvariablesvalues():
     log.debug("/getlibraryvariablesvalues")
     if (wserver.isTokenValid(request)):
         log.debug("/IN getlibraryvariablesvalues")
+        wstatistics.startUpdate("getlibraryvariablesvalues")
         ret = wserver.getLibraryVariablesValues(request)
+        wstatistics.endUpdate("getlibraryvariablesvalues")
         log.debug("/OUT getlibraryvariablesvalues")
         return ret
     else:
-        return "InvalidToken"
+        return HieratikaConstants.INVALID_TOKEN
 
 #Tries to login a user
 @application.route("/login", methods=["POST", "GET"])
 def login():
-    log.debug("/login")
-    return wserver.login(request) 
+    log.debug("/IN login")
+    wstatistics.startUpdate("login")
+    ret = wserver.login(request) 
+    wstatistics.endUpdate("login")
+    log.debug("/OUT login")
+    return ret
 
 #Logout a user
 @application.route("/logout", methods=["POST", "GET"])
 def logout():
-    log.debug("/logout")
+    log.debug("/IN logout")
     if (wserver.isTokenValid(request)):
+        wstatistics.startUpdate("logout")
         wserver.logout(request) 
+        wstatistics.endUpdate("logout")
+        log.debug("/OUT logout")
         return ""
     else:
-        return "InvalidToken"
+        return HieratikaConstants.INVALID_TOKEN
 
 #Updates a group of schedule variables
 @application.route("/updateschedule", methods=["POST", "GET"])
@@ -472,11 +557,13 @@ def updateschedule():
     log.debug("/updateschedule")
     if (wserver.isTokenValid(request)):
         log.debug("/IN updateschedule")
+        wstatistics.startUpdate("updateschedule")
         ret = wserver.updateSchedule(request)    
+        wstatistics.endUpdate("updateschedule")
         log.debug("/OUT updateschedule")
         return ret
     else:
-        return "InvalidToken"
+        return HieratikaConstants.INVALID_TOKEN
 
 #Commits a group of schedule variables
 @application.route("/commitschedule", methods=["POST", "GET"])
@@ -484,11 +571,13 @@ def commitschedule():
     log.debug("/commitschedule")
     if (wserver.isTokenValid(request)):
         log.debug("/IN commitschedule")
+        wstatistics.startUpdate("commitschedule")
         ret = wserver.commitSchedule(request)    
+        wstatistics.endUpdate("commitschedule")
         log.debug("/OUT commitschedule")
         return ret
     else:
-        return "InvalidToken"
+        return HieratikaConstants.INVALID_TOKEN
 
 #Creates a new schedule
 @application.route("/createschedule", methods=["POST", "GET"])
@@ -496,11 +585,84 @@ def createschedule():
     log.debug("/createschedule")
     if (wserver.isTokenValid(request)):
         log.debug("/IN createschedule")
+        wstatistics.startUpdate("createschedule")
         ret = wserver.createSchedule(request)
+        wstatistics.endUpdate("createschedule")
         log.debug("/OUT createschedule")
         return ret
     else:
-        return "InvalidToken"
+        return HieratikaConstants.INVALID_TOKEN
+
+#Deletes an existent schedule
+@application.route("/deleteschedule", methods=["POST", "GET"])
+def deleteschedule():
+    log.debug("/deleteschedule")
+    if (wserver.isTokenValid(request)):
+        log.debug("/IN deleteschedule")
+        wstatistics.startUpdate("deleteschedule")
+        ret = wserver.deleteSchedule(request)
+        wstatistics.endUpdate("deleteschedule")
+        log.debug("/OUT deleteschedule")
+        return ret
+    else:
+        return HieratikaConstants.INVALID_TOKEN
+
+#Obsoletes an existent schedule
+@application.route("/obsoleteschedule", methods=["POST", "GET"])
+def obsoleteschedule():
+    log.debug("/obsoleteschedule")
+    if (wserver.isTokenValid(request)):
+        log.debug("/IN obsoleteschedule")
+        wstatistics.startUpdate("obsoleteschedule")
+        ret = wserver.obsoleteSchedule(request)
+        wstatistics.endUpdate("obsoleteschedule")
+        log.debug("/OUT obsoleteschedule")
+        return ret
+    else:
+        return HieratikaConstants.INVALID_TOKEN
+
+#Creates a new schedule folder
+@application.route("/createschedulefolder", methods=["POST", "GET"])
+def createschedulefolder():
+    log.debug("/createschedulefolder")
+    if (wserver.isTokenValid(request)):
+        log.debug("/IN createschedulefolder")
+        wstatistics.startUpdate("createschedulefolder")
+        ret = wserver.createScheduleFolder(request)
+        wstatistics.endUpdate("createschedulefolder")
+        log.debug("/OUT createschedulefolder")
+        return ret
+    else:
+        return HieratikaConstants.INVALID_TOKEN
+
+#Deletes an existent schedule folder
+@application.route("/deleteschedulefolder", methods=["POST", "GET"])
+def deleteschedulefolder():
+    log.debug("/deleteschedulefolder")
+    if (wserver.isTokenValid(request)):
+        log.debug("/IN deleteschedulefolder")
+        wstatistics.startUpdate("deleteschedulefolder")
+        ret = wserver.deleteScheduleFolder(request)
+        wstatistics.endUpdate("deleteschedulefolder")
+        log.debug("/OUT deleteschedulefolder")
+        return ret
+    else:
+        return HieratikaConstants.INVALID_TOKEN
+
+#Obsoletes an existent schedule folder
+@application.route("/obsoleteschedulefolder", methods=["POST", "GET"])
+def obsoleteschedulefolder():
+    log.debug("/obsoleteschedulefolder")
+    if (wserver.isTokenValid(request)):
+        log.debug("/IN obsoleteschedulefolder")
+        wstatistics.startUpdate("obsoleteschedulefolder")
+        ret = wserver.obsoleteScheduleFolder(request)
+        wstatistics.endUpdate("obsoleteschedulefolder")
+        log.debug("/OUT obsoleteschedulefolder")
+        return ret
+    else:
+        return HieratikaConstants.INVALID_TOKEN
+
 
 #Applies a transformation
 @application.route("/transform", methods=["POST", "GET"])
@@ -508,11 +670,13 @@ def transform():
     log.debug("/transform")
     if (wserver.isTokenValid(request)):
         log.debug("/IN transform")
+        wstatistics.startUpdate("transform")
         ret = wtransformation.transform(request)
+        wstatistics.endUpdate("transform")
         log.debug("/OUT transform")
         return ret
     else:
-        return "InvalidToken"
+        return HieratikaConstants.INVALID_TOKEN
     
 @application.route("/stream", methods=["POST", "GET"])
 def stream():
@@ -528,7 +692,18 @@ def stream():
             #Note that this cannot be interfaced through the wserver (otherwise the yield reply will not work properly)
             return Response(wserver.getServer().streamData(username, tokenId), mimetype="text/event-stream")
     else:
-        return "InvalidToken"
+        return HieratikaConstants.INVALID_TOKEN
+
+@application.route("/statistics", methods=["POST", "GET"])
+def statistics():
+    log.debug("/statistics")
+    if (wserver.isTokenValid(request)):
+        log.debug("/IN statistics")
+        ret = json.dumps(wstatistics.getStatistics()) 
+        log.debug("/OUT statistics")
+        return ret
+    else:
+        return HieratikaConstants.INVALID_TOKEN
 
 @application.route("/")
 def index():

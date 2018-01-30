@@ -1,11 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<configurationContainer
-    xmlns="http://www.iter.org/CODAC/PlantSystemConfig/2014" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<configurationContainer xmlns="http://www.iter.org/CODAC/PlantSystemConfig/2014" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <schemaVersion>1.2</schemaVersion>
     <version>00.00</version>
     <sddVersion>1</sddVersion>
     <name>Example 2</name>
-    <description>A library test</description>
+    <description/>
     <plantSystems>
         <plantSystem>
             <name>AA</name>
@@ -20,18 +18,12 @@
                                 <name>CC</name>
                                 <alias>CC</alias>
                                 <description>Double value</description>
-                                <values>
-                                  <value>3.0</value>
-                                </values>
-                            </record>
+                                <values><value>-2</value></values></record>
                             <record size="1" xsi:type="recordDouble">
                                 <name>DD</name>
                                 <alias>DD</alias>
                                 <description>Double value</description>
-                                <values>
-                                  <value>-2.0</value>
-                                </values>
-                            </record>
+                                <values><value>3</value></values></record>
                         </records>
                     </folder>
                </folders>
@@ -45,8 +37,8 @@
                             <constraint>
                                 <name>Double limit</name>
                                 <description>Validates a double limit</description>
-                                <hint><![CDATA[Change the value of AA@BB@CC<=10]]></hint>
-                                <function name="schedule.validate"><![CDATA[='AA@BB@CC'<=10]]></function>
+                                <hint>Change the value of AA@BB@CC&lt;=10</hint>
+                                <function name="schedule.validate">='AA@BB@CC'&lt;=10</function>
                                 <origin>SDD</origin>
                             </constraint>
                         </constraints>
@@ -59,4 +51,4 @@
             </sdnTopics>
         </plantSystem>
     </plantSystems>
-</configurationContainer>
+<references><counter>2</counter></references></configurationContainer>

@@ -26,6 +26,7 @@ import logging
 ##
 # Project imports
 ##
+from hieratika.hconstants import HieratikaConstants
 from hieratika.page import Page
 from hieratika.user import User
 from hieratika.usergroup import UserGroup
@@ -38,7 +39,7 @@ log = logging.getLogger("{0}".format(__name__))
 ##
 # Class definition
 ##
-class WServer:
+class WServer(object):
     """ Provides an interface point between the specific server implementation (see HieratikaServer)
         and the webserver. In particular this class parses and transforms the web form parameters into 
         the list of the parameters that are expected by the HieratikaServer implementation.
@@ -108,7 +109,7 @@ class WServer:
            request.form["pageName"]: name of the page (which corresponds to the name of the configuration).
            request.form["variables"]: identifiers of the variables to be queried.
         Returns:
-            A json encoded list of variables or InvalidToken if the token is not valid.
+            A json encoded list of variables or HieratikaConstants.INVALID_TOKEN if the token is not valid.
             The following information is retrieved for any given variable:
             - name: the full variable name (containing any structure naming information, encoded as with a structure separator);
             - alias: a free format text which provides a meaningful name to the variable.
@@ -129,7 +130,7 @@ class WServer:
             toReturn = json.dumps(variablesStr)
         except KeyError as e:
             log.critical(str(e))
-            toReturn = "InvalidParameters"
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
 
         return toReturn 
 
@@ -140,7 +141,7 @@ class WServer:
            request.form["libraryType"]: name of the page (which corresponds to the name of the configuration).
            request.form["variables"]: identifiers of the variables to be queried.
         Returns:
-            A json encoded list of variables or InvalidToken if the token is not valid.
+            A json encoded list of variables or HieratikaConstants.INVALID_TOKEN if the token is not valid.
             The following information is retrieved for any given variable:
             - name: the full variable name (containing any structure naming information, encoded as with a structure separator);
             - alias: a free format text which provides a meaningful name to the variable.
@@ -162,7 +163,7 @@ class WServer:
             toReturn = json.dumps(variablesStr)
         except KeyError as e:
             log.critical(str(e))
-            toReturn = "InvalidParameters"
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
 
         return toReturn 
 
@@ -172,7 +173,7 @@ class WServer:
         Args:
            request.form["pageName"]: name of the page (which corresponds to the name of the configuration).
         Returns:
-            A json encoded list of transformations (see TransformationFunction) or InvalidToken if the token is not valid.
+            A json encoded list of transformations (see TransformationFunction) or HieratikaConstants.INVALID_TOKEN if the token is not valid.
         """
        
         toReturn = ""
@@ -183,7 +184,7 @@ class WServer:
             toReturn = json.dumps(transformationsStr)
         except KeyError as e:
             log.critical(str(e))
-            toReturn = "InvalidParameters"
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
 
         return toReturn 
 
@@ -199,7 +200,7 @@ class WServer:
         Returns:
             The string ok if the values are successfully updated.
         """
-        toReturn = "ok"
+        toReturn = HieratikaConstants.OK
         try:
             pageName = request.form["pageName"]
             variables = request.form["variables"]
@@ -219,7 +220,7 @@ class WServer:
                 self.serverImpl.queueStreamData(json.dumps(toStream))
         except KeyError as e:
             log.critical(str(e))
-            toReturn = "InvalidParameters"
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
         return toReturn
 
     def getLibraries(self, request):
@@ -243,35 +244,58 @@ class WServer:
             log.debug("For {0} in {1} returning: {2}".format(username, htype, toReturn))
         except KeyError as e:
             log.critical(str(e))
-            toReturn = "InvalidParameters"
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
         return toReturn
 
-
-    def getSchedules(self, request):
-        """ Gets all the schedules that are avaiable for a given user in a given page.
+    def getScheduleFolders(self, request):
+        """ Gets all the folders that are avaiable for a given user in a given page and in a given folder.
 
         Args:
            request.form["username"]: the username to which the returned schedules belong to. 
            request.form["pageName"]: the name of the page associated to the schedule.
+           request.form["parentFolders"]: the list of the parent folders of the schedules to be retrieved.
+        Returns:
+            A list with all the folders found.
+        """
+        toReturn = ""
+        try:
+            pageName = request.form["pageName"]
+            username = request.form["username"]
+            parentFolders = json.loads(request.form["parentFolders"])
+            
+            folders = self.serverImpl.getScheduleFolders(username, pageName, parentFolders)
+            foldersStr = [f.__dict__ for f in folders]
+            toReturn = json.dumps(foldersStr)
+            log.debug("For {0} in {1} returning: {2}".format(username, pageName, toReturn))
+        except Exception as e:
+            log.critical(str(e))
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
+        return toReturn
+
+    def getSchedules(self, request):
+        """ Gets all the schedules that are avaiable for a given user in a given page and in a given folder.
+
+        Args:
+           request.form["username"]: the username to which the returned schedules belong to. 
+           request.form["pageName"]: the name of the page associated to the schedule.
+           request.form["parentFolders"]: the list of the parent folders of the schedules to be retrieved.
         Returns:
             A json representation of all the schedules that are available for the requested user in the 
             specified page.
         """
         toReturn = ""
-#        try:
-        pageName = request.form["pageName"]
-        if "username" in request.form:
+        try:
+            pageName = request.form["pageName"]
             username = request.form["username"]
-        else:
-            username = ""
-        
-        schedules = self.serverImpl.getSchedules(username, pageName)
-        schedulesStr = [s.__dict__ for s in schedules]
-        toReturn = json.dumps(schedulesStr)
-        log.debug("For {0} in {1} returning: {2}".format(username, pageName, toReturn))
-#        except Exception as e:
-#            log.critical(str(e))
-#            toReturn = "InvalidParameters"
+            parentFolders = json.loads(request.form["parentFolders"])
+            
+            schedules = self.serverImpl.getSchedules(username, pageName, parentFolders)
+            schedulesStr = [s.__dict__ for s in schedules]
+            toReturn = json.dumps(schedulesStr)
+            log.debug("For {0} in {1} returning: {2}".format(username, pageName, toReturn))
+        except Exception as e:
+            log.critical(str(e))
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
         return toReturn
 
     def getSchedule(self, request):
@@ -287,11 +311,11 @@ class WServer:
             scheduleUID = request.form["scheduleUID"]
             schedule = self.serverImpl.getSchedule(scheduleUID)
             if (schedule is not None):
-                toReturn = json.dumps(schedule)
+                toReturn = json.dumps(schedule.__dict__)
                 log.debug("Returning schedule: {0}".format(toReturn))
         except KeyError as e:
             log.critical(str(e))
-            toReturn = "InvalidParameters"
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
         return toReturn
 
     def getScheduleVariablesValues(self, request):
@@ -310,7 +334,7 @@ class WServer:
             toReturn = json.dumps(variables)
         except KeyError as e:
             log.critical(str(e))
-            toReturn = "InvalidParameters"
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
         return toReturn
 
     def getLibraryVariablesValues(self, request):
@@ -329,7 +353,7 @@ class WServer:
             toReturn = json.dumps(variables)
         except KeyError as e:
             log.critical(str(e))
-            toReturn = "InvalidParameters"
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
         return toReturn
 
 
@@ -344,7 +368,7 @@ class WServer:
         Returns:
             ok if the schedule is successfully updated or an empty string otherwise.
         """
-        toReturn = "ok"
+        toReturn = HieratikaConstants.OK
         try: 
             tid = request.form["tid"]
             scheduleUID = request.form["scheduleUID"]
@@ -366,7 +390,7 @@ class WServer:
 
         except KeyError as e:
             log.critical(str(e))
-            toReturn = "InvalidParameters"
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
         return toReturn
 
     def createSchedule(self, request):
@@ -377,27 +401,160 @@ class WServer:
             request.form["description"]: the description of the schedule to create.
             request.form["username"]: the owner of the schedule.
             request.form["pageName"]: name of the page to which the schedule belongs to.
+            request.form["parentFolders"]: a list of the parent folders of the folder to be created.
             request.form["sourceScheduleUID"]: create the schedule by copying from the schedule with the unique identifier given by sourceScheduleUID. If sourceSchedule is not set, copy from the plant.
 
         Returns:
-            The unique identifier of the created schedule or InvalidParameters if the schedule could not be created.
+            The unique identifier of the created schedule or HieratikaConstants.INVALID_PARAMETERS if the schedule could not be created.
         """
         try:
             name = request.form["name"]
             description = request.form["description"]
             username = request.form["username"]
             pageName = request.form["pageName"]
+            parentFolders = json.loads(request.form["parentFolders"])
             sourceScheduleUID = None
             if "sourceScheduleUID" in request.form:
                 sourceScheduleUID = request.form["sourceScheduleUID"]
-            log.critical("{0}".format(request.form))
-            toReturn = self.serverImpl.createSchedule(name, description, username, pageName, sourceScheduleUID) 
+            toReturn = self.serverImpl.createSchedule(name, description, username, pageName, parentFolders, sourceScheduleUID) 
             if (toReturn == None):
-                toReturn = "InvalidParameters"
+                toReturn = HieratikaConstants.INVALID_PARAMETERS
         except KeyError as e:
             log.critical(e)
-            toReturn = "InvalidParameters"
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
         return toReturn
+
+    def deleteSchedule(self, request):
+        """ Deletes an existent schedule. 
+
+        Args:
+            request.form["scheduleUID"]: the schedule identifier.
+        Returns:
+            HieratikaConstants.OK if the schedule was successfully delete, HieratikaConstants.NOT_FOUND if the schedule was not found or HieratikaConstants.IN_USE if the schedule is being (or was already) used and thus cannot be deleted.
+        """
+        try:
+            scheduleUID = request.form["scheduleUID"]
+            toReturn = self.serverImpl.deleteSchedule(scheduleUID) 
+        except KeyError as e:
+            log.critical(e)
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
+        return toReturn
+
+    def obsoleteSchedule(self, request):
+        """ Obsoletes an existent schedule. 
+
+        Args:
+            request.form["scheduleUID"]: the schedule identifier.
+        Returns:
+            HieratikaConstants.OK if the schedule was successfully obsoleted, HieratikaConstants.NOT_FOUND if the schedule was not found or HieratikaConstants.IN_USE if the schedule is being (or was already) used and thus cannot be deleted.
+        """
+        try:
+            scheduleUID = request.form["scheduleUID"]
+            toReturn = self.serverImpl.obsoleteSchedule(scheduleUID) 
+        except KeyError as e:
+            log.critical(e)
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
+        return toReturn
+
+    def createScheduleFolder(self, request):
+        """ Creates a new schedule folder. 
+
+        Args:
+            request.form["name"]: the name of the schedule folder to create.
+            request.form["username"]: the owner of the folder.
+            request.form["parentFolders"]: a list of the parent folders of the folder to be created.
+            request.form["pageName"]: name of the page to which the schedule folder belongs to.
+        Returns:
+            HieratikaConstants.OK if the schedule was successfully created, HieratikaConstants.NOT_FOUND if the parent folders do not exist or HieratikaConstants.UNKNOWN_ERROR if case of any other error.
+        """
+        try:
+            name = request.form["name"]
+            username = request.form["username"]
+            parentFolders = json.loads(request.form["parentFolders"])
+            pageName = request.form["pageName"]
+            toReturn = self.serverImpl.createScheduleFolder(name, username, parentFolders, pageName) 
+        except KeyError as e:
+            log.critical(e)
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
+        return toReturn
+
+    def deleteScheduleFolder(self, request):
+        """ Deletes a schedule folder. 
+
+        Args:
+            request.form["name"]: the name of the schedule folder to delete.
+            request.form["username"]: the owner of the folder.
+            request.form["parentFolders"]: a list of the parent folders of the folder to be deleted.
+            request.form["pageName"]: name of the page to which the schedule folder belongs to.
+        Returns:
+            HieratikaConstants.OK if the schedule was successfully deleted or HieratikaConstants.UNKNOWN_ERROR if case of any other error.
+        """
+        try:
+            name = request.form["name"]
+            username = request.form["username"]
+            parentFolders = json.loads(request.form["parentFolders"])
+            pageName = request.form["pageName"]
+            toReturn = self.serverImpl.deleteScheduleFolder(name, username, parentFolders, pageName) 
+        except KeyError as e:
+            log.critical(e)
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
+        return toReturn
+
+    def obsoleteScheduleFolder(self, request):
+        """ Creates a new schedule folder. 
+
+        Args:
+            request.form["name"]: the name of the schedule folder to obsolete.
+            request.form["username"]: the owner of the folder.
+            request.form["parentFolders"]: a list of the parent folders of the folder to be obsoleted.
+            request.form["pageName"]: name of the page to which the schedule folder belongs to.
+        Returns:
+            HieratikaConstants.OK if the schedule was successfully obsoleted or HieratikaConstants.UNKNOWN_ERROR if case of any other error.
+        """
+        try:
+            name = request.form["name"]
+            username = request.form["username"]
+            parentFolders = json.loads(request.form["parentFolders"])
+            pageName = request.form["pageName"]
+            toReturn = self.serverImpl.obsoleteScheduleFolder(name, username, parentFolders, pageName) 
+        except KeyError as e:
+            log.critical(e)
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
+        return toReturn
+
+
+    def deleteLibrary(self, request):
+        """ Deletes an existent library. 
+
+        Args:
+            request.form["libraryUID"]: the library identifier.
+        Returns:
+            HieratikaConstants.OK if the library was successfully delete, HieratikaConstants.NOT_FOUND if the library was not found or HieratikaConstants.IN_USE if the library is being (or was already) used and thus cannot be deleted.
+        """
+        try:
+            libraryUID = request.form["libraryUID"]
+            toReturn = self.serverImpl.deleteLibrary(libraryUID) 
+        except KeyError as e:
+            log.critical(e)
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
+        return toReturn
+
+    def obsoleteLibrary(self, request):
+        """ Obsoletes an existent library. 
+
+        Args:
+            request.form["libraryUID"]: the library identifier.
+        Returns:
+            HieratikaConstants.OK if the library was successfully obsoleted, HieratikaConstants.NOT_FOUND if the library was not found or HieratikaConstants.IN_USE if the library is being (or was already) used and thus cannot be deleted.
+        """
+        try:
+            libraryUID = request.form["libraryUID"]
+            toReturn = self.serverImpl.obsoleteLibrary(libraryUID) 
+        except KeyError as e:
+            log.critical(e)
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
+        return toReturn
+
 
     def getUsers(self, request):
         """
@@ -427,7 +584,7 @@ class WServer:
                 log.debug("Returning user: {0}".format(toReturn))
         except KeyError as e:
             log.critical(str(e))
-            toReturn = "InvalidParameters"
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
         return toReturn
 
     def getPages(self, request):
@@ -446,7 +603,7 @@ class WServer:
         Args:
            request.form["pageName"]: shall contain the page name.
         Returns:
-            A page with a given name or InvalidToken if the token is not valid.
+            A page with a given name or HieratikaConstants.INVALID_TOKEN if the token is not valid.
         """
 
         try: 
@@ -457,7 +614,7 @@ class WServer:
             toReturn = json.dumps(page.__dict__)
         except KeyError as e:
             log.critical(str(e))
-            toReturn = "InvalidParameters"
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
         return toReturn
 
     def setPagesFolder(self, pagesFolder):
@@ -499,7 +656,7 @@ class WServer:
             log.debug("{0}".format(str(user)))
         except KeyError as e:
             log.critical("Missing field ({0})".format(e))
-            toReturn = "InvalidParameters"
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
         return toReturn
 
     def logout(self, request):
@@ -523,7 +680,7 @@ class WServer:
             request.form["variables"]: a dictionary with the list of variables to be updated in the form {variableName1:variableValue1, ...}
 
         Returns:
-            ok if the schedule is successfully updated or an empty string otherwise.
+            HieratikaConstants.OK if the schedule was successfully commited, or one of HieratikaConstants.IN_USE, HieratikaConstants.UNKNOWN_ERROR if the library could not be saved.
         """
         toReturn = ""
         try: 
@@ -536,7 +693,9 @@ class WServer:
                 "scheduleUID": scheduleUID,
                 "variables": [] 
             }
-            variablesToStream = self.serverImpl.commitSchedule(tid, scheduleUID, variables)
+            ret = self.serverImpl.commitSchedule(tid, scheduleUID, variables)
+            toReturn = ret[0]
+            variablesToStream = ret[1]
             #Send 100 variables at the time in order not to overflow the queue size..
             keys = variablesToStream.keys()
             n = self.streamDataMaxVariables 
@@ -545,10 +704,9 @@ class WServer:
                 for k in keys[i: i + n]:
                     toStream["variables"][k] = variablesToStream[k]
                 self.serverImpl.queueStreamData(json.dumps(toStream))
-            toReturn = "ok"
         except KeyError as e:
             log.critical(str(e))
-            toReturn = "InvalidParameters"
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
         return toReturn
 
     def saveLibrary(self, request):
@@ -562,7 +720,7 @@ class WServer:
             request.form["variables"]: a dictionary with the list of variables to be updated in the form {variableName1:variableValue1, ...}
 
         Returns:
-            A json representation of the new library instance or an empty string if the library could not be saved.
+            A json representation of the new library instance or one of HieratikaConstants.IN_USE, HieratikaConstants.UNKNOWN_ERROR if the library could not be saved.
         """
         toReturn = ""
         try: 
@@ -572,10 +730,12 @@ class WServer:
             username = request.form["username"]
             variables = json.loads(request.form["variables"])
             lib = self.serverImpl.saveLibrary(htype, name, description, username, variables)
-            if (lib is not None):
-                toReturn = json.dumps(lib.__dict__)
+            if (lib[0] == HieratikaConstants.OK):
+                toReturn = json.dumps(lib[1].__dict__)
+            else:
+                toReturn = lib[1]
         except KeyError as e:
             log.critical(str(e))
-            toReturn = "InvalidParameters"
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
         return toReturn
 

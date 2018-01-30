@@ -209,12 +209,28 @@ class HieratikaServer(object):
         pass
 
     @abstractmethod
-    def getSchedules(self, username, pageName):
+    def getScheduleFolders(self, username, pageName, parentFolders):
+        """ Gets all the schedule folders that are avaiable for a given user in a given page.
+
+        Args:
+           username (str): the username to which the returned schedules belong to. 
+           pageName (str): the name of the page associated to the schedule.
+           parentFolders ([str]): list of the parent folders of the folders to be retrieved.
+        Returns:
+            An array with all the ScheduleFolders that are available for the requested user in the 
+            specified page.
+        """
+        pass
+
+
+    @abstractmethod
+    def getSchedules(self, username, pageName, parentFolders):
         """ Gets all the schedules that are avaiable for a given user in a given page.
 
         Args:
-           username: the username to which the returned schedules belong to. 
-           pageName: the name of the page associated to the schedule.
+           username (str): the username to which the returned schedules belong to. 
+           pageName (str): the name of the page associated to the schedule.
+           parentFolders ([str]): list of the parent folders of the folders to be retrieved.
         Returns:
             An array with all the schedules that are available for the requested user in the 
             specified page.
@@ -226,8 +242,8 @@ class HieratikaServer(object):
         """ Gets all the libraries (for a given type) that are avaiable for a given user.
 
         Args:
-           username: the username to which the returned libraries belong to. 
-           htype: the library type.
+           username (str): the username to which the returned libraries belong to. 
+           htype (str): the library type.
         Returns:
             An array with all the libraries (of the requested type) that are available for the requested user.
         """
@@ -297,7 +313,7 @@ class HieratikaServer(object):
             variables ({variableName1:value1, variableName2:value2, ...}):  dictionary with variables to be updated.
 
         Returns:
-            The list of variables that were updated in the form of a dictionary {variableName1:value1, variableName2:value2, ...}
+            A tupple where the first element is one of HieratikaConstants.OK, HieratikaConstants.IN_USE and the second element the list of variables that were updated in the form of a dictionary {variableName1:value1, variableName2:value2, ...}
         """
         pass
 
@@ -315,7 +331,7 @@ class HieratikaServer(object):
         pass
 
     @abstractmethod
-    def createSchedule(self, name, description, username, pageName, sourceScheduleUID = None):
+    def createSchedule(self, name, description, username, pageName, parentFolders, sourceScheduleUID = None):
         """ Creates a new schedule either based on a existing schedule (if sourceSchedule is not None) or from the plant. 
 
         Args:
@@ -323,10 +339,97 @@ class HieratikaServer(object):
             description (str): the description of the schedule to create.
             username (str): the owner of the schedule.
             pageName (str): name of the page to which the schedule belongs to.
+            parentFolders ([str]): list of the parent folders of the new schedule to be created.
             sourceScheduleUID (str): create the schedule by copying from the schedule with this unique identifier. If sourceScheduleUID is None, copy from the plant.
 
         Returns:
             The unique identifier of the created schedule or None if the schedule could not be created.
+        """
+        pass
+
+    @abstractmethod
+    def deleteSchedule(self, scheduleUID):
+        """ Deletes an existent schedule. 
+
+        Args:
+            scheduleUID (str): unique schedule identifier
+        Returns:
+            HieratikaConstants.OK if the schedule was successfully delete, HieratikaConstants.NOT_FOUND if the schedule was not found or HieratikaConstants.IN_USE if the schedule is being (or was already used) and thus cannot be deleted.
+        """
+        pass
+
+    @abstractmethod
+    def obsoleteSchedule(self, scheduleUID):
+        """ Obsoletes an existent schedule. 
+
+        Args:
+            scheduleUID (str): unique schedule identifier
+        Returns:
+            HieratikaConstants.OK if the schedule was successfully delete, HieratikaConstants.NOT_FOUND if the schedule was not found or HieratikaConstants.IN_USE if the schedule is being (or was already used) and thus cannot be deleted.
+        """
+        pass
+
+    @abstractmethod
+    def createScheduleFolder(self, name, username, parentFolders, pageName):
+        """ Creates a new schedule folder. 
+
+        Args:
+            name (str): the name of the folder to create.
+            username (str): the owner of the schedule folder.
+            parentFolders ([str]): list of the parent folders of the new folder to be created.
+            pageName (str): name of the page to which the schedule folder belongs to.
+        Returns:
+            HieratikaConstants.OK if the schedule was successfully created, HieratikaConstants.NOT_FOUND if the parent folders do not exist or HieratikaConstants.UNKNOWN_ERROR if case of any other error.
+        """
+        pass
+
+    @abstractmethod
+    def deleteScheduleFolder(self, name, username, parentFolders, pageName):
+        """ Delete a schedule folder. 
+
+        Args:
+            name (str): the name of the folder to delete.
+            username (str): the owner of the schedule folder.
+            parentFolders ([str]): list of the parent folders of the folder to be deleted.
+            pageName (str): name of the page to which the schedule folder belongs to.
+        Returns:
+            HieratikaConstants.OK if the schedule was successfully deleted or HieratikaConstants.UNKNOWN_ERROR if case of any other error.
+        """
+        pass
+
+    @abstractmethod
+    def obsoleteScheduleFolder(self, name, username, parentFolders, pageName):
+        """ Obsoletes a schedule folder. 
+
+        Args:
+            name (str): the name of the folder to obsolete.
+            username (str): the owner of the schedule folder.
+            parentFolders ([str]): list of the parent folders of the new folder to be obsolete.
+            pageName (str): name of the page to which the schedule folder belongs to.
+        Returns:
+            HieratikaConstants.OK if the schedule was successfully obsolete or HieratikaConstants.UNKNOWN_ERROR if case of any other error.
+        """
+        pass
+
+    @abstractmethod
+    def deleteLibrary(self, libraryUID):
+        """ Deletes an existent library. 
+
+        Args:
+            libraryUID (str): unique library identifier
+        Returns:
+            HieratikaConstants.OK if the library was successfully delete, HieratikaConstants.NOT_FOUND if the library was not found or HieratikaConstants.IN_USE if the library is being (or was already used) and thus cannot be deleted.
+        """
+        pass
+
+    @abstractmethod
+    def obsoleteLibrary(self, libraryUID):
+        """ Obsoletes an existent library. 
+
+        Args:
+            libraryUID (str): unique library identifier
+        Returns:
+            HieratikaConstants.OK if the library was successfully delete, HieratikaConstants.NOT_FOUND if the library was not found or HieratikaConstants.IN_USE if the library is being (or was already used) and thus cannot be deleted.
         """
         pass
 
@@ -342,7 +445,6 @@ class HieratikaServer(object):
             variables ({variableName1:value1, variableName2:value2, ...}):  dictionary with the library variables to be stored.
 
         Returns:
-            An instance of the new library is successfully saved/created, None otherwise.
+            A tupple where the first element is one of HieratikaConstants.OK, HieratikaConstants.IN_USE or HieratikaConstants, and the second element is the new library if successfully saved/created, None otherwise.
         """
         pass
-

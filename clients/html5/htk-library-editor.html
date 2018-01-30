@@ -21,6 +21,8 @@
 
         <!-- Project imports -->
         <link rel="import" href="/libraries.html">
+        <link rel="import" href="/htk-dialogs.html">
+        <link rel="import" href="/htk-helper.html">
     </head>
     <body>
         <!-- HTML5 component template-->
@@ -32,10 +34,15 @@
                     <tr>
                         <td><select id="uselect" name="uselect"></select></td>
                         <td><select id="lselect" name="lselect"></select></td>
-                        <td><button id="saveAsButton">Save as...</button><input type="text" id="saveAsLibraryName"></input></td>
+                        <td><button id="saveButton">Save...</button>
+                        <td><button id="deleteButton">Delete...</button></td>
+                        <td><button id="obsoleteButton">Obsolete...</button></td>
+                        <td><input type="checkbox" id="obsoleteCheckBox" value="obsolete">Show obsolete?</input></td>
                     </tr>
                     <tr>
-                        <td colspan="3"><textarea rows="2" cols="60" id="descriptionTextArea" title="Description"></textarea></td>
+                        <td colspan="7"><textarea rows="2" cols="60" id="descriptionTextArea" title="Description"></textarea></td>
+                    </tr>
+                    <tr>
                     </tr>
                 </table>
                 </br>
@@ -65,7 +72,8 @@
                     }
 
                     /**
-                     * @brief Gets the UID of the library currently selected by the user.
+                     * @brief Gets the UID of the library currently selected by the user (with name libraryName).
+                     * @param[in] libraryName the library to get the UID.
                      */
                     getLibraryUID (libraryName) {
                         var allLibraries = this.availableLibraries;
@@ -93,12 +101,18 @@
                                 this.librarySelector.innerHTML = "";
                                 for (var i=0; i<this.availableLibraries.length; i++) {
                                     var library = this.availableLibraries[i];
-                                    var option = document.createElement( 'option' );
-                                    option.uid = library.uid;
-                                    option.value = library.name;
-                                    option.text = library.name;
-                                    option.description = library.description;
-                                    this.librarySelector.add(option);
+                                    if ((!library.obsolete) || (library.obsolete && this.obsoleteCheckBox.checked)) {
+                                        var option = document.createElement( 'option' );
+                                        option.uid = library.uid;
+                                        option.value = library.name;
+                                        option.text = library.name;
+                                        option.obsolete = library.obsolete;
+                                        if (library.obsolete) {
+                                            option.style = "color:red";
+                                        }
+                                        option.description = library.description;
+                                        this.librarySelector.add(option);
+                                    }
                                 }
                                 readyFun();
                             }.bind(this),
@@ -132,13 +146,17 @@
                      * @param[in] libraryValue the name of the library.
                      */
                     showEditor (libraryUser, libraryValue) {
+                        var user = parent.htkHelper.getUser();
+                        this.deleteButton.disabled = (libraryUser !== user.username);
+                        this.obsoleteButton.disabled = (libraryUser !== user.username);
+
                         parent.htkDialogs.showWaitDialog();
                         this.populateUsers(libraryUser); 
                         this.populateLibraries(libraryUser, function() {
                             this.librarySelector.value = libraryValue;
                             this.editLibrary();
-                            this.diag.showModal();
                             parent.htkDialogs.closeWaitDialog();
+                            this.diag.showModal();
                         }.bind(this));
                     }
 
@@ -237,7 +255,6 @@
                                             comps[c].setValue(variableValue);
                                         }
                                     }
-                                    this.saveAsLibraryName.value = libraryName;
                                     this.descriptionTextArea.value = option.description;
                                     parent.htkDialogs.closeWaitDialog();
                                 }.bind(this));
@@ -264,9 +281,13 @@
                         this.userSelector = this.shadowRoot.querySelector("#uselect");
                         this.okButton = this.shadowRoot.querySelector("#tselectorOK");
                         var cancelButton = this.shadowRoot.querySelector("#tselectorCancel");
-                        this.saveAsButton = this.shadowRoot.querySelector("#saveAsButton");
-                        this.saveAsLibraryName = this.shadowRoot.querySelector("#saveAsLibraryName");
+                        this.saveButton = this.shadowRoot.querySelector("#saveButton");
+                        this.deleteButton = this.shadowRoot.querySelector("#deleteButton");
+                        this.obsoleteButton = this.shadowRoot.querySelector("#obsoleteButton");
+                        this.obsoleteCheckBox = this.shadowRoot.querySelector("#obsoleteCheckBox");
                         this.descriptionTextArea = this.shadowRoot.querySelector("#descriptionTextArea");
+                        this.deleteButton.disabled = true;
+                        this.obsoleteButton.disabled = true;
 
                         this.okButton.onclick = function() {
                             var selectedUser = this.userSelector.options[this.userSelector.selectedIndex].text;
@@ -275,6 +296,86 @@
                             this.diag.close();
                         }.bind(this); //bind is needed to make sure that the "this" is still valid in the context of the callback
 
+                        this.deleteButton.onclick = function() {
+                            var libraryName = "";
+                            if (this.librarySelector.selectedIndex >= 0) {
+                                var option = this.librarySelector.options[this.librarySelector.selectedIndex];
+                                var libraryName = option.text;
+                                var ok = parent.htkDialogs.showConfirmDialog("Are you sure you want to delete the library " + libraryName + "?");
+                                if (ok) {
+                                    parent.htkDialogs.showWaitDialog();
+                                    var libraryUID = this.getLibraryUID(libraryName);
+                                    parent.htkHelper.deleteLibrary(
+                                        libraryUID,
+                                        function () {
+                                            var user = parent.htkHelper.getUser();
+                                            this.populateLibraries(user.username, function() {
+                                                if (this.availableLibraries.length > 0) {
+                                                    var selectedLibrary = this.availableLibraries[0].name;
+                                                    this.librarySelector.value = selectedLibrary;
+                                                }
+                                                this.editLibrary();
+                                                parent.htkDialogs.closeWaitDialog();
+                                            }.bind(this));
+                                        }.bind(this),
+                                        function (response) {
+                                            parent.htkDialogs.closeWaitDialog();
+                                        }
+                                    );
+                                }
+                            }
+                            else {
+                                parent.htkDialogs.showErrorDialog("Please select a library first");
+                            }
+                        }.bind(this);
+
+                        this.obsoleteCheckBox.onclick = function() {
+                            parent.htkDialogs.showWaitDialog();
+                            var user = parent.htkHelper.getUser();
+                            this.populateLibraries(user.username, function() {
+                                if (this.availableLibraries.length > 0) {
+                                    var selectedLibrary = this.availableLibraries[0].name;
+                                    this.librarySelector.value = selectedLibrary;
+                                }
+                                this.editLibrary();
+                                parent.htkDialogs.closeWaitDialog();
+                            }.bind(this));
+                        }.bind(this);
+
+                        this.obsoleteButton.onclick = function() {
+                            var libraryName = "";
+                            if (this.librarySelector.selectedIndex >= 0) {
+                                var option = this.librarySelector.options[this.librarySelector.selectedIndex];
+                                var libraryName = option.text;
+                                var ok = parent.htkDialogs.showConfirmDialog("Are you sure you want to obsolete the library " + libraryName + "?");
+                                if (ok) {
+                                    parent.htkDialogs.showWaitDialog();
+                                    var libraryUID = this.getLibraryUID(libraryName);
+                                    parent.htkHelper.obsoleteLibrary(
+                                        libraryUID,
+                                        function () {
+                                            var user = parent.htkHelper.getUser();
+                                            this.populateLibraries(user.username, function() {
+                                                if (this.availableLibraries.length > 0) {
+                                                    var selectedLibrary = this.availableLibraries[0].name;
+                                                    this.librarySelector.value = selectedLibrary;
+                                                }
+                                                this.editLibrary();
+                                                parent.htkDialogs.closeWaitDialog();
+                                            }.bind(this));
+                                        }.bind(this),
+                                        function (response) {
+                                            parent.htkDialogs.closeWaitDialog();
+                                        }
+                                    );
+                                }
+                            }
+                            else {
+                                parent.htkDialogs.showErrorDialog("Please select a library first");
+                            }
+                        }.bind(this);
+
+
                         cancelButton.onclick = function() {
                             this.diag.close();
                         }.bind(this); //bind is needed to make sure that the "this" is still valid in the context of the callback
@@ -282,6 +383,9 @@
                         this.userSelector.onchange = function() {
                             parent.htkDialogs.showWaitDialog();
                             var selectedUser = this.userSelector.options[this.userSelector.selectedIndex].text;
+                            var user = parent.htkHelper.getUser();
+                            this.deleteButton.disabled = (selectedUser !== user.username);
+                            this.obsoleteButton.disabled = (selectedUser !== user.username);
                             this.populateLibraries(selectedUser, function() {
                                 if (this.availableLibraries.length > 0) {
                                     var selectedLibrary = this.availableLibraries[0].name;
@@ -297,22 +401,24 @@
                         }.bind(this);
 
                         this.iFrameEditor = this.shadowRoot.querySelector("#iframeeditor");
-                        this.saveAsButton.onclick = function() {
+                        this.saveButton.onclick = function() {
                             var editorComponents = this.iFrameEditor.contentDocument._frameComponents;
-                            var saveAsName = this.saveAsLibraryName.value;
-                            var description = this.descriptionTextArea.value;
-                            var variables = {};
-                            for (var key in editorComponents) {
-                                var comps = editorComponents[key];
-                                //The same id might be used in different components...
-                                for (var c in comps) {
-                                    variables[comps[c].id] = comps[c].getValue();
+                            var libraryName = "";
+                            if (this.librarySelector.selectedIndex >= 0) {
+                                var option = this.librarySelector.options[this.librarySelector.selectedIndex];
+                                libraryName = option.text;
+                            }
+                            var saveAsName = parent.htkDialogs.showInputDialog("Please insert the new library name:", libraryName);
+                            if (saveAsName !== null) {
+                                var description = this.descriptionTextArea.value;
+                                var variables = {};
+                                for (var key in editorComponents) {
+                                    var comps = editorComponents[key];
+                                    //The same id might be used in different components...
+                                    for (var c in comps) {
+                                        variables[comps[c].id] = comps[c].getValue();
+                                    }
                                 }
-                            }
-                            if (saveAsName.length === 0) {
-                                alert("Please introduce a library name");
-                            }
-                            else {
                                 parent.htkDialogs.showWaitDialog();
                                 parent.htkHelper.saveLibrary(
                                     this.owner.getLibraryType(),
@@ -330,15 +436,14 @@
                                                 option.description = library.description;
                                                 this.librarySelector.add(option);
                                                 this.librarySelector.value = saveAsName;
-                                                this.owner.addAvailableLibrary({id:library.id, name:saveAsName});
+                                                this.availableLibraries.push(library);
                                             }
-                                            alert("Library updated successfully!");
+                                            alert("Library created successfully!");
                                         }
-                                        parent.htkDialogs.hideWaitDialog();
+                                        parent.htkDialogs.closeWaitDialog();
                                     }.bind(this),
                                     function (response) {
-                                        parent.htkDialogs.showErrorDialog("Failed to save the library variables info. Unknown error, check the server logs.");
-                                        parent.htkDialogs.hideWaitDialog();
+                                        parent.htkDialogs.closeWaitDialog();
                                     }
                                 );
                             }
@@ -375,7 +480,7 @@
                             libraryType, 
                             allVariableIds, 
                             function (variables) {
-                                var user = JSON.parse(localStorage.user);
+                                var user = parent.htkHelper.getUser();
                                 for (var i in variables) {
                                     var variable = variables[i];
                                     var targetElements = editorComponents[variable.name];

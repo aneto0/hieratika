@@ -20,9 +20,9 @@
         <!-- Standard imports -->
 
         <!-- Project imports -->
-        <link rel="import" href="htk-constants.html">
-        <link rel="import" href="htk-dialogs.html">
-        <link rel="import" href="htk-wait-dialog.html">
+        <link rel="import" href="/htk-constants.html">
+        <link rel="import" href="/htk-dialogs.html">
+        <link rel="import" href="/htk-wait-dialog.html">
     </head>
 
     <script>
@@ -41,6 +41,7 @@
                 this.valuesToSynchroniseRemote = [];
                 this.scheduleValuesToCommit = {};
                 this.currentScheduleUID = undefined;
+                this.idxx = new Date().toISOString();
             }
 
             /**
@@ -56,7 +57,7 @@
              * @param[in] scheduleUIDIn the UID of the schedule currently opened by the user.
              */
             setCurrentScheduleUID(scheduleUIDIn) {
-                this.scheduleUID = scheduleUIDIn;
+                this.currentScheduleUID = scheduleUIDIn;
             }
 
             /**
@@ -72,7 +73,7 @@
              * @brief Informs that a value is to be synchronised remote.
              * @param[in] variable the variable to synchronise.
              */
-            synchroniseRemote(variable) {
+            addVariableToSynchroniseRemote(variable) {
                 this.valuesToSynchroniseRemote.push(variable);
             }
 
@@ -85,6 +86,14 @@
             }
 
             /**
+             * @brief Gets the htk-main-editor (which is the owner of the main frame components).
+             * @return the owner of the main frame components.
+             */
+            getHtkMainEditor() {
+                return this.htkMainEditor;
+            }
+
+            /**
              * @brief Gets all the main frame components.
              * @return all the components that belong to the main frame.
              */
@@ -92,12 +101,21 @@
                 return this.htkMainEditor.getAllMainFrameHtkComponents();
             }
 
+
+            /**
+             * @brief Registers a component that wants to informed when all the variables information, for a given page, have been loaded.
+             * @param[in] listener the component to register.
+             */
+            addVariablesInfoLoadedListener(listener) {
+                this.htkMainEditor.addVariablesInfoLoadedListener(listener);
+            }
+
             /**
              * @brief Loads the configuration variables into the plant.
              * @details This is an asynchronous call.
              * @param[in] configName the name of the configuration that is to be load into the plant.
              * @param[in] successFun function with prototype (void) f(void), that will be called if the variables were successfully loaded into the plant.
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the variables were not loaded into the plant.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the variables were not loaded into the plant.
              */
             loadIntoPlant(configName, successFun, errorFun) {
                 $.ajax({
@@ -129,7 +147,7 @@
              * @details This is an asynchronous call.
              * @param[in] configName the name of the configuration that is to be load into the plant.
              * @param[in] successFun function with prototype (void) f(void), that will be called if the variables were successfully set as the variables to be uploaded into the plant.
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the variables were not set.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the variables were not set.
              */
             updatePlant(configName, successFun, errorFun) {
                 var allHtkDataJSon = {};
@@ -181,7 +199,7 @@
              * @param[in] configName the name of the configuration that is the owner of the variables.
              * @param[in] variablesNames the name of the variables that are to be queried.
              * @param[in] successFun function with prototype (void) f(variables), that will be called if the variables were successfully retrieved.
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the variables were not set.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the variables were not set.
              */
             getVariablesInfo(configName, variablesNames, successFun, errorFun) {
                 $.ajax({
@@ -211,7 +229,7 @@
              * @param[in] libraryType the type of library being queried.
              * @param[in] variablesNames the name of the variables that are to be queried.
              * @param[in] successFun function with prototype (void) f(variables), that will be called if the variables were successfully retrieved.
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the variables were not set.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the variables were not set.
              */
             getLibraryVariablesInfo(libraryType, variablesNames, successFun, errorFun) {
                 $.ajax({
@@ -240,7 +258,7 @@
              * @details This is an asynchronous call.
              * @param[in] variablesNames the name of the variables that are to be queried.
              * @param[in] successFun function with prototype (void) f(variables), that will be called if the variables were successfully retrieved.
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the variables were not set.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the variables were not set.
              */
             getLiveVariablesInfo(variablesNames, successFun, errorFun) {
                 $.ajax({
@@ -306,7 +324,7 @@
             /**
              * @brief Commits all the changes to the current schedule.
              * @param[in] successFun function with prototype (void) f(void), that will be called if the schedule is successfully commited.
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the schedule could not be commited.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be commited.
              */
             commitAllChangesToSchedule(successFun, errorFun) {
                 $.ajax({
@@ -320,8 +338,14 @@
                     },
                     success: function (response) {
                         if (this.checkServerResponse(response)) {
-                            successFun();
-                            this.scheduleValuesToCommit = {};
+                            if (response === HTK_IN_USE) {
+                                parent.htkDialogs.showErrorDialog("The schedule is being used in other schedules and thus cannot be overwritten (note that it might being used by this same variable. If so unselect if first).");
+                                errorFun();
+                            } 
+                            else {
+                                successFun();
+                                this.scheduleValuesToCommit = {};
+                            }
                         }
                     }.bind(this),
                     error: function (response) {
@@ -335,7 +359,7 @@
              * @brief Gets the information about all the available pages.
              * @details This is an asynchronous call.
              * @param[in] successFun function with prototype (void) f(pages), that will be called if the pages were successfully retrieved.
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the pages could not be retrieved.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the pages could not be retrieved.
              */
             getPages(successFun, errorFun) {
                 $.ajax({
@@ -358,20 +382,54 @@
             }
 
             /**
-             * @brief Gets all the schedules that belong to a given user.
+             * @brief Gets all the folders that belong to a given user in a given folder.
              * @param[in] configName the name of the configuration that is associated to the schedules to be retrieved.
              * @param[in] username the name of the user that owns the schedules.
-             * @param[in] successFun function with prototype (void) f(schedules), that will be called if the schedules could be retrieved.
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the schedules could not be retrieved.
+             * @param[in] parentFolders full path of the folder containing the schedules to be retrieved.
+             * @param[in] successFun function with prototype (void) f(folders), that will be called if the folders could be retrieved.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the folders could not be retrieved.
              */
-            getSchedules(configName, username, successFun, errorFun) {
+            getScheduleFolders(configName, username, parentFolders, successFun, errorFun) {
+                $.ajax({
+                    type: "post",
+                    url: "/getschedulefolders",
+                    data: {
+                        token: this.token,
+                        pageName: configName,
+                        username : username,
+                        parentFolders: JSON.stringify(parentFolders)
+                    },
+                    success: function (response) {
+                        if (this.checkServerResponse(response)) {
+                            var availableFolders = $.parseJSON(response);
+                            successFun(availableFolders);
+                        }
+                    }.bind(this),
+                    error: function (response) {
+                        this.showCriticalError(response);
+                        errorFun();
+                    }.bind(this)
+                });
+            }
+
+
+            /**
+             * @brief Gets all the schedules that belong to a given user in a given folder.
+             * @param[in] configName the name of the configuration that is associated to the schedules to be retrieved.
+             * @param[in] username the name of the user that owns the schedules.
+             * @param[in] parentFolders full path of the folder containing the schedules to be retrieved.
+             * @param[in] successFun function with prototype (void) f(schedules), that will be called if the schedules could be retrieved.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the schedules could not be retrieved.
+             */
+            getSchedules(configName, username, parentFolders, successFun, errorFun) {
                 $.ajax({
                     type: "post",
                     url: "/getschedules",
                     data: {
                         token: this.token,
                         pageName: configName,
-                        username : username
+                        username : username,
+                        parentFolders: JSON.stringify(parentFolders)
                     },
                     success: function (response) {
                         if (this.checkServerResponse(response)) {
@@ -386,6 +444,35 @@
                 });
             }
 
+            /**
+             * @brief Gets information about a given schedule.
+             * @param[in] scheduleUID the schedule unique identifier.
+             * @param[in] successFun function with prototype (void) f(schedule), the function that will be called if the schedule is successfully retrieved.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be retrieved.
+             */
+            getSchedule(scheduleUID, successFun, errorFun) {
+                $.ajax({
+                    type: "post",
+                    url: "/getschedule",
+                    data: {
+                        token: this.token,
+                        scheduleUID: scheduleUID
+                    },
+                    success: function (response) {
+                        if (this.checkServerResponse(response)) {
+                            var schedule = $.parseJSON(response);
+                            successFun(schedule);
+                        }
+                        else {
+                            errorFun(response);
+                        }
+                    }.bind(this),
+                    error: function (response) {
+                        this.showCriticalError(response);
+                        errorFun();
+                    }.bind(this)
+                });
+            }
 
             /**
              * @brief Creates a new schedule.
@@ -393,15 +480,17 @@
              * @param[in] scheduleName the name of the schedule to create.
              * @param[in] scheduleDescription the description of the schedule to create.
              * @param[in] configName the name of the configuration that is associated to this schedule.
+             * @param[in] parentFolders full path of the folder that will contain the new schedule.
              * @param[in] sourceScheduleUID the identifier of the schedule that is being used as a basis (i.e. where to copy from) for this schedule, or undefined if it is not applicable.
              * @param[in] successFun function with prototype (void) f(void), that will be called if the schedule was successfully created.
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the schedule could not be created.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be created.
              */
-            createSchedule(scheduleName, scheduleDescription, configName, sourceScheduleUID, successFun, errorFun) {
+            createSchedule(scheduleName, scheduleDescription, configName, parentFolders, sourceScheduleUID, successFun, errorFun) {
                 var schedule = {
                     token: this.token,
                     name: scheduleName,
                     description: scheduleDescription,
+                    parentFolders: JSON.stringify(parentFolders),
                     pageName: configName 
                 }
                 var user = JSON.parse(localStorage.user);
@@ -426,12 +515,150 @@
             }
 
             /**
+             * @brief Creates a new schedule folder.
+             * @details This is an asynchronous call.
+             * @param[in] folderName the name of the folder to create.
+             * @param[in] configName the name of the configuration that is associated to this schedule.
+             * @param[in] parentFolders full path of the folder that will contain the new schedule.
+             * @param[in] successFun function with prototype (void) f(void), that will be called if the schedule was successfully created.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be created.
+             */
+            createScheduleFolder(folderName, configName, parentFolders, successFun, errorFun) {
+                var user = JSON.parse(localStorage.user);
+                var scheduleFolder = {
+                    token: this.token,
+                    name: folderName,
+                    parentFolders: JSON.stringify(parentFolders),
+                    username: user.username,
+                    pageName: configName 
+                }
+                $.ajax({
+                    type: "post",
+                    url: "/createschedulefolder",
+                    data: scheduleFolder,
+                    success: function (response) {
+                        if (this.checkServerResponse(response)) {
+                            successFun();
+                        }
+                    }.bind(this),
+                    error: function (response) {
+                        this.showCriticalError(response);
+                        errorFun();
+                    }.bind(this)
+                });
+            }
+
+            /**
+             * @brief Deletes an existent list of schedule folders.
+             * @details This is an asynchronous call.
+             * @param[in] folderName the names of the folders to delete.
+             * @param[in] configName the name of the configuration that is associated to this schedule.
+             * @param[in] parentFolders full path of the folder that contains the schedule.
+             * @param[in] successFun function with prototype (void) f(void), that will be called if the schedule was successfully created.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be created.
+             */
+            deleteScheduleFolder(folderNames, configName, parentFolders, successFun, errorFun) {
+                if (folderNames.length > 0) {
+                    var folderName = folderNames[0];
+                    var user = JSON.parse(localStorage.user);
+                    var scheduleFolder = {
+                        token: this.token,
+                        name: folderName,
+                        parentFolders: JSON.stringify(parentFolders),
+                        username: user.username,
+                        pageName: configName 
+                    }
+                    $.ajax({
+                        type: "post",
+                        url: "/deleteschedulefolder",
+                        data: scheduleFolder,
+                        success: function (response) {
+                            if (this.checkServerResponse(response)) {
+                                if (response === HTK_OK) {
+                                    folderNames.shift();
+                                    if (folderNames.length > 0) {
+                                        this.deleteScheduleFolder(folderNames, configName, parentFolders, successFun, errorFun);
+                                    }
+                                    else {
+                                        successFun();
+                                    }
+                                }
+                                else {
+                                    parent.htkDialogs.showErrorDialog("Unkown error while deleting the folder " + folderName + " in the server. Is the folder empty?. Check the logs.");
+                                    errorFun();
+                                }
+                            }
+                        }.bind(this),
+                        error: function (response) {
+                            this.showCriticalError(response);
+                            errorFun();
+                        }.bind(this)
+                    });
+                }
+                else {
+                    successFun();
+                }
+            }
+
+            /**
+             * @brief Obsoletes an existent list of schedule folder.
+             * @details This is an asynchronous call.
+             * @param[in] folderNames the names of the folders to obsolete.
+             * @param[in] configName the name of the configuration that is associated to this schedule.
+             * @param[in] parentFolders full path of the folder that contains the schedule.
+             * @param[in] successFun function with prototype (void) f(void), that will be called if the schedule was successfully created.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be created.
+             */
+            obsoleteScheduleFolder(folderNames, configName, parentFolders, successFun, errorFun) {
+                if (folderNames.length > 0) {
+                    var folderName = folderNames[0];
+                    var user = JSON.parse(localStorage.user);
+                    var scheduleFolder = {
+                        token: this.token,
+                        name: folderName,
+                        parentFolders: JSON.stringify(parentFolders),
+                        username: user.username,
+                        pageName: configName 
+                    }
+                    $.ajax({
+                        type: "post",
+                        url: "/obsoleteschedulefolder",
+                        data: scheduleFolder,
+                        success: function (response) {
+                            if (this.checkServerResponse(response)) {
+                                if (response === HTK_OK) {
+                                    folderNames.shift();
+                                    if (folderNames.length > 0) {
+                                        this.obsoleteScheduleFolder(folderNames, configName, parentFolders, successFun, errorFun);
+                                    }
+                                    else {
+                                        successFun();
+                                    }
+                                }
+                                else {
+                                    parent.htkDialogs.showErrorDialog("Unkown error while obsoleting the folder " + folderName + " in the server. Check the server logs.");
+                                    errorFun();
+                                }
+                            }
+                        }.bind(this),
+                        error: function (response) {
+                            this.showCriticalError(response);
+                            errorFun();
+                        }.bind(this)
+                    });
+                }
+                else {
+                    successFun();
+                }
+            }
+
+            /**
              * @brief Triggers a transformation in the server.
              * @details This is an asynchronous call.
              * @param[in] funName the name of the transformationFunction.
              * @param[in] inputs the variables that are to be input to the transformation as variable/value key-pairs.
              * @param[in] successFun function with prototype (void) f(uid), that will be called if the transformation was successfully triggered.
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the transformation could not be triggered.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the transformation could not be triggered.
              */
             transform(funName, inputs, successFun, errorFun) {
                 $.ajax({
@@ -455,9 +682,21 @@
             }
 
             /**
+             * @brief Gets the current logged in user.
+             * @return the current logged in user.
+             */
+            getUser() {
+                var user = localStorage.user;
+                if (user !== undefined) {
+                    user = JSON.parse(user);
+                }
+                return user;
+            }
+
+            /**
              * @brief Gets all the available users.
              * @param[in] successFun function with prototype (void) f(users), that will be called if the users were successfully retrieved.
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the users could not be retrieved.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the users could not be retrieved.
              */
             getUsers(successFun, errorFun) {
                 $.ajax({
@@ -484,7 +723,7 @@
              * @param[in] usernameToSend the username.
              * @param[in] passwordToSend the user password.
              * @param[in] successFun function with prototype (void) f(user), that will be called if the user was successfully logged in.
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the user could not be logged in.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the user could not be logged in.
              */
             loginToServer(usernameToSend, passwordToSend, successFun, errorFun) {
                 $.ajax({
@@ -513,7 +752,7 @@
             /**
              * @brief Logsout a user from the system.
              * @param[in] successFun function with prototype (void) f(void), that will be called if the user was successfully logged out.
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the users could not be logged out.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the users could not be logged out.
              */
             logout(successFun, errorFun) {
                 $.ajax({
@@ -538,7 +777,7 @@
              * @details This is an asynchronous call.
              * @param[in] configName the name of the configuration from where the transformations are to be retrieved. 
              * @param[in] successFun function with prototype (void) f(void), that will be called if the schedule was successfully created.
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the schedule could not be created.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be created.
              */
             getTransformations(configName, successFun, errorFun) {
                 $.ajax({
@@ -567,7 +806,7 @@
              * @param[in] libraryType the library type. 
              * @param[in] username the library owner. 
              * @param[in] successFun function with prototype (void) f(libraries), that will be called if the libraires were successfully retrieved .
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the libraries could not be retrieved.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the libraries could not be retrieved.
              */
             getLibraries(libraryType, username, successFun, errorFun) {
                 $.ajax({
@@ -596,7 +835,7 @@
              * @details This is an asynchronous call.
              * @param[in] uid the library unique identifier. 
              * @param[in] successFun function with prototype (void) f(variablesValues), that will be called if the library variables values were successfully retrieved .
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the libraries variables values could not be retrieved.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the libraries variables values could not be retrieved.
              */
             getLibraryVariablesValues(uid, successFun, errorFun) {
                 $.ajax({
@@ -627,10 +866,10 @@
              * @param[in] libraryDescription the library description. 
              * @param[in] variables the library variables/values key-pairs. 
              * @param[in] successFun function with prototype (void) f(library), that will be called if the library was successfully saved.
-             * @param[in] errorFun function with prototype (void) f(void), that will be called if the libraries variables values could not be saved.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the libraries variables values could not be saved.
              */
-            saveLibrary(libraryType, libraryName, libraryDescription, variables) {
-                var user = JSON.parse(localStorage.user);
+            saveLibrary(libraryType, libraryName, libraryDescription, variables, successFun, errorFun) {
+                var user = this.getUser();
                 $.ajax({
                     type: "post",
                     url: "/savelibrary",
@@ -644,8 +883,18 @@
                     },
                     success: function (response) {
                         if(this.checkServerResponse(response)) {
-                            var library = $.parseJSON(response);
-                            successFun(library);
+                            if (response === HTK_IN_USE) {
+                                parent.htkDialogs.showErrorDialog("Library is being used in other schedules and thus cannot be overwritten (note that it might being used by this same variable. If so unselect if first).");
+                                errorFun();
+                            } 
+                            else if (response === HTK_UNKNOWN_ERROR) {
+                                parent.htkDialogs.showErrorDialog("Unkown error while saving the library in the server");
+                                errorFun();
+                            }
+                            else {
+                                var library = $.parseJSON(response);
+                                successFun(library);
+                            }
                         }
                     }.bind(this),
                     error: function (response) {
@@ -656,19 +905,238 @@
             }
 
             /**
-             * @brief Checks if the response from the server is valid (i.e. if the server has not replied with INVALID_TOKEN). If it returned with INVALID_TOKEN calls fireInvalidToken().
-             * @return true if the response from the server is not INVALID_TOKEN.
+             * @brief Deletes a set of schedules.
+             * @details This is an asynchronous call.
+             * @param[in] scheduleUID the schedule unique identifiers. 
+             * @param[in] successFun function with prototype (void) f(void), that will be called if the schedule was successfully deleted.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be deleted.
+             */
+            deleteSchedule(scheduleUIDs, successFun, errorFun) {
+                if (scheduleUIDs.length > 0) {
+                    var scheduleUID = scheduleUIDs[0];
+                    $.ajax({
+                        type: "post",
+                        url: "/deleteschedule",
+                        data: {
+                            token: this.token,
+                            scheduleUID: scheduleUID
+                        },
+                        success: function (response) {
+                            if(this.checkServerResponse(response)) { 
+                                if (response === HTK_OK) {
+                                    scheduleUIDs.shift();
+                                    if (scheduleUIDs.length > 0) {
+                                        this.deleteSchedule(scheduleUIDs, successFun, errorFun);
+                                    }
+                                    else {
+                                        successFun();
+                                    }
+                                }
+                                else {
+                                    if (response === HTK_IN_USE) {
+                                        parent.htkDialogs.showErrorDialog("Schedule " + scheduleUID + " is being used in other schedules and thus cannot be deleted.");
+                                        errorFun();
+                                    } 
+                                    else if (response === HTK_NOT_FOUND) {
+                                        parent.htkDialogs.showErrorDialog("Schedule " + scheduleUID + " could not be found in the server!");
+                                        errorFun();
+                                    }
+                                    else {
+                                        parent.htkDialogs.showErrorDialog("Unkown error while deleting the schedule " + scheduleUID + " in the server");
+                                        errorFun();
+                                    }
+                                }
+                            }
+                        }.bind(this),
+                        error: function (response) {
+                            this.showCriticalError(response);
+                            errorFun();
+                        }.bind(this)
+                    });
+                }
+                else {
+                    successFun();
+                }
+            }
+
+            /**
+             * @brief Obsoletes a set of schedules.
+             * @details This is an asynchronous call.
+             * @param[in] scheduleUID the schedule unique identifiers. 
+             * @param[in] successFun function with prototype (void) f(void), that will be called if the schedule was successfully obsoleted.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be obsoleted.
+             */
+            obsoleteSchedule(scheduleUIDs, successFun, errorFun) {
+                if (scheduleUIDs.length > 0) {
+                    var scheduleUID = scheduleUIDs[0];
+                    $.ajax({
+                        type: "post",
+                        url: "/obsoleteschedule",
+                        data: {
+                            token: this.token,
+                            scheduleUID: scheduleUID 
+                        },
+                        success: function (response) {
+                            if(this.checkServerResponse(response)) { 
+                                if (response === HTK_OK) {
+                                    scheduleUIDs.shift();
+                                    if (scheduleUIDs.length > 0) {
+                                        this.obsoleteSchedule(scheduleUIDs, successFun, errorFun);
+                                    }
+                                    else {
+                                        successFun();
+                                    }
+                                }
+                                else {
+                                    if (response === HTK_NOT_FOUND) {
+                                        parent.htkDialogs.showErrorDialog("Schedule " + scheduleUID + " could not be found in the server!");
+                                        errorFun();
+                                    }
+                                    else {
+                                        parent.htkDialogs.showErrorDialog("Unkown error while obsoleting the schedule " + scheduleUID + " in the server");
+                                        errorFun();
+                                    }
+                                }
+                            }
+                        }.bind(this),
+                        error: function (response) {
+                            this.showCriticalError(response);
+                            errorFun();
+                        }.bind(this)
+                    });
+                }
+                else {
+                    successFun();
+                }
+            }
+
+
+            /**
+             * @brief Deletes a library.
+             * @details This is an asynchronous call.
+             * @param[in] libraryUID the library unique identifier. 
+             * @param[in] successFun function with prototype (void) f(void), that will be called if the library was successfully deleted.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the library could not be deleted.
+             */
+            deleteLibrary(libraryUID, successFun, errorFun) {
+                $.ajax({
+                    type: "post",
+                    url: "/deletelibrary",
+                    data: {
+                        token: this.token,
+                        libraryUID: libraryUID
+                    },
+                    success: function (response) {
+                        if(this.checkServerResponse(response)) { 
+                            if (response === HTK_OK) {
+                                successFun();
+                            }
+                            else {
+                                if (response === HTK_IN_USE) {
+                                    parent.htkDialogs.showErrorDialog("Library is being used in other schedules and thus cannot be deleted.");
+                                    errorFun();
+                                } 
+                                else if (response === HTK_NOT_FOUND) {
+                                    parent.htkDialogs.showErrorDialog("Library could not be found in the server!");
+                                    errorFun();
+                                }
+                                else {
+                                    parent.htkDialogs.showErrorDialog("Unkown error while deleting the library in the server");
+                                    errorFun();
+                                }
+                            }
+                        }
+                    }.bind(this),
+                    error: function (response) {
+                        this.showCriticalError(response);
+                        errorFun();
+                    }.bind(this)
+                });
+            }
+
+            /**
+             * @brief Obsoletes a library.
+             * @details This is an asynchronous call.
+             * @param[in] libraryUID the library unique identifier. 
+             * @param[in] successFun function with prototype (void) f(void), that will be called if the library was successfully obsoleted.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the library could not be obsoleted.
+             */
+            obsoleteLibrary(libraryUID, successFun, errorFun) {
+                $.ajax({
+                    type: "post",
+                    url: "/obsoletelibrary",
+                    data: {
+                        token: this.token,
+                        libraryUID: libraryUID
+                    },
+                    success: function (response) {
+                        if(this.checkServerResponse(response)) { 
+                            if (response === HTK_OK) {
+                                successFun();
+                            }
+                            else {
+                                if (response === HTK_NOT_FOUND) {
+                                    parent.htkDialogs.showErrorDialog("Library could not be found in the server!");
+                                    errorFun();
+                                }
+                                else {
+                                    parent.htkDialogs.showErrorDialog("Unkown error while obsoleting the library in the server");
+                                    errorFun();
+                                }
+                            }
+                        }
+                    }.bind(this),
+                    error: function (response) {
+                        this.showCriticalError(response);
+                        errorFun();
+                    }.bind(this)
+                });
+            }
+
+            /**
+             * @brief Gets statistics information regarding the system performance.
+             * @details This is an asynchronous call.
+             * @param[in] successFun function with prototype (void) f(statistics), that will be called if the variables were successfully retrieved.
+             * @param[in] errorFun function with prototype (void) f(), that will be called if the statistics could not be retrieved.
+             */
+            getStatistics(successFun, errorFun) {
+                $.ajax({
+                    type: "post",
+                    url: "/statistics",
+                    data: {
+                        token: localStorage.currentToken 
+                    },
+                    success: function (response) {
+                        if (this.checkServerResponse(response)) {
+                            var statistics = $.parseJSON(response);
+                            successFun(statistics);
+                        }
+                    }.bind(this),
+                    error: function (response) {
+                        this.showCriticalError(response);
+                        errorFun();
+                    }.bind(this)
+                });
+            }
+
+
+            /**
+             * @brief Checks if the response from the server is valid (i.e. if the server has not replied with HTK_INVALID_TOKEN). If it returned with HTK_INVALID_TOKEN calls fireInvalidToken().
+             * @return true if the response from the server is not HTK_INVALID_TOKEN.
              */
             checkServerResponse(response) {
-                var ok = (response !== INVALID_TOKEN);
-                if (!ok) {
-                    this.fireInvalidToken();
+                var ok = (response.length > 0);
+                if (ok) {
+                    if (response === HTK_INVALID_TOKEN) {
+                        ok = false;
+                        this.fireInvalidToken();
+                    }
                 }
                 return ok;
             }
 
             /**
-             * @brief Registers a component that is interested in being notified if an INVALID_TOKEN is received from the server.
+             * @brief Registers a component that is interested in being notified if an HTK_INVALID_TOKEN is received from the server.
              */ 
             addInvalidTokenListener(listener) {
                 this.invalidTokenListeners.push(listener);
@@ -685,42 +1153,40 @@
 
             /**
              * @brief Updates the schedule remotely with any values that have changed in the last period.
-             * @param[in] period time interval in milliseconds at which the component values shall be synchronised remotely.
              */
-            synchroniseRemote(period) {
-                if (this.currentScheduleUID !== undefined) {
-                    var toPop = this.valuesToSynchroniseRemote.length;
+            synchroniseRemote() {
+                //This is because in the context of the setInterval callback the this is the Window
+                var _this = htkHelper;
+                if (_this.currentScheduleUID !== undefined) {
+                    var toPop = _this.valuesToSynchroniseRemote.length;
                     if (toPop > 0) {
                         var variablesToSend = {};
                         //Not perfectly safe, but worst comes to the worst I send twice the same thing from time to time
                         var i = 0;
                         while (i < toPop) {
-                            var valueToSynch = this.valuesToSynchroniseRemote.shift();//not pop since we want to remove the oldest (i.e. the first) before
+                            var valueToSynch = _this.valuesToSynchroniseRemote.shift();//not pop since we want to remove the oldest (i.e. the first) before
                             variablesToSend[valueToSynch.id] = valueToSynch.value;
-                            this.scheduleValuesToCommit[valueToSynch.id] = valueToSynch.value;
+                            _this.scheduleValuesToCommit[valueToSynch.id] = valueToSynch.value;
                             i++;
                         }
                         $.ajax({
                             type: "post",
                             url: "/updateschedule",
                             data: {
-                                token: this.token,
-                                tid: this.remoteServerTid,
-                                scheduleUID:this.currentScheduleUID,
+                                token: _this.token,
+                                tid: _this.remoteServerTid,
+                                scheduleUID:_this.currentScheduleUID,
                                 variables:JSON.stringify(variablesToSend)
                             },
                             success: function (response) {
-                                setTimeout(this.synchroniseRemote, period);
-                            }.bind(this),
+                            }.bind(_this),
                             error: function (response) {
-                                setTimeout(this.synchroniseRemote, period);
                                 console.log(response);
                                 alert(response);
-                            }.bind(this)
+                            }.bind(_this)
                         });
                     }
                 }
-                setTimeout(this.synchroniseRemote, period);
             }
 
             /**
@@ -796,11 +1262,31 @@
             getAllUsers() {
                 return this.allUsers;
             }
+
+            /**
+             * @brief Helper function which gets all the selected options in any select (with or without multiple).
+             * @param[in] select the HTML select where to get the options from.
+             * @return all the selected options.
+             */
+            getSelectAllSelectedValues(select) {
+                var result = [];
+                var options = select && select.options;
+                var nOptions = options.length;
+                for (var i=0; i<nOptions; i++) {
+                    var opt = options[i];
+                    if (opt.selected) {
+                        result.push(opt);
+                    }
+                }
+                return result;
+            }
         }
         //IMPORTANT! Remember when accessing to these global variables to prefix with parent, so that they can be accessed from an iframe
-        htkHelper = new HtkHelper();
-        htkHelper.synchroniseRemote();
-        
+        htkHelper = undefined;
+        if (htkHelper === undefined) {
+            htkHelper = new HtkHelper();
+            setInterval(htkHelper.synchroniseRemote, 2000);
+        }
     
     </script>
 </html>

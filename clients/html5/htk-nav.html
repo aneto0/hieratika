@@ -62,6 +62,7 @@
                 <button class="w3-bar-item w3-button" title="Set current values as the plant" id="setplantbtn"><i class="fa fa-thermometer-full"></i> Set plant</button>
                 <button class="w3-bar-item w3-button w3-border-top" title="Manage transformations" id="transformationsbtn"><i class="fa fa-cogs"></i> f(x)</button>
                 <button class="w3-bar-item w3-button w3-border-top" title="Load the current plant into the system" id="loadintoplantbtn"><i class="fa fa-upload"></i> Load</button>
+                <button class="w3-bar-item w3-button w3-border-top" title="Show system statistics" id="showstatisticsbtn"><i class="fa fa-area-chart"></i> Statistics</button>
             </div>
             <div class="w3-bar w3-dark-grey w3-tiny">
                 <button class="w3-button" id="tsidebaropen">&#9776;</button>
@@ -148,6 +149,11 @@
                             parent.htkHelper.loadIntoPlant(this.selectedPage.name, this.loadIntoPlantCompleted, this.loadIntoPlantError);
                         }.bind(this);
 
+                        this.showStatisticsButton = this.shadowRoot.querySelector("#showstatisticsbtn");
+                        this.showStatisticsButton.onclick = function() {
+                            this.hideSideBar();
+                            parent.htkHelper.getHtkMainEditor().showStatistics();
+                        }.bind(this);
 
                         this.pageSelectButton = this.shadowRoot.querySelector("#pageselectbtn");
                         this.loginButton = this.shadowRoot.querySelector("#loginbtn");
@@ -155,7 +161,8 @@
                         this.loginDialog.addLoginListener(this);
                         this.loginButton.onclick = function() {
                             this.hideSideBar();
-                            if (localStorage.user === undefined) {
+                            var user = parent.htkHelper.getUser(); 
+                            if (user === undefined) {
                                 this.loginDialog.show();
                             }
                             else {
@@ -186,7 +193,7 @@
                         this.editScheduleButton = this.shadowRoot.querySelector("#editschedulebtn");
                         this.editScheduleButton.onclick = function() {
                             this.hideSideBar();
-                            this.scheduleSelector.show(this.editScheduleChanged.bind(this), this.user.id);
+                            this.scheduleSelector.show(this.editScheduleChanged.bind(this));
                         }.bind(this);
 
                         this.viewScheduleButton = this.shadowRoot.querySelector("#viewschedulebtn");
@@ -213,12 +220,12 @@
                         this.usernameDisplay = this.shadowRoot.querySelector("#username");
                         this.currentDisplay = this.shadowRoot.querySelector("#currentdisplay");
                         this.currentReference = this.shadowRoot.querySelector("#currentreference");
-
-                        if (localStorage.user === undefined) {
+                        
+                        var user = parent.htkHelper.getUser();
+                        if (user === undefined) {
                             this.loginButton.value = "<i class='fa fa-user-o'> Login</i>";
                         }
                         else {
-                            var user = JSON.parse(localStorage.user);
                             parent.htkHelper.setToken(localStorage.currentToken);
                             this.loginSuccessful(user);
                         }
@@ -363,7 +370,6 @@
                      */
                     commitError() {
                         parent.htkDialogs.closeWaitDialog();
-                        parent.htkDialogs.showErrorDialog("Failed to commit the schedule. Unknown error, check the server logs.");
                     }
 
                     /**

@@ -28,6 +28,7 @@ import threading
 ##
 # Project imports
 ##
+from hieratika.hconstants import HieratikaConstants
 
 ##
 # Logger configuration
@@ -37,7 +38,7 @@ log = logging.getLogger("{0}".format(__name__))
 ##
 # Class definition
 ##
-class WLoader:
+class WLoader(object):
     """ Provides an interface point between the specific loader implementations (see HieratikaLoader)
         and the webserver. In particular this class parses and transforms the web form parameters into 
         the list of the parameters that are expected by the HieratikaLoader implementation.
@@ -61,7 +62,7 @@ class WLoader:
         Args:
             request.form["pageNames"]: the name of the configuration models that are to be loaded.
         Returns:
-            "ok" if all the configurations are successfully loaded.
+            HieratikaConstants.OK if all the configurations are successfully loaded.
         """
         toReturn = "InvalidParameters"
         try:
@@ -85,7 +86,7 @@ class WLoader:
                 if (not ok):
                     break
             if (ok):
-                toReturn = "ok"            
+                toReturn = HieratikaConstants.OK            
         except KeyError as e:
             log.critical(e)
         return toReturn

@@ -5,6 +5,8 @@
         <link rel="import" href="/htk-filter-editor.html">
         <link rel="import" href="/htk-input.html">
         <link rel='import' href='/htk-struct-browser.html'>
+        <link rel="import" href="/htk-library-button.html">
+        <link rel="import" href="/htk-schedule-button.html">
     </head>
     <body>
         <table>
@@ -18,6 +20,18 @@
                 <td>Standard input 2</td>
                 <td>
                     <htk-input id='DT@BT@DBL2'></htk-input>
+                </td>
+            </tr>
+           <tr>
+                <td>Schedule 1</td>
+                <td>
+                    <htk-schedule-button id='DT@SCH@SCH1' data-config-name="55A0-discrete-coils"></htk-schedule-button>
+                </td>
+            </tr>
+           <tr>
+                <td>Schedule 2</td>
+                <td>
+                    <htk-schedule-button id='DT@SCH@SCH2' data-config-name="55A0-discrete-coils"></htk-schedule-button>
                 </td>
             </tr>
             <tr>

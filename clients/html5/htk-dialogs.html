@@ -69,10 +69,33 @@
                 alert(msg);
             }
 
+            /**
+             * @brief Shows an input dialog.
+             * @param[in] msg the message to display.
+             * @param[in] defaultValue the default value to show on the text input box.
+             * @return the user answer or null if the user has pressed cancel.
+             */
+            showInputDialog(msg, defaultValue = "") {
+                return prompt(msg, defaultValue);
+            }
+
+            /**
+             * @brief Shows a confirm dialog.
+             * @param[in] msg the message to display.
+             * @return true if the user pressed OK, false otherwise.
+             */
+            showConfirmDialog(msg) {
+                return confirm(msg);
+            }
+
+
         }
 
         //IMPORTANT! Remember when accessing to these global variables to prefix with parent. so that they can be accessed from an iframe
-        htkDialogs = new HtkDialogs();
+        htkDialogs = undefined;
+        if (htkDialogs === undefined) {
+            htkDialogs = new HtkDialogs();
+        }
     </script>
     </body>
 </html>

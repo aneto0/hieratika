@@ -81,7 +81,7 @@
                     }
 
                     /**
-                     * @brief Informs all the registered components (see addPlantInfoLoadedListener) that a new page has been loaded.
+                     * @brief Informs all the registered components (see addVariablesInfoLoadedListener) that a new page has been loaded.
                      */
                     fireVariablesInfoLoaded() {
                         for(var l in this.variablesInfoLoadedListeners) {
@@ -112,7 +112,7 @@
                         parent.htkHelper.getLiveVariablesInfo(
                             allLiveVariableIds, 
                             function (variables) {
-                                var user = JSON.parse(localStorage.user);
+                                var user = parent.htkHelper.getUser();
                                 for (var i in variables) {
                                     var variable = variables[i];
                                     var targetElements = this.mainEditorIFrame.contentDocument._frameComponents[variable.name];
@@ -127,7 +127,7 @@
                                     pageName,
                                     allVariableIds, 
                                     function (variables) {
-                                        var user = JSON.parse(localStorage.user);
+                                        var user = parent.htkHelper.getUser();
                                         for (var i in variables) {
                                             var variable = variables[i];
                                             var targetElements = this.mainEditorIFrame.contentDocument._frameComponents[variable.name];
@@ -208,6 +208,15 @@
                      */
                     getAllMainFrameHtkComponents() {
                         return this.mainEditorIFrame.contentDocument._frameComponents;
+                    }
+
+                    /**
+                     * @brief Shows the statistics page.
+                     */
+                    showStatistics() {
+                        this.mainEditorIFrame.onload = function(evt) {
+                        }.bind(this);
+                        this.mainEditorIFrame.src = "/statistics.html?" + new Date().getTime(); //new Date... to force reloading with no caching
                     }
                 }
 

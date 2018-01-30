@@ -74,6 +74,14 @@ class SharedList(object):
         self.mux.release()
         return ret
 
+    def pop(self):
+        """ See list.pop
+        """
+        self.mux.acquire()
+        ret = self.listImpl.pop()
+        self.mux.release()
+        return ret
+
     def __getitem__(self, index):
         """ See list.__getitem__()
         """
@@ -118,4 +126,5 @@ class SharedList(object):
         ret = self.listImpl.__str__()
         self.mux.release()
         return ret
+
 

@@ -333,7 +333,7 @@
                 otherHtkComp.setValue(valueToUpdate, false);
             });
             if (parent.htkHelper.getCurrentScheduleUID() !== undefined) {
-                parent.htkHelper.synchroniseRemote(valueToUpdateR);
+                parent.htkHelper.addVariableToSynchroniseRemote(valueToUpdateR);
             }
         }
 

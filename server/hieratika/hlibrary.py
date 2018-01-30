@@ -36,7 +36,7 @@ class HLibrary(object):
     """ Describes a hieratika parameter library.
         An HLibrary is a collection of values that can be assigned to different variables. 
         A typical example is a waveform definition.
-        The same waveform definition (i.e. the actual values) might be used by many parameters. As a consequence these parameters need only to link
+        The same waveform definition (i.e. the actual values) might be used by many parameters. As a consequence these parameters need only to link (refer)
         to this waveform definition (by name) in order to be configured (as opposed to be individually configured with the same values).
         Note that this is not the place where to define structured types. The same structured type might be used by many libraries. As an example, 
         a waveform structured type might be used by a library for selecting power supply references and by a library for selecting data acquisition time windows.
@@ -47,7 +47,7 @@ class HLibrary(object):
         A library which is locked cannot be modified nor deleted from the system. This is to avoid that a given library definition is used in a given configuration and is later overriden.
     """
 
-    def __init__(self, htype, uid, name, owner, description = ""):
+    def __init__(self, htype, uid, name, owner, description = "", obsolete = False):
         """ Constructs an HLibrary object against a uid, name, owner and description.
         
         Args:
@@ -56,6 +56,7 @@ class HLibrary(object):
             name (str): the name of the library.
             owner (str): the username of the User which owns the library.
             description (str): a description of the library.
+            obsolete (bool): True if the schedule has been marked as obsolete.
         """
         self.htype = htype
         self.uid = uid
@@ -64,6 +65,7 @@ class HLibrary(object):
         self.description = description
         self.locked = False
         self.lastModified = 0
+        self.obsolete = obsolete
 
     def getUID(self):
         """ 
@@ -128,6 +130,12 @@ class HLibrary(object):
         """
         self.lastModified = lastModified
 
+    def isObsolete(self):
+        """ 
+        Returns:
+            Returns true if the library has been marked as obsolete.
+        """
+        return self.obsolete
 
     def __eq__(self, another):
         """ Two libraries are equal if they have the same uid.
