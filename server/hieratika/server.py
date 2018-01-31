@@ -33,7 +33,7 @@ import threading
 ##
 # Project imports
 ##
-from hieratika.util.broadcastqueue import BroacastQueue
+from hieratika.util.broadcastqueue import BroadcastQueue
 from hieratika.util.shareddict import SharedDictionary
 
 ##
@@ -70,7 +70,7 @@ class HieratikaServer(object):
             udpGroup = config.get("hieratika", "udpBroadcastQueueGroup")
             udpPort = config.getint("hieratika", "udpBroadcastQueuePort")
             self.standalone = config.getboolean("hieratika", "standalone")
-            self.udpQueue = BroacastQueue(udpGroup, udpPort)
+            self.udpQueue = BroadcastQueue(udpPort)
         except (KeyError, ValueError, ConfigParser.Error) as e:
             log.critical("Failed to load configuration parameters {0}".format(e))
             return False

@@ -21,10 +21,11 @@ __date__ = "07/11/2017"
 # Standard imports
 ##
 import logging
+import multiprocessing 
 import os
-from socket import *
-import struct
 import threading
+import time
+import zmq
 
 ##
 # Project imports
@@ -38,23 +39,25 @@ log = logging.getLogger("{0}".format(__name__))
 ##
 # Class definition
 ##
-class BroacastQueue:
+class BroadcastQueue:
     """ A one to many queue which allows to share objects between one and many processes.
-        The implementation is based on multicast UDP sockets with a ttl of 1 (i.e. blocked to the current network segment).
+        The implementation is based on a zmq published subscriber pattern.
     """
     
-    def __init__(self, group, port, itemSize=8192, timeout=10):
+    def __init__(self, port, timeout = 100, address = "127.0.0.1"):
         """ Constructor.
         Args:
-            group (str): the multicast group to be used.
-            port (int): the multicast port.
-            timeout (int): maximum timeout to wait for an item to arrive. If no item arrives in this time the queue will return None.
+            port (int): the zmq port.
+            timeout (int): maximum timeout in ms to wait for an item to arrive. If no item arrives in this time the queue will return None.
+            address (str): the zmq address.
         """
-        self.group = group
         self.port = port
         self.timeout = timeout
-        self.itemSize = itemSize
+        self.address = address
+        self.proxyUrl = 'ipc://broadcastqueue-proxy-internal'
         self.sockets = {}
+        p = multiprocessing.Process(target=self.proxy)
+        p.start()
 
     def __del__(self):
         """ Destructor.
@@ -62,31 +65,44 @@ class BroacastQueue:
         """
         for k,  sock in self.sockets.iteritems():
              sock.close()
+
+    def proxy(self):
+        ctx = zmq.Context()
+        sub = ctx.socket(zmq.ROUTER)
+        #sub.setsockopt(zmq.SUBSCRIBE, "")
+        sub.bind(self.proxyUrl)
+        pub = ctx.socket(zmq.PUB)
+        pub.bind("tcp://{0}:{1}".format(self.address, self.port))
+        try:
+            log.info("Starting zmq proxy and binding to ({0}) {1}:{2}".format(self.proxyUrl, self.address, self.port))
+            zmq.proxy(sub, pub) 
+        except Exception as e:
+            log.critical("zmq proxy terminated {0}".format(e))
+        log.critical("Exiting zmq proxy callback")
         
     def getSocket(self, receiver):
         """ Gets a socket. A socket will be cached for every pid/tid pair.
     
-        Args:
-            receiver (boolean): True if the socket is a receiver.
         Returns:
-            An UDP multicast socket.
+            A zmq subscriber socket.
         """
         uid = str(os.getpid()) + "_" + str(threading.current_thread().ident)
         if (receiver):
             uid = uid + "_rec"
         if (uid not in self.sockets):
-            sock = socket(AF_INET, SOCK_DGRAM)
-            sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-            sock.settimeout(self.timeout)
+            context = zmq.Context()
             if (receiver):
-                mgroup = inet_aton(self.group)
-                mreq = struct.pack('4sL', mgroup, INADDR_ANY)
-                sock.setsockopt(IPPROTO_IP, IP_ADD_MEMBERSHIP, mreq)
-                sock.bind((self.group, self.port))
+                sock = context.socket(zmq.SUB)
+                sock.connect("tcp://{0}:{1}".format(self.address, self.port))
+                log.info("Creating new subscriber socket @ {0}:{1}".format(self.address, self.port))
+                sock.setsockopt(zmq.RCVTIMEO, self.timeout)
+                sock.setsockopt(zmq.SUBSCRIBE, "")
             else:
-                # Set the time-to-live for messages to 1 so they do not go past the local network segment.
-                ttl = struct.pack('b', 1)
-                sock.setsockopt(IPPROTO_IP, IP_MULTICAST_TTL, ttl)
+                log.info("Creating new publisher socket {0} @ {1}:{2}".format(self.proxyUrl, self.address, self.port))
+                sock = context.socket(zmq.DEALER)
+                sock.sndhwm = 1100000
+                sock.connect(self.proxyUrl)
+
             self.sockets[uid] = sock 
         return self.sockets[uid]
 
@@ -97,21 +113,19 @@ class BroacastQueue:
             item (str): the item to be sent.
         """
         sock = self.getSocket(False)
-        sock.sendto(item, (self.group, self.port))
+        sock.send_pyobj(item)
             
     def get(self):
         """ Gets an item from queue.
         
-        Args:
-            itemSize (int): maximum item size to be received.
         Returns:
             The received item or None if a timeout occurs.
         """
 
         sock = self.getSocket(True)
         try:
-            item, address = sock.recvfrom(self.itemSize)
-        except timeout:
+            item = sock.recv_pyobj()
+        except Exception as e:
             item = None 
         return item
 

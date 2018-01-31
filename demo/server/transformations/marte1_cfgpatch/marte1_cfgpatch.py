@@ -65,9 +65,9 @@ class MARTe1CfgPatch(HieratikaTransformation):
                 keys = variable.split(".")
                 #Navigate in the MARTe configuration file (e.g. MARTe.Thread_1.GAMs.Param1)
                 p = config
-                for k in keys:
+                for k in keys[:-1]:
                     p = p[k]
-                p = "\"{0}\"".format(inputs[variable])
+                p[keys[-1]] = "\"{0}\"".format(inputs[variable])
 
             outputs["OutputCfg"] = "\"{0}\"".format(config.serialise())
         except Exception as e:

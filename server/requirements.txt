@@ -7,5 +7,9 @@ python-pam
 #lxml for psps server
 lxml
 
-#ahkab for the distributed.ini configuration
+#ahkab for the distributed.ini configuration (only needed for the demo which uses akhab). TODO remove dependency.
 ahkab
+
+#To implement the broadcast queue
+pyzmq
+
