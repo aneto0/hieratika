@@ -56,6 +56,7 @@ class BroadcastQueue:
         self.address = address
         self.proxyUrl = 'ipc://broadcastqueue-proxy-internal'
         self.sockets = {}
+        #The proxy provides an ipc interface for the publishers that live in different processes
         p = multiprocessing.Process(target=self.proxy)
         p.start()
 
@@ -67,6 +68,8 @@ class BroadcastQueue:
              sock.close()
 
     def proxy(self):
+        """ Required to share the context between different processes. Heavily based on https://github.com/zeromq/pyzmq/issues/710
+        """
         ctx = zmq.Context()
         sub = ctx.socket(zmq.ROUTER)
         #sub.setsockopt(zmq.SUBSCRIBE, "")
@@ -82,9 +85,11 @@ class BroadcastQueue:
         
     def getSocket(self, receiver):
         """ Gets a socket. A socket will be cached for every pid/tid pair.
-    
+   
+        Args:
+            receiver (bool): True if the socket is for a subscriber. 
         Returns:
-            A zmq subscriber socket.
+            A zmq socket.
         """
         uid = str(os.getpid()) + "_" + str(threading.current_thread().ident)
         if (receiver):
