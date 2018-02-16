@@ -167,7 +167,10 @@ class EPICSV3Monitor(HieratikaMonitor):
                 if (value is not None):
                     nelm = variable.getNumberOfElements()
                     if (nelm > 1):
-                        value = value.tolist()
+                        try:
+                            value = value.tolist()
+                        except Exception as e:
+                            log.critical("Could not convert value to list {0}".format(e))
                     variable.setValue(value)
                 variables.append(variable)
 
