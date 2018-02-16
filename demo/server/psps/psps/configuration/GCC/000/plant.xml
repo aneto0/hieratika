@@ -1,0 +1,93 @@
+<configurationContainer xmlns="http://www.iter.org/CODAC/PlantSystemConfig/2014" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <schemaVersion>1.2</schemaVersion>
+    <version>00.00</version>
+    <sddVersion>1</sddVersion>
+    <name>GCC demo</name>
+    <description>GCC demo to support discussion of key concepts</description>
+    <plantSystems>
+        <plantSystem>
+            <name>GCC</name>
+            <version>1.0</version>
+            <description>The GCC Plant</description>
+            <plantRecords>
+                <folders>
+                    <folder>
+                        <name>PAR1</name>
+                        <records>
+                            <record xsi:type="recordEnum" size="1">
+                                <name>SCOPE</name>
+                                <alias>Scope</alias>
+                                <description>Where can this parameter be changed?</description>
+                                <origin></origin>
+                                <units></units>
+                                <definition definition="org.iter.codac.psps.validation.ConstantEnum">SCOPE</definition>
+                                <values>
+                                    <value>CAMPAIGN</value>
+                                </values>
+                                <choices>
+                                    <choice>CAMPAIGN</choice>
+                                    <choice>SESSION</choice>
+                                    <choice>EXPERIMENT</choice>
+                                    <choice>FREE</choice>
+                                </choices>
+                            </record>
+                            <record size="1" xsi:type="recordDouble">
+                                <name>VAL</name>
+                                <alias>VAL</alias>
+                                <description>Double value</description>
+                                <values>
+                                    <value>-109</value>
+                                </values>
+                            </record>
+                        </records>
+                    </folder>
+                    <folder>
+                        <name>LINK</name>
+                        <records>
+                            <record size="1" xsi:type="recordSchedule">
+                                <name>PARENT</name>
+                                <alias>PARENT</alias>
+                                <description>Link to parent</description>
+                                <values>
+                                    <value>"../demo/server/psps/users/codac-dev-1/configuration/GCC/Campaigns/RU-Campaign-1.xml"</value>
+                                </values>
+                            </record>
+                        </records>
+                    </folder>
+                </folders>
+            </plantRecords>
+            <plantConstraints>
+                <folders>
+                    <folder>
+                        <name>From SDD</name>
+                        <folders/>
+                        <constraints>
+                            <constraint>
+                                <name>Double limit</name>
+                                <description>Validates a double limit</description>
+                                <hint>Change the value of PAR1@VAL&lt;=1000</hint>
+                                <function name="schedule.validate">='PAR1@VAL'&lt;=1000</function>
+                                <origin>SDD</origin>
+                            </constraint>
+                        </constraints>
+                    </folder>
+                </folders>
+                <constraints/>
+            </plantConstraints>
+            <plantViews>
+                <plantView>
+                    <name>GCC-Campaign</name>
+                    <description>GCC campaign settings</description>
+                </plantView>
+                <plantView>
+                    <name>GCC-Session</name>
+                    <description>GCC session settings</description>
+                </plantView>
+
+            </plantViews>
+            <sdnTopics>
+                <sdnTopics/>
+            </sdnTopics>
+        </plantSystem>
+    </plantSystems>
+</configurationContainer>
