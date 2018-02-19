@@ -1012,6 +1012,8 @@ class PSPSServer(HieratikaServer):
             toReturn = "library" 
         elif (xmlVariableType == "recordSchedule"):
             toReturn = "schedule" 
+        elif (xmlVariableType == "recordLock"):
+            toReturn = "lock" 
         else:
             log.critical("Could not convert type {0}".format(xmlVariableType))
         return toReturn
@@ -1372,7 +1374,6 @@ class PSPSServer(HieratikaServer):
                     updatedVariables = updatedVariables + self.updateLibrary(recordXml, root, variableValue, oldValue)
                 elif (typeFromXml == "schedule"):
                     self.updateScheduleVariable(variableValue, oldValue)
-                    
             else:
                 log.critical("Could not find {0} . Failed while looking for {1}".format(variableName, fullVariablePath))
         else:
