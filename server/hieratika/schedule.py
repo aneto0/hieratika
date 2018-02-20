@@ -35,7 +35,7 @@ class Schedule(object):
     """ Describes a hieratika parameter schedule.
     """
 
-    def __init__(self, uid, name, pageName, owner, description = "", obsolete = False):
+    def __init__(self, uid, name, pageName, owner, description = "", obsolete = False, inheritsFromUID = ""):
         """ Constructs a Schedule object against a uid, name and description.
         
         Args:
@@ -45,6 +45,7 @@ class Schedule(object):
             description (str): a description of the schedule.
             owner (str): the username of the User which owns the schedule.
             obsolete (bool): True if the schedule has been marked as obsolete.
+            inheritsFromUID (str): The UID of the schedule from which this schedule has inherited from (if None inheritsFromUID = "").
         """
         self.uid = uid
         self.name = name
@@ -52,6 +53,7 @@ class Schedule(object):
         self.description = description
         self.owner = owner 
         self.obsolete = obsolete
+        self.inheritsFromUID = inheritsFromUID
 
     def getUID(self):
         """ 
@@ -94,7 +96,13 @@ class Schedule(object):
             Returns true if the schedule has been marked as obsolete.
         """
         return self.obsolete
-       
+
+    def getInheritsFromUID(self):
+        """ 
+        Returns:
+            Returns the unique identifier of the schedule from which this schedule has inherited from.
+        """
+        return self.inheritsFromUID
 
     def __eq__(self, another):
         """ Two schedules are equal if they have the same uid.

@@ -18,22 +18,44 @@
                                 <name>DBL</name>
                                 <alias>DBL</alias>
                                 <description>Double value</description>
+                                <lock>DT@BT@LOCK1</lock>
                                 <values><value>-109</value></values></record>
                             <record size="1" xsi:type="recordDouble">
                                 <name>DBL2</name>
                                 <alias>DBL2</alias>
                                 <description>Another Double value</description>
                                 <values><value>[3]</value></values></record>
+                                <lock>DT@BT@LOCK1</lock>
                             <record size="[5]" xsi:type="recordDouble">
                                 <name>DBLA</name>
                                 <alias>DBLA</alias>
                                 <description>Double value array</description>
                                 <values><value>[1, 2, 3, 4, 5]</value></values></record>
+                                <lock>DT@BT@LOCK2</lock>
                             <record size="[2,3]" xsi:type="recordDouble">
                                 <name>DBLM</name>
                                 <alias>DBLM</alias>
                                 <description>Double value matrix</description>
                                 <values><value>[[1, 1], [1, 1, 1]]</value></values></record>
+                                <lock>DT@BT@LOCK3</lock>
+                            <record size="1" xsi:type="recordLock">
+                                <name>LOCK1</name>
+                                <alias>LOCK1</alias>
+                                <description>A lock</description>
+                                <values><value>1</value></values>
+                            </record>
+                            <record size="1" xsi:type="recordLock">
+                                <name>LOCK2</name>
+                                <alias>LOCK2</alias>
+                                <description>Another lock</description>
+                                <values><value>0</value></values>
+                            </record>
+                            <record size="1" xsi:type="recordLock">
+                                <name>LOCK3</name>
+                                <alias>LOCK3</alias>
+                                <description>And another lock</description>
+                                <values><value>0</value></values>
+                            </record>
                         </records>
                     </folder>
                     <folder>
@@ -115,4 +137,4 @@
             </sdnTopics>
         </plantSystem>
     </plantSystems>
-</configurationContainer>
+<references><counter>1</counter></references></configurationContainer>

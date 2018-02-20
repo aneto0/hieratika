@@ -73,6 +73,10 @@
                 this.setPlantValue(variable.value);
                 this.setValue(variable.value);
             }
+            //Check if there is another variable controlling the locking state of this variable.
+            if ("lockVariable" in variable) {
+                this.setLockVariable(variable.lockVariable);
+            }
         }
 
 
@@ -277,12 +281,44 @@
 
         /**
          * @brief Sets if the value of the variable represented by this component is allowed to be changed.
-         * @param[in] isReadOnly if true the value of the variable represented by this component cannot be changed.
+         * @param[in] isReadOnly if true the value of the variable represented by this component cannot be changed (which will be for sure true if this is a live variable, if this user is not allowed to write or if the variable is locked for editing by a locking variable).
          */
         setReadOnly (isReadOnly) {
             this.readOnly = isReadOnly;
-            this.readOnly = ((this.readOnly) || (this.liveVariable));
+            this.readOnly = ((this.readOnly) || (this.liveVariable) || (!this.userAllowedToWrite) || (this.locked));
             this.refresh();
+        }
+
+        /**
+         * @brief Returns true if the variable is locked.
+         * @return true if the variable is locked.
+         */
+        isLocked() {
+            return this.locked;
+        }
+
+        /**
+         * @brief Sets if this variable locking state.
+         * @param[in] locked if true this variable will not be editable.
+         */
+        setLocked(locked) {
+            this.locked = locked;
+            this.refresh();
+        }
+
+        /**
+         * @brief Returns the name of the variable which locks this variable (or undefined if not set).
+         */
+        getLockVariable() {
+            return this.lockVariable;
+        }
+
+        /**
+         * @brief Sets the name of variable which allows this variable to bet edited (or not).
+         * @param[in] lockVariable the name of the locking variable.
+         */
+        setLockVariable(lockVariable) {
+            this.lockVariable = lockVariable;
         }
 
         /**
@@ -446,6 +482,8 @@
             this.validations = undefined;
             this.struct = false;
             this.readOnly = false;
+            this.locked = false;
+            this.lockVariable = undefined;
             this.numberOfElements = [];
             this.liveVariable = this.getAttribute("data-live");
             if (this.liveVariable !== null) {
@@ -507,7 +545,7 @@
 
         /**
          * @brief Checks if this is user is allowed to change the value of the variable represented by this component.
-         * @details If the user is allowed to write .isUserAllowedToWrite() will return true.
+         * @details If the user is allowed to write isUserAllowedToWrite() will return true.
          * @param[in] user the user to verify.
          */
         checkUserAllowedToWrite(user) {

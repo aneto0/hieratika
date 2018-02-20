@@ -484,10 +484,11 @@
              * @param[in] configName the name of the configuration that is associated to this schedule.
              * @param[in] parentFolders full path of the folder that will contain the new schedule.
              * @param[in] sourceScheduleUID the identifier of the schedule that is being used as a basis (i.e. where to copy from) for this schedule, or undefined if it is not applicable.
+             * @param[in] inheritFromSchedule if "true" the created schedule will be marked as being inherited from the sourceScheduleUID and an hardlink between the two will be created. This mean that that the sourceScheduleUID will not be modifiable nor deletable while this link exists (i.e. while the created schedule exists).
              * @param[in] successFun function with prototype (void) f(void), that will be called if the schedule was successfully created.
              * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be created.
              */
-            createSchedule(scheduleName, scheduleDescription, configName, parentFolders, sourceScheduleUID, successFun, errorFun) {
+            createSchedule(scheduleName, scheduleDescription, configName, parentFolders, sourceScheduleUID, inheritFromSchedule, successFun, errorFun) {
                 var schedule = {
                     token: this.token,
                     name: scheduleName,
@@ -500,6 +501,7 @@
                 if (sourceScheduleUID !== undefined) {
                     schedule["sourceScheduleUID"] = sourceScheduleUID;
                 }
+                schedule["inheritFromSchedule"] = inheritFromSchedule;
                 $.ajax({
                     type: "post",
                     url: "/createschedule",

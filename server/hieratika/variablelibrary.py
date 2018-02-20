@@ -39,7 +39,7 @@ class VariableLibrary(Variable):
     """ Describes a hieratika library variable. A variable library is a Variable whose value is the name of library contaning the parameter values that are to be assigned to a list of other variables. 
     """
 
-    def __init__(self, name, alias, description = "", vtype = "", permissions = [], numberOfElements = [], value = [], libraryType = "", mappings = []):
+    def __init__(self, name, alias, description = "", vtype = "", permissions = [], numberOfElements = [], value = [], lockVariable = "", libraryType = "", mappings = []):
         """ Constructs a new VariableLibrary object.
         
         Args:
@@ -50,10 +50,11 @@ class VariableLibrary(Variable):
             numberOfElements ([int]): see Variable.__init__
             permissions (str): see Variable.__init__
             value (str): see Variable.__init__
+            lockVariable (str): see Variable.__init__
             libraryType (str): the library type (which univocally defines the library in the system).
             mappings ([(source1:destination1), (source2, destination2), ...]): list of key/value tuples, where the key is the name of source variable in the library and the value is the name of destination parameter (where to copy the source variable value).
         """
-        super(VariableLibrary, self).__init__(name, alias, description, vtype, permissions, numberOfElements, value, [])
+        super(VariableLibrary, self).__init__(name, alias, description, vtype, permissions, numberOfElements, value, [], lockVariable)
         self.libraryType = libraryType
         self.mappings = mappings
 

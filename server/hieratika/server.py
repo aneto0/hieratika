@@ -331,7 +331,7 @@ class HieratikaServer(object):
         pass
 
     @abstractmethod
-    def createSchedule(self, name, description, username, pageName, parentFolders, sourceScheduleUID = None):
+    def createSchedule(self, name, description, username, pageName, parentFolders, sourceScheduleUID = None, inheritFromSchedule = False):
         """ Creates a new schedule either based on a existing schedule (if sourceSchedule is not None) or from the plant. 
 
         Args:
@@ -341,6 +341,8 @@ class HieratikaServer(object):
             pageName (str): name of the page to which the schedule belongs to.
             parentFolders ([str]): list of the parent folders of the new schedule to be created.
             sourceScheduleUID (str): create the schedule by copying from the schedule with this unique identifier. If sourceScheduleUID is None, copy from the plant.
+            inheritFromSchedule (bool): if True the created schedule will be marked as being inherited from the sourceScheduleUID and an hardlink between the two will be created. This mean that that the sourceScheduleUID will
+            not be modifiable nor deletable while this link exists (i.e. while the created schedule exists).
 
         Returns:
             The unique identifier of the created schedule or None if the schedule could not be created.

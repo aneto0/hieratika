@@ -40,7 +40,7 @@ class VariableEnum(Variable):
         A VariableEnum is a Variable which accepts as value only a predefinied list of choices (see getChoices).
     """
 
-    def __init__(self, name, alias, description = "", vtype = "", permissions = [], numberOfElements = [], value = [], validations = [], choices = []):
+    def __init__(self, name, alias, description = "", vtype = "", permissions = [], numberOfElements = [], value = [], validations = [], lockVariable = "", choices = []):
         """ Constructs a new VariableEnum object.
         
         Args:
@@ -52,6 +52,7 @@ class VariableEnum(Variable):
             permissions (str): see Variable.__init__
             value (str): see Variable.__init__
             validations ([str]): see Variable.__init__
+            lockVariable ([str]): see Variable.__init__
             choices ([str]): list of possible values that can be assigned to this variable.
         """
         super(VariableEnum, self).__init__(name, alias, description, vtype, permissions, numberOfElements, value, validations)

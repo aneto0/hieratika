@@ -88,6 +88,7 @@
                         <td>
                             <select id="newschedulesselect" name="newschedulesselect">
                             </select>
+                            <input type="checkbox" id="inheritcheckbox" value="inherit" title="Inherit from selected schedule?">Inherit?<i class="fa fa-link"></i></input>
                         </td>
                     </tr>
                 </table>
@@ -294,6 +295,7 @@
                                 this.updateUserSchedules(); 
                             }.bind(this); 
 
+                            this.inheritCheckBox = this.shadowRoot.querySelector("#inheritcheckbox");
                             this.createNewScheduleFolderButton = this.shadowRoot.querySelector("#createschedulefolderbtn");
                             this.createNewScheduleFolderButton.onclick = function() {
                                 var newFolderName = parent.htkDialogs.showInputDialog("Please insert the new folder name.");
@@ -325,6 +327,13 @@
                             okNewScheduleButton.onclick = function() {
                                 parent.htkDialogs.showWaitDialog();
                                 var sourceScheduleUID = undefined;
+                                var inheritFromSchedule = this.inheritCheckBox.checked;
+                                if (inheritFromSchedule) {
+                                    inheritFromSchedule = "true";
+                                }
+                                else {
+                                    inheritFromSchedule = "false";
+                                }
                                 if (this.newSchedulesSelect.selectedIndex > 0) {
                                     sourceScheduleUID = this.newSchedulesSelect[this.newSchedulesSelect.selectedIndex].value;
                                 }
@@ -334,6 +343,7 @@
                                     this.pageName,
                                     this.currentFolderPath,
                                     sourceScheduleUID,
+                                    inheritFromSchedule,
                                     function () {
                                         this.scheduleDiv.removeAttribute("hidden");
                                         this.newScheduleDiv.setAttribute("hidden", "true");

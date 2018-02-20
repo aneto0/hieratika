@@ -39,7 +39,7 @@ class Variable(object):
         Variables may contain other variables (i.e. they can represent a member of a structure), where their name is the key of a __dict__ representation of the Variable object.
     """
 
-    def __init__(self, name, alias, description = "", vtype = "", permissions = [], numberOfElements = [], value = [], validations = []):
+    def __init__(self, name, alias, description = "", vtype = "", permissions = [], numberOfElements = [], value = [], validations = [], lockVariable = ""):
         """ Constructs a new Variable object.
         
         Args:
@@ -51,6 +51,7 @@ class Variable(object):
             permissions (str): user groups that are allowed to change this variable.
             value (str): string encoded variable value.
             validations ([str]): list of validation expresssions that are associated to this variable. The format is to be interpreted and parsed by the client applications (the current format is any equation in the form EXPR OP EXPR. The EXPRs are either a mathematical expression containing at least the name of this variable inside single quotes. It may also contain the name of other variables and constant values. The OP is one of the following operators: <, <=, ==, >, >=. ). An example is 'VAR1' <= (2 * 'VAR2'), where VAR1 = self.getName().
+            lockVariable (str): name of another variable (with type lock) which sets if this variable value can be changed.
         """
         self.name = name
         self.alias = alias 
@@ -63,6 +64,7 @@ class Variable(object):
         self.isStruct = False
         self.members = {}
         self.validations = validations
+        sefl.lockVariable = lockVariable
 
     def getName(self):
         """ 
@@ -133,6 +135,21 @@ class Variable(object):
             validations ([str]): array of validation functions that are associated to this variable.
         """
         self.validations = validations
+
+    def getLockVariable(self):
+        """
+        Returns:
+            The variable lock variable(see __init__)
+        ""
+        return self.lockVariable
+
+    def setLockVariable(self, lockVariable):
+        """ Sets this variable lock variable (see __init__)
+        Args:
+            lockVariable (str): the name of the variable which will set the locking state of this variable.
+        """
+        self.lockVariable = lockVariable
+
 
     def setValue(self, value):
         """ Sets the variables value.
@@ -254,6 +271,7 @@ class Variable(object):
             "permissions": map(str, self.getPermissions()),
             "validations": map(str, self.getValidations()),
             "isStruct": self.isStruct,
+            "lockVariable": self.lockVariable
         }
         if (len(self.members) == 0):
             variable["numberOfElements"] = self.getNumberOfElements()

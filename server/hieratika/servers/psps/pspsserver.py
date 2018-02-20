@@ -206,6 +206,7 @@ class PSPSServer(HieratikaServer):
         try:
             nameXml = rec.find("./ns0:name", self.xmlns)
             aliasXml = rec.find("./ns0:alias", self.xmlns)
+            lockXml = rec.find("./ns0:lock", self.xmlns)
             typeFromXml = self.convertVariableTypeFromXml(rec.attrib["{" + self.xmlns["xsi"] + "}type"])
             descriptionXml = rec.find("./ns0:description", self.xmlns)
             value = []
@@ -230,6 +231,9 @@ class PSPSServer(HieratikaServer):
             else:
                 log.critical("./ns0:values is missing for record with name {0}".format(nameXml.text))
 
+            lockVariable = ""
+            if (lockXml is not None):
+                lockVariable = lockXml.text
             numberOfElements = ast.literal_eval(rec.attrib["size"])
             #TODO handle permissions in xml (currently only the default ones are supported)
             if (typeFromXml == "enum"):
@@ -239,7 +243,7 @@ class PSPSServer(HieratikaServer):
                     choices = []
                     for choiceXml in choicesXml:
                         choices.append(choiceXml.text)
-                    variable = VariableEnum(nameXml.text, aliasXml.text, descriptionXml.text, typeFromXml, self.defaultExperts, numberOfElements, value, [], choices)
+                    variable = VariableEnum(nameXml.text, aliasXml.text, descriptionXml.text, typeFromXml, self.defaultExperts, numberOfElements, value, [], lockVariable, choices)
                     log.debug("Added {0} choices for {1}".format(choices, variable.getName()))
                 else:
                     log.critical("Could not find ns0:choices for {0}".format(nameXml.text))
@@ -264,12 +268,12 @@ class PSPSServer(HieratikaServer):
                             log.critical("Could not find ns0:library mappings for {0}".format(nameXml.text))
                     else:
                         log.critical("Could not find ns0:library name for {0}".format(nameXml.text))
-                    variable = VariableLibrary(nameXml.text, aliasXml.text, descriptionXml.text, typeFromXml, self.defaultExperts, numberOfElements, value, libraryType, mappings)
+                    variable = VariableLibrary(nameXml.text, aliasXml.text, descriptionXml.text, typeFromXml, self.defaultExperts, numberOfElements, value, lockVariable, libraryType, mappings)
                     log.debug("Added {0} mappings for {1}".format(mappings, variable.getName()))
                 else:
                     log.critical("Could not find ns0:library for {0}".format(nameXml.text))
             else:
-                variable = Variable(nameXml.text, aliasXml.text, descriptionXml.text, typeFromXml, self.defaultExperts, numberOfElements, value)
+                variable = Variable(nameXml.text, aliasXml.text, descriptionXml.text, typeFromXml, self.defaultExperts, numberOfElements, value, [], lockVariable)
             log.debug("Loaded {0}".format(variable))
         except Exception as e:
             #Not very elegant to catch all the possible exceptions...
@@ -607,6 +611,7 @@ class PSPSServer(HieratikaServer):
             self.lockPool.acquire(xmlId)
             tree = self.getCachedXmlTree(xmlFile)
             obsolete = False
+            inheritsFromUID = ""
             if (tree is not None):
                 xmlRoot = tree.getroot()
                 description = xmlRoot.find("./ns0:description", self.xmlns)
@@ -616,6 +621,10 @@ class PSPSServer(HieratikaServer):
                 if (obsoleteXml is not None):
                     obsoleteTxt = obsoleteXml.text
                     obsolete = obsoleteTxt in ("true", "yes", "1") 
+                inheritXml = xmlRoot.find("./ns0:inherit", self.xmlns)
+                if (inheritXml is not None):
+                    inheritsFromUID = inheritXml.text
+
 
             self.lockPool.release(xmlId)
             filePath = xmlFile.split("/")
@@ -623,7 +632,7 @@ class PSPSServer(HieratikaServer):
             name = name.split(".xml")
             if (len(name) > 1):
                 name = name[-2]
-                schedule = Schedule(xmlFile, name, pageName, username, description, obsolete)
+                schedule = Schedule(xmlFile, name, pageName, username, description, obsolete, inheritsFromUID)
                 schedules.append(schedule);
 
         return schedules
@@ -634,6 +643,7 @@ class PSPSServer(HieratikaServer):
         self.lockPool.acquire(xmlId)
         tree = self.getCachedXmlTree(scheduleUID)
         obsolete = False
+        inheritsFromUID = ""
         if (tree is not None):
             xmlRoot = tree.getroot()
             pageName = xmlRoot.find("./ns0:name", self.xmlns)
@@ -653,12 +663,16 @@ class PSPSServer(HieratikaServer):
             if (ownerXml is not None):
                 owner = ownerXml.text
 
+            inheritXml = xmlRoot.find("./ns0:inherit", self.xmlns)
+            if (inheritXml is not None):
+                inheritsFromUID = inheritXml.text
+
             filePath = scheduleUID.split("/")
             name = filePath[-1]
             name = name.split(".xml")
             if (len(name) > 1):
                 name = name[-2]
-                schedule = Schedule(scheduleUID, name, pageName, owner, description, obsolete)
+                schedule = Schedule(scheduleUID, name, pageName, owner, description, obsolete, inheritsFromUID)
         self.lockPool.release(xmlId)
         return schedule
 
@@ -677,6 +691,46 @@ class PSPSServer(HieratikaServer):
 
             if (referenceCounter == 0):
                 if (os.path.isfile(scheduleUID)):
+                    #Decrement reference counters on all libraries that are owned by this schedule
+                    allLibrariesXml = xmlRoot.findall(".//ns0:record[xsi:type='recordLibrary']", self.xmlns)
+                    for libraryXml in allLibrariesXml:
+                        libraryTypeXml = libraryXml.find("./ns0:type", self.xmlns)
+                        if (libraryTypeXml is not None):
+                            libraryType = libraryTypeXml.text
+                            valueXml = libraryXml.find("./ns0:values/ns0:value", self.xmlns)
+                            if (valueXml is not None):
+                                try:
+                                    variableValue = json.loads(valueXml.text)
+                                    #In order to be able to trap the case where there are strings
+                                except Exception as e:
+                                    val = valueXml.text
+                                    log.critical("Failed to load json {0}. Returning the original text.".format(e))
+
+                                variableValueOwnerLibName = variableValue.split("/")
+                                if (len(variableValueOwnerLibName) < 2):
+                                    log.critical("The library variable value shall contain the owner username and the name of the library separated by a /")
+                                else:
+                                    username = variableValueOwnerLibName[0]
+                                    libraryName = variableValueOwnerLibName[1]
+                                    if (self.standalone):
+                                        directory = "{0}/psps/libraries/{1}".format(self.baseDir, libraryType)
+                                    else:
+                                        directory = "{0}/users/{1}/libraries/{2}".format(self.baseDir, username, libraryType)
+                                    libraryUID = "{0}/{1}.xml".format(directory, libraryName)
+                                    libraryXmlId = self.getXmlId(libraryUID)
+                                    self.lockPool.acquire(libraryXmlId)
+                                    self.decrementReferenceCounter(libraryUID)
+                                    self.lockPool.release(libraryXmlId)
+
+                    #Decrement the reference in the parent schedule
+                    inheritXml = xmlRoot.find("./ns0:inherit", self.xmlns)
+                    if (inheritXml is not None):
+                        inheritFromUID = inheritXml.text
+                        inheritFromXmlId = self.getXmlId(inheritFromUID)
+                        self.lockPool.acquire(inheritFromXmlId)
+                        self.decrementReferenceCounter(inheritFromUID)
+                        self.lockPool.release(inheritFromXmlId)
+
                     #Delete any cached xml paths
                     try:
                         del(self.cachedXmls[scheduleUID])
@@ -684,6 +738,7 @@ class PSPSServer(HieratikaServer):
                         pass
 
                     try:
+                        xmlRoot = None
                         os.remove(scheduleUID)
                         log.info("Deleted schedule with UID: {0}".format(scheduleUID))
                     except Exception as e:
@@ -730,7 +785,7 @@ class PSPSServer(HieratikaServer):
         return referenceCounter
         
     def incrementReferenceCounter(self, xmlUID):
-        #Helper function that assumes that the access to this library has been locked!
+        #Helper function that assumes that the access to this xmlUID has been locked!
         tree = self.getCachedXmlTree(xmlUID)
         if (tree is not None):
             xmlRoot = tree.getroot()
@@ -742,7 +797,7 @@ class PSPSServer(HieratikaServer):
             log.debug("New reference counter for object with UID: {0} is {1}".format(xmlUID, referenceCounter))
 
     def decrementReferenceCounter(self, xmlUID):
-        #Helper function that assumes that the access to this library has been locked!
+        #Helper function that assumes that the access to this xmlUID has been locked!
         tree = self.getCachedXmlTree(xmlUID)
         if (tree is not None):
             xmlRoot = tree.getroot()
@@ -871,13 +926,16 @@ class PSPSServer(HieratikaServer):
         return updatedVariables 
 
     
-    def createSchedule(self, name, description, username, pageName, parentFolders, sourceScheduleUID):
+    def createSchedule(self, name, description, username, pageName, parentFolders, sourceScheduleUID, inheritFromSchedule):
         log.info("Creating a new schedule for user: {0} for page: {1} with name: {2}".format(username, pageName, name))
         parentFoldersPath = self.getParentFoldersPath(parentFolders)
         if (sourceScheduleUID is None):
             sourceScheduleUID = "{0}/psps/configuration/{1}/000/plant.xml".format(self.baseDir, pageName)
         else: 
             filePath = sourceScheduleUID.split("/")
+
+        sourceScheduleXmlId = self.getXmlId(sourceScheduleUID)
+        self.lockPool.acquire(sourceScheduleXmlId)
 
         ok = True
         if (not name.endswith(".xml")):
@@ -917,11 +975,19 @@ class PSPSServer(HieratikaServer):
                 if (ownerXml is None):
                     ownerXml = etree.SubElement(xmlRoot, "{{{0}}}owner".format(self.xmlns["ns0"]))
                 ownerXml.text = username 
+                if (inheritFromSchedule):
+                    inheritXml = xmlRoot.find("./ns0:inherit", self.xmlns)
+                    if (inheritXml is None):
+                        inheritXml = etree.SubElement(xmlRoot, "{{{0}}}inherit".format(self.xmlns["ns0"]))
+                    inheritXml.text = sourceScheduleUID
+                    self.incrementReferenceCounter(sourceScheduleUID)
                 tree.write(destScheduleUID)
                 log.info("Created schedule with uid {0}".format(destScheduleUID))
             else:
                 log.critical("Failed to create schedule with uid {0}".format(destScheduleUID))
             self.lockPool.release(xmlId)
+        
+        self.lockPool.release(sourceScheduleXmlId)
         return destScheduleUID
 
     def createScheduleFolder(self, name, username, parentFolders, pageName):

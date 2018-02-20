@@ -302,6 +302,7 @@
 
                         parent.htkHelper.addInvalidTokenListener(this);
                         this.pageListeners = [this];
+                        this.scheduleChangeListeners = [this];
                         this.userLogoutListeners = [this];
                         this.addPageListener(this.scheduleSelector);
                         this.disableAllButPageSelect();
@@ -421,7 +422,17 @@
                             }
                         );
                     }
-                   
+
+                    /**
+                     * @brief Informs all registered components that a new schedule has been selected to be displayed.
+                     * @param[in] schedule the schedule that was selected.
+                     */ 
+                    fireScheduleChanged(schedule) {
+                        for(var l in this.scheduleChangeListeners) {
+                            this.scheduleChangeListeners[l].scheduleChanged(schedule);
+                        }
+                    }
+                  
                     /**
                      * @brief Informs all registered components that a new page has been selected.
                      * @param[in] page the page that was selected.
@@ -530,10 +541,49 @@
                     }
 
                     /**
+                     * @brief Callback function that is called when a user selects a different schedule to be displayed.
+                     * @param[in] schedule the schedule that was selected by the user.
+                     */
+                    scheduleChanged(schedule) {
+                        var currentScheduleText = schedule.name;
+                        this.currentDisplay.innerHTML = currentScheduleText;
+                        if (schedule.inheritsFromUID !== undefined) {
+                            if (schedule.inheritsFromUID.length > 0) {
+                                parent.htkHelper.getSchedule(
+                                    schedule.inheritsFromUID, 
+                                    function (parentSchedule) {
+                                        currentScheduleText += " (" + parentSchedule.name + ")";
+                                        this.currentDisplay.innerHTML = currentScheduleText;
+                                    }.bind(this),
+                                    function (response) {
+                                    }
+                                );
+                            }
+                        }
+                        parent.htkHelper.setCurrentScheduleUID(schedule.uid);
+                        this.setPlantButton.disabled = false;
+                    }
+
+                    /**
                      * @brief Callback function that is called when a new reference is selected. Calls setReference.
                      */
                     refererenceScheduleChanged(schedule) {
-                        this.currentReference.innerHTML = schedule.name; 
+                        var referenceScheduleText = schedule.name;
+                        this.currentReference.innerHTML = referenceScheduleText; 
+                        if (schedule.inheritsFromUID !== undefined) {
+                            if (schedule.inheritsFromUID.length > 0) {
+                                parent.htkHelper.getSchedule(
+                                    schedule.inheritsFromUID, 
+                                    function (parentSchedule) {
+                                        referenceScheduleText += " (" + parentSchedule.name + ")";
+                                        this.currentReference.innerHTML = referenceScheduleText;
+                                    }.bind(this),
+                                    function (response) {
+                                    }
+                                );
+                            }
+                        }
+
                         this.setReference(schedule.uid);
                     }
 
@@ -548,30 +598,34 @@
                      * @brief Callback function that is called when the user requests to edit a given schedule. Updates the current variables values by calling copyFromSchedule.
                      */
                     editScheduleChanged(schedule) {
-                        this.currentDisplay.innerHTML = schedule.name; 
                         this.copyFromSchedule(schedule.uid, true, false, false);
-                        parent.htkHelper.setCurrentScheduleUID(schedule.uid);
-                        this.setPlantButton.disabled = false;
                         this.copyFromReferenceScheduleButton.disabled = false;
                         this.copyFromReferencePlantButton.disabled = false;
                         this.commitButton.disabled = false;
                         this.undoButton.disabled = false;
+                        this.fireScheduleChanged(schedule);
                     }
 
                     /**
                      * @brief Callback function that is called when the user requests to view a given schedule. Updates the current variables values by calling copyFromSchedule.
                      */
                     viewScheduleChanged(schedule) {
-                        this.currentDisplay.innerHTML = schedule.name; 
                         this.copyFromSchedule(schedule.uid, true, false, true);
-                        parent.htkHelper.setCurrentScheduleUID(schedule.uid);
-                        this.setPlantButton.disabled = false;
                         this.copyFromReferenceScheduleButton.disabled = true;
                         this.copyFromReferencePlantButton.disabled = true;
                         this.commitButton.disabled = true;
                         this.undoButton.disabled = true;
+                        this.fireScheduleChanged(schedule);
                     }
-               
+              
+                    /**
+                     * @brief Registers a component that wants to be informed about schedule changes.
+                     * @param[in] listener the component to register.
+                     */
+                    addScheduleChangedListener(listener) {
+                        this.scheduleChangeListeners.push(listener);
+                    }
+ 
                     /**
                      * @brief Registers a component that wants to be informed about page changes.
                      * @param[in] listener the component to register.

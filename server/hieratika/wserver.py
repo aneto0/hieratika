@@ -403,7 +403,7 @@ class WServer(object):
             request.form["pageName"]: name of the page to which the schedule belongs to.
             request.form["parentFolders"]: a list of the parent folders of the folder to be created.
             request.form["sourceScheduleUID"]: create the schedule by copying from the schedule with the unique identifier given by sourceScheduleUID. If sourceSchedule is not set, copy from the plant.
-
+            request.from["inheritFromSchedule"]: if True the created schedule will be marked as being inherited from the sourceScheduleUID and an hardlink between the two will be created. This mean that that the sourceScheduleUID will not be modifiable nor deletable while this link exists (i.e. while the created schedule exists).
         Returns:
             The unique identifier of the created schedule or HieratikaConstants.INVALID_PARAMETERS if the schedule could not be created.
         """
@@ -414,9 +414,13 @@ class WServer(object):
             pageName = request.form["pageName"]
             parentFolders = json.loads(request.form["parentFolders"])
             sourceScheduleUID = None
+            inheritFromSchedule = False
             if "sourceScheduleUID" in request.form:
                 sourceScheduleUID = request.form["sourceScheduleUID"]
-            toReturn = self.serverImpl.createSchedule(name, description, username, pageName, parentFolders, sourceScheduleUID) 
+            if "inheritFromSchedule" in request.form:
+                inheritFromSchedule = request.form["inheritFromSchedule"]
+                inheritFromSchedule = (inheritFromSchedule == "true")
+            toReturn = self.serverImpl.createSchedule(name, description, username, pageName, parentFolders, sourceScheduleUID, inheritFromSchedule) 
             if (toReturn == None):
                 toReturn = HieratikaConstants.INVALID_PARAMETERS
         except KeyError as e:
