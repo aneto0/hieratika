@@ -68,6 +68,13 @@
             updateScheduleValuesToCommit(name, value) {
                 this.scheduleValuesToCommit[name] = value;
             }
+
+            /**
+             * @brief Resets the values that are to be commited.
+             */
+            resetScheduleValuesToCommit() {
+                this.scheduleValuesToCommit = {};
+            }
             
             /**
              * @brief Informs that a value is to be synchronised remote.

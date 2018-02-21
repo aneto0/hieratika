@@ -274,7 +274,7 @@ class PSPSServer(HieratikaServer):
                     log.critical("Could not find ns0:library for {0}".format(nameXml.text))
             else:
                 variable = Variable(nameXml.text, aliasXml.text, descriptionXml.text, typeFromXml, self.defaultExperts, numberOfElements, value, [], lockVariable)
-            log.debug("Loaded {0}".format(variable))
+            log.debug("Loaded {0} with lock {1}".format(variable, lockVariable))
         except Exception as e:
             #Not very elegant to catch all the possible exceptions...
             if (nameXml is None):
@@ -692,35 +692,7 @@ class PSPSServer(HieratikaServer):
             if (referenceCounter == 0):
                 if (os.path.isfile(scheduleUID)):
                     #Decrement reference counters on all libraries that are owned by this schedule
-                    allLibrariesXml = xmlRoot.findall(".//ns0:record[xsi:type='recordLibrary']", self.xmlns)
-                    for libraryXml in allLibrariesXml:
-                        libraryTypeXml = libraryXml.find("./ns0:type", self.xmlns)
-                        if (libraryTypeXml is not None):
-                            libraryType = libraryTypeXml.text
-                            valueXml = libraryXml.find("./ns0:values/ns0:value", self.xmlns)
-                            if (valueXml is not None):
-                                try:
-                                    variableValue = json.loads(valueXml.text)
-                                    #In order to be able to trap the case where there are strings
-                                except Exception as e:
-                                    val = valueXml.text
-                                    log.critical("Failed to load json {0}. Returning the original text.".format(e))
-
-                                variableValueOwnerLibName = variableValue.split("/")
-                                if (len(variableValueOwnerLibName) < 2):
-                                    log.critical("The library variable value shall contain the owner username and the name of the library separated by a /")
-                                else:
-                                    username = variableValueOwnerLibName[0]
-                                    libraryName = variableValueOwnerLibName[1]
-                                    if (self.standalone):
-                                        directory = "{0}/psps/libraries/{1}".format(self.baseDir, libraryType)
-                                    else:
-                                        directory = "{0}/users/{1}/libraries/{2}".format(self.baseDir, username, libraryType)
-                                    libraryUID = "{0}/{1}.xml".format(directory, libraryName)
-                                    libraryXmlId = self.getXmlId(libraryUID)
-                                    self.lockPool.acquire(libraryXmlId)
-                                    self.decrementReferenceCounter(libraryUID)
-                                    self.lockPool.release(libraryXmlId)
+                    self.updateAllScheduleLibrariesReferenceCounter(xmlRoot, False)
 
                     #Decrement the reference in the parent schedule
                     inheritXml = xmlRoot.find("./ns0:inherit", self.xmlns)
@@ -783,7 +755,7 @@ class PSPSServer(HieratikaServer):
             
         referenceCounter = int(refCounterXml.text)
         return referenceCounter
-        
+
     def incrementReferenceCounter(self, xmlUID):
         #Helper function that assumes that the access to this xmlUID has been locked!
         tree = self.getCachedXmlTree(xmlUID)
@@ -981,6 +953,17 @@ class PSPSServer(HieratikaServer):
                         inheritXml = etree.SubElement(xmlRoot, "{{{0}}}inherit".format(self.xmlns["ns0"]))
                     inheritXml.text = sourceScheduleUID
                     self.incrementReferenceCounter(sourceScheduleUID)
+                    self.inheritLocks(xmlRoot)
+
+                #Reset the reference counter on the copy
+                refCounterXml = xmlRoot.find("./ns0:references/ns0:counter", self.xmlns)
+                if (refCounterXml is None):
+                    refsCounterXml = etree.SubElement(xmlRoot, "{{{0}}}references".format(self.xmlns["ns0"]))
+                    refCounterXml = etree.SubElement(refsCounterXml, "{{{0}}}counter".format(self.xmlns["ns0"]))
+                refCounterXml.text = "0"
+
+                self.updateAllScheduleLibrariesReferenceCounter(xmlRoot, True)
+
                 tree.write(destScheduleUID)
                 log.info("Created schedule with uid {0}".format(destScheduleUID))
             else:
@@ -1639,4 +1622,65 @@ class PSPSServer(HieratikaServer):
             os.utime(filename, None)
         except OSError:
             open(filename, 'a').close()
+
+    def inheritLocks(self, xmlRoot):
+        """ Helper function which inherits all the locks and thus disallows any locks that are already locked from being changed in the schedule.
+            Assumes that the xmlRoot is locked (semaphore access-wise).        
+        Args:
+            xmlRoot(str): the xml where to lock the locks.
+        """
+        allLocksXml = xmlRoot.findall(".//ns0:record[@xsi:type='recordLock']", self.xmlns)
+        for r in allLocksXml:
+            valueXml = r.find("./ns0:values/ns0:value", self.xmlns)
+            if (valueXml is not None):
+                try:
+                    #In order to be able to trap the case where there are strings
+                    val = json.loads(valueXml.text)
+                except Exception as e:
+                    val = valueXml.text
+                    log.critical("Failed to load json {0}. Returning the original text.".format(e))
+
+                print "\n\n\n\n\n\n{0}\n\n\n\n\n\n\n".format(val)
+                try:
+                    val = int(val)
+                except Exception as e:
+                    val = -1
+                    log.critical("Failed to parse int {0}. Returning -1.".format(e))
+                if (val != 0):
+                    valueXml.text = "-1"
+
+    def updateAllScheduleLibrariesReferenceCounter(self, xmlRoot, increment):
+        #Increments/decrements reference counters on all libraries that are owned by the schedule belonging to xmlRoot
+        allLibrariesXml = xmlRoot.findall(".//ns0:record[@xsi:type='recordLibrary']", self.xmlns)
+        for libraryXml in allLibrariesXml:
+            libraryTypeXml = libraryXml.find("./ns0:type", self.xmlns)
+            if (libraryTypeXml is not None):
+                libraryType = libraryTypeXml.text
+                valueXml = libraryXml.find("./ns0:values/ns0:value", self.xmlns)
+                if (valueXml is not None):
+                    try:
+                        variableValue = json.loads(valueXml.text)
+                        #In order to be able to trap the case where there are strings
+                    except Exception as e:
+                        val = valueXml.text
+                        log.critical("Failed to load json {0}. Returning the original text.".format(e))
+
+                    variableValueOwnerLibName = variableValue.split("/")
+                    if (len(variableValueOwnerLibName) < 2):
+                        log.critical("The library variable value shall contain the owner username and the name of the library separated by a /")
+                    else:
+                        username = variableValueOwnerLibName[0]
+                        libraryName = variableValueOwnerLibName[1]
+                        if (self.standalone):
+                            directory = "{0}/psps/libraries/{1}".format(self.baseDir, libraryType)
+                        else:
+                            directory = "{0}/users/{1}/libraries/{2}".format(self.baseDir, username, libraryType)
+                        libraryUID = "{0}/{1}.xml".format(directory, libraryName)
+                        libraryXmlId = self.getXmlId(libraryUID)
+                        self.lockPool.acquire(libraryXmlId)
+                        if (increment):
+                            self.incrementReferenceCounter(libraryUID)
+                        else:
+                            self.decrementReferenceCounter(libraryUID)
+                        self.lockPool.release(libraryXmlId)
 

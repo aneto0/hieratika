@@ -264,6 +264,15 @@
         }
 
         /**
+         * @brief Sets if the value of the variable represented by this component is allowed to be editable (note that user-permissions, locks, etc. might still prevent it from being edited. See isReadOnly()).
+         * @param[in] editable if true the value of the variable represented by this component can be edited.
+         */
+        setEditable(editable) {
+            this.editable = editable;
+            this.setReadOnly(this.isReadOnly());
+        }
+
+        /**
          * @brief Returns true if the variable represented by this component is live (i.e. it is not a configuration variable whose value can be stored in a configuration or loaded into the plant).
          * @return true if the variable represented by this component is a live variable.
          */
@@ -273,19 +282,17 @@
 
         /**
          * @brief Returns true if the value of the variable represented by this component cannot be changed.
-         * @return true if the value of the variable represented by this component cannot be changed.
+         * @return true if the value of the variable represented by this component cannot be changed (which will be for sure true if this is a live variable, if this user is not allowed to write or if the variable is locked for editing by a locking variable).
          */
         isReadOnly() {
-            return ((this.readOnly) || (this.liveVariable));
+            return ((!this.editable) || (this.liveVariable) || (!this.userAllowedToWrite) || (this.locked));
         }
 
         /**
          * @brief Sets if the value of the variable represented by this component is allowed to be changed.
-         * @param[in] isReadOnly if true the value of the variable represented by this component cannot be changed (which will be for sure true if this is a live variable, if this user is not allowed to write or if the variable is locked for editing by a locking variable).
+         * @param[in] isReadOnly if true the value of the variable represented by this component cannot be changed (which will be for sure true if this is a live variable, if this user is not allowed to write or if the variable is locked for editing by a locking variable: see isReadOnly()).
          */
         setReadOnly (isReadOnly) {
-            this.readOnly = isReadOnly;
-            this.readOnly = ((this.readOnly) || (this.liveVariable) || (!this.userAllowedToWrite) || (this.locked));
             this.refresh();
         }
 
@@ -303,7 +310,7 @@
          */
         setLocked(locked) {
             this.locked = locked;
-            this.refresh();
+            this.setReadOnly(this.isReadOnly());
         }
 
         /**
@@ -461,6 +468,31 @@
         }
 
         /**
+         * @brief Registers a component (does not have to inherit from HtkComponent but must have the function lockedStatusChanged) to listen for lock status events.
+         * @param[comp] the component to register.
+         */
+        addLockStatusChangedListener(comp) {
+            this.lockStatusChangedListeners.push(comp);
+        }
+
+        /**
+         * @brief Informs all the registered components that their lock status has changed.
+         * @param[in] locked true if the component is to be locked.
+         */
+        fireLockedStatusChanged(locked) {
+            for(var f in this.lockStatusChangedListeners) {
+                this.lockStatusChangedListeners[f].lockedStatusChanged(this, locked);
+            }
+        }
+
+        /**
+         * @brief Informs this component that another component has changed its lock status.
+         */
+        lockedStatusChanged(source, locked) {
+            this.setLocked(locked);
+        }
+
+        /**
          * @brief HTML5 createdCallback function. Initialise all the component variables and register the component to listen for information from the server.
          * @details Note that the component will be registered in a dictionary that is private to the document (_frameComponents) so that it can be accessed from an iframe. Also note 
          * that the _frameComponents dictionary variable must be private to the iframe (i.e. to the document), otherwise there will be name clashes between different instance of libraries of the same type (given that each of them
@@ -470,6 +502,7 @@
             var template = this.getTemplate();
             
             this.valueChangedListeners = [];
+            this.lockStatusChangedListeners = [];
             this.permissionGroups = [];
             this.userAllowedToWrite = false;
 
@@ -481,7 +514,7 @@
             this.library = undefined;
             this.validations = undefined;
             this.struct = false;
-            this.readOnly = false;
+            this.editable = false;
             this.locked = false;
             this.lockVariable = undefined;
             this.numberOfElements = [];
@@ -557,7 +590,7 @@
                 }
             }
             this.userAllowedToWrite = userAllowed;
-            this.refresh();
+            this.setReadOnly(this.isReadOnly());
         }
     }
 

@@ -127,6 +127,7 @@
                                     allVariableIds, 
                                     function (variables) {
                                         var user = parent.htkHelper.getUser();
+                                        var lockVariableNames = [];
                                         for (var i in variables) {
                                             var variable = variables[i];
                                             var targetElements = this.mainEditorIFrame.contentDocument._frameComponents[variable.name];
@@ -134,7 +135,19 @@
                                                 for (var j in targetElements) {
                                                     targetElements[j].setVariable(variable);
                                                     targetElements[j].checkUserAllowedToWrite(user);
+                                                    if (variable.lockVariable.length > 0) {
+                                                        targetElements[j].setLockVariable(variable.lockVariable);
+                                                        var targetLockElements = this.mainEditorIFrame.contentDocument._frameComponents[variable.lockVariable];
+                                                        if (targetLockElements != null) {
+                                                            for (var z in targetLockElements) {
+                                                                targetLockElements[z].addLockStatusChangedListener(targetElements[j]);
+                                                            }
+                                                        } 
+                                                    }
                                                 }
+                                            }
+                                            if (variable.lockVariable.length > 0) {
+                                                lockVariableNames.push(variable.lockVariable);
                                             }
                                         }
 

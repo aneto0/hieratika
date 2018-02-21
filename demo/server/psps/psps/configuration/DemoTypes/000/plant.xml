@@ -24,20 +24,20 @@
                                 <name>DBL2</name>
                                 <alias>DBL2</alias>
                                 <description>Another Double value</description>
-                                <values><value>[3]</value></values></record>
                                 <lock>DT@BT@LOCK1</lock>
+                                <values><value>[3]</value></values></record>
                             <record size="[5]" xsi:type="recordDouble">
                                 <name>DBLA</name>
                                 <alias>DBLA</alias>
                                 <description>Double value array</description>
-                                <values><value>[1, 2, 3, 4, 5]</value></values></record>
                                 <lock>DT@BT@LOCK2</lock>
+                                <values><value>[1, 2, 3, 4, 5]</value></values></record>
                             <record size="[2,3]" xsi:type="recordDouble">
                                 <name>DBLM</name>
                                 <alias>DBLM</alias>
                                 <description>Double value matrix</description>
-                                <values><value>[[1, 1], [1, 1, 1]]</value></values></record>
                                 <lock>DT@BT@LOCK3</lock>
+                                <values><value>[[1, 1], [1, 1, 1]]</value></values></record>
                             <record size="1" xsi:type="recordLock">
                                 <name>LOCK1</name>
                                 <alias>LOCK1</alias>
@@ -137,4 +137,4 @@
             </sdnTopics>
         </plantSystem>
     </plantSystems>
-<references><counter>1</counter></references></configurationContainer>
+<references><counter>2</counter></references></configurationContainer>

@@ -64,7 +64,7 @@ class Variable(object):
         self.isStruct = False
         self.members = {}
         self.validations = validations
-        sefl.lockVariable = lockVariable
+        self.lockVariable = lockVariable
 
     def getName(self):
         """ 
@@ -140,7 +140,7 @@ class Variable(object):
         """
         Returns:
             The variable lock variable(see __init__)
-        ""
+        """
         return self.lockVariable
 
     def setLockVariable(self, lockVariable):

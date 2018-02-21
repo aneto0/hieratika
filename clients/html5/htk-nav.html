@@ -561,6 +561,7 @@
                             }
                         }
                         parent.htkHelper.setCurrentScheduleUID(schedule.uid);
+                        parent.htkHelper.resetScheduleValuesToCommit();
                         this.setPlantButton.disabled = false;
                     }
 
@@ -591,31 +592,33 @@
                      * @brief Callback function that is called when the user requests to update the variables values with values from a given schedule. Calls copyFromSchedule.
                      */
                     copyFromScheduleChanged(schedule) {
-                        this.copyFromSchedule(schedule.uid, false, true, false);
+                        this.copyFromSchedule(schedule.uid, false, true, false, function (){});
                     }
 
                     /**
                      * @brief Callback function that is called when the user requests to edit a given schedule. Updates the current variables values by calling copyFromSchedule.
                      */
                     editScheduleChanged(schedule) {
-                        this.copyFromSchedule(schedule.uid, true, false, false);
-                        this.copyFromReferenceScheduleButton.disabled = false;
-                        this.copyFromReferencePlantButton.disabled = false;
-                        this.commitButton.disabled = false;
-                        this.undoButton.disabled = false;
-                        this.fireScheduleChanged(schedule);
+                        this.copyFromSchedule(schedule.uid, true, false, false, function() {
+                            this.copyFromReferenceScheduleButton.disabled = false;
+                            this.copyFromReferencePlantButton.disabled = false;
+                            this.commitButton.disabled = false;
+                            this.undoButton.disabled = false;
+                            this.fireScheduleChanged(schedule);
+                        }.bind(this));
                     }
 
                     /**
                      * @brief Callback function that is called when the user requests to view a given schedule. Updates the current variables values by calling copyFromSchedule.
                      */
                     viewScheduleChanged(schedule) {
-                        this.copyFromSchedule(schedule.uid, true, false, true);
-                        this.copyFromReferenceScheduleButton.disabled = true;
-                        this.copyFromReferencePlantButton.disabled = true;
-                        this.commitButton.disabled = true;
-                        this.undoButton.disabled = true;
-                        this.fireScheduleChanged(schedule);
+                        this.copyFromSchedule(schedule.uid, true, false, true, function() {
+                            this.copyFromReferenceScheduleButton.disabled = true;
+                            this.copyFromReferencePlantButton.disabled = true;
+                            this.commitButton.disabled = true;
+                            this.undoButton.disabled = true;
+                            this.fireScheduleChanged(schedule);
+                        }.bind(this));
                     }
               
                     /**
@@ -707,9 +710,10 @@
                      * @param[in] schUID the schedule identifier (i.e. the schedule name).
                      * @param[in] resetValue if true, for all the components, the initial value will be set against the retrieved schedule value.
                      * @param[in] updateRemote if true, for all the components, the update will be propagated to the server (see HtkComponent.setValue).
-                     * @param[in] setReadOnly if true, for all the components, the component will be set as read-only.
+                     * @param[in] setNotEditable if true, for all the components, the component will be set as read-only.
+                     * @param[in] successFun the function to be called when all the variables have been copied.
                      */
-                    copyFromSchedule(schUID, resetValue, updateRemote, setReadOnly) {
+                    copyFromSchedule(schUID, resetValue, updateRemote, setNotEditable, successFun) {
                         parent.htkDialogs.showWaitDialog();
                         parent.htkHelper.getScheduleVariablesValues(
                             schUID, 
@@ -727,10 +731,11 @@
                                                 targetElement.setInitialValue(variableValue);
                                             }
                                             targetElement.setValue(variableValue, updateRemote);
-                                            targetElement.setReadOnly(setReadOnly);
+                                            targetElement.setEditable(!setNotEditable);
                                         }
                                     }
                                 }
+                                successFun();
                                 parent.htkDialogs.closeWaitDialog();
                             },
                             function () {
