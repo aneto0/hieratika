@@ -4,36 +4,28 @@
         <link rel="import" href="/htk-component.html">
         <link rel="import" href="/htk-filter-editor.html">
         <link rel="import" href="/htk-input.html">
-        <link rel='import' href='/htk-struct-browser.html'>
         <link rel="import" href="/htk-library-button.html">
+        <link rel="import" href="/htk-lock-button.html">
         <link rel="import" href="/htk-schedule-button.html">
+        <link rel='import' href='/htk-struct-browser.html'>
     </head>
     <body>
         <table>
-           <tr>
-                <td>Parent link</td>
-                <td>
-                    <htk-schedule-button id='GCC@LINK@PARENT' data-config-name="GCC"></htk-schedule-button>
-                </td>
+            <tr>
+                <td><i class="fa fa-thermometer-half"></i> Threshold 1</td>
+                <td><htk-input id='GCC@THS1@VAL'></htk-input></td>
+                <td><htk-lock-button id='GCC@THS1@LOCK'></htk-lock-button></td>
             </tr>
             <tr>
-                <td>Parameter 1 Scope</td>
-                <td>
-                    <htk-enum id='GCC@PAR1@SCOPE'></htk-enum>
-                </td>
+                <td><i class="fa fa-thermometer-half"></i> Threshold 2</td>
+                <td><htk-input id='GCC@THS2@VAL'></htk-input></td>
+                <td><htk-lock-button id='GCC@THS2@LOCK'></htk-lock-button></td>
             </tr>
             <tr>
-                <td>Parameter 1 Value</td>
-                <td>
-                    <htk-input id='GCC@PAR1@VAL'></htk-input>
-                </td>
-           </tr>
-           <tr>
-                <td>Struct browser</td>
-                <td>
-                    <htk-struct-browser id='GCC'></htk-struct-browser>
-                </td>
-          </tr>
+                <td><i class="fa fa-thermometer-half"></i> Threshold 3</td>
+                <td><htk-input id='GCC@THS3@VAL'></htk-input></td>
+                <td><htk-lock-button id='GCC@THS3@LOCK'></htk-lock-button></td>
+            </tr>
         </table>
     </body>
 </html>

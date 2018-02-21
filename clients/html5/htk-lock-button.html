@@ -96,6 +96,7 @@
                         this.checkValues(this.buttonIcon);
                         if (intValue === -1) {
                             this.buttonIcon.style.color = "red";
+                            this.setEditable(false);
                         }
                     }
 
@@ -103,7 +104,6 @@
                      * @brief Sets the button read only state.
                      */
                     setReadOnly (isReadOnly) {
-                        super.setReadOnly(isReadOnly);
                         this.buttonLock.disabled = isReadOnly;
                     }
 

@@ -8,11 +8,36 @@
         <plantSystem>
             <name>GCC</name>
             <version>1.0</version>
-            <description>The GCC Plant</description>
+            <description>GCC Plant Example</description>
             <plantRecords>
                 <folders>
                     <folder>
-                        <name>PAR1</name>
+                        <name>THS1</name>
+                        <records>
+                            <record xsi:type="recordLock" size="1">
+                                <name>LOCK</name>
+                                <alias>Lock</alias>
+                                <description>Can parameters associated to this lock be changed?</description>
+                                <origin></origin>
+                                <units></units>
+                                <definition definition="org.iter.codac.psps.validation.ConstantEnum">LOCK</definition>
+                                <values>
+                                    <value>0</value>
+                                </values>
+                            </record>
+                            <record size="1" xsi:type="recordDouble">
+                                <name>VAL</name>
+                                <alias>VAL</alias>
+                                <lock>GCC@THS1@LOCK</lock>
+                                <description>Double value</description>
+                                <values>
+                                    <value>-109</value>
+                                </values>
+                            </record>
+                        </records>
+                    </folder>
+                    <folder>
+                        <name>THS2</name>
                         <records>
                             <record xsi:type="recordLock" size="1">
                                 <name>LOCK</name>
@@ -29,6 +54,7 @@
                                 <name>VAL</name>
                                 <alias>VAL</alias>
                                 <description>Double value</description>
+                                <lock>GCC@THS2@LOCK</lock>
                                 <values>
                                     <value>-109</value>
                                 </values>
@@ -36,14 +62,26 @@
                         </records>
                     </folder>
                     <folder>
-                        <name>LINK</name>
+                        <name>THS3</name>
                         <records>
-                            <record size="1" xsi:type="recordSchedule">
-                                <name>PARENT</name>
-                                <alias>PARENT</alias>
-                                <description>Link to parent</description>
+                            <record xsi:type="recordLock" size="1">
+                                <name>LOCK</name>
+                                <alias>Lock</alias>
+                                <description>Can parameters associated to this lock be changed?</description>
+                                <origin></origin>
+                                <units></units>
+                                <definition definition="org.iter.codac.psps.validation.ConstantEnum">LOCK</definition>
                                 <values>
-                                    <value>"../demo/server/psps/users/codac-dev-1/configuration/GCC/Campaigns/RU-Campaign-1.xml"</value>
+                                    <value>0</value>
+                                </values>
+                            </record>
+                            <record size="1" xsi:type="recordDouble">
+                                <name>VAL</name>
+                                <alias>VAL</alias>
+                                <description>Double value</description>
+                                <lock>GCC@THS3@LOCK</lock>
+                                <values>
+                                    <value>-109</value>
                                 </values>
                             </record>
                         </records>
@@ -59,8 +97,8 @@
                             <constraint>
                                 <name>Double limit</name>
                                 <description>Validates a double limit</description>
-                                <hint>Change the value of PAR1@VAL&lt;=1000</hint>
-                                <function name="schedule.validate">='PAR1@VAL'&lt;=1000</function>
+                                <hint>Change the value of GCC@THS1@VAL&lt;=1000</hint>
+                                <function name="schedule.validate">='GSS@THS1@VAL'&lt;=1000</function>
                                 <origin>SDD</origin>
                             </constraint>
                         </constraints>
@@ -68,17 +106,6 @@
                 </folders>
                 <constraints/>
             </plantConstraints>
-            <plantViews>
-                <plantView>
-                    <name>GCC-Campaign</name>
-                    <description>GCC campaign settings</description>
-                </plantView>
-                <plantView>
-                    <name>GCC-Session</name>
-                    <description>GCC session settings</description>
-                </plantView>
-
-            </plantViews>
             <sdnTopics>
                 <sdnTopics/>
             </sdnTopics>

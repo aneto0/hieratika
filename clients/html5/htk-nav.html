@@ -727,11 +727,19 @@
                                     if (targetElements != null) {
                                         for (var j=0; j<targetElements.length; j++) {
                                             var targetElement = targetElements[j];
-                                            if (resetValue) {
-                                                targetElement.setInitialValue(variableValue);
+                                            //resetValue = true => change of schedule
+                                            var update = resetValue;
+                                            if (!update) {
+                                                //Do not overwrite locked components!
+                                                update = !targetElement.isReadOnly();
                                             }
-                                            targetElement.setValue(variableValue, updateRemote);
-                                            targetElement.setEditable(!setNotEditable);
+                                            if (update) {
+                                                if (resetValue) {
+                                                    targetElement.setInitialValue(variableValue);
+                                                }
+                                                targetElement.setValue(variableValue, updateRemote);
+                                                targetElement.setEditable(!setNotEditable);
+                                            }
                                         }
                                     }
                                 }
