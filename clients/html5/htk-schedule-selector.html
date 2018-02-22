@@ -84,10 +84,16 @@
                         <td><textarea rows="4" cols="30" id="newscheduledescription" title="Description"></textarea></td>
                     </tr>
                     <tr>
-                        <td>Copy from:</td>
+                        <td rowspan="2">Copy from:</td>
                         <td>
-                            <select id="newschedulesselect" name="newschedulesselect">
-                            </select>
+                            <button title="Select" id="newschedulebtn">Select...</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="newschedulescopyfromname">
+                            plant
+                        </td>
+                        <td>
                             <input type="checkbox" id="inheritcheckbox" value="inherit" title="Inherit from selected schedule?">Inherit?<i class="fa fa-link"></i></input>
                         </td>
                     </tr>
@@ -131,7 +137,6 @@
                             var clone = document.importNode(template.content, true);
                             var root = this.createShadowRoot();
                             root.appendChild(clone);
-                      
                             this.pageName = ""; 
                             this.diag = this.shadowRoot.querySelector("#dscheduleselector");
                             this.userSelect = this.shadowRoot.querySelector("#userselect");
@@ -166,33 +171,37 @@
 
                             this.scheduleDiv = this.shadowRoot.querySelector("#divschedule");
                             this.newScheduleDiv = this.shadowRoot.querySelector("#divnewschedule");
-                            this.newSchedulesSelect = this.shadowRoot.querySelector("#newschedulesselect");
+                            this.newScheduleCopyFromName = this.shadowRoot.querySelector("#newschedulescopyfromname");
+                            this.newSchedulesButton = this.shadowRoot.querySelector("#newschedulebtn");
                             this.newScheduleName = this.shadowRoot.querySelector("#newschedulename")
-                            this.newScheduleDescription = this.shadowRoot.querySelector("#newscheduledescription")
+                            this.newScheduleDescription = this.shadowRoot.querySelector("#newscheduledescription");
+                            this.copyFromScheduleUID = undefined;
                             this.createNewScheduleButton = this.shadowRoot.querySelector("#createschedulebtn");
                             this.createNewScheduleButton.onclick = function() {
+                                this.copyFromScheduleUID = undefined;
                                 this.scheduleDiv.setAttribute("hidden", "true");
                                 this.newScheduleDiv.removeAttribute("hidden");
                                 this.newScheduleName.value = (new Date().toISOString());
                                 this.newScheduleDescription.value = "Schedule created on the " + this.newScheduleName.value;
-
-                                this.newSchedulesSelect.innerHTML = "";
-                                var option1 = document.createElement("option");
-                                var scheduleName = PLANT_NAME;
-                                option1.text = scheduleName;
-                                option1.value = scheduleName;
-                                this.newSchedulesSelect.appendChild(option1);
-                                
-                                if ((this.userSelect.selectedIndex >= 0) && (this.scheduleSelect.selectedIndex >= 0)) {
-                                    var username = this.userSelect[this.userSelect.selectedIndex].value;
-                                    var schedule = this.scheduleSelect[this.scheduleSelect.selectedIndex].scheduleInfo;
-                                    option1 = document.createElement("option");
-                                    scheduleName = schedule.name + " (owner: " + username + ")";
-                                    option1.text = scheduleName;
-                                    option1.value = schedule.uid;
-                                    this.newSchedulesSelect.appendChild(option1);
-                                }
+                                this.newScheduleCopyFromName.innerHTML = PLANT_NAME;
+                                this.inheritCheckBox.disabled = true;
                             }.bind(this); 
+
+                            this.newScheduleSelector = undefined;
+                            this.copyFromScheduleUID = null;
+                            this.newSchedulesButton.onclick = function() {
+                                if (this.newScheduleSelector === undefined) {
+                                    this.newScheduleSelector = document.createElement("htk-schedule-selector");
+                                    this.shadowRoot.appendChild(this.newScheduleSelector);
+                                }
+                                this.newScheduleSelector.setPageName(this.pageName);
+                                this.newScheduleSelector.show(function(schedule) {
+                                    this.inheritCheckBox.disabled = false;
+                                    this.inheritCheckBox.checked = false;
+                                    this.copyFromScheduleUID = schedule.uid;
+                                    this.newScheduleCopyFromName.innerHTML = schedule.name + " (owner: " + schedule.owner + ")";
+                                }.bind(this), true, false);
+                            }.bind(this);
 
                             this.deleteScheduleButton = this.shadowRoot.querySelector("#deleteschedulebtn");
                             this.deleteScheduleButton.onclick = function() {
@@ -334,8 +343,8 @@
                                 else {
                                     inheritFromSchedule = "false";
                                 }
-                                if (this.newSchedulesSelect.selectedIndex > 0) {
-                                    sourceScheduleUID = this.newSchedulesSelect[this.newSchedulesSelect.selectedIndex].value;
+                                if (this.copyFromScheduleUID !== undefined) {
+                                    sourceScheduleUID = this.copyFromScheduleUID;
                                 }
                                 parent.htkHelper.createSchedule(
                                     this.newScheduleName.value,
@@ -361,6 +370,7 @@
                         this.currentFolderPath = [];
                         this.allowUserOK = true;
                         this.allowUserScheduleManagement = true;
+                        this.editMode = false;
                     }
 
                     /**
@@ -376,7 +386,15 @@
                                 }
                                 else {
                                     this.descriptionArea.innerHTML = selectedOption.scheduleInfo.description;
-                                    this.okButton.disabled = !this.allowUserOK;
+                                    var disableOK = !this.allowUserOK;
+                                    if (this.editMode) {
+                                        if (!disableOK) {
+                                            var currentUsername = htkHelper.getUser().username;
+                                            var userIsTheOwner = (currentUsername === username);
+                                            disableOK = !userIsTheOwner;
+                                        }
+                                    }
+                                    this.okButton.disabled = disableOK;
                                 }
                             }
                         }
@@ -523,14 +541,16 @@
                      * @param[in] okCallbackFun the function to call if the user selects OK.
                      * @param[in] allowUserOK if true allows the user to select OK and change the selected schedule (otherwise it used as read-only).
                      * @param[in] allowUserScheduleManagement if true allow the user to create/delete schedules.
+                     * @param[in] editMode if true the intention is to select a schedule for editing.
                      */
-                    show(okCallbackFun, allowUserOK = true, allowUserScheduleManagement = true) {
+                    show(okCallbackFun, allowUserOK = true, allowUserScheduleManagement = true, editMode = false) {
                         this.okCallbackFunction = okCallbackFun;
                         this.allowUserOK = allowUserOK;
                         this.allowUserScheduleManagement = allowUserScheduleManagement;
                         this.okButton.disabled = true;
                         this.userSelect.innerHTML = "";
                         this.scheduleSelect.innerHTML = "";
+                        this.editMode = editMode;
                         var option1 = document.createElement("option");
                         option1.text = "Select user";
                         option1.value = NONE_NAME;

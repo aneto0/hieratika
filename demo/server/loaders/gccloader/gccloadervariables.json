@@ -1,0 +1,9 @@
+{
+    "GCC@THS1@VAL": ["GCC-THS1-VAL", 0],
+    "GCC@THS1@LOCK": ["GCC-THS1-LOCK", 1],
+    "GCC@THS2@VAL": ["GCC-THS2-VAL", 0],
+    "GCC@THS2@LOCK": ["GCC-THS2-LOCK", 1],
+    "GCC@THS3@VAL": ["GCC-THS3-VAL", 0],
+    "GCC@THS3@LOCK": ["GCC-THS3-LOCK", 1]
+}
+

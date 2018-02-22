@@ -193,7 +193,7 @@
                         this.editScheduleButton = this.shadowRoot.querySelector("#editschedulebtn");
                         this.editScheduleButton.onclick = function() {
                             this.hideSideBar();
-                            this.scheduleSelector.show(this.editScheduleChanged.bind(this));
+                            this.scheduleSelector.show(this.editScheduleChanged.bind(this), true, true, true);
                         }.bind(this);
 
                         this.viewScheduleButton = this.shadowRoot.querySelector("#viewschedulebtn");
@@ -738,8 +738,8 @@
                                                     targetElement.setInitialValue(variableValue);
                                                 }
                                                 targetElement.setValue(variableValue, updateRemote);
-                                                targetElement.setEditable(!setNotEditable);
                                             }
+                                            targetElement.setEditable(!setNotEditable);
                                         }
                                     }
                                 }

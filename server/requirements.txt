@@ -13,3 +13,6 @@ ahkab
 #To implement the broadcast queue
 pyzmq
 
+#For bit manipulation
+bitstring
+

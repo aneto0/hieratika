@@ -18,22 +18,15 @@
                                 <name>LOCK</name>
                                 <alias>Lock</alias>
                                 <description>Can parameters associated to this lock be changed?</description>
-                                <origin></origin>
-                                <units></units>
-                                <definition definition="org.iter.codac.psps.validation.ConstantEnum">LOCK</definition>
-                                <values>
-                                    <value>0</value>
-                                </values>
-                            </record>
-                            <record size="1" xsi:type="recordDouble">
+                                <origin/>
+                                <units/>
+                                <values><value>[1]</value></values></record>
+                            <record size="1" xsi:type="recordFloat">
                                 <name>VAL</name>
                                 <alias>VAL</alias>
                                 <lock>GCC@THS1@LOCK</lock>
                                 <description>Double value</description>
-                                <values>
-                                    <value>-109</value>
-                                </values>
-                            </record>
+                                <values><value>1</value></values></record>
                         </records>
                     </folder>
                     <folder>
@@ -43,22 +36,15 @@
                                 <name>LOCK</name>
                                 <alias>Lock</alias>
                                 <description>Can parameters associated to this lock be changed?</description>
-                                <origin></origin>
-                                <units></units>
-                                <definition definition="org.iter.codac.psps.validation.ConstantEnum">LOCK</definition>
-                                <values>
-                                    <value>0</value>
-                                </values>
-                            </record>
-                            <record size="1" xsi:type="recordDouble">
+                                <origin/>
+                                <units/>
+                                <values><value>[1]</value></values></record>
+                            <record size="1" xsi:type="recordFloat">
                                 <name>VAL</name>
                                 <alias>VAL</alias>
                                 <description>Double value</description>
                                 <lock>GCC@THS2@LOCK</lock>
-                                <values>
-                                    <value>-109</value>
-                                </values>
-                            </record>
+                                <values><value>2</value></values></record>
                         </records>
                     </folder>
                     <folder>
@@ -68,22 +54,15 @@
                                 <name>LOCK</name>
                                 <alias>Lock</alias>
                                 <description>Can parameters associated to this lock be changed?</description>
-                                <origin></origin>
-                                <units></units>
-                                <definition definition="org.iter.codac.psps.validation.ConstantEnum">LOCK</definition>
-                                <values>
-                                    <value>0</value>
-                                </values>
-                            </record>
-                            <record size="1" xsi:type="recordDouble">
+                                <origin/>
+                                <units/>
+                                <values><value>[0]</value></values></record>
+                            <record size="1" xsi:type="recordFloat">
                                 <name>VAL</name>
                                 <alias>VAL</alias>
                                 <description>Double value</description>
                                 <lock>GCC@THS3@LOCK</lock>
-                                <values>
-                                    <value>-109</value>
-                                </values>
-                            </record>
+                                <values><value>3</value></values></record>
                         </records>
                     </folder>
                 </folders>
@@ -111,4 +90,4 @@
             </sdnTopics>
         </plantSystem>
     </plantSystems>
-</configurationContainer>
+<references><counter>0</counter></references></configurationContainer>

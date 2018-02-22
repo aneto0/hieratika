@@ -2,7 +2,16 @@
     "LIVE-VAR-1",
     "LIVE-VAR-2",
     "LIVE-VAR-3",
-    "LIVE-VAR-4"
-    
+    "LIVE-VAR-4",
+    "GCC-THS1-VAL",
+    "GCC-THS1-LOCK",
+    "GCC-THS2-VAL",
+    "GCC-THS2-LOCK",
+    "GCC-THS3-VAL",
+    "GCC-THS3-LOCK",
+    "GCC-CAMPAIGN",
+    "GCC-SESSION",
+    "GCC-DIGEST",
+    "GCC-COUNTER"
 ]
 

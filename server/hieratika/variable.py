@@ -247,7 +247,7 @@ class Variable(object):
         Returns:
             The absolute name of the variable.
         """
-        return getAbsoluteName()
+        return self.getAbsoluteName()
 
     def __str__(self):
         """ Returns a string representation of a Variable.

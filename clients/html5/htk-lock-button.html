@@ -58,21 +58,22 @@
                         super.createdCallback();
                         this.buttonLock = this.shadowRoot.querySelector("#block");
                         this.buttonLock.addEventListener("click", function (e) {
-                            var value = this.getValue();  
-                            if (value === undefined) {
-                                value = "1";
-                            }
-                            var intValue = parseInt(value);
-                            if (intValue === 1) {
-                                this.setValue(0);
-                            }
-                            else if (intValue === 0) {
-                                this.setValue(1);
+                            if (!this.isReadOnly()) {
+                                var value = this.getValue();  
+                                if (value === undefined) {
+                                    value = "1";
+                                }
+                                var intValue = parseInt(value);
+                                if (intValue === 1) {
+                                    this.setValue(0);
+                                }
+                                else if (intValue === 0) {
+                                    this.setValue(1);
+                                }
                             }
                         }.bind(this));
                         this.buttonIcon = this.shadowRoot.querySelector("#bicon");
                         this.buttonLock.style.background = STANDARD_BCOLOR;
-                        this.buttonIcon.style.background = STANDARD_BCOLOR;
                     }
                    
                     /**
@@ -94,28 +95,37 @@
                             this.buttonIcon.className = "fa fa-lock";
                         }
                         this.checkValues(this.buttonIcon);
+                        this.buttonIcon.style.background = STANDARD_BCOLOR;
+                        if (this.isReadOnly()) {
+                            this.buttonIcon.style.color = "LightGray";
+                        }
                         if (intValue === -1) {
                             this.buttonIcon.style.color = "red";
-                            this.setEditable(false);
                         }
-                    }
-
-                    /**
-                     * @brief Sets the button read only state.
-                     */
-                    setReadOnly (isReadOnly) {
-                        this.buttonLock.disabled = isReadOnly;
                     }
 
                     /** 
                      * @brief See HtkComponent.setValue
                      */
                     setValue (elementsToSet, updateRemote=true) {
-                        super.setValue(elementsToSet, updateRemote);
                         var intValue = parseInt(elementsToSet);
                         var locked = (intValue != 0);
-
+                        if (intValue === -1) {
+                            this.setEditable(false);
+                        }
+                        super.setValue(elementsToSet, updateRemote);
                         this.fireLockedStatusChanged(locked);
+                    }
+
+                    /**
+                     *
+                     */
+                    setEditable (editable) {
+                        var intValue = parseInt(this.getValue());
+                        if (intValue === -1) {
+                            editable = false;
+                        }
+                        super.setEditable(editable);
                     }
 
                     /**

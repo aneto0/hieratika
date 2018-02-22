@@ -10,7 +10,7 @@
         <link rel='import' href='/htk-struct-browser.html'>
     </head>
     <body>
-        <table>
+        <table style="border:none">
             <tr>
                 <td><i class="fa fa-thermometer-half"></i> Threshold 1</td>
                 <td><htk-input id='GCC@THS1@VAL'></htk-input></td>
@@ -25,6 +25,17 @@
                 <td><i class="fa fa-thermometer-half"></i> Threshold 3</td>
                 <td><htk-input id='GCC@THS3@VAL'></htk-input></td>
                 <td><htk-lock-button id='GCC@THS3@LOCK'></htk-lock-button></td>
+            </tr>
+        </table>
+        <hr>
+        <table style="border:none">
+            <tr>
+                <td><i class="fa fa-lock" style="color:blue"></i> Counter</td>
+                <td><htk-input id='GCC-COUNTER' data-live="true"></htk-input></td>
+            </tr>
+            <tr>
+                <td><i class="fa fa-lock" style="color:blue"></i> Digest</td>
+                <td><htk-input id='GCC-DIGEST' data-live="true"></htk-input></td>
             </tr>
         </table>
     </body>
