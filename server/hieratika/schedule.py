@@ -55,13 +55,20 @@ class Schedule(object):
         self.obsolete = obsolete
         self.inheritsFromUID = inheritsFromUID
 
-    def __init__(self, dictionary):
-        """ Constructs a schedule object from a dictionary representation
-        Args:
-            dictionary(dict): dictionary representation of the Schedule
+    @staticmethod
+    def fromSerializableDict(dictionary):
         """
-        for k, v in dictionary.items():
-            setattr(self, k, v)
+        Args:
+            dictionary(dict): dictionary representation of a Schedule.
+        Returns:
+            A new Schedule instance with the properties defined in dictionary.
+        """
+        schedule = None
+        try:
+            schedule = Schedule(dictionary["uid"], dictionary["name"], dictionary["pageName"], dictionary["description"], dictionary["owner"], dictionary["obsolete"], dictionary["inheritsFromUID"])
+        except Exception as e:
+            log.critical("Could not create the Schedule {0}".format(e))
+        return schedule
 
     def getUID(self):
         """ 
