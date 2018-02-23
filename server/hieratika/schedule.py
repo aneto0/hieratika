@@ -55,6 +55,14 @@ class Schedule(object):
         self.obsolete = obsolete
         self.inheritsFromUID = inheritsFromUID
 
+    def __init__(self, dictionary):
+        """ Constructs a schedule object from a dictionary representation
+        Args:
+            dictionary(dict): dictionary representation of the Schedule
+        """
+        for k, v in dictionary.items():
+            setattr(self, k, v)
+
     def getUID(self):
         """ 
         Returns: 

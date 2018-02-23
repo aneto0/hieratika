@@ -897,6 +897,9 @@ class PSPSServer(HieratikaServer):
         self.lockPool.release(xmlId)
         return updatedVariables 
 
+    def updatePlantFromSchedule(self, pageName, scheduleUID):
+        variables = self.getScheduleVariablesValues(scheduleUID)
+        return self.updatePlant(pageName, variables)
     
     def createSchedule(self, name, description, username, pageName, parentFolders, sourceScheduleUID, inheritFromSchedule):
         log.info("Creating a new schedule for user: {0} for page: {1} with name: {2}".format(username, pageName, name))

@@ -331,6 +331,20 @@ class HieratikaServer(object):
         pass
 
     @abstractmethod
+    def updatePlantFromSchedule(self, pageName, scheduleUID):
+        """ Updates the variable values of the plant (associated to a given page) against the variables that are set in a given schedule.
+    
+        Args:
+            pageName (str): name of the page holding these variables.
+            scheduleUID (str): unique schedule identifier
+
+        Returns:
+            The list of variables that were updated in the form of a dictionary {variableName1:value1, variableName2:value2, ...}
+        """
+        pass
+
+
+    @abstractmethod
     def createSchedule(self, name, description, username, pageName, parentFolders, sourceScheduleUID = None, inheritFromSchedule = False):
         """ Creates a new schedule either based on a existing schedule (if sourceSchedule is not None) or from the plant. 
 

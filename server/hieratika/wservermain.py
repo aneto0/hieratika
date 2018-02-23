@@ -332,6 +332,21 @@ def updateplant():
     else:
         return HieratikaConstants.INVALID_TOKEN
 
+#Try to update the values in the plant against the values stored in a schedule
+@application.route("/updateplantfromschedule", methods=["POST", "GET"])
+def updateplantfromschedule():
+    log.debug("/updateplantfromschedule")
+    if (wserver.isTokenValid(request)):
+        log.debug("/IN updateplantfromschedule")
+        wstatistics.startUpdate("updateplantfromschedule")
+        ret = wserver.updatePlantFromSchedule(request)
+        wstatistics.endUpdate("updateplantfromschedule")
+        log.debug("/OUT updateplantfromschedule")
+        return ret
+    else:
+        return HieratikaConstants.INVALID_TOKEN
+
+
 #Try to load the values into the plant
 @application.route("/loadintoplant", methods=["POST", "GET"])
 def loadintoplant():

@@ -223,6 +223,40 @@ class WServer(object):
             toReturn = HieratikaConstants.INVALID_PARAMETERS
         return toReturn
 
+    def updatePlantFromSchedule(self, request):
+        """ Updates the values of the plant from a given schedule.
+            All the variables that are successfully updated will be streamed to all the clients.
+
+        Args:
+            request.form["pageName"]: name of the page (which corresponds to the name of the configuration).
+            request.form["tid"]: the unique thread (and process) identifier which was returned to the client when registered to the data stream (see streamData).
+            request.form["scheduleUID"]: the unique identifier of the schedule to be set against the plant.
+        Returns:
+            The string ok if the values are successfully updated.
+        """
+        toReturn = HieratikaConstants.OK
+        try:
+            pageName = request.form["pageName"]
+            scheduleUID = request.form["scheduleUID"]
+            toStream = {
+                "tid": request.form["tid"],
+                "variables": {}
+            }
+            variablesToStream = self.serverImpl.updatePlantFromSchedule(pageName, scheduleUID)
+            #Send n variables at the time in order not to overflow the queue size..
+            keys = variablesToStream.keys()
+            n = self.streamDataMaxVariables
+            for i in xrange(0, len(keys), n):
+                toStream["variables"] = {}
+                for k in keys[i: i + n]:
+                    toStream["variables"][k] = variablesToStream[k]
+                self.serverImpl.queueStreamData(json.dumps(toStream))
+        except KeyError as e:
+            log.critical(str(e))
+            toReturn = HieratikaConstants.INVALID_PARAMETERS
+        return toReturn
+
+
     def getLibraries(self, request):
         """ Gets all the library instances that are avaiable for a given library type and for a given user.
 
