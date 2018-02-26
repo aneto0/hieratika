@@ -19,7 +19,6 @@ __date__ = "17/11/2017"
 ##
 # Standard imports
 ##
-from flask import request
 import json
 import logging
 

@@ -1,0 +1,59 @@
+record( ao, "TEST-AUX-GCC:TT0010-AA-CREF")
+{
+   field(DTYP, "Soft Channel")
+}
+
+record( longout, "TEST-AUX-GCC:TT0010-AA-CREFLR")
+{
+   field(DTYP, "Soft Channel")
+}
+
+record( ao, "TEST-AUX-GCC:IT0011-AA-CREF")
+{
+   field(DTYP, "Soft Channel")
+}
+
+record( longout, "TEST-AUX-GCC:IT0011-AA-CREFLR")
+{
+   field(DTYP, "Soft Channel")
+}
+
+record( ao, "TEST-AUX-GCC:ET0012-AA-CREF")
+{
+   field(DTYP, "Soft Channel")
+}
+
+record( longout, "TEST-AUX-GCC:ET0012-AA-CREFLR")
+{
+   field(DTYP, "Soft Channel")
+}
+
+record( longout, "TEST-AUX-GCC:Config_Counter")
+{
+   field(DTYP, "Soft Channel")
+}
+
+record( longout, "TEST-AUX-GCC:Validation_fCalc_Config")
+{
+   field(DTYP, "Soft Channel")
+}
+
+record( longout, "TEST-AUX-GCC:Load_Config")
+{
+   field(DTYP, "Soft Channel")
+}
+
+record( stringout, "GCC-CAMPAIGN")
+{
+   field(DTYP, "Soft Channel")
+}
+
+record( stringout, "GCC-SESSION")
+{
+   field(DTYP, "Soft Channel")
+}
+
+record( stringout, "GCC-EXPERIMENT")
+{
+   field(DTYP, "Soft Channel")
+}

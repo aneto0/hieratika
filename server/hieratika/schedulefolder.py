@@ -45,6 +45,22 @@ class ScheduleFolder(object):
         self.name = name
         self.obsolete = obsolete
 
+    @staticmethod
+    def fromSerializableDict(dictionary):
+        """
+        Args:
+            dictionary(dict): dictionary representation of a ScheduleFolder.
+        Returns:
+            A new ScheduleFolder instance with the properties defined in dictionary.
+        """
+        schedule = None
+        try:
+            schedule = ScheduleFolder(dictionary["name"], dictionary["obsolete"])
+        except Exception as e:
+            log.critical("Could not create the ScheduleFolder {0}".format(e))
+        return schedule
+
+
     def getName(self):
         """ 
         Returns:

@@ -20,13 +20,13 @@
                                 <description>Can parameters associated to this lock be changed?</description>
                                 <origin/>
                                 <units/>
-                                <values><value>[1]</value></values></record>
+                                <values><value>[-1]</value></values></record>
                             <record size="1" xsi:type="recordFloat">
                                 <name>VAL</name>
                                 <alias>VAL</alias>
                                 <lock>GCC@THS1@LOCK</lock>
                                 <description>Double value</description>
-                                <values><value>1</value></values></record>
+                                <values><value>["1"]</value></values></record>
                         </records>
                     </folder>
                     <folder>
@@ -38,13 +38,13 @@
                                 <description>Can parameters associated to this lock be changed?</description>
                                 <origin/>
                                 <units/>
-                                <values><value>[1]</value></values></record>
+                                <values><value>[-1]</value></values></record>
                             <record size="1" xsi:type="recordFloat">
                                 <name>VAL</name>
                                 <alias>VAL</alias>
                                 <description>Double value</description>
                                 <lock>GCC@THS2@LOCK</lock>
-                                <values><value>2</value></values></record>
+                                <values><value>["3"]</value></values></record>
                         </records>
                     </folder>
                     <folder>
@@ -62,7 +62,7 @@
                                 <alias>VAL</alias>
                                 <description>Double value</description>
                                 <lock>GCC@THS3@LOCK</lock>
-                                <values><value>3</value></values></record>
+                                <values><value>["3"]</value></values></record>
                         </records>
                     </folder>
                 </folders>

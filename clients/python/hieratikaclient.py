@@ -111,7 +111,8 @@ class HieratikaClient (object):
                 serverReply = response.read()
                 if (serverReply != HieratikaConstants.INVALID_PARAMETERS):
                     schedulesDict = json.loads(serverReply)
-                    schedules = map(Schedule, schedulesDict)
+                    for s in schedulesDict:
+                        schedules.append(Schedule.fromSerializableDict(s))
                     log.info("Retrieved {0} schedules for user {1} in page {2}".format(len(schedules), username, pageName))
             else:
                 log.info("Could not get the schedules for {0} {1} {2}".format(username, pageName, parentFolders))
@@ -136,13 +137,49 @@ class HieratikaClient (object):
             if (response.status == 200):
                 serverReply = response.read()
                 if (serverReply != HieratikaConstants.INVALID_PARAMETERS):
-                    schedulesFolderDict = json.loads(serverReply)
-                    scheduleFolders = map(ScheduleFolder, schedulesFolderDict)
+                    scheduleFoldersDict = json.loads(serverReply)
+                    for s in scheduleFoldersDict:
+                        scheduleFolders.append(ScheduleFolder.fromSerializableDict(s))
                     log.info("Retrieved {0} schedule folders for user {1} in page {2}".format(len(scheduleFolders), username, pageName))
             else:
                 log.info("Could not get the schedules for {0} {1} {2}".format(username, pageName, parentFolders))
         return scheduleFolders
-            
+
+    def updatePlantFromSchedule(self, pageName, scheduleUID):
+        """ Updates the values of the plant from a given schedule.
+
+        Args:
+            pageName (str): the name of the page associated to the schedule.
+            scheduleUID (str): the unique identifier of the schedule to be set against the plant.
+        Returns:
+            True if the values are successfully updated.
+        """
+        toReturn = False
+        if ((self.conn is not None) and (self.user is not None)):
+            params = urllib.urlencode({"token": self.user.getToken(), "pageName": pageName, "scheduleUID": scheduleUID, "tid": "0"})
+            self.conn.request("POST", "updateplantfromschedule", params, self.headers)
+            response = self.conn.getresponse()
+            if (response.status == 200):
+                toReturn = (response.read() == HieratikaConstants.OK)
+        return toReturn
+        
+    def loadIntoPlant(self, pageName):
+        """ Loads the specified page into the plant.
+
+        Args:
+            pageName (str): the name of the page associated to the schedule.
+        Returns:
+            True if all the parameters were successfully loaded.
+        """
+        toReturn = False
+        if ((self.conn is not None) and (self.user is not None)):
+            params = urllib.urlencode({"token": self.user.getToken(), "pageNames": json.dumps([pageName])})
+            self.conn.request("POST", "loadintoplant", params, self.headers)
+            response = self.conn.getresponse()
+            if (response.status == 200):
+                toReturn = (response.read() == HieratikaConstants.OK)
+        return toReturn
+
     def getUser(self):
         """
         Returns:

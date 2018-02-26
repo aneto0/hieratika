@@ -70,8 +70,9 @@
                                     var value = variables[name];
                                     if (targetElements  !== undefined) {
                                         for (var i=0; i<targetElements.length; i++) {
+                                            var targetElement = targetElements[i];
                                             if ((updateSchedule) || (updateLive)) {
-                                                targetElements[i].setValue(value, false);
+                                                targetElement.setValue(value, false);
                                                 //Someone else changed but might not have commited!
                                                 parent.htkHelper.updateScheduleValuesToCommit(name, value);
                                             }

@@ -98,10 +98,13 @@ class GCCLoader(HieratikaLoader):
                 log.info("Updated {0} ({1}:{2})".format(var.getName(), pvname, value))
 
                 if (var.getType() == "float32"):
+                    value = float(value)
                     value = bitstring.BitArray(float=value, length=32)
                     value = value.int
-                if (not isLock):
-                    digest = digest ^ value
+                else:
+                    value = int(value)
+                #if (not isLock):
+                digest = digest ^ value
             else:
                 log.critical("{0} not found in the variable map!".format(var)) 
 
