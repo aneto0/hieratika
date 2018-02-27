@@ -16,10 +16,10 @@ Hieratika is a distributed parameter configuration system.
 
 The main functions of Hieratika are to:
 * \[F1\] Enable the configuration of any plant (independently of its complexity);
-* \[F1.1\] Some parameters can be a reference to a given schedule instance on another plant (e.g. VACUUM-GLOBAL = COMMISSIONG-SETTING-FEB-2018, where COMMISSIONG-SETTING-FEB-2018 is the name of a schedule);
-* \[F1.2\] Some parameters can be a reference to a library instance;
-* \[F1.3\] Parameters can be described as a structure of any complexity;
-* \[F1.4\] The leafs of the structure shall be any basic type as defined  [here](server/hieratika/variable.py).
+  \[F1.1\] Some parameters can be a reference to a given schedule instance on another plant (e.g. VACUUM-GLOBAL = COMMISSIONG-SETTING-FEB-2018, where COMMISSIONG-SETTING-FEB-2018 is the name of a schedule);
+  \[F1.2\] Some parameters can be a reference to a library instance;
+  \[F1.3\] Parameters can be described as a structure of any complexity;
+  \[F1.4\] The leafs of the structure shall be any basic type as defined  [here](server/hieratika/variable.py).
 * \[F2\] Enable the storing and retrieval of an unlimited number of configuration snapshots (schedules);
 * \[F3\] Allow the validation of the configuration parameters;
 * \[F3.1\] Some parameters are to be validated using mathematical expressions which might involve other parameters (e.g. PAR1 < (PAR2 * PAR3));
