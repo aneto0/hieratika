@@ -7,25 +7,31 @@ Hieratika is a distributed parameter configuration system.
 | Term | Meaning | Example |
 | ---- | ------- | ------- |
 | Library | A type of parameter whose value is a reference to the values of a given subset of parameters. | Lib1 = {A = 2; B = 3}, Lib2 = {A = 1; B = 4}, LIB-PARAMETER=Lib1, where LIB-PARAMETER is the parameter name and Lib1 the parameter value. Note that in the plant the meaningful parameters are **A** and **B**, so that when the plant is updated, Hieratika will retrieve the values that are associated with Lib1 and load the value of **A** and **B** accordingly. |
-| Live parameters | Any plant output variable, which can be read but not modified by Hieratika. | Power supply output voltage; Switch position; ... | 
+| Live variable | Any plant variable that can be read but not modified by Hieratika. | Power supply output voltage; Switch position; ... | 
 | Parameter | Any named variable that is susceptible of being configured. | Maximum pressure value; ADC number of bits; ... |
-| Plant | Any system (hardware or software). A plant might be composed of many plants. | Vacuum system; power supply; pump; scientific code; ... |
-| Schedule | Named snapshot of a configuration. Stores the values of all the parameters at the time of the schedule creation. | Schedule for test; Schedule for operation during commissioning; Schedule for normal operation; ... |
+| Plant | The value of all the parameters that are to be loaded into the physical plant. | Vacuum system; power supply; pump; scientific code; ... |
+| Schedule | Named snapshot of a configuration. Stores the values of all the parameters at the time of the schedule creation (or updating). | Schedule for test; Schedule for operation during commissioning; Schedule for normal operation; ... |
 
 ## Functions
 
 The main functions of Hieratika are to:
 * \[F1\] Enable the configuration of any plant (independently of its complexity);
-  \[F1.1\] Some parameters can be a reference to a given schedule instance on another plant (e.g. VACUUM-GLOBAL = COMMISSIONG-SETTING-FEB-2018, where COMMISSIONG-SETTING-FEB-2018 is the name of a schedule);
-  \[F1.2\] Some parameters can be a reference to a library instance;
-  \[F1.3\] Parameters can be described as a structure of any complexity;
-  \[F1.4\] The leafs of the structure shall be any basic type as defined  [here](server/hieratika/variable.py).
+![alt text](docs/images/concepts-1.png "Some Hieratika concepts.")
+* \[F1.1\] Some parameters can be a reference to a given schedule instance on another plant (e.g. TEMPERATURES = TEST-1, where TEST-1 is the name of a schedule);
+![alt text](docs/images/concepts-2.png "Hieratika concepts. Schedule link.")
+* \[F1.2\] Some parameters can be a reference to a library instance;
+* \[F1.3\] Parameters can be described as a structure of any complexity;
+* \[F1.4\] The type of the leafs of the structure shall be of any basic type as defined  [here](server/hieratika/variable.py).
 * \[F2\] Enable the storing and retrieval of an unlimited number of configuration snapshots (schedules);
+* \[F2.1\] Prevent the deleting of a schedule if it is referenced by a variable in any other schedule;
+* \[F2.2\] Prevent the deleting of a library if it is referenced by a variable in any schedule;
+* \[F2.3\] Lock a parameter from being editing based on the state of another parameter;
+* \[F2.4\] Enable to inherit the locking status of a parameter when creating a new schedule. If the parameter was locked in the parent schedule it shall not be editable in the inherited schedule.
 * \[F3\] Allow the validation of the configuration parameters;
 * \[F3.1\] Some parameters are to be validated using mathematical expressions which might involve other parameters (e.g. PAR1 < (PAR2 * PAR3));
 * \[F3.2\] Some parameters are to be validated using complex algorithms that might be written in any modern programming language;
 * \[F3.3\] Some parameters are to be validated as a function of the value of parameters that belong to a different plant (e.g. VACUUM-PAR1 * FACTOR < POWER-SUPPLY-PAR2);
-* \[F3.3\] Some parameters are to be validated as a function of the value of live parameters (e.g. POWER-SUPPLY-1-MAX-CURRENT * FACTOR < POWER-SUPPLY-2-CURRENT-VOLTAGE);
+* \[F3.3\] Some parameters are to be validated as a function of the value of live variables (e.g. POWER-SUPPLY-1-MAX-CURRENT * FACTOR < POWER-SUPPLY-2-CURRENT-VOLTAGE);
 * \[F4\] Allow the transformation of configuration parameters;
 * \[F4.1\] Some parameters are to be transformed using mathematical expressions which might involve other parameters (e.g. PAR1 = (PAR2 * PAR3));
 * \[F4.2\] Some parameters are to be transformed using complex algorithms that might be written in any modern programming language;
