@@ -1,4 +1,20 @@
-TODO
+# Hieratika
+
+Hieratika is a distributed client-server parameter configuration system.
+
+## Glossary
+
+| Term | Meaning | Example |
+| ---- | ------- | ------- |
+| Plant | Any system (hardware or software). A plant might be composed of many plants. | Vacuum system; power supply; pump |
+
+## Functions
+
+The main functions of Hieratika are to:
+
+
+
+## TODO
 -   Create the statistics backend (should these be persistent??)
 -   Rename the page concept to configuration model/object - NOT DONE
 -   Document the design - NOT DONE
