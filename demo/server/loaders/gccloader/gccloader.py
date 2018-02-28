@@ -94,6 +94,8 @@ class GCCLoader(HieratikaLoader):
                 value = var.getValue()
                 if type(value) is list:
                     value = value[0]
+                if (isLock):
+                    value = abs(int(value))
                 epics.caput(pvname, value)
                 log.info("Updated {0} ({1}:{2})".format(var.getName(), pvname, value))
 
@@ -103,7 +105,6 @@ class GCCLoader(HieratikaLoader):
                     value = value.int
                 else:
                     value = int(value)
-                #if (not isLock):
                 digest = digest ^ value
             else:
                 log.critical("{0} not found in the variable map!".format(var)) 
