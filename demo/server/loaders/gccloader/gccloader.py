@@ -84,7 +84,7 @@ class GCCLoader(HieratikaLoader):
         variablesPlantInfo = self.server.getVariablesInfo(self.pageName, self.variables)
         counterValue = epics.caget(self.pvLoadCounter)
         log.info("Counter value {0}:{1}".format(self.pvLoadCounter, counterValue))
-        digest = counterValue
+        digest = int(counterValue)
 
         for var in variablesPlantInfo:
             varname = var.getName()
@@ -103,6 +103,7 @@ class GCCLoader(HieratikaLoader):
                     value = float(value)
                     value = bitstring.BitArray(float=value, length=32)
                     value = value.int
+                    log.info("Float value to be updated {0}:{1}".format(var.getName(), value))
                 else:
                     value = int(value)
                 digest = digest ^ value

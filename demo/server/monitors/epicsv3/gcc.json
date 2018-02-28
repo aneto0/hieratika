@@ -8,7 +8,7 @@
 "TEST-AUX-GCC:Config_Counter",
 "TEST-AUX-GCC:Validation_fCalc_Config",
 "TEST-AUX-GCC:Load_Config",
-"GCC-CAMPAIGN",
-"GCC-SESSION",
-"GCC-EXPERIMENT"
+"TEST-AUX-GCC:Campaign",
+"TEST-AUX-GCC:Session",
+"TEST-AUX-GCC:Experiment"
 ]
