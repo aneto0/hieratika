@@ -2,6 +2,8 @@
 
 Hieratika is a distributed parameter configuration system.
 
+Hieratika provides a client-server infrastructure that allows to model and manage the configuration of plant systems. In particular it provides services that allow to store, compare, transform, validate and load different configurations of a given plant system. This is expected to be useful for the implementation life-cycle of a plant, from testing and commissioning to operation.    
+
 ## Glossary
 
 | Term | Meaning | Example |
@@ -16,9 +18,9 @@ Hieratika is a distributed parameter configuration system.
 
 The main functions of Hieratika are to:
 * \[F1\] Enable the configuration of any plant (independently of its complexity);
-![alt text](docs/images/concepts-1.png "Some Hieratika concepts.")
-* \[F1.1\] Some parameters can be a reference to a given schedule instance on another plant (e.g. TEMPERATURES = TEST-1, where TEST-1 is the name of a schedule);
-![alt text](docs/images/concepts-2.png "Hieratika concepts. Schedule link.")
+![alt text](docs/images/concepts-3.png "Hieratika concepts.")
+* \[F1.1\] Some parameters can be a reference to a given schedule instance on another plant (e.g. VACUUM = TEST-1, where TEST-1 is the name of a schedule);
+![alt text](docs/images/concepts-4.png "Hieratika concepts. Schedule linking.")
 * \[F1.2\] Some parameters can be a reference to a library instance;
 * \[F1.3\] Parameters can be described as a structure of any complexity;
 * \[F1.4\] The type of the leafs of the structure shall be of any basic type as defined  [here](server/hieratika/variable.py).

@@ -62,7 +62,7 @@
                                 <alias>VAL</alias>
                                 <description>Double value</description>
                                 <lock>GCC@THS3@LOCK</lock>
-                                <values><value>["3"]</value></values></record>
+                                <values><value>["30"]</value></values></record>
                         </records>
                     </folder>
                 </folders>
