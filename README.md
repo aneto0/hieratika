@@ -21,9 +21,10 @@ The main functions of Hieratika are to:
 ![alt text](docs/images/concepts-3.png "Hieratika concepts.")
 * \[F1.1\] Some parameters can be a reference to a given schedule instance on another plant (e.g. VACUUM = TEST-1, where TEST-1 is the name of a schedule);
 ![alt text](docs/images/concepts-4.png "Hieratika concepts. Schedule linking.")
-* \[F1.2\] Some parameters can be a reference to a library instance;
+* \[F1.2\] Some parameters can be a reference to a library instance (e.g. ALARMS = TEST-1, where TEST-1 is the name of a library of a given type: LIB1 in the figure below);
+![alt text](docs/images/concepts-4.png "Hieratika concepts. Library links.")
 * \[F1.3\] Parameters can be described as a structure of any complexity;
-* \[F1.4\] The type of the leafs of the structure shall be of any basic type as defined  [here](server/hieratika/variable.py).
+* \[F1.4\] The type of the leafs of the structure shall be of any basic type as defined [here](server/hieratika/variable.py).
 * \[F2\] Enable the storing and retrieval of an unlimited number of configuration snapshots (schedules);
 * \[F2.1\] Prevent the deleting of a schedule if it is referenced by a variable in any other schedule;
 * \[F2.2\] Prevent the deleting of a library if it is referenced by a variable in any schedule;
