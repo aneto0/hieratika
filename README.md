@@ -40,6 +40,7 @@ The main functions of Hieratika are to:
 * \[F4\] Allow the transformation of configuration parameters;
 * \[F4.1\] Some parameters are to be transformed using mathematical expressions which might involve other parameters (e.g. PAR1 = (PAR2 * PAR3));
 * \[F4.2\] Some parameters are to be transformed using complex algorithms that might be written in any modern programming language;
+![alt text](docs/images/concepts-7.png "Hieratika concepts. Parameter transformation.")
 * \[F5\] Allow the development of graphical widgets which allow users to interface with the configuration and the live parameters;
 * \[F5.1\] Update and validate the values of the configuration parameters;
 * \[F5.2\] Trigger the execution of complex validation algorithms;
