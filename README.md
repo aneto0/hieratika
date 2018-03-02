@@ -22,14 +22,16 @@ The main functions of Hieratika are to:
 * \[F1.1\] Some parameters can be a reference to a given schedule instance on another plant (e.g. VACUUM = TEST-1, where TEST-1 is the name of a schedule);
 ![alt text](docs/images/concepts-4.png "Hieratika concepts. Schedule linking.")
 * \[F1.2\] Some parameters can be a reference to a library instance (e.g. ALARMS = TEST-1, where TEST-1 is the name of a library of a given type: LIB1 in the figure below);
-![alt text](docs/images/concepts-4.png "Hieratika concepts. Library links.")
+![alt text](docs/images/concepts-5.png "Hieratika concepts. Library links.")
 * \[F1.3\] Parameters can be described as a structure of any complexity;
 * \[F1.4\] The type of the leafs of the structure shall be of any basic type as defined [here](server/hieratika/variable.py).
 * \[F2\] Enable the storing and retrieval of an unlimited number of configuration snapshots (schedules);
 * \[F2.1\] Prevent the deleting of a schedule if it is referenced by a variable in any other schedule;
 * \[F2.2\] Prevent the deleting of a library if it is referenced by a variable in any schedule;
 * \[F2.3\] Lock a parameter from being editing based on the state of another parameter;
+![alt text](docs/images/concepts-6.png "Hieratika concepts. Parameter locking.")
 * \[F2.4\] Enable to inherit the locking status of a parameter when creating a new schedule. If the parameter was locked in the parent schedule it shall not be editable in the inherited schedule.
+![alt text](docs/images/concepts-7.png "Hieratika concepts. Parameter locking inheritance.")
 * \[F3\] Allow the validation of the configuration parameters;
 * \[F3.1\] Some parameters are to be validated using mathematical expressions which might involve other parameters (e.g. PAR1 < (PAR2 * PAR3));
 * \[F3.2\] Some parameters are to be validated using complex algorithms that might be written in any modern programming language;
