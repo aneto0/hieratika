@@ -2,14 +2,15 @@
 
 Hieratika is a distributed parameter configuration system.
 
-Hieratika provides a client-server infrastructure that allows to model and manage the configuration of plant systems. In particular it provides services that allow to store, compare, transform, validate and load different configurations of a given plant system. This is expected to be useful for the implementation life-cycle of a plant, from testing and commissioning to operation.    
+Hieratika provides a client-server infrastructure that allows to model and manage the configuration of plant systems. It offers services that allow to store, compare, transform, validate and load plant system configurations. These services are expected to support the life-cycle of a plant development, from testing and commissioning to operation.    
 
 ## Glossary
 
 | Term | Meaning | Example |
 | ---- | ------- | ------- |
-| Library | A type of parameter whose value is a reference to the values of a given subset of parameters. | Lib1 = {A = 2; B = 3}, Lib2 = {A = 1; B = 4}, LIB-PARAMETER=Lib1, where LIB-PARAMETER is the parameter name and Lib1 the parameter value. Note that in the plant the meaningful parameters are **A** and **B**, so that when the plant is updated, Hieratika will retrieve the values that are associated with Lib1 and load the value of **A** and **B** accordingly. |
+| Library | A type of parameter whose value is a reference to the values of a subset of parameters. | Lib1 = {A = 2; B = 3}, Lib2 = {A = 1; B = 4}, LIB-PARAMETER=Lib1, where LIB-PARAMETER is the parameter name and Lib1 the parameter value. Note that in the plant the meaningful parameters are **A** and **B**, so that when the plant is updated, Hieratika will retrieve the values that are associated with Lib1 and load the value of **A** and **B** accordingly. |
 | Live variable | Any plant variable that can be read but not modified by Hieratika. | Power supply output voltage; Switch position; ... | 
+| Lock | A parameter that is locked is not modifiable. | Maximum expert voltage. | 
 | Parameter | Any named variable that is susceptible of being configured. | Maximum pressure value; ADC number of bits; ... |
 | Plant | The value of all the parameters that are to be loaded into the physical plant. | Vacuum system; power supply; pump; scientific code; ... |
 | Schedule | Named snapshot of a configuration. Stores the values of all the parameters at the time of the schedule creation (or updating). | Schedule for test; Schedule for operation during commissioning; Schedule for normal operation; ... |
@@ -37,6 +38,7 @@ The main functions of Hieratika are to:
 * \[F3.2\] Some parameters are to be validated using complex algorithms that might be written in any modern programming language;
 * \[F3.3\] Some parameters are to be validated as a function of the value of parameters that belong to a different plant (e.g. VACUUM-PAR1 * FACTOR < POWER-SUPPLY-PAR2);
 * \[F3.3\] Some parameters are to be validated as a function of the value of live variables (e.g. POWER-SUPPLY-1-MAX-CURRENT * FACTOR < POWER-SUPPLY-2-CURRENT-VOLTAGE);
+![alt text](docs/images/concepts-9.png "Hieratika concepts. Live variables.")
 * \[F4\] Allow the transformation of configuration parameters;
 * \[F4.1\] Some parameters are to be transformed using mathematical expressions which might involve other parameters (e.g. PAR1 = (PAR2 * PAR3));
 * \[F4.2\] Some parameters are to be transformed using complex algorithms that might be written in any modern programming language;
@@ -53,6 +55,18 @@ The main functions of Hieratika are to:
 * \[F6.1\] Allow users to concurrently edit and store private configuraton schedules;
 * \[F6.2\] Allow users to concurrently compare and copy from others' schedules;
 * \[F6.3\] Prevent users from editing other users schedules;
+
+## Architecture
+
+Hieratika is a **RESTful** client-server application with a well defined API based on HTTP and JSON for data representation.
+
+By design Hieratika makes no assumptions on the:
+
+* database technology that is used to store the parameters;
+* plant system loading mechanisms and interfaces;
+* programming languages and libraries for the parameter validations;
+* plant system live variables monitoring interfaces;
+* authentication technology that is used to validate the user operations.
 
 
 ## TODO
