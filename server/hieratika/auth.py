@@ -253,6 +253,7 @@ class HieratikaAuth(object):
     @abstractmethod
     def load(self, config):
         """ Configures the authentication service against a set of parameters. This set of parameters is specific for each implementation.
+        
         Args:
             config(ConfigParser): the authentication specific implementation parameters are in the "auth-impl" section.
         Returns:
@@ -263,6 +264,7 @@ class HieratikaAuth(object):
     @abstractmethod 
     def authenticate(self, username, password):
         """ Authenticates a user into the system.
+        
         Args:
             username (str): the username.
             password (str): the user password.

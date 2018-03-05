@@ -1,0 +1,7 @@
+_static/
+_templates/
+hieratika.rst
+test.rst
+hieratika.*.rst
+test.*.rst
+

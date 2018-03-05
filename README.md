@@ -38,10 +38,12 @@ The main functions of Hieratika are to:
 * \[F3.2\] Some parameters are to be validated using complex algorithms that might be written in any modern programming language;
 * \[F3.3\] Some parameters are to be validated as a function of the value of parameters that belong to a different plant (e.g. VACUUM-PAR1 * FACTOR < POWER-SUPPLY-PAR2);
 * \[F3.3\] Some parameters are to be validated as a function of the value of live variables (e.g. POWER-SUPPLY-1-MAX-CURRENT * FACTOR < POWER-SUPPLY-2-CURRENT-VOLTAGE);
+* \[F3.4\] The validation of configuration parameters using complex algorithms shall not block the user from validating or configuring other parameters;
 ![alt text](docs/images/concepts-9.png "Hieratika concepts. Live variables.")
 * \[F4\] Allow the transformation of configuration parameters;
 * \[F4.1\] Some parameters are to be transformed using mathematical expressions which might involve other parameters (e.g. PAR1 = (PAR2 * PAR3));
 * \[F4.2\] Some parameters are to be transformed using complex algorithms that might be written in any modern programming language;
+* \[F4.3\] The transformation of configuration parameters using complex algorithms shall not block the user from transforming or configuring other parameters;
 ![alt text](docs/images/concepts-8.png "Hieratika concepts. Parameter transformation.")
 * \[F5\] Allow the development of graphical widgets which allow users to interface with the configuration and the live parameters;
 * \[F5.1\] Update and validate the values of the configuration parameters;
@@ -51,10 +53,14 @@ The main functions of Hieratika are to:
 * \[F5.5\] Compare the current parameter value against the value in a given schedule;
 * \[F5.6\] Copy the parameter value from the value in the plant;
 * \[F5.7\] Copy the parameter value from the value in a given schedule;
-* \[F6\] Enable multi-user access to the configuration process. 
+* \[F6\] Enable multi-user access to the configuration process; 
 * \[F6.1\] Allow users to concurrently edit and store private configuraton schedules;
 * \[F6.2\] Allow users to concurrently compare and copy from others' schedules;
-* \[F6.3\] Prevent users from editing other users schedules;
+* \[F6.3\] Prevent users from editing other users schedules.
+* \[F6\] Inform users about any of the following changes:
+* \[F6.1\] Values of a given plant;
+* \[F6.2\] Values of a given schedule;
+* \[F6.3\] Update of a given transformation function.
 
 ## Architecture
 
@@ -67,6 +73,66 @@ By design Hieratika makes no assumptions on the:
 * programming languages and libraries for the parameter validations;
 * plant system live variables monitoring interfaces;
 * authentication technology that is used to validate the user operations.
+
+The current implementation consists on a python web-server based on [Flask](http://flask.pocoo.org/) which offers and HTTP/JSON API to the clients. 
+  
+![alt text](docs/images/concepts-10.png "Hieratika base architecture.")
+
+### REST API
+
+The REST API is offered by the [wservermain interface](server/hieratika/wservermain.py). This interface delegates the API calls to one of the *JSON to python translators* modules. Each of these modules may have one or more plugins registered, which implement the API function call in python. 
+
+| Translator | Plugin parent | Description |
+| -------- | ----------- | ---------- |
+| [wserver](server/hieratika/wserver.py) | [HieratikaServer](server/hieratika/server.py) | Plant parameters database interface. |
+| [wloader](server/hieratika/wloader.py) | [HieratikaLoader](server/hieratika/loader.py) | Plant loading mechanisms. |
+| [wtransformation](server/hieratika/wtransformation.py) | [HieratikaTransformation](server/hieratika/transformation.py) | Transformation functions. |
+| [wmonitor](server/hieratika/wmonitor.py) | [HieratikaMonitor](server/hieratika/monitor.py) | Variables live monitoring. |
+
+Upon a successful login (see [login @ wserver](server/hieratika/wserver.py) and [authenticate @ auth](server/hieratika/auth.py)) the API caller will receive a unique token that shall be used on all subsequent calls to the API.
+
+The default [parameters server](server/hieratika/servers/psps/pspsserver.py) is based on a filesystem database where each plant system is modelled using the ITER PSPS configuration objects XML structure.  
+
+Detailed information about the API parameters and return values can be found by building the server-api documentation.
+
+```
+cd docs/server-api
+make html
+```
+
+The functions described above are allocated as follows:
+
+| Function | Component | Description |
+| -------- | --------- | ----------- |
+| [F1] Model configuration | [getVariablesInfo @ HieratikaServer](server/hieratika/server.py) | This method returns an array of [Variables](server/hieratika/variable.py). The Variable class may contain other Variable instances and can represent a structure of any required complexity. |
+| [F1.1] Schedule reference | [Schedule](server/hieratika/schedule.py) and [Variable](server/hieratika/variable.py) | The [Variable](server/hieratika/variable.py) class supports the *schedule* type and allows to store as the value a unique identifier of the referenced schedule. |
+| [F1.2] Library reference | [HLibrary](server/hieratika/library.py) and [Variable](server/hieratika/variable.py) | The [Variable](server/hieratika/variable.py) class supports the *library* type and allows to store as the value a unique identifier of the referenced library. |
+| [F1.3] Structured parameters | [Variable](server/hieratika/variable.py) | See [F1]. |
+| [F1.4] Basic types | [Variable](server/hieratika/variable.py) | See [F1]. |
+| [F2] Schedule retrieval | [getSchedules @ HieratikaServer](server/hieratika/server.py) | This method returns an array of [Schedules](server/hieratika/schedule.py). |
+| [F2.1] Schedule deleting | [incrementReferenceCounter, decrementReferenceCounter and getReferenceCounter @ PSPSServer](server/hieratika/servers/psps/pspsserver.py) | The PSPSServer implementation maintains a counter with the number of objects that are referencing any given Schedule and prevents the deletion of this Schedule if the counter value is > 0. |
+| [F2.2] Library deleting | [incrementReferenceCounter, decrementReferenceCounter and getReferenceCounter @ PSPSServer](server/hieratika/servers/psps/pspsserver.py) | The PSPSServer implementation maintains a counter with the number of objects that are referencing any given Library and prevents the deletion of this Library if the counter value is > 0. |
+| [F2.3] Parameter locking | [Variable](server/hieratika/variable.py) | The Variable class allows to set the unique identifier of another Variable (which locks this Variable). **TODO: only the client is implementing this check (the server allows to write over locked variables).** |
+| [F2.4] Schedule linking | [Schedule](server/hieratika/schedule.py) and [inheritLocks @ PSPSServer](server/hieratika/servers/psps/pspsserver.py) | The Schedule class allows to set the name of a parent Schedule, from which this Schedule inherits. If the value of a Lock is set to 1 in the parent schedule, it will be set to -1 in the newly created Schedule, so to mark it as no modifiable. |
+
+### Configuration parameters
+
+The server requires a configuration file to start.
+
+gunicorn --preload --log-file=- -k gevent -w 16 -b 0.0.0.0:80 'hieratika.wservermain:start(config="PATH_TO_CONFIG.ini")
+General
+
+#### WServer
+
+#### WLoader
+
+#### WTransformation
+
+#### WMonitor
+
+#### Authentication
+
+
 
 
 ## TODO

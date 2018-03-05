@@ -46,7 +46,7 @@ class Variable(object):
             name (str): the variable name. This name can either encode a @ separated path of a name which univocally identifies the variable in the system; or it can be the relative name of the variable when it represents a member of another variable.
             alias (str): free format text which provides a meaningful name to the variable.
             description (str): one-line description of the variable.
-            vtype (str): the variable type as one of: uint8, int8, uint16, int16, uint32, int32, uint64, int64, string, enum, lock.
+            vtype (str): the variable type as one of: uint8, int8, uint16, int16, uint32, int32, uint64, int64, string, enum, lock, schedule, library.
             numberOfElements ([int]): as an array where each entry contains the number of elements on any given direction. 
             permissions (str): user groups that are allowed to change this variable.
             value (str): string encoded variable value.
