@@ -689,10 +689,12 @@
                                         var variableName = keys[i];
                                         var variableValue = variables[keys[i]];
                                         var htkCompArray = mainFrameHtkComponents[variableName];
-                                        for (var j=0; j<htkCompArray.length; j++) {
-                                            var htkComp = htkCompArray[j];
-                                            htkComp.setReferenceValue(variableValue);
-                                            htkComp.setReference(currentReference);
+                                        if (htkCompArray !== undefined) {
+                                            for (var j=0; j<htkCompArray.length; j++) {
+                                                var htkComp = htkCompArray[j];
+                                                htkComp.setReferenceValue(variableValue);
+                                                htkComp.setReference(currentReference);
+                                            }
                                         }
                                     }
                                     parent.htkDialogs.closeWaitDialog();

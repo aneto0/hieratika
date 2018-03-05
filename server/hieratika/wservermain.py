@@ -108,22 +108,22 @@ def load(config):
         loaderClassNames = []
         if (config.has_option("hieratika", "loaderModules")):
             loaderModuleNames = config.get("hieratika", "loaderModules")
-            log.info("Transformation modules are {0}".format(loaderModuleNames))
+            log.info("Loader modules are {0}".format(loaderModuleNames))
             loaderModuleNames = ast.literal_eval(loaderModuleNames)
 
             loaderClassNames = config.get("hieratika", "loaderClasses")
-            log.info("Transformation classes are {0}".format(loaderClassNames))
+            log.info("Loader classes are {0}".format(loaderClassNames))
             loaderClassNames = ast.literal_eval(loaderClassNames)
 
         monitorModuleNames = []
         monitorClassNames = []
         if (config.has_option("hieratika", "monitorModules")):
             monitorModuleNames = config.get("hieratika", "monitorModules")
-            log.info("Transformation modules are {0}".format(monitorModuleNames))
+            log.info("Monitor modules are {0}".format(monitorModuleNames))
             monitorModuleNames = ast.literal_eval(monitorModuleNames)
 
             monitorClassNames = config.get("hieratika", "monitorClasses")
-            log.info("Transformation classes are {0}".format(monitorClassNames))
+            log.info("Monitor classes are {0}".format(monitorClassNames))
             monitorClassNames = ast.literal_eval(monitorClassNames)
 
 

@@ -384,7 +384,7 @@
                                 if (selectedOption.folder) {
                                     this.okButton.disabled = true;
                                 }
-                                else {
+                                else if (selectedOption.scheduleInfo !== undefined) {
                                     this.descriptionArea.innerHTML = selectedOption.scheduleInfo.description;
                                     var disableOK = !this.allowUserOK;
                                     if (this.editMode) {
