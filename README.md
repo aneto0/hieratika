@@ -54,7 +54,7 @@ The main functions of Hieratika are to:
 * \[F5.6\] Copy the parameter value from the value in the plant;
 * \[F5.7\] Copy the parameter value from the value in a given schedule;
 * \[F6\] Enable multi-user access to the configuration process; 
-* \[F6.1\] Allow users to concurrently edit and store private configuraton schedules;
+* \[F6.1\] Allow users to concurrently edit and store private configuration schedules;
 * \[F6.2\] Allow users to concurrently compare and copy from others' schedules;
 * \[F6.3\] Prevent users from editing other users schedules.
 * \[F6\] Inform users about any of the following changes:
@@ -100,7 +100,25 @@ cd docs/server-api
 make html
 ```
 
-The functions described above are allocated as follows:
+### HTML5 Client
+
+The standard Hieratika client is an HTML5 based application. For the sake of code clarity and organisation, it heavily relies on the JavaScript [ECMAScript version 6](http://es6-features.org) implementation on the concepts of [HTML5 Custom Elements](https://developers.google.com/web/fundamentals/web-components/), i.e. HTML5 Web Components.
+
+![alt text](docs/images/concepts-12.png "Hieratika HTML5.")
+
+![alt text](docs/images/concepts-11.png "Hieratika HTML5 client.")
+
+The user-interface for a given plant configuration model (see [Page](server/hieratika/page.py)) are developed by assembling HTML5 components ([htk-component](clients/html5/htk-component.html)) on an HTML page and by connecting such components to the [configuration parameters](server/hieratika/variable.py). 
+
+Hieratika already offers a pallete of ready to be used components, but it is expected that many application specific components will be developed by either extending existing components or by developing new components (always inheriting from [HtkComponent](clients/html5/htk-component.html)). The architecture expects that by inheriting from HtkComponent most of the component development effort is dedicated to the graphical rendering details on how a given component should be updated when its value changes. The HtkComponent already encapsulates all the required interfaces to receive streaming updates from the server and to be informed about changes to the current plant and schedule values.  
+
+The interface to the REST API is provided by the [HtkHelper](clients/html5/htk-helper.html) component. The pattern always consists on an AJAX remote call where the caller is constrained to pass two function callback references: one to be called if the request was successful and another if an error has occurred while executing the remote call.
+
+The [HtkNav](clients/html5/htk-nav.html) component   
+
+### Function allocation
+
+The functions described above are allocated to the following components:
 
 | Function | Component | Description |
 | -------- | --------- | ----------- |
