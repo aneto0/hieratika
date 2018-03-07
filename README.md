@@ -114,7 +114,38 @@ Hieratika already offers a pallete of ready to be used components, but it is exp
 
 The interface to the REST API is provided by the [HtkHelper](clients/html5/htk-helper.html) component. The pattern always consists on an AJAX remote call where the caller is constrained to pass two function callback references: one to be called if the request was successful and another if an error has occurred while executing the remote call.
 
-The [HtkNav](clients/html5/htk-nav.html) component   
+The [HtkNav](clients/html5/htk-nav.html) component provides the user-interface controls, including:
+
+* [User access](clients/html5/htk-login.html);
+* Selection of the [configuration](clients/html5/htk-schedule-selector.html) model to visualise;
+* [Editing, creation and deletion of schedules](clients/html5/htk-page-selector.html);
+* Comparing the current schedule against another schedule or the plant;
+* Copying from another schedule or from the plant;
+* Commiting changes performed on a given schedule;
+* Undoing changes performed on a given schedule; 
+* Triggering the execution of remote functions;
+* Loading the current schedule into the plant.
+
+The [HtkMainEditor](clients/html5/htk-main-editor.html) offers the iframe to hold the components that represent a given Hieratika page.
+
+The inline (mathematical) validation of the functions declared in the configuration model is performed using the component [HtkValidation](clients/html5/htk-validation.html), using the [mathjs](http://mathjs.org/) library.  
+
+#### Standard widgets
+
+| Name | tag | Description |
+| -------- | --- | --------- |
+| [Htk2DLinePlot](clients/html5/htk-2d-line-plot.html) | \<htk-2d-line-plot\> | 2d line plot component based on [www.chartjs.org](www.chartjs.org) (see attachedCallback for available options) |
+| [HtkAbstractInput](clients/html5/htk-abstract-input.html) | \<htk-abstract-input\> | Provides common methods for all the standard input components. |
+| [HtkArrayEditor](clients/html5/htk-array-editor.html) | \<htk-array-editor\> | Array editor. |
+| [HtkEnum](clients/html5/htk-enum.html) | \<htk-enum\> | Enum editor component implemented using an HTML select. |
+| [HtkInput](clients/html5/htk-input.html) | \<htk-input\> | Standard text input component. |
+| [HtkLibrary](clients/html5/htk-library.html) | N/A | An abstract class where components that are to handle library variables should inherit from. |
+| [HtkLibraryButton](clients/html5/htk-library-button.html) | \<htk-library-button\> | A button which opens a [htk-library-editor](clients/html5/htk-library-editor.html). The value of this component is the name of the selected library (username/libraryname). |
+| [HtkLibraryEditor](clients/html5/htk-library-editor.html) | \<htk-library-editor\> | An editor which is capable of rendering a library content (by displaying its associated page) and of managing libraries (creation, deletion, ...). |
+| [HtkLockButton](clients/html5/htk-lock-button.html) | \<htk-lock-button\> | A button which renders an Hieratike Lock type. |
+| [HtkScheduleButton](clients/html5/htk-schedule-button.html) | \<htk-schedule-button\> | A button which opens a htk-schedule-selector. The value of this component is the UID of the selected schedule. |
+| [HtkStructBrowser](clients/html5/htk-struct-browser.html) | \<htk-struct-browser\> | Renders an Hieratika structured variable with a tree, where each node represents a member of the structure. |
+| [HtkTextArea](clients/html5/htk-textarea.html) | \<htk-textarea\> | Text area input component. |
 
 ### Function allocation
 
