@@ -11,9 +11,11 @@ Hieratika provides a client-server infrastructure that allows to model and manag
 | Library | A type of parameter whose value is a reference to the values of a subset of parameters. | Lib1 = {A = 2; B = 3}, Lib2 = {A = 1; B = 4}, LIB-PARAMETER=Lib1, where LIB-PARAMETER is the parameter name and Lib1 the parameter value. Note that in the plant the meaningful parameters are **A** and **B**, so that when the plant is updated, Hieratika will retrieve the values that are associated with Lib1 and load the value of **A** and **B** accordingly. |
 | Live variable | Any plant variable that can be read but not modified by Hieratika. | Power supply output voltage; Switch position; ... | 
 | Lock | A parameter that is locked is not modifiable. | Maximum expert voltage. | 
+| Obsolete | A Schedule or Library that are marked as obsolete should no longer be used in new configurations. | Schedule used for the acceptance of a system which has been modified. |  
 | Parameter | Any named variable that is susceptible of being configured. | Maximum pressure value; ADC number of bits; ... |
 | Plant | The value of all the parameters that are to be loaded into the physical plant. | Vacuum system; power supply; pump; scientific code; ... |
 | Schedule | Named snapshot of a configuration. Stores the values of all the parameters at the time of the schedule creation (or updating). | Schedule for test; Schedule for operation during commissioning; Schedule for normal operation; ... |
+| UID | Unique identifier | |
 
 ## Functions
 
@@ -31,14 +33,18 @@ The main functions of Hieratika are to:
 * \[F2.2\] Prevent the deleting of a library if it is referenced by a variable in any schedule;
 * \[F2.3\] Lock a parameter from being editing based on the state of another parameter;
 ![alt text](docs/images/concepts-6.png "Hieratika concepts. Parameter locking.")
-* \[F2.4\] Enable to inherit the locking status of a parameter when creating a new schedule. If the parameter was locked in the parent schedule it shall not be editable in the inherited schedule.
+* \[F2.4\] Enable to inherit the locking status of a parameter when creating a new schedule. If the parameter was locked in the parent schedule it shall not be editable in the inherited schedule;
 ![alt text](docs/images/concepts-7.png "Hieratika concepts. Parameter locking inheritance.")
+* \[F2.5\] Allow to organise schedules inside folders; 
+* \[F2.6\] Allow to organise libraries inside folders; 
+* \[F2.7\] Allow to mark schedules as obsolete; 
+* \[F2.8\] Allow to mark libraries as obsolete; 
 * \[F3\] Allow the validation of the configuration parameters;
 * \[F3.1\] Some parameters are to be validated using mathematical expressions which might involve other parameters (e.g. PAR1 < (PAR2 * PAR3));
 * \[F3.2\] Some parameters are to be validated using complex algorithms that might be written in any modern programming language;
 * \[F3.3\] Some parameters are to be validated as a function of the value of parameters that belong to a different plant (e.g. VACUUM-PAR1 * FACTOR < POWER-SUPPLY-PAR2);
-* \[F3.3\] Some parameters are to be validated as a function of the value of live variables (e.g. POWER-SUPPLY-1-MAX-CURRENT * FACTOR < POWER-SUPPLY-2-CURRENT-VOLTAGE);
-* \[F3.4\] The validation of configuration parameters using complex algorithms shall not block the user from validating or configuring other parameters;
+* \[F3.4\] Some parameters are to be validated as a function of the value of live variables (e.g. POWER-SUPPLY-1-MAX-CURRENT * FACTOR < POWER-SUPPLY-2-CURRENT-VOLTAGE);
+* \[F3.5\] The validation of configuration parameters using complex algorithms shall not block the user from validating or configuring other parameters;
 ![alt text](docs/images/concepts-9.png "Hieratika concepts. Live variables.")
 * \[F4\] Allow the transformation of configuration parameters;
 * \[F4.1\] Some parameters are to be transformed using mathematical expressions which might involve other parameters (e.g. PAR1 = (PAR2 * PAR3));
@@ -57,10 +63,10 @@ The main functions of Hieratika are to:
 * \[F6.1\] Allow users to concurrently edit and store private configuration schedules;
 * \[F6.2\] Allow users to concurrently compare and copy from others' schedules;
 * \[F6.3\] Prevent users from editing other users schedules.
-* \[F6\] Inform users about any of the following changes:
-* \[F6.1\] Values of a given plant;
-* \[F6.2\] Values of a given schedule;
-* \[F6.3\] Update of a given transformation function.
+* \[F7\] Inform users about any of the following changes:
+* \[F7.1\] Values of a given plant;
+* \[F7.2\] Values of a given schedule;
+* \[F7.3\] Update of a given transformation function.
 
 ## Architecture
 
@@ -149,7 +155,7 @@ The inline (mathematical) validation of the functions declared in the configurat
 
 ### Function allocation
 
-The functions described above are allocated to the following components:
+The functions described above are allocated to the following components in the server:
 
 | Function | Component | Description |
 | -------- | --------- | ----------- |
@@ -163,6 +169,81 @@ The functions described above are allocated to the following components:
 | [F2.2] Library deleting | [incrementReferenceCounter, decrementReferenceCounter and getReferenceCounter @ PSPSServer](server/hieratika/servers/psps/pspsserver.py) | The PSPSServer implementation maintains a counter with the number of objects that are referencing any given Library and prevents the deletion of this Library if the counter value is > 0. |
 | [F2.3] Parameter locking | [Variable](server/hieratika/variable.py) | The Variable class allows to set the unique identifier of another Variable (which locks this Variable). **TODO: only the client is implementing this check (the server allows to write over locked variables).** |
 | [F2.4] Schedule linking | [Schedule](server/hieratika/schedule.py) and [inheritLocks @ PSPSServer](server/hieratika/servers/psps/pspsserver.py) | The Schedule class allows to set the name of a parent Schedule, from which this Schedule inherits. If the value of a Lock is set to 1 in the parent schedule, it will be set to -1 in the newly created Schedule, so to mark it as no modifiable. |
+| [F2.5] Schedule folders | [createScheduleFolder and getScheduleFolders @ HieratikaServer](server/hieratika/server.py) | The schedules can be organised inside a tree of folders. |
+| [F2.6] Library folders |**TODO** | Not implemented yet. |
+| [F2.7] Obsolete schedules | [obsoleteSchedule @ HieratikaServer](server/hieratika/server.py), [obsoleteScheduleFolder @ HieratikaServer](server/hieratika/server.py) and [isObsolete @ Schedule](server/hieratika/schedule.py) | Both the individual schedules and the folders can be marked as obsolete. |
+| [F2.8] Obsolete libraries | [obsoleteLibrary @ HieratikaServer](server/hieratika/server.py) and [isObsolete @ HLibrary](server/hieratika/hlibrary.py) |  |
+| [F3] Allow the validation of the configuration parameters | [getTransformationsInfo @ HieratikaServer](server/hieratika/server.py) and [transform @ HieratikaTransformation](server/hieratika/transformation.py) | The getTransformationsInfo allows to declare any number of functions in a given configuration model. By implementing the abstract interface in the HieratikaTransformation, any transformation function can be implemented. The validation is assumed to be a transformation function which returns a boolean value. |
+| [F3.1] Mathematical expressions | See [F3] | |
+| [F3.2] Complex algorithms | See [F3] | |
+| [F3.3] Validation with parameters from other plants | [setServer @ HieratikaTransformation](server/hieratika/transformation.py) | Any class inheriting from [HieratikaTransformation](server/hieratika/transformation.py) has access to the [HieratikaServer component](server/hieratika/server.py) to query the value of parameters from other plants. |
+| [F3.4] Validation with live parameters | [setMonitor @ HieratikaTransformation](server/hieratika/transformation.py) | Any class inheriting from [HieratikaTransformation](server/hieratika/transformation.py) has access to the [HieratikaMonitor](server/hieratika/monitor.py) components to query the value of live variables **TODO implement setMonitors** |
+| [F3.5] Non-blocking validation interface | [update @ HieratikaTransformation](server/hieratika/transformation.py) and [queueStreamData @ HieratikaServer](server/hieratika/server.py) | The component performing the validation is expected to asynchronously inform about the validation progress by calling the [update](server/hieratika/transformation.py) method. The HieratikaServer will then use Server Side Events to inform all the registered clients about the update. |
+| [F4] Allow the transformation of configuration parameters | See [F3] | |
+| [F4.1] Mathematical expressions | See [F3.1] | |
+| [F4.2] Complex algorithms | See [F3.2] | |
+| [F4.3] Non-blocking validation interface | See [F3.5] | |
+| [F5] GUI widgets | See client function allocation. ||
+| [F5.1] Update and valitation of parameters | See client function allocation. ||
+| [F5.2] Trigger validation algorithms | See client function allocation. ||
+| [F5.3] Trigger transformation algorithms | See client function allocation. ||
+| [F5.4] Compare configuration values against plant | See client function allocation. ||
+| [F5.5] Compare configuration values against other schedules | See client function allocation. ||
+| [F5.6] Copy the values from a given plant | See client function allocation. ||
+| [F5.7] Copy the values from a given schedule | See client function allocation. ||
+| [F6] Multi-user access | [wservermain interface](server/hieratika/wservermain.py) | Provides the REST API. |
+| [F6.1] Private schedules | [createSchedule @ HieratikaServer](server/hieratika/server.py) | Every (registered) user is allowed to create schedules. |
+| [F6.2] Compare and copy schedules | [getSchedules @ HieratikaServer](server/hieratika/server.py) | Every (registered) user is allowed to retrieve schedules from other users. |
+| [F6.3] Prevent users from editing other users schedules | | **TODO Currently only protected at the client side**. |
+| [F7] Live updates | [stream @ wservermain](server/hieratika/wservermain.py)  | Allows clients to register as listeners of server side events. |
+[ [F7.1] Updates from plant changes | [queueStreamData @ HieratikaServer](server/hieratika/server.py), [streamData @ HieratikaServer](server/hieratika/server.py) and [updatePlant @ WServer](server/hieratika/server.py) | The WServer calls updatePlant on the HieratikaServer implementation, which returns a list with all the parameters that were updated. This list is then streamed to the clients by calling queueStreamData on the HieratikaServer. |
+[ [F7.2] Updates from schedule changes | As 7.1 but with the method [updateSchedule @ WServer](server/hieratika/server.py) || 
+[ [F7.3] Updates of transformation functions | See [F3.5] | | 
+
+The functions described above are allocated to the following components in the HTML5 client:
+
+| Function | Component | Description |
+| -------- | --------- | ----------- |
+| [F1] Model configuration | [loadVariablesInfo @ HtkMainEditor](clients/html5/htk-main-editor.html) and [getVariablesInfo @ HtkHelper](clients/html5/htk-helper.html) | The [HtkMainEditor](clients/html5/htk-main-editor.html) loads a given page from the server and calls getVariablesInfo to populate the widgets with the variables' information. |
+| [F1.1] Schedule reference | [HtkScheduleButton](clients/html5/htk-schedule-button.html) and [HtkScheduleSelector](clients/html5/htk-schedule-selector.html) | The value of the HtkScheduleButton is the UID of the schedule selected by the user. The HtkScheduleSelector allows to select and assign a different schedule. |
+| [F1.2] Library reference | [HtkLibrary](clients/html5/htk-library.html), [HtkLibraryEditor](clients/html5/htk-library-editor.html), [HtkLibraryButton](clients/html5/htk-library-button.html), and [getLibraries, getLibraryVariablesValues, deleteLibrary, saveLibrary and obsoleteLibrary @ HtkHelper](clients/html5/htk-helper.html) | Each library type is associated to one (and only one) HTML page with its own widgets. The HtkLibraryEditor provides the frame to hold this page, together with components that allow to manage the libraries and its values (create, delete, save, ...). The HtkLibraryButton is a standard component whose value is the UID of the library instance selected by the user and that allows to open an HtkLibraryEditor. |
+| [F1.3] Structured parameters | [setVariable @ HtkComponent](clients/html5/htk-component.html) | The server side [Variable](server/hieratika/variable.py) is marshalled into a JSON structure. |
+| [F1.4] Basic types | [setVariable @ HtkComponent](clients/html5/htk-component.html)  | See [F1.3]. |
+| [F2] Schedule retrieval | [HtkScheduleSelector](clients/html5/htk-schedule-selector.html) and [getSchedules @ HtkHelper](clients/html5/htk-helper.html) | The HtkScheduleSelector allows to select and retrieve any of the schedules available for a given configuraton model. The AJAX interface to the server is encapsulated in the HtkHelper component. |
+| [F2.1] Schedule deleting | [HtkScheduleSelector](clients/html5/htk-schedule-selector.html) and [deleteSchedule @ HtkHelper](clients/html5/htk-helper.html) | The HtkScheduleSelector allows to delete any of the schedules available for a given configuraton model. The AJAX interface to the server is encapsulated in the HtkHelper component and will fail if the Schedule is referenced by any given variable. |
+| [F2.2] Library deleting | [HtkLibraryEditor](clients/html5/htk-library-editor.html) and [deleteLibrary @ HtkHelper](clients/html5/htk-helper.html) | The HtkLibraryEditor allows to delete any of the libraries available for a given variable in a configuraton model. The AJAX interface to the server is encapsulated in the HtkHelper component and will fail if the Library is referenced by any given variable. |
+| [F2.3] Parameter locking | [setLockVariable, setLocked and isReadOnly @ HtkComponent](client/html5/htk-component.html) | A component will be set as read-only if setLocked is set to true. The name of variable locking this variable is automatically retrieved from the model. |
+| [F2.4] Schedule linking | [HtkScheduleSelector](clients/html5/htk-schedule-selector.html) and [createSchedule @ HtkHelper](clients/html5/htk-helper.html) | When creating a new schedule, the HtkScheduleSelector allows to either copy or link to a source schedule. This information is propagated to server through the HtkHelper. |
+| [F2.5] Schedule folders | [HtkScheduleSelector](clients/html5/htk-schedule-selector.html) and [createScheduleFolder and getScheduleFolders @ HtkHelper](clients/html5/htk-helper.html) | The HtkScheduleSelector allows to create (and delete) schedule folders. This information is then be propagated to server through the HtkHelper. |
+| [F2.6] Library folders |**TODO** | Not implemented yet. |
+| [F2.7] Obsolete schedules | [HtkScheduleSelector](clients/html5/htk-schedule-selector.html) and [obsoleteSchedule and obsoleteScheduleFolder @ HtkHelper](clients/html5/htk-helper.html) | Individual schedules and folders that are marked as obsolete cannot be selected. |
+| [F2.8] Obsolete libraries | [obsoleteLibrary @ HtkLibraryEditor](clients/html5/htk-library-editor.html) | Libraries that are marked as obsolete cannot be selected |
+| [F3] Allow the validation of the configuration parameters | [HtkValidation](clients/html5/htk-validation.html), [HtkValidationMath](clients/html5/htk-validation.html) and  [getValidations @ HtkComponent](clients/html5/htk-component.html) | Each HtkComponent can be associated to one or more validation functions. The HtkValidationMath evaluates simple mathematical expressions using [mathjs](http://mathjs.org/). The expressions may contain variables which are the parameters or live-variables. |
+| [F3.1] Mathematical expressions | See [F3.1] | |
+| [F3.2] Complex algorithms | [HtkTransformations](clients/html5/htk-transformations.html) | The HtkTransformations allows to trigger the execution of complex algorithms in the server side. |
+| [F3.3] Validation with parameters from other plants | [getVariablesInfo @ HtkHelper](clients/html5/htk-helper.html) | The HtkHelper enables to retrieve parameters from other configuration models. |
+| [F3.4] Validation with live parameters | [isLiveVariable @ HtkComponent](clients/html5/htk-component.html) | The live-variables are modelled as the configuration parameters so that the concepts explained in [F3] apply. |
+| [F3.5] Non-blocking validation interface | [HtkTransformations](clients/html5/htk-transformations.html), [transform @ HtkHelper](clients/html5/htk-helper.html) and [HtkStream](clients/html5/htk-stream.html) | The HtkTransformation dialog is not modal. The HtkStream will fire a transformation update every time there is a server side event. |
+| [F4] Allow the transformation of configuration parameters | See [F3] | |
+| [F4.1] Mathematical expressions | See [F3.1] | |
+| [F4.2] Complex algorithms | See [F3.2] | |
+| [F4.3] Non-blocking validation interface | See [F3.5] | |
+| [F5] GUI widgets | See client function allocation. ||
+| [F5.1] Update and valitation of parameters | See client function allocation. ||
+| [F5.2] Trigger validation algorithms | See client function allocation. ||
+| [F5.3] Trigger transformation algorithms | See client function allocation. ||
+| [F5.4] Compare configuration values against plant | See client function allocation. ||
+| [F5.5] Compare configuration values against other schedules | See client function allocation. ||
+| [F5.6] Copy the values from a given plant | See client function allocation. ||
+| [F5.7] Copy the values from a given schedule | See client function allocation. ||
+| [F6] Multi-user access | [wservermain interface](server/hieratika/wservermain.py) | Provides the REST API. |
+| [F6.1] Private schedules | [createSchedule @ HieratikaServer](server/hieratika/server.py) | Every (registered) user is allowed to create schedules. |
+| [F6.2] Compare and copy schedules | [getSchedules @ HieratikaServer](server/hieratika/server.py) | Every (registered) user is allowed to retrieve schedules from other users. |
+| [F6.3] Prevent users from editing other users schedules | | **TODO Currently only protected at the client side**. |
+| [F7] Live updates | [stream @ wservermain](server/hieratika/wservermain.py)  | Allows clients to register as listeners of server side events. |
+[ [F7.1] Updates from plant changes | [queueStreamData @ HieratikaServer](server/hieratika/server.py), [streamData @ HieratikaServer](server/hieratika/server.py) and [updatePlant @ WServer](server/hieratika/server.py) | The WServer calls updatePlant on the HieratikaServer implementation, which returns a list with all the parameters that were updated. This list is then streamed to the clients by calling queueStreamData on the HieratikaServer. |
+[ [F7.2] Updates from schedule changes | As 7.1 but with the method [updateSchedule @ WServer](server/hieratika/server.py) || 
+[ [F7.3] Updates of transformation functions | See [F3.5] | | 
 
 ### Configuration parameters
 
