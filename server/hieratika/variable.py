@@ -75,6 +75,7 @@ class Variable(object):
 
     def setName(self, name):
         """ Sets the variable name.
+        
         Args:
             name(str): the new variable name.
         """
@@ -131,6 +132,7 @@ class Variable(object):
 
     def setValidations(self, validations):
         """ Sets the validations functions for the variable (see __init__)
+        
         Args:
             validations ([str]): array of validation functions that are associated to this variable.
         """
@@ -145,6 +147,7 @@ class Variable(object):
 
     def setLockVariable(self, lockVariable):
         """ Sets this variable lock variable (see __init__)
+        
         Args:
             lockVariable (str): the name of the variable which will set the locking state of this variable.
         """
@@ -153,6 +156,7 @@ class Variable(object):
 
     def setValue(self, value):
         """ Sets the variables value.
+        
         Args:
             value (str): value to be updated.
         """
@@ -179,15 +183,17 @@ class Variable(object):
 
     def setParent(self, parent):
         """ Sets the parent variable of this variable, i.e. the structured variable only this member variable.
-            Args:
-                parent (Variable): the parent variable.
+        
+        Args:
+        	parent (Variable): the parent variable.
         """
         self.parent = parent
 
     def addMember(self, variable):
         """ Adds a variable a member of this variable. IsStruct() will return True
-            Args:
-                variable (Variable): the member variable.
+        
+        Args:
+        	variable (Variable): the member variable.
         """
         variable.setParent(self)
         self.members[variable.getName()] = variable
@@ -202,10 +208,11 @@ class Variable(object):
 
     def getMember(self, memberName):
         """ Gets a member variable of this variable.
-            Args:
-                memberName (str): the name of the member variable to be retrieved.
-            Returns:
-                The member variable or None if it does not exist.
+        
+        Args:
+        	memberName (str): the name of the member variable to be retrieved.
+		Returns:
+        	The member variable or None if it does not exist.
         """
         try:
             member = self.members[memberName]
@@ -252,8 +259,8 @@ class Variable(object):
     def __str__(self):
         """ Returns a string representation of a Variable.
             
-            Returns:
-                A string representation of a Variable which consists of the absolute name followed by the value.
+		Returns:
+        	A string representation of a Variable which consists of the absolute name followed by the value.
         """
         return "{0} [{1}] : {2}".format(self.getAbsoluteName(), self.getNumberOfElements(), self.getValue()) 
 

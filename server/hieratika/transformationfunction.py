@@ -61,6 +61,7 @@ class TransformationFunction(object):
 
     def setFunction(self, fun):
         """ Sets the function name.
+        
         Args:
             fun(str): the new function name.
         """
@@ -89,7 +90,8 @@ class TransformationFunction(object):
 
     def getUID(self):
         """
-        Returns a unique identifier for the TransformationFunction based on the function name, input variables names and output variables names.
+        Returns:
+        	A unique identifier for the TransformationFunction based on the function name, input variables names and output variables names.
         """
         return "{0}_{1}_{2}".format(self.fun, self.inputs.keys(), self.outputs.keys())
 

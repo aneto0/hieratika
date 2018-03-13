@@ -24,5 +24,5 @@ help:
 	rm $(SOURCEDIR)/hieratika.*.rst
 	rm $(SOURCEDIR)/test.rst
 	rm $(SOURCEDIR)/test.*.rst
-	@$(SPHINXAPIDOC) -f -o source/ ../../server/
+	@$(SPHINXAPIDOC) -f -o "$(SOURCEDIR)" ../../server/
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)

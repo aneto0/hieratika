@@ -48,6 +48,7 @@ class HieratikaBasicAuth(HieratikaAuth):
 
     def load(self, config):
         """ Loads the list of usernames that are allowed to login into the system.
+        
         Args:
             config(ConfigParser): shall contain the usernames and user groups in the "auth-impl" section inside a parameter named users.
             The format shall be users:username1;usergroup1;usergroup2,username2;usergroup1,... (i.e. users are separated by , and each user groups separated by ;)
@@ -73,8 +74,8 @@ class HieratikaBasicAuth(HieratikaAuth):
 
     def authenticate(self, username, password):
         """ 
-            Returns:
-                True if the username was specified in the list of allowed usernames.
+        Returns:
+        	True if the username was specified in the list of allowed usernames.
         """
         return (username in self.allowedUsers)
 

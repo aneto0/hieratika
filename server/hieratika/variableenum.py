@@ -61,6 +61,7 @@ class VariableEnum(Variable):
 
     def getChoices(self):
         """ Only meaningful for enum types.
+        
         Returns:
             The list of possible enum choices.
         """
@@ -68,6 +69,7 @@ class VariableEnum(Variable):
 
     def setChoices(self, choices):
         """ Set the available choices (only meaningful for enum types)
+        
         Args:
             choices ([str]): the list of available choices for the enum.
         """

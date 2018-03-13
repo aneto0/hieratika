@@ -141,6 +141,7 @@ class HieratikaServer(object):
 
     def userLoggedIn(self, username, token):
         """ Called everytime a user is logged in into the system.
+        
         Args:
             username (str): the username of the user.
         """
@@ -148,6 +149,7 @@ class HieratikaServer(object):
 
     def userLoggedOut(self, username, token):
         """ Called everytime a user is logged in into the system.
+        
         Args:
             username (str): the username of the user.
         """
@@ -163,6 +165,7 @@ class HieratikaServer(object):
     @abstractmethod
     def load(self, config):
         """ Configures the server against a set of parameters. This set of parameters is specific for each server implementation.
+        
         Args:
             config(ConfigParser): the server specific implementation parameters are in the section "server-impl".
         Returns:
@@ -287,9 +290,9 @@ class HieratikaServer(object):
         Args:
             scheduleUID(str): unique schedule identifier.
         Returns:
-            A dictionary of variableId:variableValue pairs  
-        pass
+            A dictionary of variableId:variableValue pairs          
         """
+        pass
 
     @abstractmethod
     def getLibraryVariablesValues(self, libraryUID):
@@ -298,9 +301,9 @@ class HieratikaServer(object):
         Args:
             libraryUID(str): unique library identifier.
         Returns:
-            A dictionary of variableId:variableValue pairs  
-        pass
+            A dictionary of variableId:variableValue pairs          
         """
+        pass
 
     @abstractmethod
     def commitSchedule(self, tid, scheduleUID, variables):

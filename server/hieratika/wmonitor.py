@@ -86,6 +86,7 @@ class WMonitor(object):
 
     def setMonitors(self, monitorImpls):
         """ Sets the HieratikaMonitor implementations to be used.
+        
         Args:
             monitorImpls ([HieratikaMonitor]): the list of HieratikaMonitor implementations to be used.
         """

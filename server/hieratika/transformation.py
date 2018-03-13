@@ -48,6 +48,7 @@ class HieratikaTransformation(object):
     @abstractmethod
     def load(self, manager, config):
         """ Configures the transformation against a set of parameters. This set of parameters is specific for each transformation implementation.
+        
         Args:
             manager(multiprocessing.Manager): A multiprocessing Manager instance to allocate objects that are to be shared by different processes.
             config(ConfigParser): the transformation specific implementation parameters are in the section "transformation-impl".
@@ -60,6 +61,7 @@ class HieratikaTransformation(object):
     def transform(self, transformationUID, fun, inputs):
         """ Executes the transformation function against the provided inputs.
             Note that the outputs are to be streamed through a different interface (see update).
+            
         Args:
             transformationUID (str): unique identifier for the transformation (one for each call to this function) to be used when calling the update method.
             fun (str): name of the function to be executed.
@@ -72,6 +74,7 @@ class HieratikaTransformation(object):
     @abstractmethod
     def isTransformationSupported(self, fun, inputs):
         """ Returns True if the transformation defined by fun and by list of inputs can be executed by this HieratikaTransformation instance.
+        
         Args:
             fun (str): name of the function to be executed.
             inputs ({variableName1:value1, variableName2:value2, ...}):  dictionary with variables to be used as input to the function.
@@ -83,6 +86,7 @@ class HieratikaTransformation(object):
     def loadCommon(self, manager, config):
         """ Loads parameters that are common to all transformation implementations.
             NOOP as of today.
+            
         Args:
             manager(multiprocessing.Manager): A multiprocessing Manager instance to allocate objects that are to be shared by different processes.
         Returns:
@@ -100,6 +104,7 @@ class HieratikaTransformation(object):
 
     def update(self, transformationUID, state, progress, outputs):
         """ Informs about the state of the transformation identified by the transformationUID. 
+        
         Args:
             transformationUID (str): unique identifier of the transformation.
             state (int): execution state as one of the following: 0: RUNNING; 1: COMPLETED; -1: ERROR.

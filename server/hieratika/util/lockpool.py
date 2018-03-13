@@ -143,6 +143,7 @@ class LockPool(object):
                
     def isKeyInUse(self, key): 
         """ Checks if a given key is currently being used.
+        
         Returns:
             True if the key currently being used to lock a semaphore in the pool.
         """

@@ -103,10 +103,11 @@ class PSPSServer(HieratikaServer):
 
     def getXmlId(self, xmlPath):
         """ Creates a unique key and associates it to an xml file path. (needed to have shorter keys as path may potentially be very long).
-            Args:
-                xmlPath(str): path to the xml file.
-            Returns:
-                A key which univocally identifies this xml path. 
+        
+        Args:
+        	xmlPath(str): path to the xml file.
+		Returns:
+        	A key which univocally identifies this xml path. 
         """
         self.mux.acquire()
         if (len(self.xmlIds) > self.maxXmlIds):
@@ -130,10 +131,11 @@ class PSPSServer(HieratikaServer):
 
     def findVariableInXml(self, xmlRoot, variableName):       
         """ Walks the xml tree and finds a given variable.
-            Args:
-                xmlRoot (xmlElement): xml element pointing at the root of the psps file.
-            Returns:
-                An xmlElement poiting at the variable identified by variableName (using the structSeparator symbol as a separator for folders).
+
+		Args:
+        	xmlRoot (xmlElement): xml element pointing at the root of the psps file.
+		Returns:
+        	An xmlElement poiting at the variable identified by variableName (using the structSeparator symbol as a separator for folders).
         """
         idx = variableName.find(self.structSeparator)
         if (idx != -1):
@@ -198,10 +200,11 @@ class PSPSServer(HieratikaServer):
 
     def createVariableFromRecord(self, rec):
         """ Helper function to create a Variable from a psps record.
-            Args:
-                rec (xmlElement): xml Element pointing at ns0:record.
-            Returns:
-                A Variable constructed from the ns0:record elements
+        
+        Args:
+        	rec (xmlElement): xml Element pointing at ns0:record.
+        Returns:
+        	A Variable constructed from the ns0:record elements
         """
         try:
             nameXml = rec.find("./ns0:name", self.xmlns)
@@ -343,6 +346,7 @@ class PSPSServer(HieratikaServer):
 
     def loadConstraints(self, xmlRoot):
         """ Loads all the constraints defined in the xml file and (if needed) resets all the variables names to the full structured path name.
+        
         Args:
             xmlRoot (Element): pointing at the root of the xml file where to load the constraints from.
         Returns:
@@ -1491,6 +1495,7 @@ class PSPSServer(HieratikaServer):
 
     def getRecord(self, rec, variables, prefix = None):
         """ Helper function to load the value from a record.
+        
         Args:
             rec (xml Element): the record to be queried.
             variables ({}): dictionary where to set the record name: record value

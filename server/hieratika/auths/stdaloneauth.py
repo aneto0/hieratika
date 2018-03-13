@@ -50,6 +50,7 @@ class HieratikaStdAloneAuth(HieratikaAuth):
 
     def load(self, config):
         """ Loads the list of groups that are to be associated with this user.
+        
         Returns:
             True 
         """

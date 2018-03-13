@@ -56,6 +56,7 @@ class EPICSV3Monitor(HieratikaMonitor):
 
     def readCAInfoParameter(self, cainfoStr, parameter):
         """ Helper function which extract the parameter from the string returned by cainfo.
+        
         Args:
             cainfoStr(str): value return by a cainfo of a given variable.
             parameter(str): parameter to be extracted.
@@ -74,6 +75,7 @@ class EPICSV3Monitor(HieratikaMonitor):
 
     def convertVariableTypeFromCAInfo(self, vtype):
         """ Helper function which converts the vtype returned by cainfo into an hieratika type.
+        
         Args:
             parameter(str): vtype type to be converted.
         Returns:

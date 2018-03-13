@@ -61,6 +61,7 @@ class WTransformation:
 
     def setTransformations(self, transformationImpls):
         """ Sets the HieratikaTransformation implementations to be used.
+        
         Args:
             transformationImpls ([HieratikaTransformation]): the list of HieratikaTransformation implementations to be used.
         """

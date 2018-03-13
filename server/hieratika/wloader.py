@@ -51,6 +51,7 @@ class WLoader(object):
 
     def setLoaders(self, loaderImpls):
         """ Sets the HieratikaLoader implementations to be used.
+        
         Args:
             loaderImpls ([HieratikaLoader]): the list of HieratikaLoader implementations to be used.
         """

@@ -339,3 +339,18 @@ python2.7 -m hieratika.wservermain -i PATH_TO_CONFIG.ini -H 0.0.0.0 -p 80
 
 Note that all the plugins must be found in the *PYTHONPATH*.
 
+## API documentation
+
+The server API documentation can be built issuing the following commands:
+
+```
+cd docs/server-api
+make html
+```
+
+The output will be available in the [API html folder](docs/server-api/build/html/index.html).
+
+## Demos
+
+Several demos are available in the [psps demo folder](demo/server/psps/).
+

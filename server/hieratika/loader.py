@@ -48,6 +48,7 @@ class HieratikaLoader(object):
     @abstractmethod
     def load(self, config):
         """ Configures the loader against a set of parameters. This set of parameters is specific for each loader implementation.
+        
         Args:
             config(ConfigParser): the loader specific implementation parameters are in the section "loader-impl".
         Returns:
@@ -58,6 +59,7 @@ class HieratikaLoader(object):
     def loadCommon(self, config):
         """ Loads parameters that are common to all loader implementations.
             NOOP as of today.
+            
         Args:
             config (ConfigParser): parameters that are common to all authenticate implementations:
             NONE as of today.
@@ -69,6 +71,7 @@ class HieratikaLoader(object):
     @abstractmethod
     def loadIntoPlant(self, pageName):
         """ Loads the configuration model idenfied by the page.
+        
         Args:
             pageName (str): unique identifier of the configuration to be loaded.
         Returns:
@@ -79,6 +82,7 @@ class HieratikaLoader(object):
     @abstractmethod
     def isLoadable(self, pageName):
         """ Returns True if the configuration identified by the page name can be loaded by this loader.
+        
         Args:
             pageName (str): unique identifier of the configuration to be loaded.
         Returns:

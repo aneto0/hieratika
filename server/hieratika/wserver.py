@@ -55,6 +55,7 @@ class WServer(object):
     def isTokenValid(self, request):
         """ Verifies if a given token is valid.
             A token is valid iff a user has been properly validated.
+            
         Args:
             request.form["token"]: a token generated after a successful user login.
         Returns:
@@ -76,6 +77,7 @@ class WServer(object):
    
     def setServer(self, serverImpl):
         """ Sets the HieratikaServer implementation to be used.
+        
         Args:
             serverImpl (HieratikaServer): the HieratikaServer final implementation to be used.
         """
@@ -90,6 +92,7 @@ class WServer(object):
 
     def setAuth(self, authImpl):
         """ Sets the HieratikaAuth implementation to be used.
+        
         Args:
             authImpl (HieratikaAuth): the HieratikaAuth final implementation to be used.
         """
@@ -656,14 +659,16 @@ class WServer(object):
         return toReturn
 
     def setPagesFolder(self, pagesFolder):
-        """ Sets the pages folder
+        """ Sets the pages folder.
+        
         Args:
             pagesFolder (str): folder which holds the html pages with the user-interfaces.
         """
         self.pagesFolder = pagesFolder
 
     def getPagesFolder(self):
-        """ Gets the pages folder
+        """ Gets the pages folder.
+        
         Returns:
             The folder which holds the html pages with the user-interfaces.
         """

@@ -48,6 +48,7 @@ class HieratikaMonitor(object):
     @abstractmethod
     def load(self, config):
         """ Configures the monitor against a set of parameters. This set of parameters is specific for each transformation implementation.
+        
         Args:
             config(ConfigParser): the monitor specific implementation parameters are in the section "live-impl".
         Returns:
@@ -70,6 +71,7 @@ class HieratikaMonitor(object):
     def loadCommon(self, config):
         """ Loads parameters that are common to all monitor implementations.
             NOOP as of today.
+            
         Args:
             config (ConfigParser): parameters that are common to all authenticate implementations:
             NONE as of today.
@@ -88,6 +90,7 @@ class HieratikaMonitor(object):
 
     def update(self, variables):
         """ To be called any time any of the variable monitored by this implementation has changed. 
+        
         Args:
             variables ({variableName1:value1, variableName2:value2, ...}):  dictionary with the variables that have been updated.
         Returns:
