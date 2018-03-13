@@ -320,7 +320,7 @@
                         var htkCompArray = mainFrameHtkComponents[keys[i]];
                         for (var j=0; j<htkCompArray.length; j++) {
                             var htkComp = htkCompArray[j];
-                            htkComp.setReadOnly(true);
+                            htkComp.setEditable(false);
                             var value = htkComp.getPlantValue();
                             if (value !== undefined) {
                                 htkComp.setValue(value, false);

@@ -97,7 +97,7 @@ The REST API is offered by the [wservermain interface](server/hieratika/wserverm
 
 Upon a successful login (see [login @ wserver](server/hieratika/wserver.py) and [authenticate @ auth](server/hieratika/auth.py)) the API caller will receive a unique token that shall be used on all subsequent calls to the API.
 
-The default [parameters server](server/hieratika/servers/psps/pspsserver.py) is based on a filesystem database where each plant system is modelled using the ITER PSPS configuration objects XML structure.  
+The default [parameters server](server/hieratika/servers/psps/pspsserver.py) is based on a filesystem database where each plant system is modelled using the [ITER Pulse Schedule Preparation System (PSPS)](https://static.iter.org/codac/cs/CODAC_Operational_Applications_Release_N_S3WV58_v1_2.pdf) configuration objects XML structure.  
 
 Detailed information about the API parameters and return values can be found by building the server-api documentation.
 
@@ -228,49 +228,114 @@ The functions described above are allocated to the following components in the H
 | [F4.1] Mathematical expressions | See [F3.1] | |
 | [F4.2] Complex algorithms | See [F3.2] | |
 | [F4.3] Non-blocking validation interface | See [F3.5] | |
-| [F5] GUI widgets | See client function allocation. ||
-| [F5.1] Update and valitation of parameters | See client function allocation. ||
-| [F5.2] Trigger validation algorithms | See client function allocation. ||
-| [F5.3] Trigger transformation algorithms | See client function allocation. ||
-| [F5.4] Compare configuration values against plant | See client function allocation. ||
-| [F5.5] Compare configuration values against other schedules | See client function allocation. ||
-| [F5.6] Copy the values from a given plant | See client function allocation. ||
-| [F5.7] Copy the values from a given schedule | See client function allocation. ||
-| [F6] Multi-user access | [wservermain interface](server/hieratika/wservermain.py) | Provides the REST API. |
-| [F6.1] Private schedules | [createSchedule @ HieratikaServer](server/hieratika/server.py) | Every (registered) user is allowed to create schedules. |
-| [F6.2] Compare and copy schedules | [getSchedules @ HieratikaServer](server/hieratika/server.py) | Every (registered) user is allowed to retrieve schedules from other users. |
-| [F6.3] Prevent users from editing other users schedules | | **TODO Currently only protected at the client side**. |
-| [F7] Live updates | [stream @ wservermain](server/hieratika/wservermain.py)  | Allows clients to register as listeners of server side events. |
-[ [F7.1] Updates from plant changes | [queueStreamData @ HieratikaServer](server/hieratika/server.py), [streamData @ HieratikaServer](server/hieratika/server.py) and [updatePlant @ WServer](server/hieratika/server.py) | The WServer calls updatePlant on the HieratikaServer implementation, which returns a list with all the parameters that were updated. This list is then streamed to the clients by calling queueStreamData on the HieratikaServer. |
-[ [F7.2] Updates from schedule changes | As 7.1 but with the method [updateSchedule @ WServer](server/hieratika/server.py) || 
-[ [F7.3] Updates of transformation functions | See [F3.5] | | 
+| [F5] GUI widgets | [HtkComponent](clients/html5/htk-component.html) | The user-interface is based on HTML5 custom elements. See the HTML5 client description above. |
+| [F5.1] Update and valitation of parameters | [HtkComponent](clients/html5/htk-component.html) and [HtkStream](clients/html5/htk-stream.html) | Components inheriting from HtkComponent will be notified (if implementing the correct function) when the value (or any of the reference values) of the component changes.  |
+| [F5.2] Trigger validation algorithms | See [F3.1] and [F3.5]. ||
+| [F5.3] Trigger transformation algorithms | See [F3.1] and [F3.5]. ||
+| [F5.4] Compare configuration values against plant | [HtkComponent](clients/html5/htk-component.html) and [HtkNav](clients/html5/htk-nav.html). | The HtkComponent knows about the its current value and about the plant value. The HtkNav allows to warn every HtkComponent that the user wants to compare the current value against the plant value. The component is then expected to renderer itself accordingly. |
+| [F5.5] Compare configuration values against other schedules | [HtkComponent](clients/html5/htk-component.html) and [HtkNav](clients/html5/htk-nav.html). | The HtkComponent knows about the its current value and about the current selected schedule value. The HtkNav allows to warn every HtkComponent that the user wants to compare the current value against the currently selected schedule value. The component is then expected to renderer itself accordingly. |
+| [F5.6] Copy the values from a given plant | [HtkComponent](clients/html5/htk-component.html) and [copyFromReferencePlantButton.onclick @ HtkNav](clients/html5/htk-nav.html). | The copyFromReferencePlantButton.onclick function retrieves the current plant values for all the components and calls setValue on all the HtkComponents. |
+| [F5.7] Copy the values from a given plant | [HtkComponent](clients/html5/htk-component.html) and [copyFromSchedule @ HtkNav](clients/html5/htk-nav.html). | The copyFromSchedule function retrieves the current schedule values for all the components and calls setValue on all the HtkComponents. |
+| [F6] Multi-user access | [HtkLogin](client/html5/HtkLogin.html) and [HtkHelper](client/html5/HtkHelper.html) | The HtkHelper implements the REST API. |
+| [F6.1] Private schedules | [createSchedule @ HtkHelper](client/html5/HtkHelper.html) | Every (registered) user is allowed to create schedules. |
+| [F6.2] Compare and copy schedules | [HtkScheduleSelector](clients/html5/htk-schedule-selector.html) and [getSchedules @ HtkHelper](clients/html5/htk-helper.html) | The HtkScheduleSelector allows to select and retrieve any of the schedules available for a given configuraton model. See also [F5.6] and [F5.7] |
+| [F6.3] Prevent users from editing other users schedules | [copyFromSchedule @ HtkNav](clients/html5/htk-nav.html) and [setEditable @ HtkComponent](clients/html5/htk-component.html) | If the schedule does not belong to the user, every HtkComponent will have setEditable(false).  |
+| [F7] Live updates | [HtkStream](clients/html5/HtkStream.html) | Propagates the server side events to the relevant HtkComponent. |
+| [F7.1] Updates from plant changes | [HtkStream](clients/html5/HtkStream.html) and [setPlantValue @ HtkComponent](clients/html5/htk-component) | The HtkStream looks for the components associated to the updated parameter name (using the component id) and calls setPlantValue. |
+| [F7.2] Updates from schedule changes | [HtkStream](clients/html5/HtkStream.html) and [setPlantValue @ HtkComponent](clients/html5/htk-component) | The HtkStream checks if the updated schedule is the one being displayed to this user. If so, it looks for the components associated to the updated parameter name (using the component id) and calls setValue. |
+| [F7.3] Updates of transformation functions | [fireTransformationUpdated @ HtkStream](clients/html5/HtkStream.html) and [HtkTransformations](clients/html5/htk-transformations.html) | Registered components will be informed about transformation updates. | 
 
-### Configuration parameters
+### Security
 
-The server requires a configuration file to start.
+All the REST requests are associated to a token that is generated at login time by the authentication module plugin. 
+Each request is then validated by the authentication module plugin using the function [isTokenValid](server/hieratika/auth.py).
 
+### Statistics
+
+The [WStatistics](server/hieratika/wstatistics.py) module maintains a local (non-persistent) database which is updated with the server execution time of all the API calls performed during the execution of Hieratika. TODO this component is still to be finished.  
+
+### Configuration
+
+The server requires a configuration file to start. This file is parsed using the python [ConfigParser](https://docs.python.org/2/library/configparser.html).
+
+All the Hieratika server modules ([HieratikaServer](server/hieratika/server.py), [HieratikaAuth](server/hieratika/auth.py), [HieratikaMonitor](server/hieratika/monitor.py), [HieratikaLoader](server/hieratika/loader.py) and [HieratikaTransformation](server/hieratika/transformation.py)) are loaded as plugins using the python [importlib](https://docs.python.org/3/library/importlib.html). The configuration file is expected to declare *Sections* with the names *PLUGIN_TYPE-impl* where *PLUGIN_TYPE* is one of: server, monitor, auth, loader, transformation. Upon the start of the server, Hieratika will call the function **load** on all the registered plugins (see below). 
+
+Some plugin types also have compulsory configurations that are common to all the plugin specialisations. These compulsory configuration are loaded by calling the function **loadCommon** on all the relevant plugins. 
+
+The structure of the configuration file is divided in *Sections* and shall respect the following structure:
+
+#### Section: [Hieratika]
+
+Parameters that are common to all Hieratika modules.
+
+| Parameter | Description | Example |  
+| --------- | ----------- | ------- |  
+| staticFolder | Location of the HTML5 standard client HTML pages (Flask static folder). | ../../clients/html5 | 
+| pagesFolder | Location of the HTML user-interface pages associated to the plant where Hieratika is being used. | ../demo/server/pages |
+| serverModule | The python module where to load the server class from. | hieratika.servers.psps.pspsserver |
+| serverClass | The Hieratika server implementation. | PSPSServer |
+| udpBroadcastQueuePort | The port that is used by the [BroadcastQueue](server/hieratika/util/broadcastqueue.py). | 23450 |
+| structSeparator | Symbol which defines how member names in a structure variable name are separated. | @ |
+| authModule | The module where to load the auth class from. | hieratika.auths.basicauth |
+| authClass | The Hieratika auth implementation. | HieratikaBasicAuth |
+| loginMonitorUpdateRate | The time interval (in seconds) at which the state of logged in users is to be checked. | 60 | 
+| loginMonitorMaxInactivityTime | Maximum time that a given user can stay logged in without interacting with the server. | 600 |
+| loginMaxUsers | Maximum number of users that can be logged in at any time. | 4 |
+| standalone | If true Hieratika is expected to be used in single user mode. This information can be used by the Hieratika plugins (e.g. by the authentication module). | False |
+| numberOfLocks | A [LockPool](server/hieratika/util/lockpool.py) is used to guarantee transactional access (process and thread safe) to the internal logic of Hieratika. This number defines the maximum number of semaphores that can be used in parallel. | 8 |
+| statisticsUpdatePeriod | Update rate at which the statistics should be updated. | 1 |
+| transformationModules | List of transformation plugin modules | ['ahkabdemo'] |  
+| transformationClasses | List of transformation plugin classes | ['AhkabDemo'] |
+| loaderModules | List of loader plugin modules | ['hieratika.loaders.noop.nooploader'] |  
+| loaderClasses | List of loader plugin classes | ['NOOPLoader'] |
+| monitorModules | List of monitor plugin modules | ['hieratika.monitors.epicsv3.epicsv3monitor'] |  
+| monitorClasses | List of monitor plugin classes | ['EPICSV3Monitor'] |
+
+#### Section: [server-impl]
+
+Parameters that are specific to the parameter server implementation, e.g. the [PSPSServer](server/hieratika/servers/psps/pspsserver.py):
+
+| Parameter | Description | Example |  
+| --------- | ----------- | ------- |
+| baseDir   | Base directory where all the XML files are stored. | ../demo/server/psps |
+| numberOfLocks | A [LockPool](server/hieratika/util/lockpool.py) is used to guarantee transactional access (process and thread safe) to the database. This number defines the maximum number of semaphores that can be used in parallel. | 8 |
+| maxXmlIds | Maximum number of xmlIds accelerators that are allowed at any given time (see getXmlId @ PSPSServer). | 32 |
+| maxXmlCachedTrees | Maximum number of xml trees that can be cached in memory. | 16 |
+| defaultExperts | Defines the experts that are to be associated to all the variables. | ['experts-1', 'experts-2'] |
+| autoCreatePages | Automatically creates basic html pages for each plant system (if these don't exist already). | True |
+
+#### Section: [auth-impl]
+
+Parameters that are specific to the authentication module implementation, e.g. the [HieratikaBasicAuth](server/hieratika/auths/basicauth.py).
+
+| Parameter | Description | Example |  
+| --------- | ----------- | ------- |
+| users     | Comma separated list of users that are authorised to use the system. The semicolon associates groups (experts) to the users. | gcc-configurator;experts-1;experts-2,codac-dev-1;experts-1;experts-2,codac-dev-2;experts-1,codac-dev-3 |
+
+#### Section: [monitor-impl]
+
+Parameters that are specific to the monitoring module implementation, e.g. the [EPICSV3Monitor](server/hieratika/monitors/epicsv3/epicsv3monitor.py).
+
+| Parameter | Description | Example |  
+| --------- | ----------- | ------- |
+| variableListJsonPath | JSON file with the list of variables to be monitored. | ../demo/server/monitors/epicsv3/monitor.json |
+
+
+## Deployment
+  
+The list of dependencies is declared [requirements](requirements.txt) file.
+
+The server can be started using [gunicorn](http://gunicorn.org/):
+
+```
 gunicorn --preload --log-file=- -k gevent -w 16 -b 0.0.0.0:80 'hieratika.wservermain:start(config="PATH_TO_CONFIG.ini")
-General
+```
 
-#### WServer
+or directly python: 
 
-#### WLoader
+```
+python2.7 -m hieratika.wservermain -i PATH_TO_CONFIG.ini -H 0.0.0.0 -p 80
+```
 
-#### WTransformation
+Note that all the plugins must be found in the *PYTHONPATH*.
 
-#### WMonitor
-
-#### Authentication
-
-
-
-
-## TODO
--   Create the statistics backend (should these be persistent??)
--   Rename the page concept to configuration model/object - NOT DONE
--   Document the design - NOT DONE
--   Write unit tests for the server - NOT DONE
--   Port the sqlite backend - NOT DONE
--   Setup the unit testing infrastructure for the client - NOT DONE
--   Write unit tests for the client - NOT DONE
--   DAP are just normal schedules associated to a given user (make sure that the standalone implementation also supports this) - TODO - make sure this is clear in the documentation.

@@ -67,7 +67,6 @@ class HieratikaServer(object):
         self.streamUsers = SharedDictionary() 
         try:
             #IPC using UDP sockets
-            udpGroup = config.get("hieratika", "udpBroadcastQueueGroup")
             udpPort = config.getint("hieratika", "udpBroadcastQueuePort")
             self.standalone = config.getboolean("hieratika", "standalone")
             self.udpQueue = BroadcastQueue(udpPort)
