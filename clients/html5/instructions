@@ -1,0 +1,5 @@
+in domLoaded...or variablesInfoLoaded
+var htkCompArray = document._frameComponents[coilVariableId];i
+coil[prop] = parseFloat(htkCompArray[0].getValue());
+parent.htkHelper.addVariablesInfoLoadedListener(this);
+

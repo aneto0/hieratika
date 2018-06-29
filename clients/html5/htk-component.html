@@ -23,6 +23,17 @@
 <link rel="import" href="/htk-validation.html">
 
 <script type="text/javascript">
+
+	function copy(o) {
+   		var output, v, key;
+   		output = Array.isArray(o) ? [] : {};
+   		for (key in o) {
+       		v = o[key];
+       		output[key] = (typeof v === "object") ? copy(v) : v;
+   		}
+   		return output;
+	}
+
     /**
      * @brief The root of the Hieratika HTML5 components class hierarchy.
      * @details All the Hieratika HTML5 user-interface components shall inherit from HtkComponent. 
@@ -159,8 +170,8 @@
          */
         setReferenceValue (referenceValueToSet) {
             if (referenceValueToSet !== undefined) {
-                if (referenceValueToSet .slice !== undefined) {
-                    this.referenceValue = referenceValueToSet.slice(0);
+                if (Array.isArray(referenceValueToSet)) {
+                    this.referenceValue = copy(referenceValueToSet);
                 }
                 else {
                     this.referenceValue = referenceValueToSet;
@@ -185,8 +196,8 @@
          */
         setPlantValue (plantValueToSet) {
             if (plantValueToSet !==  undefined) {
-                if (plantValueToSet.slice !== undefined) {
-                    this.plantValue = plantValueToSet.slice(0);
+                if (Array.isArray(plantValueToSet)) {
+                    this.plantValue = copy(plantValueToSet);
                 }
                 else {
                     this.plantValue = plantValueToSet;
@@ -204,6 +215,8 @@
             return this.initValue;
         }
 
+
+
         /**
          * @brief Sets the inital value of this component (i.e. the value set at the last commit or when the page was loaded).
          * @details After setting the value, a fireValueChanged event with VALUE_CHANGED_INITIAL will be triggered and the component will be asked to refresh.
@@ -211,8 +224,8 @@
          */
         setInitialValue (initialValueToSet) {
             if (initialValueToSet !== undefined) {
-                if (initialValueToSet.slice !== undefined) {
-                    this.initValue = initialValueToSet.slice(0);
+                if (Array.isArray(initialValueToSet)) {
+                	this.initValue=copy(initialValueToSet);
                 }
                 else {
                     this.initValue = initialValueToSet;
@@ -393,7 +406,7 @@
          * @param[in] validationsToSet the validations to be set.
          */
         setValidations (validationsToSet) {
-            this.validations = [new HtkValidationType(this)];
+            //this.validations = [new HtkValidationType(this)];
             for(var i in validationsToSet) {
                 this.validations.push(new HtkValidationMath(validationsToSet[i]));
             }
@@ -505,6 +518,7 @@
             this.lockStatusChangedListeners = [];
             this.permissionGroups = [];
             this.userAllowedToWrite = false;
+            this.eventCustomCallbackListener = [];
 
             this.typeValue = "string";
             this.initValue = undefined;
@@ -592,6 +606,15 @@
             this.userAllowedToWrite = userAllowed;
             this.setReadOnly(this.isReadOnly());
         }
+        
+        eventCallback(param){
+        }
+        
+        //use this to initialise other components 
+        //to be called when you want
+        addEventCustomListener(comp){
+			this.eventCustomCallbackListener.push(comp);
+		}
     }
 
     /**

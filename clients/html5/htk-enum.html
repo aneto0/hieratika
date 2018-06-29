@@ -77,6 +77,13 @@
                         }   
                     }
 
+
+					reset(){
+						while(this.select.hasChildNodes()){
+                        	this.select.removeChild(this.select.childNodes[0]);
+						}	
+					}
+
                     /**
                      * @brief Adds all the available options to the selector.
                      */
@@ -90,6 +97,11 @@
                             this.select.appendChild(option);
                         }
                         this.select.value = this.getValue();
+                    }
+                    
+                    
+                    getChoices(){
+                    	return this.choices.slice(0);
                     }
 
                     /**

@@ -1,9 +1,11 @@
  <html>
     <head>
         <link rel="import" href="/libraries.html">
+        <link rel="import" href="/htk-array-editor.html">
         <link rel="import" href="/htk-component.html">
         <link rel="import" href="/htk-filter-editor.html">
-        <link rel="import" href="/htk-input.html">
+        <link rel="import" href="/htk-input2.html">
+        <link rel="import" href="/htk-matrix-editor.html">
         <link rel="import" href="/htk-library-button.html">
         <link rel="import" href="/htk-lock-button.html">
         <link rel='import' href='/htk-struct-browser.html'>
@@ -14,13 +16,25 @@
             <tr>
                 <td>Standard input</td>
                 <td>
-                    <htk-input id='DT@BT@DBL'></htk-input>
+                    <htk-input2 id='DT@BT@DBL'></htk-input2>
                 </td>
             </tr>
             <tr>
                 <td>Standard input 2</td>
                 <td>
-                    <htk-input id='DT@BT@DBL2'></htk-input>
+                    <htk-input2 id='DT@BT@DBL2'></htk-input2>
+                </td>
+           </tr>
+           <tr>
+                <td>Standard input 3</td>
+                <td>
+                    <htk-input2 id='DT@BT@DBL3'></htk-input2>
+                </td>
+           </tr>
+		   <tr>
+                <td>Standard input 4</td>
+                <td>
+                    <htk-input2 id='DT@BT@DBL4'></htk-input2>
                 </td>
            </tr>
            <tr>
@@ -66,6 +80,12 @@
                 </td>
             </tr>
             <tr>
+                <td>Matrix</td>
+                <td>
+                    <htk-matrix-editor id='DT@BT@DBLMA'></htk-matrix-editor>
+                </td>
+            </tr>
+            <tr>
                 <td>Array</td>
                 <td>
                     <htk-array-editor id='DT@BT@DBLA'></htk-array-editor>
@@ -80,7 +100,7 @@
             <tr>
                 <td>LIVE-VAR-1</td>
                 <td>
-                    <htk-input id='LIVE-VAR-1' data-live="true"></htk-input>
+                    <htk-input2 id='LIVE-VAR-1' data-live="true"></htk-input2>
                 </td>
             </tr>
 

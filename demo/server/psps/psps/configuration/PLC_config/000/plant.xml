@@ -1,0 +1,179 @@
+<configurationContainer xmlns="http://www.iter.org/CODAC/PlantSystemConfig/2014" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <schemaVersion>1.2</schemaVersion>
+    <version>00.00</version>
+    <sddVersion>1</sddVersion>
+    <name>DemoTypes</name>
+    <description>Demonstrate types</description>
+    <plantSystems>
+        <plantSystem>
+            <name>DT</name>
+            <version>1.0</version>
+            <description>Created at: 2015-05-27T11:52:32.620+02:00</description>
+            <plantRecords>
+                <folders>
+                    <folder>
+                        <name>BT</name>
+                        <records>
+                            <record size="[1, 1]" xsi:type="recordDouble">
+                                <name>DBLMA</name>
+                                <alias>DBLMA</alias>
+                                <description>Double value matrix</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <values><value>[["PLC TRIP 1"], ["PLC TRIP 2"], ["STRAY 1"], ["STRAY 2"]]</value></values></record>
+                            <record size="[1, 1]" xsi:type="recordDouble">
+                                <name>DBLMA1</name>
+                                <alias>DBLMA1</alias>
+                                <description>Double value matrix</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <values><value>[["MODULE 9 NI 9401 DIO-0"], ["MODULE 9 NI 9401 DIO-3"], ["MODULE 9 NI 9401 DIO-1"], ["MODULE 9 NI 9401 DIO-2"]]</value></values></record>
+                            <record size="[1, 1]" xsi:type="recordDouble">
+                                <name>DBLMA2</name>
+                                <alias>DBLMA2</alias>
+                                <description>Double value matrix</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <values><value>[["Alarm signaled with 0"], ["Alarm signaled with 1"], ["Pulse Train"], ["Alarm signaled with 0"]]</value></values></record>
+                            <record size="[1]" xsi:type="recordDouble">
+                                <name>DBLMA3</name>
+                                <alias>DBLMA3</alias>
+                                <description>Double value matrix</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <values><value>[["PLC TRIP 1", "GND", "STRAY 2"], ["PLC TRIP 2", "PLC TRIP 2", "STRAY 1"], ["STRAY 1", "PLC TRIP 1", "PLC TRIP 2"]]</value></values></record>
+                            <record size="[1]" xsi:type="recordDouble">
+                                <name>DBLMA4</name>
+                                <alias>DBLMA4</alias>
+                                <description>Double value matrix</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <values><value>[["PLC TRIP 1"], ["PLC TRIP 2"], ["STRAY 1"], ["STRAY 2"], ["f1"], ["f2"], ["f3"]]</value></values></record>
+                            <record size="[1]" xsi:type="recordDouble">
+                                <name>DBLMA5</name>
+                                <alias>DBLMA5</alias>
+                                <description>Double value matrix</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <values><value>[["1"], ["1"], ["1"], ["1"], ["1"], ["1"], ["2"]]</value></values></record>
+							<record size="[[1, 1], [1, 1], [1, 1]]" xsi:type="recordDouble">
+                                <name>DBLSIP</name>
+                                <alias>DBLSIP</alias>
+                                <description>Double value matrix</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <values><value>[[["EU ARC INPUT"], ["EU ARC INPUT"]], [["MODULE 9 NI 9401 DIO-0"], ["MODULE 9 NI 9401 DIO-0"]], [["Alarm signaled with 0"], ["Alarm signaled with 0"]]]</value></values></record>
+							<record size="1" xsi:type="recordDouble">
+                                <name>DBLSFS</name>
+                                <alias>DBLSFS</alias>
+                                <description>Double value matrix</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <values><value>["f1", "f2", "f3"]</value></values></record>
+							<record size="[[1]]" xsi:type="recordDouble">
+                                <name>DBLSFL</name>
+                                <alias>DBLSFL</alias>
+                                <description>Double value matrix</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <values><value>[[["1", "x", "x"], ["x", "1", "x"], ["x", "x", "1"]], [["0", "x", "x"], ["x", "0", "x"], ["x", "x", "0"]], [["x", "x", "1"], ["x", "1", "x"], ["1", "x", "x"]]]</value></values></record>
+                            <record size="[1]" xsi:type="recordDouble">
+                                <name>DBLSFO</name>
+                                <alias>DBLSFO</alias>
+                                <description>Double value matrix</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <values><value>[["Normal Op", [["PLC TRIP 1"], ["PLC TRIP 2"], ["STRAY 1"], ["STRAY 2"], ["f1"], ["f2"], ["f3"]], [["1"], ["1"], ["1"], ["1"], ["1"], ["1"], ["0"]]]]</value></values></record>
+                            <record size="1" xsi:type="recordEnum">
+                                <name>DBLE</name>
+                                <alias>DBLE</alias>
+                                <description>Enum</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <choices>
+                                <choice>EU ARC INPUT</choice>
+                                <choice>RU ARC INPUT</choice>
+                                <choice>PLC TRIP 1</choice>
+                                <choice>PLC TRIP 2</choice>
+                                <choice>MODE LOSS</choice>
+                                <choice>STRAY 1</choice>
+                                <choice>STRAY 2</choice>
+                                </choices>
+                                <values><value>["ciaoo"]</value></values></record>
+                            <record size="1" xsi:type="recordEnum">
+                                <name>DBLE1</name>
+                                <alias>DBLE1</alias>
+                                <description>Enum</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <choices>
+                                <choice>MODULE 9 NI 9401 DIO-0</choice>
+                                <choice>MODULE 9 NI 9401 DIO-1</choice>
+                                <choice>MODULE 9 NI 9401 DIO-2</choice>
+                                <choice>MODULE 9 NI 9401 DIO-3</choice>
+                                </choices>
+                                <values><value>["ciaoo"]</value></values></record>
+                            <record size="1" xsi:type="recordEnum">
+                                <name>DBLE2</name>
+                                <alias>DBLE2</alias>
+                                <description>Enum</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <choices>
+                                <choice>Alarm signaled with 0</choice>
+                                <choice>Alarm signaled with 1</choice>
+                                <choice>Pulse Train</choice>
+                                </choices>
+                                <values><value>["ciaoo"]</value></values></record> 
+                            <record size="1" xsi:type="recordEnum">
+                                <name>DBLE3</name>
+                                <alias>DBLE3</alias>
+                                <description>Enum</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <choices>
+                                <choice>EU ARC INPUT</choice>
+                                <choice>RU ARC INPUT</choice>
+                                <choice>PLC TRIP 1</choice>
+                                <choice>PLC TRIP 2</choice>
+                                <choice>MODE LOSS</choice>
+                                <choice>STRAY 0</choice>
+                                <choice>STRAY 1</choice>
+                                </choices>
+                                <values><value>["ciaoo"]</value></values></record>   
+                            <record size="1" xsi:type="recordEnum">
+                                <name>DBLE4</name>
+                                <alias>DBLE4</alias>
+                                <description>Enum</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <choices>
+                                <choice>EU ARC INPUT</choice>
+                                <choice>RU ARC INPUT</choice>
+                                <choice>PLC TRIP 1</choice>
+                                <choice>PLC TRIP 2</choice>
+                                <choice>MODE LOSS</choice>
+                                <choice>STRAY 1</choice>
+                                <choice>STRAY 2</choice>
+                                </choices>
+                                <values><value>["ciaoo"]</value></values></record>
+                            <record size="1" xsi:type="recordEnum">
+                                <name>DBLE5</name>
+                                <alias>DBLE5</alias>
+                                <description>Enum</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <choices>
+                                <choice>0</choice>
+                                <choice>1</choice>
+                                </choices>
+                                <values><value>["1"]</value></values></record>   
+                            <record size="1" xsi:type="recordLock">
+                                <name>LOCK1</name>
+                                <alias>LOCK1</alias>
+                                <description>A lock</description>
+                                <values><value>[1]</value></values></record>
+                            <record size="1" xsi:type="recordLock">
+                                <name>LOCK2</name>
+                                <alias>LOCK2</alias>
+                                <description>Another lock</description>
+                                <values><value>[0]</value></values></record>
+                            <record size="1" xsi:type="recordLock">
+                                <name>LOCK3</name>
+                                <alias>LOCK3</alias>
+                                <description>And another lock</description>
+                                <values><value>[0]</value></values></record>
+                        </records>
+                    </folder>
+                </folders>
+            </plantRecords>
+            <sdnTopics>
+                <sdnTopics/>
+            </sdnTopics>
+        </plantSystem>
+    </plantSystems>
+<references><counter>2</counter></references></configurationContainer>

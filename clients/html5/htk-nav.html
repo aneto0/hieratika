@@ -300,6 +300,7 @@
 
                         this.streamer.addTransformationListener(this.transformationsViewer);
 
+                        parent.htkHelper.setHtkNav(this);
                         parent.htkHelper.addInvalidTokenListener(this);
                         this.pageListeners = [this];
                         this.scheduleChangeListeners = [this];

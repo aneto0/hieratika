@@ -1,0 +1,59 @@
+<configurationContainer xmlns="http://www.iter.org/CODAC/PlantSystemConfig/2014" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <schemaVersion>1.2</schemaVersion>
+    <version>00.00</version>
+    <sddVersion>1</sddVersion>
+    <name>DemoTypes</name>
+    <description>Demonstrate types</description>
+    <plantSystems>
+        <plantSystem>
+            <name>DT</name>
+            <version>1.0</version>
+            <description>Created at: 2015-05-27T11:52:32.620+02:00</description>
+            <plantRecords>
+                <folders>
+                    <folder>
+                        <name>BT</name>
+                        <records>
+                            <record size="[1]" xsi:type="recordDouble">
+                                <name>DBLGAMARR</name>
+                                <alias>DBLGAMARR</alias>
+                                <description>String Array</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <values><value>["GAM1"]</value></values></record>
+                            <record size="[1]" xsi:type="recordDouble">
+                                <name>DBLDSARR</name>
+                                <alias>DBLDSARR</alias>
+                                <description>String Array</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <values><value>["DS1"]</value></values></record>
+                            <record size="[1]" xsi:type="recordDouble">
+                                <name>DBLSTARR</name>
+                                <alias>DBLSTARR</alias>
+                                <description>String Array</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <values><value>["State1"]</value></values></record>
+                            <record size="1" xsi:type="recordLock">
+                                <name>LOCK1</name>
+                                <alias>LOCK1</alias>
+                                <description>A lock</description>
+                                <values><value>[1]</value></values></record>
+                            <record size="1" xsi:type="recordLock">
+                                <name>LOCK2</name>
+                                <alias>LOCK2</alias>
+                                <description>Another lock</description>
+                                <values><value>[0]</value></values></record>
+                            <record size="1" xsi:type="recordLock">
+                                <name>LOCK3</name>
+                                <alias>LOCK3</alias>
+                                <description>And another lock</description>
+                                <values><value>[0]</value></values></record>
+                        </records>
+                    </folder>
+                </folders>
+            </plantRecords>
+            <sdnTopics>
+                <sdnTopics/>
+            </sdnTopics>
+        </plantSystem>
+    </plantSystems>
+<references><counter>2</counter></references></configurationContainer>

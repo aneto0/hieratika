@@ -19,19 +19,37 @@
                                 <alias>DBL</alias>
                                 <description>Double value</description>
                                 <lock>DT@BT@LOCK1</lock>
-                                <values><value>-109</value></values></record>
+                                <values><value>1</value></values></record>
                             <record size="1" xsi:type="recordDouble">
                                 <name>DBL2</name>
                                 <alias>DBL2</alias>
                                 <description>Another Double value</description>
                                 <lock>DT@BT@LOCK1</lock>
-                                <values><value>[3]</value></values></record>
+                                <values><value>[-2]</value></values></record>
+                            <record size="1" xsi:type="recordDouble">
+                                <name>DBL3</name>
+                                <alias>DBL3</alias>
+                                <description>Another Double value</description>
+                                <lock>DT@BT@LOCK1</lock>
+                                <values><value>1</value></values></record>
+							<record size="1" xsi:type="recordDouble">
+                                <name>DBL4</name>
+                                <alias>DBL4</alias>
+                                <description>Another Double value</description>
+                                <lock>DT@BT@LOCK1</lock>
+                                <values><value>1</value></values></record>
+                            <record size="[2, 2]" xsi:type="recordDouble">
+                                <name>DBLMA</name>
+                                <alias>DBLMA</alias>
+                                <description>Double value matrix</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <values><value>[[3, 6], [7, 8]]</value></values></record>
                             <record size="[5]" xsi:type="recordDouble">
                                 <name>DBLA</name>
                                 <alias>DBLA</alias>
                                 <description>Double value array</description>
                                 <lock>DT@BT@LOCK2</lock>
-                                <values><value>[1, 2, 3, 4, 5]</value></values></record>
+                                <values><value>[2, 2, 3, 4, 5, 6]</value></values></record>
                             <record size="[2,3]" xsi:type="recordDouble">
                                 <name>DBLM</name>
                                 <alias>DBLM</alias>
@@ -42,20 +60,17 @@
                                 <name>LOCK1</name>
                                 <alias>LOCK1</alias>
                                 <description>A lock</description>
-                                <values><value>1</value></values>
-                            </record>
+                                <values><value>[1]</value></values></record>
                             <record size="1" xsi:type="recordLock">
                                 <name>LOCK2</name>
                                 <alias>LOCK2</alias>
                                 <description>Another lock</description>
-                                <values><value>0</value></values>
-                            </record>
+                                <values><value>[0]</value></values></record>
                             <record size="1" xsi:type="recordLock">
                                 <name>LOCK3</name>
                                 <alias>LOCK3</alias>
                                 <description>And another lock</description>
-                                <values><value>0</value></values>
-                            </record>
+                                <values><value>[0]</value></values></record>
                         </records>
                     </folder>
                     <folder>
@@ -103,12 +118,12 @@
                                 <name>SCH1</name>
                                 <alias>SCH1</alias>
                                 <description>Schedule</description>
-                                <values><value>"../demo/server/psps/users/codac-dev-1/configuration/55A0-discrete-coils/000/example1.xml"</value></values></record>
+                                <values><value>""</value></values></record>
                             <record size="1" xsi:type="recordSchedule">
                                 <name>SCH2</name>
                                 <alias>SCH2</alias>
                                 <description>Schedule</description>
-                                <values><value>"../demo/server/psps/users/codac-dev-1/configuration/55A0-discrete-coils/000/example2.xml"</value></values></record>
+                                <values><value>""</value></values></record>
                         </records>
                     </folder>
 
