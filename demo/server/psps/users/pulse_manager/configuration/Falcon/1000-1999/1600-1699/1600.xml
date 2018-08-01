@@ -1,0 +1,2355 @@
+<configurationContainer xmlns:ns0="http://www.iter.org/CODAC/PlantSystemConfig/2014" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ns0:schemaVersion>1.2</ns0:schemaVersion>
+  <ns0:version>00.00</ns0:version>
+  <ns0:sddVersion>1</ns0:sddVersion>
+  <ns0:name>Falcon configuration pulse 1600</ns0:name>
+  <ns0:description>Falcon configuration for pulse 1600</ns0:description>
+  <ns0:plantSystems>
+    <ns0:plantSystem>
+      <ns0:name>BPS</ns0:name>
+      <ns0:version>1.0</ns0:version>
+      <ns0:description>Falcon configuration structure for plant system BPS</ns0:description>
+      <ns0:plantRecords>
+        <ns0:folders/>
+        <ns0:records>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>MOD_DEPTH_0</ns0:name>
+            <ns0:alias>MOD_DEPTH_0</ns0:alias>
+            <ns0:description>MOD_DEPTH_0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>MOD_FREQ_R0</ns0:name>
+            <ns0:alias>MOD_FREQ_R0</ns0:alias>
+            <ns0:description>MOD_FREQ_R0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>MOD_LENGTH0</ns0:name>
+            <ns0:alias>MOD_LENGTH0</ns0:alias>
+            <ns0:description>MOD_LENGTH0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>MOD_STARTI0</ns0:name>
+            <ns0:alias>MOD_STARTI0</ns0:alias>
+            <ns0:description>MOD_STARTI0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>PULSE_LENG0</ns0:name>
+            <ns0:alias>PULSE_LENG0</ns0:alias>
+            <ns0:description>PULSE_LENG0</ns0:description>
+            <ns0:values>
+              <ns0:value>5001.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>PULSE_NUMB0</ns0:name>
+            <ns0:alias>PULSE_NUMB0</ns0:alias>
+            <ns0:description>PULSE_NUMB0</ns0:description>
+            <ns0:values>
+              <ns0:value>1.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>RAMP_DOWN_0</ns0:name>
+            <ns0:alias>RAMP_DOWN_0</ns0:alias>
+            <ns0:description>RAMP_DOWN_0</ns0:description>
+            <ns0:values>
+              <ns0:value>1000.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>RAMP_UP_TI0</ns0:name>
+            <ns0:alias>RAMP_UP_TI0</ns0:alias>
+            <ns0:description>RAMP_UP_TI0</ns0:description>
+            <ns0:values>
+              <ns0:value>1000.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>VOLTAGE_LE0</ns0:name>
+            <ns0:alias>VOLTAGE_LE0</ns0:alias>
+            <ns0:description>VOLTAGE_LE0</ns0:description>
+            <ns0:values>
+              <ns0:value>70000.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+        </ns0:records>
+      </ns0:plantRecords>
+    </ns0:plantSystem>
+    <ns0:plantSystem>
+      <ns0:name>CPS</ns0:name>
+      <ns0:version>1.0</ns0:version>
+      <ns0:description>Falcon configuration structure for plant system CPS</ns0:description>
+      <ns0:plantRecords>
+        <ns0:folders/>
+        <ns0:records>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>AUTORESTAR0</ns0:name>
+            <ns0:alias>AUTORESTAR0</ns0:alias>
+            <ns0:description>AUTORESTAR0</ns0:description>
+            <ns0:values>
+              <ns0:value>0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>FOLDBACK_A0</ns0:name>
+            <ns0:alias>FOLDBACK_A0</ns0:alias>
+            <ns0:description>FOLDBACK_A0</ns0:description>
+            <ns0:values>
+              <ns0:value>0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>FOLDBACK_C0</ns0:name>
+            <ns0:alias>FOLDBACK_C0</ns0:alias>
+            <ns0:description>FOLDBACK_C0</ns0:description>
+            <ns0:values>
+              <ns0:value>1</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>FOLDBACK_R0</ns0:name>
+            <ns0:alias>FOLDBACK_R0</ns0:alias>
+            <ns0:description>FOLDBACK_R0</ns0:description>
+            <ns0:values>
+              <ns0:value>0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0010_MAX0</ns0:name>
+            <ns0:alias>IT0010_MAX0</ns0:alias>
+            <ns0:description>IT0010_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>105.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0010_MIN0</ns0:name>
+            <ns0:alias>IT0010_MIN0</ns0:alias>
+            <ns0:description>IT0010_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>95.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0011_MAX0</ns0:name>
+            <ns0:alias>IT0011_MAX0</ns0:alias>
+            <ns0:description>IT0011_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>105.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0011_MIN0</ns0:name>
+            <ns0:alias>IT0011_MIN0</ns0:alias>
+            <ns0:description>IT0011_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>95.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>OVERVOLTAG0</ns0:name>
+            <ns0:alias>OVERVOLTAG0</ns0:alias>
+            <ns0:description>OVERVOLTAG0</ns0:description>
+            <ns0:values>
+              <ns0:value>32.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>OVERVOLTAG1</ns0:name>
+            <ns0:alias>OVERVOLTAG1</ns0:alias>
+            <ns0:description>OVERVOLTAG1</ns0:description>
+            <ns0:values>
+              <ns0:value>1.8</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>SP_CURRENT0</ns0:name>
+            <ns0:alias>SP_CURRENT0</ns0:alias>
+            <ns0:description>SP_CURRENT0</ns0:description>
+            <ns0:values>
+              <ns0:value>10.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>SP_CURRENT1</ns0:name>
+            <ns0:alias>SP_CURRENT1</ns0:alias>
+            <ns0:description>SP_CURRENT1</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>SP_VOLTAGE0</ns0:name>
+            <ns0:alias>SP_VOLTAGE0</ns0:alias>
+            <ns0:description>SP_VOLTAGE0</ns0:description>
+            <ns0:values>
+              <ns0:value>30.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>SP_VOLTAGE1</ns0:name>
+            <ns0:alias>SP_VOLTAGE1</ns0:alias>
+            <ns0:description>SP_VOLTAGE1</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>UNDERVOLTA0</ns0:name>
+            <ns0:alias>UNDERVOLTA0</ns0:alias>
+            <ns0:description>UNDERVOLTA0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>UNDERVOLTA1</ns0:name>
+            <ns0:alias>UNDERVOLTA1</ns0:alias>
+            <ns0:description>UNDERVOLTA1</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+        </ns0:records>
+      </ns0:plantRecords>
+    </ns0:plantSystem>
+    <ns0:plantSystem>
+      <ns0:name>CRIO</ns0:name>
+      <ns0:version>1.0</ns0:version>
+      <ns0:description>Falcon configuration structure for plant system CRIO</ns0:description>
+      <ns0:plantRecords>
+        <ns0:folders/>
+        <ns0:records>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>GENERAL_PU0</ns0:name>
+            <ns0:alias>GENERAL_PU0</ns0:alias>
+            <ns0:description>GENERAL_PU0</ns0:description>
+            <ns0:values>
+              <ns0:value>2.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>MOD_TIME_P0</ns0:name>
+            <ns0:alias>MOD_TIME_P0</ns0:alias>
+            <ns0:description>MOD_TIME_P0</ns0:description>
+            <ns0:values>
+              <ns0:value>500.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>MOD_TIME_P1</ns0:name>
+            <ns0:alias>MOD_TIME_P1</ns0:alias>
+            <ns0:description>MOD_TIME_P1</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>MOD_TIME_P2</ns0:name>
+            <ns0:alias>MOD_TIME_P2</ns0:alias>
+            <ns0:description>MOD_TIME_P2</ns0:description>
+            <ns0:values>
+              <ns0:value>1000.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>MOD_TIME_P3</ns0:name>
+            <ns0:alias>MOD_TIME_P3</ns0:alias>
+            <ns0:description>MOD_TIME_P3</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>PULSE_LENG1</ns0:name>
+            <ns0:alias>PULSE_LENG1</ns0:alias>
+            <ns0:description>PULSE_LENG1</ns0:description>
+            <ns0:values>
+              <ns0:value>5000000.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>PULSE_LENG2</ns0:name>
+            <ns0:alias>PULSE_LENG2</ns0:alias>
+            <ns0:description>PULSE_LENG2</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>PULSE_LENG3</ns0:name>
+            <ns0:alias>PULSE_LENG3</ns0:alias>
+            <ns0:description>PULSE_LENG3</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>PULSE_LENG4</ns0:name>
+            <ns0:alias>PULSE_LENG4</ns0:alias>
+            <ns0:description>PULSE_LENG4</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>PULSE_LENG5</ns0:name>
+            <ns0:alias>PULSE_LENG5</ns0:alias>
+            <ns0:description>PULSE_LENG5</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>PULSE_LENG6</ns0:name>
+            <ns0:alias>PULSE_LENG6</ns0:alias>
+            <ns0:description>PULSE_LENG6</ns0:description>
+            <ns0:values>
+              <ns0:value>5.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>PULSE_LENG7</ns0:name>
+            <ns0:alias>PULSE_LENG7</ns0:alias>
+            <ns0:description>PULSE_LENG7</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>PULSE_LENG8</ns0:name>
+            <ns0:alias>PULSE_LENG8</ns0:alias>
+            <ns0:description>PULSE_LENG8</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+        </ns0:records>
+      </ns0:plantRecords>
+    </ns0:plantSystem>
+    <ns0:plantSystem>
+      <ns0:name>CWS</ns0:name>
+      <ns0:version>1.0</ns0:version>
+      <ns0:description>Falcon configuration structure for plant system CWS</ns0:description>
+      <ns0:plantRecords>
+        <ns0:folders/>
+        <ns0:records>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0116_MAX0</ns0:name>
+            <ns0:alias>QT0116_MAX0</ns0:alias>
+            <ns0:description>QT0116_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>1200.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0116_MIN0</ns0:name>
+            <ns0:alias>QT0116_MIN0</ns0:alias>
+            <ns0:description>QT0116_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>900.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0216_MAX0</ns0:name>
+            <ns0:alias>QT0216_MAX0</ns0:alias>
+            <ns0:description>QT0216_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>700.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0216_MIN0</ns0:name>
+            <ns0:alias>QT0216_MIN0</ns0:alias>
+            <ns0:description>QT0216_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>500.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0218_MAX0</ns0:name>
+            <ns0:alias>QT0218_MAX0</ns0:alias>
+            <ns0:description>QT0218_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>40.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0218_MIN0</ns0:name>
+            <ns0:alias>QT0218_MIN0</ns0:alias>
+            <ns0:description>QT0218_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0327_MAX0</ns0:name>
+            <ns0:alias>QT0327_MAX0</ns0:alias>
+            <ns0:description>QT0327_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0327_MIN0</ns0:name>
+            <ns0:alias>QT0327_MIN0</ns0:alias>
+            <ns0:description>QT0327_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0329_MAX0</ns0:name>
+            <ns0:alias>QT0329_MAX0</ns0:alias>
+            <ns0:description>QT0329_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0329_MIN0</ns0:name>
+            <ns0:alias>QT0329_MIN0</ns0:alias>
+            <ns0:description>QT0329_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0408_MAX0</ns0:name>
+            <ns0:alias>QT0408_MAX0</ns0:alias>
+            <ns0:description>QT0408_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>16.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0408_MIN0</ns0:name>
+            <ns0:alias>QT0408_MIN0</ns0:alias>
+            <ns0:description>QT0408_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>11.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0410_MAX0</ns0:name>
+            <ns0:alias>QT0410_MAX0</ns0:alias>
+            <ns0:description>QT0410_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>65.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0410_MIN0</ns0:name>
+            <ns0:alias>QT0410_MIN0</ns0:alias>
+            <ns0:description>QT0410_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>35.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0412_MAX0</ns0:name>
+            <ns0:alias>QT0412_MAX0</ns0:alias>
+            <ns0:description>QT0412_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0412_MIN0</ns0:name>
+            <ns0:alias>QT0412_MIN0</ns0:alias>
+            <ns0:description>QT0412_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0416_MAX0</ns0:name>
+            <ns0:alias>QT0416_MAX0</ns0:alias>
+            <ns0:description>QT0416_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>50.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0416_MIN0</ns0:name>
+            <ns0:alias>QT0416_MIN0</ns0:alias>
+            <ns0:description>QT0416_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>36.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0418_MAX0</ns0:name>
+            <ns0:alias>QT0418_MAX0</ns0:alias>
+            <ns0:description>QT0418_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>75.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0418_MIN0</ns0:name>
+            <ns0:alias>QT0418_MIN0</ns0:alias>
+            <ns0:description>QT0418_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>53.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0420_MAX0</ns0:name>
+            <ns0:alias>QT0420_MAX0</ns0:alias>
+            <ns0:description>QT0420_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>16.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0420_MIN0</ns0:name>
+            <ns0:alias>QT0420_MIN0</ns0:alias>
+            <ns0:description>QT0420_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>6.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0422_MAX0</ns0:name>
+            <ns0:alias>QT0422_MAX0</ns0:alias>
+            <ns0:description>QT0422_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>15.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0422_MIN0</ns0:name>
+            <ns0:alias>QT0422_MIN0</ns0:alias>
+            <ns0:description>QT0422_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>9.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0427_MAX0</ns0:name>
+            <ns0:alias>QT0427_MAX0</ns0:alias>
+            <ns0:description>QT0427_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>65.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0427_MIN0</ns0:name>
+            <ns0:alias>QT0427_MIN0</ns0:alias>
+            <ns0:description>QT0427_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>40.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0429_MAX0</ns0:name>
+            <ns0:alias>QT0429_MAX0</ns0:alias>
+            <ns0:description>QT0429_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>32.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0429_MIN0</ns0:name>
+            <ns0:alias>QT0429_MIN0</ns0:alias>
+            <ns0:description>QT0429_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>24.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0433_MAX0</ns0:name>
+            <ns0:alias>QT0433_MAX0</ns0:alias>
+            <ns0:description>QT0433_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>14.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0433_MIN0</ns0:name>
+            <ns0:alias>QT0433_MIN0</ns0:alias>
+            <ns0:description>QT0433_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>9.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0435_MAX0</ns0:name>
+            <ns0:alias>QT0435_MAX0</ns0:alias>
+            <ns0:description>QT0435_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0435_MIN0</ns0:name>
+            <ns0:alias>QT0435_MIN0</ns0:alias>
+            <ns0:description>QT0435_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0437_MAX0</ns0:name>
+            <ns0:alias>QT0437_MAX0</ns0:alias>
+            <ns0:description>QT0437_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>32.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0437_MIN0</ns0:name>
+            <ns0:alias>QT0437_MIN0</ns0:alias>
+            <ns0:description>QT0437_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>9.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0439_MAX0</ns0:name>
+            <ns0:alias>QT0439_MAX0</ns0:alias>
+            <ns0:description>QT0439_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>32.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0439_MIN0</ns0:name>
+            <ns0:alias>QT0439_MIN0</ns0:alias>
+            <ns0:description>QT0439_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>26.5</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0441_MAX0</ns0:name>
+            <ns0:alias>QT0441_MAX0</ns0:alias>
+            <ns0:description>QT0441_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>14.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0441_MIN0</ns0:name>
+            <ns0:alias>QT0441_MIN0</ns0:alias>
+            <ns0:description>QT0441_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>9.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0443_MAX0</ns0:name>
+            <ns0:alias>QT0443_MAX0</ns0:alias>
+            <ns0:description>QT0443_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>45.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0443_MIN0</ns0:name>
+            <ns0:alias>QT0443_MIN0</ns0:alias>
+            <ns0:description>QT0443_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>35.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0447_MAX0</ns0:name>
+            <ns0:alias>QT0447_MAX0</ns0:alias>
+            <ns0:description>QT0447_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>10.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>QT0447_MIN0</ns0:name>
+            <ns0:alias>QT0447_MIN0</ns0:alias>
+            <ns0:description>QT0447_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>6.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TDT0601_MA0</ns0:name>
+            <ns0:alias>TDT0601_MA0</ns0:alias>
+            <ns0:description>TDT0601_MA0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.82</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TDT0602_MA0</ns0:name>
+            <ns0:alias>TDT0602_MA0</ns0:alias>
+            <ns0:description>TDT0602_MA0</ns0:description>
+            <ns0:values>
+              <ns0:value>12.85</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0011_MAX0</ns0:name>
+            <ns0:alias>TT0011_MAX0</ns0:alias>
+            <ns0:description>TT0011_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0021_MAX0</ns0:name>
+            <ns0:alias>TT0021_MAX0</ns0:alias>
+            <ns0:description>TT0021_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0031_MAX0</ns0:name>
+            <ns0:alias>TT0031_MAX0</ns0:alias>
+            <ns0:description>TT0031_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0091_MAX0</ns0:name>
+            <ns0:alias>TT0091_MAX0</ns0:alias>
+            <ns0:description>TT0091_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0151_MAX0</ns0:name>
+            <ns0:alias>TT0151_MAX0</ns0:alias>
+            <ns0:description>TT0151_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>35.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0152_MAX0</ns0:name>
+            <ns0:alias>TT0152_MAX0</ns0:alias>
+            <ns0:description>TT0152_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0251_MAX0</ns0:name>
+            <ns0:alias>TT0251_MAX0</ns0:alias>
+            <ns0:description>TT0251_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>35.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0252_MAX0</ns0:name>
+            <ns0:alias>TT0252_MAX0</ns0:alias>
+            <ns0:description>TT0252_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0253_MAX0</ns0:name>
+            <ns0:alias>TT0253_MAX0</ns0:alias>
+            <ns0:description>TT0253_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>35.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0254_MAX0</ns0:name>
+            <ns0:alias>TT0254_MAX0</ns0:alias>
+            <ns0:description>TT0254_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0507_MAX0</ns0:name>
+            <ns0:alias>TT0507_MAX0</ns0:alias>
+            <ns0:description>TT0507_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>35.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0508_MAX0</ns0:name>
+            <ns0:alias>TT0508_MAX0</ns0:alias>
+            <ns0:description>TT0508_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0509_MAX0</ns0:name>
+            <ns0:alias>TT0509_MAX0</ns0:alias>
+            <ns0:description>TT0509_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>35.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0510_MAX0</ns0:name>
+            <ns0:alias>TT0510_MAX0</ns0:alias>
+            <ns0:description>TT0510_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0511_MAX0</ns0:name>
+            <ns0:alias>TT0511_MAX0</ns0:alias>
+            <ns0:description>TT0511_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>35.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0512_MAX0</ns0:name>
+            <ns0:alias>TT0512_MAX0</ns0:alias>
+            <ns0:description>TT0512_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0515_MAX0</ns0:name>
+            <ns0:alias>TT0515_MAX0</ns0:alias>
+            <ns0:description>TT0515_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>35.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0516_MAX0</ns0:name>
+            <ns0:alias>TT0516_MAX0</ns0:alias>
+            <ns0:description>TT0516_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0517_MAX0</ns0:name>
+            <ns0:alias>TT0517_MAX0</ns0:alias>
+            <ns0:description>TT0517_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>35.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0518_MAX0</ns0:name>
+            <ns0:alias>TT0518_MAX0</ns0:alias>
+            <ns0:description>TT0518_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0519_MAX0</ns0:name>
+            <ns0:alias>TT0519_MAX0</ns0:alias>
+            <ns0:description>TT0519_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>35.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0520_MAX0</ns0:name>
+            <ns0:alias>TT0520_MAX0</ns0:alias>
+            <ns0:description>TT0520_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0521_MAX0</ns0:name>
+            <ns0:alias>TT0521_MAX0</ns0:alias>
+            <ns0:description>TT0521_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>35.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0522_MAX0</ns0:name>
+            <ns0:alias>TT0522_MAX0</ns0:alias>
+            <ns0:description>TT0522_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0527_MAX0</ns0:name>
+            <ns0:alias>TT0527_MAX0</ns0:alias>
+            <ns0:description>TT0527_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0528_MAX0</ns0:name>
+            <ns0:alias>TT0528_MAX0</ns0:alias>
+            <ns0:description>TT0528_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>35.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0529_MAX0</ns0:name>
+            <ns0:alias>TT0529_MAX0</ns0:alias>
+            <ns0:description>TT0529_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0530_MAX0</ns0:name>
+            <ns0:alias>TT0530_MAX0</ns0:alias>
+            <ns0:description>TT0530_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>35.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0533_MAX0</ns0:name>
+            <ns0:alias>TT0533_MAX0</ns0:alias>
+            <ns0:description>TT0533_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0534_MAX0</ns0:name>
+            <ns0:alias>TT0534_MAX0</ns0:alias>
+            <ns0:description>TT0534_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>35.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0535_MAX0</ns0:name>
+            <ns0:alias>TT0535_MAX0</ns0:alias>
+            <ns0:description>TT0535_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0536_MAX0</ns0:name>
+            <ns0:alias>TT0536_MAX0</ns0:alias>
+            <ns0:description>TT0536_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>35.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0539_MAX0</ns0:name>
+            <ns0:alias>TT0539_MAX0</ns0:alias>
+            <ns0:description>TT0539_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0540_MAX0</ns0:name>
+            <ns0:alias>TT0540_MAX0</ns0:alias>
+            <ns0:description>TT0540_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>35.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0541_MAX0</ns0:name>
+            <ns0:alias>TT0541_MAX0</ns0:alias>
+            <ns0:description>TT0541_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0542_MAX0</ns0:name>
+            <ns0:alias>TT0542_MAX0</ns0:alias>
+            <ns0:description>TT0542_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>35.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0543_MAX0</ns0:name>
+            <ns0:alias>TT0543_MAX0</ns0:alias>
+            <ns0:description>TT0543_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0544_MAX0</ns0:name>
+            <ns0:alias>TT0544_MAX0</ns0:alias>
+            <ns0:description>TT0544_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>35.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0547_MAX0</ns0:name>
+            <ns0:alias>TT0547_MAX0</ns0:alias>
+            <ns0:description>TT0547_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TT0548_MAX0</ns0:name>
+            <ns0:alias>TT0548_MAX0</ns0:alias>
+            <ns0:description>TT0548_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>35.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+        </ns0:records>
+      </ns0:plantRecords>
+    </ns0:plantSystem>
+    <ns0:plantSystem>
+      <ns0:name>EFIL</ns0:name>
+      <ns0:version>1.0</ns0:version>
+      <ns0:description>Falcon configuration structure for plant system EFIL</ns0:description>
+      <ns0:plantRecords>
+        <ns0:folders/>
+        <ns0:records>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0001_MAX0</ns0:name>
+            <ns0:alias>IT0001_MAX0</ns0:alias>
+            <ns0:description>IT0001_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>20.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>RAMP_OFF_A0</ns0:name>
+            <ns0:alias>RAMP_OFF_A0</ns0:alias>
+            <ns0:description>RAMP_OFF_A0</ns0:description>
+            <ns0:values>
+              <ns0:value>3.5</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>RAMP_ON_AC0</ns0:name>
+            <ns0:alias>RAMP_ON_AC0</ns0:alias>
+            <ns0:description>RAMP_ON_AC0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.45</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>SP_CURRENT2</ns0:name>
+            <ns0:alias>SP_CURRENT2</ns0:alias>
+            <ns0:description>SP_CURRENT2</ns0:description>
+            <ns0:values>
+              <ns0:value>18.7</ns0:value>
+            </ns0:values>
+          </ns0:record>
+        </ns0:records>
+      </ns0:plantRecords>
+    </ns0:plantSystem>
+    <ns0:plantSystem>
+      <ns0:name>ESCM</ns0:name>
+      <ns0:version>1.0</ns0:version>
+      <ns0:description>Falcon configuration structure for plant system ESCM</ns0:description>
+      <ns0:plantRecords>
+        <ns0:folders/>
+        <ns0:records>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0030_MAX0</ns0:name>
+            <ns0:alias>IT0030_MAX0</ns0:alias>
+            <ns0:description>IT0030_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0030_MIN0</ns0:name>
+            <ns0:alias>IT0030_MIN0</ns0:alias>
+            <ns0:description>IT0030_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0031_MAX0</ns0:name>
+            <ns0:alias>IT0031_MAX0</ns0:alias>
+            <ns0:description>IT0031_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>100.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0031_MIN0</ns0:name>
+            <ns0:alias>IT0031_MIN0</ns0:alias>
+            <ns0:description>IT0031_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0032_MAX0</ns0:name>
+            <ns0:alias>IT0032_MAX0</ns0:alias>
+            <ns0:description>IT0032_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>100.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0032_MIN0</ns0:name>
+            <ns0:alias>IT0032_MIN0</ns0:alias>
+            <ns0:description>IT0032_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0033_MAX0</ns0:name>
+            <ns0:alias>IT0033_MAX0</ns0:alias>
+            <ns0:description>IT0033_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>100.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0033_MIN0</ns0:name>
+            <ns0:alias>IT0033_MIN0</ns0:alias>
+            <ns0:description>IT0033_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0034_MAX0</ns0:name>
+            <ns0:alias>IT0034_MAX0</ns0:alias>
+            <ns0:description>IT0034_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>100.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0034_MIN0</ns0:name>
+            <ns0:alias>IT0034_MIN0</ns0:alias>
+            <ns0:description>IT0034_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>RAMP_R_BUC0</ns0:name>
+            <ns0:alias>RAMP_R_BUC0</ns0:alias>
+            <ns0:description>RAMP_R_BUC0</ns0:description>
+            <ns0:values>
+              <ns0:value>1.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>RAMP_R_BUC1</ns0:name>
+            <ns0:alias>RAMP_R_BUC1</ns0:alias>
+            <ns0:description>RAMP_R_BUC1</ns0:description>
+            <ns0:values>
+              <ns0:value>6.001</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>RAMP_R_GUN0</ns0:name>
+            <ns0:alias>RAMP_R_GUN0</ns0:alias>
+            <ns0:description>RAMP_R_GUN0</ns0:description>
+            <ns0:values>
+              <ns0:value>1.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>RAMP_R_GUN1</ns0:name>
+            <ns0:alias>RAMP_R_GUN1</ns0:alias>
+            <ns0:description>RAMP_R_GUN1</ns0:description>
+            <ns0:values>
+              <ns0:value>9.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>RAMP_R_GUN2</ns0:name>
+            <ns0:alias>RAMP_R_GUN2</ns0:alias>
+            <ns0:description>RAMP_R_GUN2</ns0:description>
+            <ns0:values>
+              <ns0:value>1.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>RAMP_R_GUN3</ns0:name>
+            <ns0:alias>RAMP_R_GUN3</ns0:alias>
+            <ns0:description>RAMP_R_GUN3</ns0:description>
+            <ns0:values>
+              <ns0:value>9.006</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>RAMP_R_MAI0</ns0:name>
+            <ns0:alias>RAMP_R_MAI0</ns0:alias>
+            <ns0:description>RAMP_R_MAI0</ns0:description>
+            <ns0:values>
+              <ns0:value>1.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>RAMP_R_MAI1</ns0:name>
+            <ns0:alias>RAMP_R_MAI1</ns0:alias>
+            <ns0:description>RAMP_R_MAI1</ns0:description>
+            <ns0:values>
+              <ns0:value>12.997</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TARGET_BUC0</ns0:name>
+            <ns0:alias>TARGET_BUC0</ns0:alias>
+            <ns0:description>TARGET_BUC0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TARGET_GUN0</ns0:name>
+            <ns0:alias>TARGET_GUN0</ns0:alias>
+            <ns0:description>TARGET_GUN0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TARGET_GUN1</ns0:name>
+            <ns0:alias>TARGET_GUN1</ns0:alias>
+            <ns0:description>TARGET_GUN1</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TARGET_MAI0</ns0:name>
+            <ns0:alias>TARGET_MAI0</ns0:alias>
+            <ns0:description>TARGET_MAI0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+        </ns0:records>
+      </ns0:plantRecords>
+    </ns0:plantSystem>
+    <ns0:plantSystem>
+      <ns0:name>ESWP</ns0:name>
+      <ns0:version>1.0</ns0:version>
+      <ns0:description>Falcon configuration structure for plant system ESWP</ns0:description>
+      <ns0:plantRecords>
+        <ns0:folders/>
+        <ns0:records>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>SP_CURRENT3</ns0:name>
+            <ns0:alias>SP_CURRENT3</ns0:alias>
+            <ns0:description>SP_CURRENT3</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>SP_CURRENT4</ns0:name>
+            <ns0:alias>SP_CURRENT4</ns0:alias>
+            <ns0:description>SP_CURRENT4</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>WAVE_H_LIM0</ns0:name>
+            <ns0:alias>WAVE_H_LIM0</ns0:alias>
+            <ns0:description>WAVE_H_LIM0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>WAVE_L_LIM0</ns0:name>
+            <ns0:alias>WAVE_L_LIM0</ns0:alias>
+            <ns0:description>WAVE_L_LIM0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>WAVE_PERIO0</ns0:name>
+            <ns0:alias>WAVE_PERIO0</ns0:alias>
+            <ns0:description>WAVE_PERIO0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+        </ns0:records>
+      </ns0:plantRecords>
+    </ns0:plantSystem>
+    <ns0:plantSystem>
+      <ns0:name>GCPS</ns0:name>
+      <ns0:version>1.0</ns0:version>
+      <ns0:description>Falcon configuration structure for plant system GCPS</ns0:description>
+      <ns0:plantRecords>
+        <ns0:folders/>
+        <ns0:records>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>AUTORESTAR1</ns0:name>
+            <ns0:alias>AUTORESTAR1</ns0:alias>
+            <ns0:description>AUTORESTAR1</ns0:description>
+            <ns0:values>
+              <ns0:value>0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>FOLDBACK_A1</ns0:name>
+            <ns0:alias>FOLDBACK_A1</ns0:alias>
+            <ns0:description>FOLDBACK_A1</ns0:description>
+            <ns0:values>
+              <ns0:value>0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>FOLDBACK_C1</ns0:name>
+            <ns0:alias>FOLDBACK_C1</ns0:alias>
+            <ns0:description>FOLDBACK_C1</ns0:description>
+            <ns0:values>
+              <ns0:value>1</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>FOLDBACK_R1</ns0:name>
+            <ns0:alias>FOLDBACK_R1</ns0:alias>
+            <ns0:description>FOLDBACK_R1</ns0:description>
+            <ns0:values>
+              <ns0:value>0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0020_MAX0</ns0:name>
+            <ns0:alias>IT0020_MAX0</ns0:alias>
+            <ns0:description>IT0020_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>105.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0020_MIN0</ns0:name>
+            <ns0:alias>IT0020_MIN0</ns0:alias>
+            <ns0:description>IT0020_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>95.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0021_MAX0</ns0:name>
+            <ns0:alias>IT0021_MAX0</ns0:alias>
+            <ns0:description>IT0021_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>105.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0021_MIN0</ns0:name>
+            <ns0:alias>IT0021_MIN0</ns0:alias>
+            <ns0:description>IT0021_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>95.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>OVERVOLTAG2</ns0:name>
+            <ns0:alias>OVERVOLTAG2</ns0:alias>
+            <ns0:description>OVERVOLTAG2</ns0:description>
+            <ns0:values>
+              <ns0:value>12.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>OVERVOLTAG3</ns0:name>
+            <ns0:alias>OVERVOLTAG3</ns0:alias>
+            <ns0:description>OVERVOLTAG3</ns0:description>
+            <ns0:values>
+              <ns0:value>1.8</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>SP_CURRENT5</ns0:name>
+            <ns0:alias>SP_CURRENT5</ns0:alias>
+            <ns0:description>SP_CURRENT5</ns0:description>
+            <ns0:values>
+              <ns0:value>2.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>SP_CURRENT6</ns0:name>
+            <ns0:alias>SP_CURRENT6</ns0:alias>
+            <ns0:description>SP_CURRENT6</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>SP_VOLTAGE2</ns0:name>
+            <ns0:alias>SP_VOLTAGE2</ns0:alias>
+            <ns0:description>SP_VOLTAGE2</ns0:description>
+            <ns0:values>
+              <ns0:value>10.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>SP_VOLTAGE3</ns0:name>
+            <ns0:alias>SP_VOLTAGE3</ns0:alias>
+            <ns0:description>SP_VOLTAGE3</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>UNDERVOLTA2</ns0:name>
+            <ns0:alias>UNDERVOLTA2</ns0:alias>
+            <ns0:description>UNDERVOLTA2</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>UNDERVOLTA3</ns0:name>
+            <ns0:alias>UNDERVOLTA3</ns0:alias>
+            <ns0:description>UNDERVOLTA3</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+        </ns0:records>
+      </ns0:plantRecords>
+    </ns0:plantSystem>
+    <ns0:plantSystem>
+      <ns0:name>HVPS</ns0:name>
+      <ns0:version>1.0</ns0:version>
+      <ns0:description>Falcon configuration structure for plant system HVPS</ns0:description>
+      <ns0:plantRecords>
+        <ns0:folders/>
+        <ns0:records>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>PULSE_DURA0</ns0:name>
+            <ns0:alias>PULSE_DURA0</ns0:alias>
+            <ns0:description>PULSE_DURA0</ns0:description>
+            <ns0:values>
+              <ns0:value>5001.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>PULSE_NUMB1</ns0:name>
+            <ns0:alias>PULSE_NUMB1</ns0:alias>
+            <ns0:description>PULSE_NUMB1</ns0:description>
+            <ns0:values>
+              <ns0:value>1.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>PULSE_UNIT0</ns0:name>
+            <ns0:alias>PULSE_UNIT0</ns0:alias>
+            <ns0:description>PULSE_UNIT0</ns0:description>
+            <ns0:values>
+              <ns0:value>0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>RAMP_DOWN_1</ns0:name>
+            <ns0:alias>RAMP_DOWN_1</ns0:alias>
+            <ns0:description>RAMP_DOWN_1</ns0:description>
+            <ns0:values>
+              <ns0:value>1000.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>RAMP_UP_TI1</ns0:name>
+            <ns0:alias>RAMP_UP_TI1</ns0:alias>
+            <ns0:description>RAMP_UP_TI1</ns0:description>
+            <ns0:values>
+              <ns0:value>500.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TIME_BET_P0</ns0:name>
+            <ns0:alias>TIME_BET_P0</ns0:alias>
+            <ns0:description>TIME_BET_P0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>VOLTAGE_LE1</ns0:name>
+            <ns0:alias>VOLTAGE_LE1</ns0:alias>
+            <ns0:description>VOLTAGE_LE1</ns0:description>
+            <ns0:values>
+              <ns0:value>44500.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+        </ns0:records>
+      </ns0:plantRecords>
+    </ns0:plantSystem>
+    <ns0:plantSystem>
+      <ns0:name>IPS1</ns0:name>
+      <ns0:version>1.0</ns0:version>
+      <ns0:description>Falcon configuration structure for plant system IPS1</ns0:description>
+      <ns0:plantRecords>
+        <ns0:folders/>
+        <ns0:records>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>ET0042_MIN0</ns0:name>
+            <ns0:alias>ET0042_MIN0</ns0:alias>
+            <ns0:description>ET0042_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>1000.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0040_MAX0</ns0:name>
+            <ns0:alias>IT0040_MAX0</ns0:alias>
+            <ns0:description>IT0040_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.00015</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0040_MAX1</ns0:name>
+            <ns0:alias>IT0040_MAX1</ns0:alias>
+            <ns0:description>IT0040_MAX1</ns0:description>
+            <ns0:values>
+              <ns0:value>2e-05</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0040_MIN0</ns0:name>
+            <ns0:alias>IT0040_MIN0</ns0:alias>
+            <ns0:description>IT0040_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0041_MAX0</ns0:name>
+            <ns0:alias>IT0041_MAX0</ns0:alias>
+            <ns0:description>IT0041_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.00015</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0041_MAX1</ns0:name>
+            <ns0:alias>IT0041_MAX1</ns0:alias>
+            <ns0:description>IT0041_MAX1</ns0:description>
+            <ns0:values>
+              <ns0:value>2e-05</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0041_MIN0</ns0:name>
+            <ns0:alias>IT0041_MIN0</ns0:alias>
+            <ns0:description>IT0041_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>OUTPUT_VOL0</ns0:name>
+            <ns0:alias>OUTPUT_VOL0</ns0:alias>
+            <ns0:description>OUTPUT_VOL0</ns0:description>
+            <ns0:values>
+              <ns0:value>1</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>OUTPUT_VOL1</ns0:name>
+            <ns0:alias>OUTPUT_VOL1</ns0:alias>
+            <ns0:description>OUTPUT_VOL1</ns0:description>
+            <ns0:values>
+              <ns0:value>0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>OUTPUT_VOL2</ns0:name>
+            <ns0:alias>OUTPUT_VOL2</ns0:alias>
+            <ns0:description>OUTPUT_VOL2</ns0:description>
+            <ns0:values>
+              <ns0:value>0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>OUTPUT_VOL3</ns0:name>
+            <ns0:alias>OUTPUT_VOL3</ns0:alias>
+            <ns0:description>OUTPUT_VOL3</ns0:description>
+            <ns0:values>
+              <ns0:value>0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>OUTPUT_VOL4</ns0:name>
+            <ns0:alias>OUTPUT_VOL4</ns0:alias>
+            <ns0:description>OUTPUT_VOL4</ns0:description>
+            <ns0:values>
+              <ns0:value>0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>OUTPUT_VOL5</ns0:name>
+            <ns0:alias>OUTPUT_VOL5</ns0:alias>
+            <ns0:description>OUTPUT_VOL5</ns0:description>
+            <ns0:values>
+              <ns0:value>0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>PROTECTION0</ns0:name>
+            <ns0:alias>PROTECTION0</ns0:alias>
+            <ns0:description>PROTECTION0</ns0:description>
+            <ns0:values>
+              <ns0:value>0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>PROTECTION1</ns0:name>
+            <ns0:alias>PROTECTION1</ns0:alias>
+            <ns0:description>PROTECTION1</ns0:description>
+            <ns0:values>
+              <ns0:value>0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>START_MODE0</ns0:name>
+            <ns0:alias>START_MODE0</ns0:alias>
+            <ns0:description>START_MODE0</ns0:description>
+            <ns0:values>
+              <ns0:value>1</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>START_MODE1</ns0:name>
+            <ns0:alias>START_MODE1</ns0:alias>
+            <ns0:description>START_MODE1</ns0:description>
+            <ns0:values>
+              <ns0:value>0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+        </ns0:records>
+      </ns0:plantRecords>
+    </ns0:plantSystem>
+    <ns0:plantSystem>
+      <ns0:name>IPS2</ns0:name>
+      <ns0:version>1.0</ns0:version>
+      <ns0:description>Falcon configuration structure for plant system IPS2</ns0:description>
+      <ns0:plantRecords>
+        <ns0:folders/>
+        <ns0:records>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>ET0052_MIN0</ns0:name>
+            <ns0:alias>ET0052_MIN0</ns0:alias>
+            <ns0:description>ET0052_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>1000.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0050_MAX0</ns0:name>
+            <ns0:alias>IT0050_MAX0</ns0:alias>
+            <ns0:description>IT0050_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.00015</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0050_MAX1</ns0:name>
+            <ns0:alias>IT0050_MAX1</ns0:alias>
+            <ns0:description>IT0050_MAX1</ns0:description>
+            <ns0:values>
+              <ns0:value>2e-05</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0050_MIN0</ns0:name>
+            <ns0:alias>IT0050_MIN0</ns0:alias>
+            <ns0:description>IT0050_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0051_MAX0</ns0:name>
+            <ns0:alias>IT0051_MAX0</ns0:alias>
+            <ns0:description>IT0051_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.00015</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0051_MAX1</ns0:name>
+            <ns0:alias>IT0051_MAX1</ns0:alias>
+            <ns0:description>IT0051_MAX1</ns0:description>
+            <ns0:values>
+              <ns0:value>2e-05</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0051_MIN0</ns0:name>
+            <ns0:alias>IT0051_MIN0</ns0:alias>
+            <ns0:description>IT0051_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>OUTPUT_VOL10</ns0:name>
+            <ns0:alias>OUTPUT_VOL10</ns0:alias>
+            <ns0:description>OUTPUT_VOL10</ns0:description>
+            <ns0:values>
+              <ns0:value>0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>OUTPUT_VOL11</ns0:name>
+            <ns0:alias>OUTPUT_VOL11</ns0:alias>
+            <ns0:description>OUTPUT_VOL11</ns0:description>
+            <ns0:values>
+              <ns0:value>0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>OUTPUT_VOL6</ns0:name>
+            <ns0:alias>OUTPUT_VOL6</ns0:alias>
+            <ns0:description>OUTPUT_VOL6</ns0:description>
+            <ns0:values>
+              <ns0:value>0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>OUTPUT_VOL7</ns0:name>
+            <ns0:alias>OUTPUT_VOL7</ns0:alias>
+            <ns0:description>OUTPUT_VOL7</ns0:description>
+            <ns0:values>
+              <ns0:value>0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>OUTPUT_VOL8</ns0:name>
+            <ns0:alias>OUTPUT_VOL8</ns0:alias>
+            <ns0:description>OUTPUT_VOL8</ns0:description>
+            <ns0:values>
+              <ns0:value>1</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>OUTPUT_VOL9</ns0:name>
+            <ns0:alias>OUTPUT_VOL9</ns0:alias>
+            <ns0:description>OUTPUT_VOL9</ns0:description>
+            <ns0:values>
+              <ns0:value>0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>PROTECTION2</ns0:name>
+            <ns0:alias>PROTECTION2</ns0:alias>
+            <ns0:description>PROTECTION2</ns0:description>
+            <ns0:values>
+              <ns0:value>1</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>PROTECTION3</ns0:name>
+            <ns0:alias>PROTECTION3</ns0:alias>
+            <ns0:description>PROTECTION3</ns0:description>
+            <ns0:values>
+              <ns0:value>0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>START_MODE2</ns0:name>
+            <ns0:alias>START_MODE2</ns0:alias>
+            <ns0:description>START_MODE2</ns0:description>
+            <ns0:values>
+              <ns0:value>0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>START_MODE3</ns0:name>
+            <ns0:alias>START_MODE3</ns0:alias>
+            <ns0:description>START_MODE3</ns0:description>
+            <ns0:values>
+              <ns0:value>0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+        </ns0:records>
+      </ns0:plantRecords>
+    </ns0:plantSystem>
+    <ns0:plantSystem>
+      <ns0:name>PMP1</ns0:name>
+      <ns0:version>1.0</ns0:version>
+      <ns0:description>Falcon configuration structure for plant system PMP1</ns0:description>
+      <ns0:plantRecords>
+        <ns0:folders/>
+        <ns0:records>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>MPG1011_MA0</ns0:name>
+            <ns0:alias>MPG1011_MA0</ns0:alias>
+            <ns0:description>MPG1011_MA0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0001</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>PBR260_CAL0</ns0:name>
+            <ns0:alias>PBR260_CAL0</ns0:alias>
+            <ns0:description>PBR260_CAL0</ns0:description>
+            <ns0:values>
+              <ns0:value>1.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>PBR260_CAL1</ns0:name>
+            <ns0:alias>PBR260_CAL1</ns0:alias>
+            <ns0:description>PBR260_CAL1</ns0:description>
+            <ns0:values>
+              <ns0:value>0.1</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>PBR260_ON_0</ns0:name>
+            <ns0:alias>PBR260_ON_0</ns0:alias>
+            <ns0:description>PBR260_ON_0</ns0:description>
+            <ns0:values>
+              <ns0:value>1</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>PBR260_SP_0</ns0:name>
+            <ns0:alias>PBR260_SP_0</ns0:alias>
+            <ns0:description>PBR260_SP_0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0001</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>PBR260_SP_1</ns0:name>
+            <ns0:alias>PBR260_SP_1</ns0:alias>
+            <ns0:description>PBR260_SP_1</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>PBR260_SP_2</ns0:name>
+            <ns0:alias>PBR260_SP_2</ns0:alias>
+            <ns0:description>PBR260_SP_2</ns0:description>
+            <ns0:values>
+              <ns0:value>7e-05</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>PBR260_SP_3</ns0:name>
+            <ns0:alias>PBR260_SP_3</ns0:alias>
+            <ns0:description>PBR260_SP_3</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TPR280_CAL0</ns0:name>
+            <ns0:alias>TPR280_CAL0</ns0:alias>
+            <ns0:description>TPR280_CAL0</ns0:description>
+            <ns0:values>
+              <ns0:value>1.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TPR280_CAL1</ns0:name>
+            <ns0:alias>TPR280_CAL1</ns0:alias>
+            <ns0:description>TPR280_CAL1</ns0:description>
+            <ns0:values>
+              <ns0:value>0.1</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>TPR280_ON_0</ns0:name>
+            <ns0:alias>TPR280_ON_0</ns0:alias>
+            <ns0:description>TPR280_ON_0</ns0:description>
+            <ns0:values>
+              <ns0:value>1</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TPR280_SP_0</ns0:name>
+            <ns0:alias>TPR280_SP_0</ns0:alias>
+            <ns0:description>TPR280_SP_0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.5</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TPR280_SP_1</ns0:name>
+            <ns0:alias>TPR280_SP_1</ns0:alias>
+            <ns0:description>TPR280_SP_1</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TPR280_SP_2</ns0:name>
+            <ns0:alias>TPR280_SP_2</ns0:alias>
+            <ns0:description>TPR280_SP_2</ns0:description>
+            <ns0:values>
+              <ns0:value>0.3</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TPR280_SP_3</ns0:name>
+            <ns0:alias>TPR280_SP_3</ns0:alias>
+            <ns0:description>TPR280_SP_3</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+        </ns0:records>
+      </ns0:plantRecords>
+    </ns0:plantSystem>
+    <ns0:plantSystem>
+      <ns0:name>PMP2</ns0:name>
+      <ns0:version>1.0</ns0:version>
+      <ns0:description>Falcon configuration structure for plant system PMP2</ns0:description>
+      <ns0:plantRecords>
+        <ns0:folders/>
+        <ns0:records>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>MPG1021_MA0</ns0:name>
+            <ns0:alias>MPG1021_MA0</ns0:alias>
+            <ns0:description>MPG1021_MA0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0001</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>PBR260_CAL2</ns0:name>
+            <ns0:alias>PBR260_CAL2</ns0:alias>
+            <ns0:description>PBR260_CAL2</ns0:description>
+            <ns0:values>
+              <ns0:value>1.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>PBR260_CAL3</ns0:name>
+            <ns0:alias>PBR260_CAL3</ns0:alias>
+            <ns0:description>PBR260_CAL3</ns0:description>
+            <ns0:values>
+              <ns0:value>0.1</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>PBR260_ON_1</ns0:name>
+            <ns0:alias>PBR260_ON_1</ns0:alias>
+            <ns0:description>PBR260_ON_1</ns0:description>
+            <ns0:values>
+              <ns0:value>1</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>PBR260_SP_4</ns0:name>
+            <ns0:alias>PBR260_SP_4</ns0:alias>
+            <ns0:description>PBR260_SP_4</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0001</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>PBR260_SP_5</ns0:name>
+            <ns0:alias>PBR260_SP_5</ns0:alias>
+            <ns0:description>PBR260_SP_5</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>PBR260_SP_6</ns0:name>
+            <ns0:alias>PBR260_SP_6</ns0:alias>
+            <ns0:description>PBR260_SP_6</ns0:description>
+            <ns0:values>
+              <ns0:value>7e-05</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>PBR260_SP_7</ns0:name>
+            <ns0:alias>PBR260_SP_7</ns0:alias>
+            <ns0:description>PBR260_SP_7</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TPR280_CAL2</ns0:name>
+            <ns0:alias>TPR280_CAL2</ns0:alias>
+            <ns0:description>TPR280_CAL2</ns0:description>
+            <ns0:values>
+              <ns0:value>1.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TPR280_CAL3</ns0:name>
+            <ns0:alias>TPR280_CAL3</ns0:alias>
+            <ns0:description>TPR280_CAL3</ns0:description>
+            <ns0:values>
+              <ns0:value>0.1</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>TPR280_ON_1</ns0:name>
+            <ns0:alias>TPR280_ON_1</ns0:alias>
+            <ns0:description>TPR280_ON_1</ns0:description>
+            <ns0:values>
+              <ns0:value>1</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TPR280_SP_4</ns0:name>
+            <ns0:alias>TPR280_SP_4</ns0:alias>
+            <ns0:description>TPR280_SP_4</ns0:description>
+            <ns0:values>
+              <ns0:value>0.5</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TPR280_SP_5</ns0:name>
+            <ns0:alias>TPR280_SP_5</ns0:alias>
+            <ns0:description>TPR280_SP_5</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TPR280_SP_6</ns0:name>
+            <ns0:alias>TPR280_SP_6</ns0:alias>
+            <ns0:description>TPR280_SP_6</ns0:description>
+            <ns0:values>
+              <ns0:value>0.3</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>TPR280_SP_7</ns0:name>
+            <ns0:alias>TPR280_SP_7</ns0:alias>
+            <ns0:description>TPR280_SP_7</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+        </ns0:records>
+      </ns0:plantRecords>
+    </ns0:plantSystem>
+    <ns0:plantSystem>
+      <ns0:name>RFD</ns0:name>
+      <ns0:version>1.0</ns0:version>
+      <ns0:description>Falcon configuration structure for plant system RFD</ns0:description>
+      <ns0:plantRecords>
+        <ns0:folders/>
+        <ns0:records>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>ET0201_MAX0</ns0:name>
+            <ns0:alias>ET0201_MAX0</ns0:alias>
+            <ns0:description>ET0201_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>220.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>ET0202_MAX0</ns0:name>
+            <ns0:alias>ET0202_MAX0</ns0:alias>
+            <ns0:description>ET0202_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>120.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>ET0203_MAX0</ns0:name>
+            <ns0:alias>ET0203_MAX0</ns0:alias>
+            <ns0:description>ET0203_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>130.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+        </ns0:records>
+      </ns0:plantRecords>
+    </ns0:plantSystem>
+    <ns0:plantSystem>
+      <ns0:name>RFIL</ns0:name>
+      <ns0:version>1.0</ns0:version>
+      <ns0:description>Falcon configuration structure for plant system RFIL</ns0:description>
+      <ns0:plantRecords>
+        <ns0:folders/>
+        <ns0:records>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>ERR_RESET_0</ns0:name>
+            <ns0:alias>ERR_RESET_0</ns0:alias>
+            <ns0:description>ERR_RESET_0</ns0:description>
+            <ns0:values>
+              <ns0:value>0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>ET0082_MAX0</ns0:name>
+            <ns0:alias>ET0082_MAX0</ns0:alias>
+            <ns0:description>ET0082_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IF_MAX_CUR0</ns0:name>
+            <ns0:alias>IF_MAX_CUR0</ns0:alias>
+            <ns0:description>IF_MAX_CUR0</ns0:description>
+            <ns0:values>
+              <ns0:value>28.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IF_MAX_CUR1</ns0:name>
+            <ns0:alias>IF_MAX_CUR1</ns0:alias>
+            <ns0:description>IF_MAX_CUR1</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IF_SP_CURR0</ns0:name>
+            <ns0:alias>IF_SP_CURR0</ns0:alias>
+            <ns0:description>IF_SP_CURR0</ns0:description>
+            <ns0:values>
+              <ns0:value>22.5</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IF_SP_CURR1</ns0:name>
+            <ns0:alias>IF_SP_CURR1</ns0:alias>
+            <ns0:description>IF_SP_CURR1</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IG_SP_CURR0</ns0:name>
+            <ns0:alias>IG_SP_CURR0</ns0:alias>
+            <ns0:description>IG_SP_CURR0</ns0:description>
+            <ns0:values>
+              <ns0:value>34.5</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IG_SP_CURR1</ns0:name>
+            <ns0:alias>IG_SP_CURR1</ns0:alias>
+            <ns0:description>IG_SP_CURR1</ns0:description>
+            <ns0:values>
+              <ns0:value>10.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0080_MAX0</ns0:name>
+            <ns0:alias>IT0080_MAX0</ns0:alias>
+            <ns0:description>IT0080_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>29.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0081_MAX0</ns0:name>
+            <ns0:alias>IT0081_MAX0</ns0:alias>
+            <ns0:description>IT0081_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>7.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>STABILIZAT0</ns0:name>
+            <ns0:alias>STABILIZAT0</ns0:alias>
+            <ns0:description>STABILIZAT0</ns0:description>
+            <ns0:values>
+              <ns0:value>0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>STABILIZAT1</ns0:name>
+            <ns0:alias>STABILIZAT1</ns0:alias>
+            <ns0:description>STABILIZAT1</ns0:description>
+            <ns0:values>
+              <ns0:value>0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>SWEEP_RATE0</ns0:name>
+            <ns0:alias>SWEEP_RATE0</ns0:alias>
+            <ns0:description>SWEEP_RATE0</ns0:description>
+            <ns0:values>
+              <ns0:value>0.6</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>SWEEP_RATE1</ns0:name>
+            <ns0:alias>SWEEP_RATE1</ns0:alias>
+            <ns0:description>SWEEP_RATE1</ns0:description>
+            <ns0:values>
+              <ns0:value>0.6</ns0:value>
+            </ns0:values>
+          </ns0:record>
+        </ns0:records>
+      </ns0:plantRecords>
+    </ns0:plantSystem>
+    <ns0:plantSystem>
+      <ns0:name>RSCM</ns0:name>
+      <ns0:version>1.0</ns0:version>
+      <ns0:description>Falcon configuration structure for plant system RSCM</ns0:description>
+      <ns0:plantRecords>
+        <ns0:folders/>
+        <ns0:records>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>HEATER_ON_0</ns0:name>
+            <ns0:alias>HEATER_ON_0</ns0:alias>
+            <ns0:description>HEATER_ON_0</ns0:description>
+            <ns0:values>
+              <ns0:value>1</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordLong">
+            <ns0:name>HEATER_ON_1</ns0:name>
+            <ns0:alias>HEATER_ON_1</ns0:alias>
+            <ns0:description>HEATER_ON_1</ns0:description>
+            <ns0:values>
+              <ns0:value>0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0100_MAX0</ns0:name>
+            <ns0:alias>IT0100_MAX0</ns0:alias>
+            <ns0:description>IT0100_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>101.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0100_MIN0</ns0:name>
+            <ns0:alias>IT0100_MIN0</ns0:alias>
+            <ns0:description>IT0100_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>99.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0101_MAX0</ns0:name>
+            <ns0:alias>IT0101_MAX0</ns0:alias>
+            <ns0:description>IT0101_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>101.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0101_MIN0</ns0:name>
+            <ns0:alias>IT0101_MIN0</ns0:alias>
+            <ns0:description>IT0101_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>99.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0102_MAX0</ns0:name>
+            <ns0:alias>IT0102_MAX0</ns0:alias>
+            <ns0:description>IT0102_MAX0</ns0:description>
+            <ns0:values>
+              <ns0:value>101.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>IT0102_MIN0</ns0:name>
+            <ns0:alias>IT0102_MIN0</ns0:alias>
+            <ns0:description>IT0102_MIN0</ns0:description>
+            <ns0:values>
+              <ns0:value>99.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>SP_CURRENT7</ns0:name>
+            <ns0:alias>SP_CURRENT7</ns0:alias>
+            <ns0:description>SP_CURRENT7</ns0:description>
+            <ns0:values>
+              <ns0:value>109.7</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>SP_CURRENT8</ns0:name>
+            <ns0:alias>SP_CURRENT8</ns0:alias>
+            <ns0:description>SP_CURRENT8</ns0:description>
+            <ns0:values>
+              <ns0:value>0.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>SWEEP_RATE2</ns0:name>
+            <ns0:alias>SWEEP_RATE2</ns0:alias>
+            <ns0:description>SWEEP_RATE2</ns0:description>
+            <ns0:values>
+              <ns0:value>1.99</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>SWEEP_RATE3</ns0:name>
+            <ns0:alias>SWEEP_RATE3</ns0:alias>
+            <ns0:description>SWEEP_RATE3</ns0:description>
+            <ns0:values>
+              <ns0:value>0.01</ns0:value>
+            </ns0:values>
+          </ns0:record>
+        </ns0:records>
+      </ns0:plantRecords>
+    </ns0:plantSystem>
+    <ns0:plantSystem>
+      <ns0:name>RSWP</ns0:name>
+      <ns0:version>1.0</ns0:version>
+      <ns0:description>Falcon configuration structure for plant system RSWP</ns0:description>
+      <ns0:plantRecords>
+        <ns0:folders/>
+        <ns0:records>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>THRESHOLD_0</ns0:name>
+            <ns0:alias>THRESHOLD_0</ns0:alias>
+            <ns0:description>THRESHOLD_0</ns0:description>
+            <ns0:values>
+              <ns0:value>21.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>THRESHOLD_1</ns0:name>
+            <ns0:alias>THRESHOLD_1</ns0:alias>
+            <ns0:description>THRESHOLD_1</ns0:description>
+            <ns0:values>
+              <ns0:value>1.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+          <ns0:record size="1" xsi:type="recordDouble">
+            <ns0:name>WAVE_PERIO1</ns0:name>
+            <ns0:alias>WAVE_PERIO1</ns0:alias>
+            <ns0:description>WAVE_PERIO1</ns0:description>
+            <ns0:values>
+              <ns0:value>41.0</ns0:value>
+            </ns0:values>
+          </ns0:record>
+        </ns0:records>
+      </ns0:plantRecords>
+    </ns0:plantSystem>
+  </ns0:plantSystems>
+</configurationContainer>
