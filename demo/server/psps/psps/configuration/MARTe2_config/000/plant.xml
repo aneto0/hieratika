@@ -14,24 +14,194 @@
                     <folder>
                         <name>BT</name>
                         <records>
-                            <record size="[1]" xsi:type="recordDouble">
+                            <record size="1" xsi:type="recordEnum">
+                                <name>DBLETYPE</name>
+                                <alias>DBLETYPE</alias>
+                                <description>Enum</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <choices>
+                                <choice>uint8</choice>
+                                <choice>int8</choice>
+                                <choice>uint16</choice>
+                                <choice>int16</choice>
+                                <choice>uint32</choice>
+                                <choice>int32</choice>
+                                <choice>uint64</choice>
+                                <choice>int64</choice>
+                                <choice>float32</choice>
+                                <choice>float64</choice>
+                                </choices>
+                                <values><value>["uint32"]</value></values></record>
+                            <record size="1" xsi:type="recordEnum">
+                                <name>DBLEDIM</name>
+                                <alias>DBLEDIM</alias>
+                                <description>Enum</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <choices>
+                                <choice>0</choice>
+                                <choice>1</choice>
+                                <choice>2</choice>
+                                </choices>
+                                <values><value>["1"]</value></values></record>
+                            <record size="1" xsi:type="recordEnum">
+                                <name>DBLEDS</name>
+                                <alias>DBLEDS</alias>
+                                <description>Enum</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <choices>
+                                <choice>DataSource1</choice>
+                                </choices>
+                                <values><value>["DataSource1"]</value></values></record>
+                            <record size="[1]" xsi:type="recordString">
                                 <name>DBLGAMARR</name>
                                 <alias>DBLGAMARR</alias>
                                 <description>String Array</description>
                                 <lock>DT@BT@LOCK2</lock>
-                                <values><value>["GAM1"]</value></values></record>
-                            <record size="[1]" xsi:type="recordDouble">
+                                <values><value>["GAM1", "GAM2"]</value></values></record>
+                            <record size="[1]" xsi:type="recordString">
                                 <name>DBLDSARR</name>
                                 <alias>DBLDSARR</alias>
                                 <description>String Array</description>
                                 <lock>DT@BT@LOCK2</lock>
-                                <values><value>["DS1"]</value></values></record>
-                            <record size="[1]" xsi:type="recordDouble">
+                                <values><value>["DS1", "DS2", "DS3"]</value></values></record>
+
+                            <record size="1" xsi:type="recordEnum">
+                                <name>DBLGAMCLASS</name>
+                                <alias>DBLGAMCLASS</alias>
+                                <description>Enum</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <choices>
+                                <choice>IOGAM</choice>
+                                <choice>TriggerOnChangeGAM</choice>
+                                <choice>FilterGAM</choice>
+                                </choices>
+                                <values><value>["IOGAM"]</value></values></record>
+                            <record size="[1]" xsi:type="recordString">
+                                <name>DBLINDS</name>
+                                <alias>DBLINDS</alias>
+                                <description>String Array</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <values><value>[["DS1"], ["DS2"]]</value></values></record>
+                            <record size="[1]" xsi:type="recordString">
+                                <name>DBLINTYPE</name>
+                                <alias>DBLINTYPE</alias>
+                                <description>String Array</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <values><value>[["uint32"], ["uint16"]]</value></values></record>
+                            <record size="[1]" xsi:type="recordString">
+                                <name>DBLINDIM</name>
+                                <alias>DBLINDIM</alias>
+                                <description>String Array</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <values><value>[["0"], ["1"]]</value></values></record>
+                            <record size="[4]" xsi:type="recordString">
+                                <name>DBLINSIGN</name>
+                                <alias>DBLINSIGN</alias>
+                                <description>String Array</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <values><value>[["Signal1", "Signal1", "1", "1"], ["Signal2", "Signal2", "1", "1"]]</value></values></record>
+                            <record size="[1]" xsi:type="recordString">
+                                <name>DBLOUTDS</name>
+                                <alias>DBLOUTDS</alias>
+                                <description>String Array</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <values><value>[["DS1"], ["DS2"]]</value></values></record>
+                            <record size="[1]" xsi:type="recordString">
+                                <name>DBLOUTTYPE</name>
+                                <alias>DBLOUTTYPE</alias>
+                                <description>String Array</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <values><value>[["uint32"], ["uint16"]]</value></values></record>
+                            <record size="[1]" xsi:type="recordString">
+                                <name>DBLOUTDIM</name>
+                                <alias>DBLOUTDIM</alias>
+                                <description>String Array</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <values><value>[["0"], ["1"]]</value></values></record>
+                            <record size="[4]" xsi:type="recordString">
+                                <name>DBLOUTSIGN</name>
+                                <alias>DBLOUTSIGN</alias>
+                                <description>String Array</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <values><value>[["Signal1", "Signal1", "1", "1"], ["Signal3", "Signal3", "1", "1"]]</value></values></record>
+                            <record size="[1]" xsi:type="recordString">
+                                <name>DBLGAMASSIGN</name>
+                                <alias>DBLGAMASSIGN</alias>
+                                <description>String Array</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <values><value>[[[["Signal1", "Signal1", "1", "1"], ["Signal2", "Signal2", "1", "1"]], [["DS1"], ["DS2"]], [["uint32"], ["uint16"]], [["0"], ["1"]], [["Signal1", "Signal1", "1", "1"], ["Signal3", "Signal3", "1", "1"]], [["DS1"], ["DS2"]], [["uint32"], ["uint16"]], [["0"], ["1"]], ["IOGAM"]], [[["", "", "", ""]],[["DS1"]], [["uint8"]], [["0"]], [["", "", "", ""]],[["DS1"]], [["uint8"]], [["0"]], ["IOGAM"]]]</value></values></record>
+                            <record size="[1]" xsi:type="recordString">
                                 <name>DBLSTARR</name>
                                 <alias>DBLSTARR</alias>
                                 <description>String Array</description>
                                 <lock>DT@BT@LOCK2</lock>
                                 <values><value>["State1"]</value></values></record>
+                            <record size="1" xsi:type="recordEnum">
+                                <name>DBLDSCLASS</name>
+                                <alias>DBLDSCLASS</alias>
+                                <description>Enum</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <choices>
+                                <choice>LinuxTimer</choice>
+                                <choice>LoggerDataSource</choice>
+                                <choice>MDSReader</choice>
+                                <choice>MDSWriter</choice>
+                                <choice>FileDataSource</choice>
+                                </choices>
+                                <values><value>["FileDataSource"]</value></values></record>
+                            <record size="[1]" xsi:type="recordString">
+                                <name>DBLDSTYPE</name>
+                                <alias>DBLDSTYPE</alias>
+                                <description>String Array</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <values><value>[["uint32"], ["uint16"]]</value></values></record>
+                            <record size="[1]" xsi:type="recordString">
+                                <name>DBLDSDIM</name>
+                                <alias>DBLINDIM</alias>
+                                <description>String Array</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <values><value>[["0"], ["1"]]</value></values></record>
+                            <record size="[4]" xsi:type="recordString">
+                                <name>DBLDSSIGN</name>
+                                <alias>DBLDSSIGN</alias>
+                                <description>String Array</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <values><value>[["Signal1", "1"], ["Signal2", "1"]]</value></values></record>
+                            <record size="[1]" xsi:type="recordString">
+                                <name>DBLDSASSIGN</name>
+                                <alias>DBLDSASSIGN</alias>
+                                <description>String Array</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <values><value>[[[["Signal1", "1"], ["Signal2", "1"]], [["uint32"], ["uint16"]], [["0"], ["1"]], ["FileDataSource"]]]</value></values></record>
+                                
+                            <record size="[4]" xsi:type="recordString">
+                                <name>DBLTHRDSIGN</name>
+                                <alias>DBLTHRDSIGN</alias>
+                                <description>String Array</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <values><value>[["Thread1", "1"],["Thread2", "2"]]</value></values></record>
+
+                            <record size="[1]" xsi:type="recordString">
+                                <name>DBLSTATEASSIGN</name>
+                                <alias>DBLSTATEASSIGN</alias>
+                                <description>String Array</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <values><value>[[[["Thread1", "1"],["Thread2", "2"]]]]</value></values></record>
+
+                            <record size="[4]" xsi:type="recordString">
+                                <name>DBLGAMTHRDASSIGN</name>
+                                <alias>DBLGAMTHRDASSIGN</alias>
+                                <description>String Array</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <values><value>[["GAM1"]]</value></values></record>
+
+                            <record size="[1]" xsi:type="recordString">
+                                <name>DBLTHREADASSIGN</name>
+                                <alias>DBLTHREADASSIGN</alias>
+                                <description>String Array</description>
+                                <lock>DT@BT@LOCK2</lock>
+                                <values><value>[[[["GAM1"]]], [[["GAM2"]]]]</value></values></record>
+
                             <record size="1" xsi:type="recordLock">
                                 <name>LOCK1</name>
                                 <alias>LOCK1</alias>

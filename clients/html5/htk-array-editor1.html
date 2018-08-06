@@ -110,6 +110,7 @@
                                 cell.style.backgroundColor = newBackgroundColor;
                             }
                         }
+                       
                         if (userChanged) {
                             this.fireValueChanged("value");
                             this.updateRemote(this.getValue());
@@ -180,26 +181,26 @@
                             	for(var i=0; i<len; i++){
                             		this.tbl.deleteRow(0);
                             	}
-                            
-                                row = this.tbl.insertRow(0);
+								this.numberOfElements=0;                      
                                 for (var i=0; i<elementsToSet.length; i++) {
                                     var row = this.tbl.insertRow(i);
                                     var col=row.insertCell(0);
-                                    col.innerHTML = "" + elementsToSet[i];
+                                    col.textContent = elementsToSet[i];
                                     col.style.width = "20px";
                                     col.style.textAlign = "right";
+                            		col.setAttribute("contenteditable", "true");
                                     col.addEventListener("input", function (e) {
                                         this.checkValues(true);
                                     }.bind(this));
+                                    this.numberOfElements++;
                                 }
                             }
                             else {
                                 for (var i=0; i<elementsToSet.length; i++) {
                                     var col = this.tbl.rows[i].cells[0];
-                                    col.innerHTML = elementsToSet[i];
+                                    col.textContent = elementsToSet[i];
                                 }
                             }
-                            this.checkValues(false);
                         }
                     }
                   
@@ -281,7 +282,7 @@
                                 this.tbl.deleteRow(this.tbl.rows.length - 1);
                             }
                             this.numberOfElements--;
-                            this.setValue(this.value.slice(0));
+                            this.value.pop();
                             this.checkValues(true);
                         }.bind(this);
                     }

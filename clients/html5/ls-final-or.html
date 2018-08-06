@@ -261,6 +261,7 @@
                         }
                         
 						this.matrix1.refreshEnum(options);
+						this.matrix1.refresh()
 					}
 
 
@@ -303,6 +304,7 @@
                         }
                         
 						this.matrix1.refreshEnum(options);
+						this.matrix1.refresh()
 					}
 
 					
@@ -310,6 +312,7 @@
                      * @brief See HtkComponent.refresh
                      */
                     refresh() {
+                        this.checkValue();
                     }
                   
                     /** 

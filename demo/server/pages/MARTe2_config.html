@@ -7,6 +7,7 @@
         <link rel="import" href="/htk-enum.html">
         <link rel="import" href="/htk-input.html">
         <link rel="import" href="/htk-matrix-dropmenu-editor.html">
+        <link rel="import" href="/htk-matrix-editor.html">
         <link rel="import" href="/htk-library-button.html">
         <link rel="import" href="/htk-lock-button.html">
         <link rel='import' href='/htk-struct-browser.html'>
@@ -16,7 +17,10 @@
         <link rel="import" href="/ls-function-assignment.html">
         <link rel="import" href="/ls-function-logic.html">
         <link rel="import" href="/ls-final-or.html">
-        
+        <link rel="import" href="/gam-assignment-phase1.html">
+        <link rel="import" href="/datasource-assignment-phase2.html">
+        <link rel="import" href="/state-assignment-phase3.html">
+        <link rel="import" href="/thread-assignment-phase4.html">
     </head>
     <body>
         <table>
@@ -38,7 +42,24 @@
                     <htk-lock-button id='DT@BT@LOCK3'></htk-lock-button>
                 </td>
            </tr>
+          <tr>
+                <td>
+                    <htk-enum id='DT@BT@DBLETYPE'></htk-enum>
+                </td>
+            </tr>
+             <tr>
+                <td>
+                    <htk-enum id='DT@BT@DBLEDIM'></htk-enum>
+                </td>
+            </tr>
             <tr>
+                <td>
+                    <htk-enum id='DT@BT@DBLEDS'></htk-enum>
+                </td>
+            </tr>
+
+            <tr>
+                <td>Name Assignment</td>
                 <td>
                      <table border="0">
             		<tr>    
@@ -52,6 +73,130 @@
 					<htk-array-editor1 id="DT@BT@DBLSTARR" ><\htk-array-editor1>
                 	</td>
 					</tr> 
+			        </table>
+                </td>
+            </tr>
+            <tr>
+                <td>GAM Assignment</td>
+                <td>
+                <gam-assignment-phase1 id='DT@BT@DBLGAMASSIGN' data-gamNamesId='DT@BT@DBLGAMARR' data-dsNamesId='DT@BT@DBLDSARR' data-inputmatrixId='DT@BT@DBLINSIGN' data-outputmatrixId='DT@BT@DBLOUTSIGN' data-dsInputMatrixId='DT@BT@DBLINDS' data-dsOutputMatrixId='DT@BT@DBLOUTDS' data-typeInputMatrixId='DT@BT@DBLINTYPE' data-typeOutputMatrixId='DT@BT@DBLOUTTYPE' data-dimInputMatrixId='DT@BT@DBLINDIM' data-dimOutputMatrixId='DT@BT@DBLOUTDIM' data-gamClassNameSelectId='DT@BT@DBLGAMCLASS'></gam-assignment-phase1>
+                </td>
+            </tr>
+            <tr>
+                <td>GAM Assignment</td>
+                <td>
+                    <htk-enum id='DT@BT@DBLGAMCLASS'></htk-enum>
+                </td>
+            </tr>
+            <tr>
+                <td>GAM Assignment</td>
+                <td>
+                   <table border="0">
+                   <tr>    
+                   <td>
+                   <htk-matrix-dropmenu-editor id="DT@BT@DBLINDS" data-initEnumId="DT@BT@DBLEDS"><\htk-matrix-dropmenu-editor>
+                   </td>
+                   <td>
+                   <htk-matrix-dropmenu-editor id="DT@BT@DBLINTYPE" data-initEnumId="DT@BT@DBLETYPE"><\htk-matrix-dropmenu-editor>
+                   </td>
+                   <td>
+                   <htk-matrix-dropmenu-editor id="DT@BT@DBLINDIM" data-initEnumId="DT@BT@DBLEDIM"><\htk-matrix-dropmenu-editor>
+                   </td>
+                   <td>
+                   <htk-matrix-editor id='DT@BT@DBLINSIGN'></htk-matrix-editor>
+                   </td>
+                   </tr>
+                   </table>
+                </td>
+            </tr>
+            <tr>
+                <td>GAM Assignment</td>
+                <td>
+                     <table border="0">
+                      <tr>
+                      <td>
+                      <htk-matrix-dropmenu-editor id="DT@BT@DBLOUTDS" data-initEnumId="DT@BT@DBLEDS"><\htk-matrix-dropmenu-editor>
+                      </td>
+                      <td>
+                      <htk-matrix-dropmenu-editor id="DT@BT@DBLOUTTYPE" data-initEnumId="DT@BT@DBLETYPE"><\htk-matrix-dropmenu-editor>
+                      </td>
+                      <td>
+                      <htk-matrix-dropmenu-editor id="DT@BT@DBLOUTDIM" data-initEnumId="DT@BT@DBLEDIM"><\htk-matrix-dropmenu-editor>
+                      </td>
+                      <td>
+                      <htk-matrix-editor id='DT@BT@DBLOUTSIGN'></htk-matrix-editor>
+                      </td>
+                      </tr>
+                   </table>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td>DataSource Assignment</td>
+                <td>
+                <datasource-assignment-phase2 id='DT@BT@DBLDSASSIGN' data-dsNamesId='DT@BT@DBLDSARR' data-inputmatrixId='DT@BT@DBLDSSIGN' data-typeMatrixId='DT@BT@DBLDSTYPE' data-dimMatrixId='DT@BT@DBLDSDIM' data-dsClassNameSelectId='DT@BT@DBLDSCLASS' data-gamAssignmentId='DT@BT@DBLGAMASSIGN'></datasource-assignment-phase2>
+                </td>
+            </tr>
+           <tr>
+                <td>DataSource Assignment</td>
+                <td>
+                    <htk-enum id='DT@BT@DBLDSCLASS'></htk-enum>
+                </td>
+            </tr>
+            <tr>
+                <td>DataSource Assignment</td>
+                <td>
+                   <table border="0">
+                   <tr>    
+                   <td>
+                   <htk-matrix-dropmenu-editor id="DT@BT@DBLDSTYPE" data-initEnumId="DT@BT@DBLETYPE"><\htk-matrix-dropmenu-editor>
+                   </td>
+                   <td>
+                   <htk-matrix-dropmenu-editor id="DT@BT@DBLDSDIM" data-initEnumId="DT@BT@DBLEDIM"><\htk-matrix-dropmenu-editor>
+                   </td>
+                   <td>
+                   <htk-matrix-editor id='DT@BT@DBLDSSIGN'></htk-matrix-editor>
+                   </td>
+                   </tr>
+                   </table>
+                </td>
+            </tr>
+
+            <tr>
+                <td>State Assignment</td>
+                <td>
+                <state-assignment-phase3 id='DT@BT@DBLSTATEASSIGN' data-stateNamesId='DT@BT@DBLSTARR' data-threadMatrixId='DT@BT@DBLTHRDSIGN'></state-assignment-phase3>
+                </td>
+            </tr>
+            <tr>
+                <td>State Assignment</td>
+                <td>
+                   <table border="0">
+                   <tr>    
+                   <td>
+                   <htk-matrix-editor id='DT@BT@DBLTHRDSIGN'></htk-matrix-editor>
+                   </td>
+                   </tr>
+                   </table>
+                </td>
+            </tr>
+            <tr>
+                <td>Thread Assignment</td>
+                <td>
+                <thread-assignment-phase4 id='DT@BT@DBLTHREADASSIGN' data-stateAssignmentId='DT@BT@DBLSTATEASSIGN' data-gamNamesId='DT@BT@DBLGAMARR' data-gamThreadMatrixId='DT@BT@DBLGAMTHRDASSIGN'></thread-assignment-phase4>
+                </td>
+            </tr>
+            <tr>
+                <td>Thread Assignment</td>
+                <td>
+                   <table border="0">
+                   <tr>    
+                   <td>
+                   <htk-matrix-dropmenu-editor id='DT@BT@DBLGAMTHRDASSIGN' data-initEnumId="DT@BT@DBLEDS"></htk-matrix-dropmenu-editor>
+                   </td>
+                   </tr>
+                   </table>
                 </td>
             </tr>
         </table>

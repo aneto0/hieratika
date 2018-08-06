@@ -13,38 +13,38 @@
  software distributed under the Licence is distributed on an "AS IS"
  basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  or implied. See the Licence permissions and limitations under the Licence.
---> 
+-->
 
 <html>
-    <head>
-        <!-- Standard imports -->
+<head>
+<!-- Standard imports -->
 
-        <!-- Project imports -->
-        <link rel="import" href="/libraries.html">
-        <link rel="import" href="/htk-component.html">
-    </head>
-    <body>
-        <!-- HTML5 component template-->
-        <template id="ttmatrix">
-            <div id="dmatrix">
-                <table border="0">
-                    <tr>
-                        <td>
-                            <table border="1" id="tmatrix">
-                                <tr></tr>
-                            </table>
-                        </td>
-                        <td>
-                            <button type="button" id="addRowButton">Add Row</button>
-                            <button type="button" id="addColButton">Add Col</button>
-                            <button type="button" id="removeRowButton">Remove Row</button>
-                            <button type="button" id="removeColButton">Remove Col</button>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </template>
-        <script>
+<!-- Project imports -->
+<link rel="import" href="/libraries.html">
+<link rel="import" href="/htk-component.html">
+</head>
+<body>
+	<!-- HTML5 component template-->
+	<template id="ttmatrix">
+	<div id="dmatrix">
+		<table border="0">
+			<tr>
+				<td>
+					<table border="1" id="tmatrix">
+						<tr></tr>
+					</table>
+				</td>
+				<td>
+					<button type="button" id="addRowButton">Add Row</button>
+					<button type="button" id="addColButton">Add Col</button>
+					<button type="button" id="removeRowButton">Remove Row</button>
+					<button type="button" id="removeColButton">Remove Col</button>
+				</td>
+			</tr>
+		</table>
+	</div>
+	</template>
+	<script>
             //This is enclosure is required to protect the importDoc
             (function () {
                 var importDoc = document.currentScript.ownerDocument; // importee
@@ -61,35 +61,35 @@
                         super();
                     }
 
-                    /**
-                     * @brief Checks if the component style should be updated due to a value change and executes all the validation functions.
-                     * @details For each element array, performs the same actions described in HtkAbstractInput.checkValues.
-                     * @param[in] userChanged true if the value update was triggered by a user action.
-                     */
-                    checkValues (userChanged) {
+					checkValue(){
                         //If the current value does not match the initial value set the font color blue
                         var initialValue = this.getInitialValue();
                         var refValue = this.getReferenceValue();
                         var plantValue = this.getPlantValue();
-                        var typeValue = this.getTypeValue();
-						this.value=new Array(this.nRows);
+						//this.value=new Array(this.tbl.rows.length);
 						                        
-                        for (var i=0; (i<this.nRows); i++) {
-                        	this.value[i]=new Array(this.nCols);
+                        for (var i=0; (i<this.tbl.rows.length); i++) {
+                        	//this.value[i]=new Array(this.tbl.rows[0].cells.length);
 						
                         	var row = this.tbl.rows[i];
-                        	for (var j=0; (j<this.nCols); j++) { 
+                        	for (var j=0; (j<this.tbl.rows[0].cells.length); j++) { 
                             	var cell = row.cells[j];
                             	if (cell !== undefined) {
                                 	var cellValue = cell.innerHTML;
-                                	var numberValue = parent.htkHelper.textToTypeValue(cellValue, typeValue);
-                                	if (numberValue === undefined) {
-	                                    numberValue = cellValue;
-    	                            }
-        	                        this.value[i][j] = numberValue;
+
             	                    var cellInitValue = "";
                 	                if (initialValue !== undefined) {
-                    	                cellInitValue = initialValue[i];
+                	                	if(initialValue[i] !== undefined){
+    	            	                	if(initialValue[i][j] !== undefined){
+	                    	                	cellInitValue = initialValue[i][j];
+                    	                	}
+                    	                	else{
+                    	                		cellInitValue = "";
+                    	                	}
+                    	                }
+                    	                else{
+                    	                	cellInitValue = "";
+                    	                }
                         	        }
                             	    if(!this.compareValues(cellValue, cellInitValue)) {
                                 	    cell.style.color = DIFF_INIT_CHANGED_COLOR;
@@ -98,14 +98,33 @@
                                     	cell.style.color = STANDARD_FCOLOR;
 	                                }
                                 
-    	                            cell.setAttribute("contenteditable", this.isReadOnly() ? "false" : "true");
         	                        var cellRefValue = "";
             	                    if (refValue !== undefined) { 
-                	                    cellRefValue = refValue[i];
+                	                	if(refValue[i] !== undefined){
+                	                	if(refValue[i][j] !== undefined){
+                    	                	cellRefValue = refValue[i][j];
+                    	                }
+                    	                else{
+                    	                	cellRefValue = "";
+                    	                }
+                    	                }
+                    	                else{
+                    	                	cellRefValue = "";
+                    	                }
                                     }
                         	        var cellPlantValue;
                             	    if (plantValue !== undefined) { 
-                                	    cellPlantValue = plantValue[i];
+                	                	if(plantValue[i] !== undefined){
+                	                	if(plantValue[i][j] !== undefined){
+                    	                	cellPlantValue= plantValue[i][j];
+                    	                }
+                    	                else{
+                    	                	cellPlantValue = "";
+                    	                }
+                    	                }
+                    	                else{
+                    	                	cellPlantValue = "";
+                    	                }
 	                                }
 
     	                            var newBackgroundColor = STANDARD_BCOLOR;
@@ -119,10 +138,6 @@
                             	}
                         	}
                         }
-                        if (userChanged) {
-                            this.fireValueChanged("value");
-                            this.updateRemote(this.getValue());
-                                                    }
                         var error = false; 
                         var errorIdx = 0;
                         if (this.validations !== undefined) {
@@ -147,7 +162,45 @@
                         else {
                             this.title = this.toString();
                         }
-                    }
+                        
+                        for(var i=0; i<this.addUpdateValueListeners.length; i++){
+                        	this.addUpdateValueListeners[i].updateValue(true);
+                        }
+					}
+
+					updateValue(userChanged){
+                        //If the current value does not match the initial value set the font color blue
+						this.value=new Array(this.tbl.rows.length);
+						var typeValue = this.getTypeValue();
+						                        
+                        for (var i=0; (i<this.tbl.rows.length); i++) {
+                        	this.value[i]=new Array(this.tbl.rows[0].cells.length);
+						
+                        	var row = this.tbl.rows[i];
+                        	for (var j=0; (j<this.tbl.rows[0].cells.length); j++) { 
+                            	var cell = row.cells[j];
+                            	if (cell !== undefined) {
+                                	var cellValue = cell.innerHTML;
+                                	var numberValue = parent.htkHelper.textToTypeValue(cellValue, typeValue);
+                                	if (numberValue === undefined) {
+	                                    numberValue = cellValue;
+    	                            }
+        	                        this.value[i][j] = numberValue;
+                            	}
+                        	}
+                        }
+                        if (userChanged) {
+                            this.fireValueChanged("value");
+                            this.updateRemote(this.getValue());
+                        }
+                        for(var i=0; i<this.addUpdateValueListeners.length; i++){
+                        	this.addUpdateValueListeners[i].updateValue(userChanged);
+                        }
+					}
+
+
+
+
 
                     /**
                      * @brief See HtkComponent.refresh
@@ -177,11 +230,19 @@
                             			var row = this.tbl.insertRow(i);
                             			for(var j=0; j<this.nCols; j++){
                             				var col = row.insertCell(j);
-                            				col.innerHTML = "" + elementsToSet[i][j];
-                                    		col.style.width = "20px";
+			                            	col.style.width = this.width;
+            			                	col.style.height =this.height;
                                     		col.style.textAlign = "right";
+                                    		col.setAttribute("contenteditable", "true");
+                            				col.innerHTML = elementsToSet[i][j];
                                     		col.addEventListener("input", function (e) {
-                                        		this.checkValues(true);
+                                        		this.updateValue(false);
+                            					this.checkValue();
+                        						if(this.addRefreshListeners!==undefined){
+                		        				   	for(var i=0; i<this.addRefreshListeners.length; i++){
+        						                   		this.addRefreshListeners[i].refresh();
+						                           	}	
+                        						}
 	                                    	}.bind(this));
     	                        		}
         	                    	}
@@ -191,11 +252,16 @@
                         	    		var row = this.tbl.rows[i];
                             			for(var j=0; j<this.nCols; j++){
                             			    col=row.cells[j];
-                                    	    col.innerHTML = elementsToSet[i][j];
+                            				col.innerHTML = elementsToSet[i][j];
                             			}
                             		}
                             	}
-                            	this.checkValues(false);
+                            	this.checkValue();
+                        		if(this.addRefreshListeners!==undefined){
+                		           	for(var i=0; i<this.addRefreshListeners.length; i++){
+        		                   		this.addRefreshListeners[i].refresh();
+		                           	}	
+                        		}
                             }
                         }
                     }
@@ -204,13 +270,7 @@
                      * @brief See HtkComponent.setValue
                      */
                     setValue (elementsToSet, updateRemote=true) {
-                    		//console.log("nRows=%d", elementsToSet.length);
-                        	//console.log("nCols=%d", elementsToSet[0].length);
-
-                        var currentRows=elementsToSet.length;
-                    	var currentCols=elementsToSet[0].length;
     					super.setValue(elementsToSet.slice(0), updateRemote);
-    					
                     }
 
                     /** 
@@ -258,65 +318,68 @@
                         var template = importDoc.querySelector("#ttmatrix");
                         return template;
                     }
-
-                    /** 
-                     * @brief See HtkComponent.createdCallback
-                     */
-                    createdCallback () {
-                        super.createdCallback();
-                        this.nRows = 1;
-                        this.nCols = 1;
-                        this.numberOfElements=0;
-                        this.addRowButton = this.shadowRoot.querySelector("#addRowButton");
-                        this.tbl = this.shadowRoot.querySelector("#tmatrix");
-                        this.addRowButton.onclick = function() {
+                    
+                    
+                    addRowCallback(){
                             var row = this.tbl.insertRow(this.nRows);
                             this.nRows++;
 							for (var i=0; i<this.nCols; i++){
                             	var col = row.insertCell(i);
                             	this.numberOfElements=this.nRows*this.nCols;
                             	col.setAttribute("contenteditable", "true");
-                            	col.style.width = "20px";
+                            	col.style.width = this.width;
+                            	col.style.height =this.height;
                             	col.style.textAlign = "right";
                             	col.addEventListener("input", function (e) {
-                            		this.checkValues(true);
+                            		this.updateValue(false);
+                            		this.checkValue();
+                        			if(this.addRefreshListeners!==undefined){
+                		        		for(var i=0; i<this.addRefreshListeners.length; i++){
+        						             this.addRefreshListeners[i].refresh();
+						            	}	
+                        			}
                             	}.bind(this));
 							}	
-                            this.checkValues(true);
-                        }.bind(this);
-
-                        this.removeRowButton = this.shadowRoot.querySelector("#removeRowButton");
-                        this.removeRowButton.onclick = function() {
+                            this.updateValue(true);
+                    }
+                    
+                    
+                    removeRowCallback(){
                         	//console.log("nRows=%d", this.nRows);
                             if(this.nRows>1){
                             	this.tbl.deleteRow(this.nRows-1);
                             	this.nRows--;
                             	this.numberOfElements=this.nRows*this.nCols;
-                            	this.checkValues(true);
+                            	this.updateValue(true);
                             }
-                        }.bind(this);
-                        
-                        this.addColButton = this.shadowRoot.querySelector("#addColButton");
-                        this.addColButton.onclick = function() {
+                    }
+                    
+                    addColCallback(){
 							//console.log("nCols=%d", this.nCols);                        
                         	for(var i=0; i<this.nRows; i++){
                         		var row=this.tbl.rows[i];
                             	var col = row.insertCell(this.nCols);
                             	col.setAttribute("contenteditable", "true");
-                            	col.style.width = "20px";
+                            	col.style.width = this.width;
+                            	col.style.height =this.height;
+
                             	col.style.textAlign = "right";
                             	col.addEventListener("input", function (e) {
-                            		this.checkValues(true);
+                            		this.updateValue(false);
+                            		this.checkValue();
+                        			if(this.addRefreshListeners!==undefined){
+                		        		for(var i=0; i<this.addRefreshListeners.length; i++){
+        						             this.addRefreshListeners[i].refresh();
+						            	}	
+                        			}
                             	}.bind(this));
                         	}
                         	this.nCols++;
                         	this.numberOfElements=this.nRows*this.nCols;
-                        	this.checkValues(true);
-                        	
-						}.bind(this);
-						
-						this.removeColButton = this.shadowRoot.querySelector("#removeColButton");
-                        this.removeColButton.onclick = function() {
+                        	this.updateValue(true);
+                    }
+                    
+                    removeColCallback(){
                         	//console.log("nCols=%d", this.nCols);
                         	if(this.nCols>1){
                         		for(i=0; i<this.nRows; i++){
@@ -325,9 +388,99 @@
 								}
 								this.nCols--;	
 								this.numberOfElements=this.nRows*this.nCols;
-								this.checkValues(true);
+								this.updateValue(true);
 								
-							}				
+							}			
+                    }
+                    
+                    
+					showHideButtons(show){
+						this.addRowButton.hidden=!show;
+						this.addColButton.hidden=!show;
+						this.removeRowButton.hidden=!show;
+						this.removeColButton.hidden=!show;
+					} 
+                    
+					refreshAllCellsDimensions(width, height){
+					     for(var i=0; i<this.tbl.rows.length; i++){
+							for(var j=0; j<this.tbl.rows[0].cells.length; j++){
+								
+								var myCell=this.tbl.rows[i].cells[j];
+								myCell.style.width = width;
+    							myCell.style.height = height;
+							}
+						}
+						this.width=width;
+						this.height=height;
+					}
+					
+					
+					addAddRowCallback(comp) {
+		            	this.addAddRowListeners.push(comp);
+					}
+
+				    addAddColCallback(comp) {
+		            	this.addAddColListeners.push(comp);
+					}
+					
+				    addRemoveRowCallback(comp) {
+		            	this.addRemoveRowListeners.push(comp);
+					}
+					
+					addRemoveColCallback(comp) {
+		            	this.addRemoveColListeners.push(comp);
+					}
+					
+			
+					addRefreshCallback(comp){
+		            	this.addRefreshListeners.push(comp);
+					}
+					
+					addUpdateValueCallback(comp){
+		            	this.addUpdateValueListeners.push(comp);
+					}
+					
+					
+					
+                    /** 
+                     * @brief See HtkComponent.createdCallback
+                     */
+                    createdCallback () {
+                        super.createdCallback();
+                        this.nRows = 1;
+                        this.nCols = 1;
+                        this.numberOfElements=0;
+                        
+                        this.width="20px";
+                        this.height="20px";
+                        
+						this.addAddRowListeners=new Array();
+                        this.addRemoveRowListeners=new Array();
+                        this.addAddColListeners=new Array();
+                        this.addRemoveColListeners=new Array();
+                        this.addRefreshListeners=new Array();
+                        this.addUpdateValueListeners=new Array();
+                        
+                        this.addRowButton = this.shadowRoot.querySelector("#addRowButton");
+                        this.tbl = this.shadowRoot.querySelector("#tmatrix");
+                        this.addRowButton.onclick = function() {
+							this.addRowCallback();
+                        }.bind(this);
+
+                        this.removeRowButton = this.shadowRoot.querySelector("#removeRowButton");
+                        this.removeRowButton.onclick = function() {
+							this.removeRowCallback();
+                        }.bind(this);
+                        
+                        this.addColButton = this.shadowRoot.querySelector("#addColButton");
+                        this.addColButton.onclick = function() {
+							this.addColCallback();
+                        	
+						}.bind(this);
+						
+						this.removeColButton = this.shadowRoot.querySelector("#removeColButton");
+                        this.removeColButton.onclick = function() {
+							this.removeColCallback();
 						}.bind(this);						                        
                     }
  
@@ -343,5 +496,5 @@
             })();
         </script>
 
-    </body>
+</body>
 </html>

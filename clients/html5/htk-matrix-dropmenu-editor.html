@@ -13,50 +13,50 @@
  software distributed under the Licence is distributed on an "AS IS"
  basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  or implied. See the Licence permissions and limitations under the Licence.
---> 
+-->
 
 <html>
-    <head>
-        <!-- Standard imports -->
+<head>
+<!-- Standard imports -->
 
-        <!-- Project imports -->
-        <link rel="import" href="/libraries.html">
-        <link rel="import" href="/htk-component.html">
-    </head>
-    <body>
-        <!-- HTML5 component template-->
-        <template id="ttmatrix">
-            <div id="dmatrix">
-                <table border="0">
-                    <tr>
-                        <td>
-                            <button type="button" id="addRowButton">Add Row</button>
-                        </td>
-                        <td>
-							<button type="button" id="removeRowButton">Remove Row</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-							<button type="button" id="addColButton">Add Col</button>
-                        </td>
-                        <td>
-                            <button type="button" id="removeColButton">Remove Col</button>
-                        </td>
-                    </tr>
-                </table>
-                <table border="0">                
-                    <tr>
-                        <td>
-                            <table border="1" id="tmatrix">
-                                <tr></tr>
-                            </table>
-                        </td>
-                    </tr>    
-                </table>            
-            </div>
-        </template>
-        <script>
+<!-- Project imports -->
+<link rel="import" href="/libraries.html">
+<link rel="import" href="/htk-component.html">
+</head>
+<body>
+	<!-- HTML5 component template-->
+	<template id="ttmatrix">
+	<div id="dmatrix">
+		<table border="0">
+			<tr>
+				<td>
+					<button type="button" id="addRowButton">Add Row</button>
+				</td>
+				<td>
+					<button type="button" id="removeRowButton">Remove Row</button>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<button type="button" id="addColButton">Add Col</button>
+				</td>
+				<td>
+					<button type="button" id="removeColButton">Remove Col</button>
+				</td>
+			</tr>
+		</table>
+		<table border="0">
+			<tr>
+				<td>
+					<table border="1" id="tmatrix">
+						<tr></tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</div>
+	</template>
+	<script>
             //This is enclosure is required to protect the importDoc
             (function () {
                 var importDoc = document.currentScript.ownerDocument; // importee
@@ -110,7 +110,10 @@
 						if (userChanged) {
                             this.fireValueChanged("value");
                             this.updateRemote(this.getValue());
-                        }                        
+                        }             
+                        for(var i=0; i<this.addUpdateValueListeners.length; i++){
+                        	this.addUpdateValueListeners[i].updateValue(userChanged);
+                        }           
                     }
                     
 
@@ -140,7 +143,6 @@
 
 					refreshAllCellsDimensions(width, height){
 					     for(var i=0; i<this.nRows; i++){
-							this.value[i]=new Array(this.nCols);
 							for(var j=0; j<this.nCols; j++){
 								var id = "#menu_"+i.toString()+j.toString(); 
 								var myCell=this.tbl.querySelector(id);
@@ -295,12 +297,18 @@
 										}
 	                            	}
     	                        	else {
-        	                    		for(var i=0; i<this.nRows; i++){
-            	                			var row = this.tbl.rows[i];
-                	            			for(var j=0; j<this.nCols; j++){
-                    	        		   		col=row.cells[j];
-                        	    			}
-                            			}
+										for(var h=0; h<this.value.length; h++){
+										    for(var k=0; k<this.value[0].length; k++){
+												var id = "#menu_"+h.toString()+k.toString(); 
+												var myCell=this.tbl.querySelector(id);
+										    	for(var m=0; m<myCell.childElementCount; m++){
+										    		var comp=myCell[m].value;
+										    		if(comp===this.value[h][k]){
+										    			myCell.selectedIndex=m;
+										    		}
+										    	}	
+									    	}
+										}
                             		}
                             	}
                             	this.checkValue();
@@ -582,5 +590,5 @@
             })();
         </script>
 
-    </body>
+</body>
 </html>
