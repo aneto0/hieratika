@@ -56,11 +56,12 @@
                             var selectedValue = this.select[this.select.selectedIndex].value;
                             this.setValue(selectedValue);
                             for(var i=0; i<this.addUpdateValueListeners.length; i++){
-                            	this.addUpdateValueListeners[i].updateValue(false);
+                            	this.addUpdateValueListeners[i].updateValue(false,this.callerIdx);
                             }
                         }.bind(this));
                         this.choices = [];
                         this.addUpdateValueListeners= new Array();
+                        this.callerIdx=0;
                     }
                     
                     /** 
@@ -124,8 +125,9 @@
                         this.select.disabled = isReadOnly;
                     }
 
-					addUpdateValueCallback(comp){
+					addUpdateValueCallback(comp, caller=0){
 		            	this.addUpdateValueListeners.push(comp);
+		            	this.callerIdx=caller;
 					}
                 }
 

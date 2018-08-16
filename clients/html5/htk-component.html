@@ -406,7 +406,7 @@
          * @param[in] validationsToSet the validations to be set.
          */
         setValidations (validationsToSet) {
-            //this.validations = [new HtkValidationType(this)];
+            this.validations = [new HtkValidationType(this)];
             for(var i in validationsToSet) {
                 this.validations.push(new HtkValidationMath(validationsToSet[i]));
             }
@@ -533,6 +533,7 @@
             this.lockVariable = undefined;
             this.numberOfElements = [];
             this.liveVariable = this.getAttribute("data-live");
+            this.validations = [];
             if (this.liveVariable !== null) {
                 this.liveVariable = (this.liveVariable.toLowerCase() === "true");
             }
