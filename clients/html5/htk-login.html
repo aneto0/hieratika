@@ -1,19 +1,19 @@
-<!-- 
+<!--
  date: 08/01/2018
  author: Andre' Neto
- 
+
  copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
  the Development of Fusion Energy ('Fusion for Energy').
  Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  by the European Commission - subsequent versions of the EUPL (the "Licence")
  You may not use this work except in compliance with the Licence.
  You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
- 
- warning: Unless required by applicable law or agreed to in writing, 
+
+ warning: Unless required by applicable law or agreed to in writing,
  software distributed under the Licence is distributed on an "AS IS"
  basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  or implied. See the Licence permissions and limitations under the Licence.
---> 
+-->
 
 <html>
     <head>
@@ -74,9 +74,9 @@
                         if (template !== undefined) {
                             // import template into
                             var clone = document.importNode(template.content, true);
-                            var root = this.createShadowRoot();
+                            const root = this.attachShadow({mode: 'open'});
                             root.appendChild(clone);
-                       
+
                             this.diag = this.shadowRoot.querySelector("#dlogin");
                             this.loginDiv = this.shadowRoot.querySelector("#divlogin");
                             var loginButton = this.shadowRoot.querySelector("#loginbtn");
@@ -84,9 +84,9 @@
                                 var usernameTxt = this.shadowRoot.querySelector("#username");
                                 var passwordTxt = this.shadowRoot.querySelector("#password");
                                 parent.htkHelper.loginToServer(
-                                    usernameTxt.value, 
+                                    usernameTxt.value,
                                     passwordTxt.value,
-                                    function(user) { 
+                                    function(user) {
                                         localStorage.user = JSON.stringify(user);
                                         parent.htkHelper.setToken(user.token);
                                         this.fireLoginSuccessful(user);
@@ -103,10 +103,10 @@
                             var cancelButton = this.shadowRoot.querySelector("#cancelbtn");
                             cancelButton.onclick = function() {
                                 this.diag.close();
-                            }.bind(this); 
+                            }.bind(this);
 
                         }
-                        
+
                         this.loginListeners = [];
                     }
 
@@ -138,7 +138,7 @@
 
                 /**
                  * @brief Registers the element.
-                 */ 
+                 */
                 document.registerElement("htk-login", {
                     prototype: HtkLogin.prototype,
                 });
