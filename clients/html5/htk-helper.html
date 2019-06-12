@@ -1,19 +1,19 @@
-<!-- 
+<!--
  date: 04/01/2018
  author: Andre' Neto
- 
+
  copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
  the Development of Fusion Energy ('Fusion for Energy').
  Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  by the European Commission - subsequent versions of the EUPL (the "Licence")
  You may not use this work except in compliance with the Licence.
  You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
- 
- warning: Unless required by applicable law or agreed to in writing, 
+
+ warning: Unless required by applicable law or agreed to in writing,
  software distributed under the Licence is distributed on an "AS IS"
  basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  or implied. See the Licence permissions and limitations under the Licence.
---> 
+-->
 
 <html>
     <head>
@@ -29,7 +29,7 @@
         /**
          * Collection of helper functions for the hieratika client components.
          */
-        class HtkHelper { 
+        class HtkHelper {
 
             constructor() {
                 this.remoteServerTid = "";
@@ -75,7 +75,7 @@
             resetScheduleValuesToCommit() {
                 this.scheduleValuesToCommit = {};
             }
-            
+
             /**
              * @brief Informs that a value is to be synchronised remote.
              * @param[in] variable the variable to synchronise.
@@ -136,7 +136,7 @@
                         if (this.checkServerResponse(response)) {
                             if (response == "ok") {
                                 successFun();
-                            } 
+                            }
                             else {
                                 errorFun();
                             }
@@ -187,7 +187,7 @@
                                     }
                                 }
                                 successFun();
-                            } 
+                            }
                             else {
                                 errorFun();
                             }
@@ -294,7 +294,7 @@
                     url: "/getschedulevariablesvalues",
                     data: {
                         token: this.token,
-                        scheduleUID: scheduleName 
+                        scheduleUID: scheduleName
                     },
                     success: function (response) {
                         if (this.checkServerResponse(response)) {
@@ -350,7 +350,7 @@
                             if (response === HTK_IN_USE) {
                                 parent.htkDialogs.showErrorDialog("The schedule is being used in other schedules and thus cannot be overwritten (note that it might being used by this same variable. If so unselect if first).");
                                 errorFun();
-                            } 
+                            }
                             else {
                                 successFun();
                                 this.scheduleValuesToCommit = {};
@@ -501,7 +501,7 @@
                     name: scheduleName,
                     description: scheduleDescription,
                     parentFolders: JSON.stringify(parentFolders),
-                    pageName: configName 
+                    pageName: configName
                 }
                 var user = JSON.parse(localStorage.user);
                 schedule["username"] = user.username;
@@ -541,7 +541,7 @@
                     name: folderName,
                     parentFolders: JSON.stringify(parentFolders),
                     username: user.username,
-                    pageName: configName 
+                    pageName: configName
                 }
                 $.ajax({
                     type: "post",
@@ -577,7 +577,7 @@
                         name: folderName,
                         parentFolders: JSON.stringify(parentFolders),
                         username: user.username,
-                        pageName: configName 
+                        pageName: configName
                     }
                     $.ajax({
                         type: "post",
@@ -629,7 +629,7 @@
                         name: folderName,
                         parentFolders: JSON.stringify(parentFolders),
                         username: user.username,
-                        pageName: configName 
+                        pageName: configName
                     }
                     $.ajax({
                         type: "post",
@@ -747,11 +747,11 @@
                     success: function (response) {
                         var user = $.parseJSON(response);
                         if (user.id !== "") {
-                            successFun(user); 
+                            successFun(user);
                         }
                         else {
                             errorFun();
-                        }            
+                        }
                     }.bind(this),
                     error: function (response) {
                         this.showCriticalError(response);
@@ -786,7 +786,7 @@
             /**
              * @brief Gets all the transformations associated to a given configuration.
              * @details This is an asynchronous call.
-             * @param[in] configName the name of the configuration from where the transformations are to be retrieved. 
+             * @param[in] configName the name of the configuration from where the transformations are to be retrieved.
              * @param[in] successFun function with prototype (void) f(void), that will be called if the schedule was successfully created.
              * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be created.
              */
@@ -801,7 +801,7 @@
                     success: function (response) {
                         if(this.checkServerResponse(response)) {
                             var transformations = JSON.parse(response);
-                            successFun(transformations); 
+                            successFun(transformations);
                         }
                     }.bind(this),
                     error: function (response) {
@@ -814,8 +814,8 @@
             /**
              * @brief Gets all the available libraries (of a given type) associated to a given user.
              * @details This is an asynchronous call.
-             * @param[in] libraryType the library type. 
-             * @param[in] username the library owner. 
+             * @param[in] libraryType the library type.
+             * @param[in] username the library owner.
              * @param[in] successFun function with prototype (void) f(libraries), that will be called if the libraires were successfully retrieved .
              * @param[in] errorFun function with prototype (void) f(), that will be called if the libraries could not be retrieved.
              */
@@ -831,7 +831,7 @@
                     success: function (response) {
                         if(this.checkServerResponse(response)) {
                             var libraries = $.parseJSON(response);
-                            successFun(libraries); 
+                            successFun(libraries);
                         }
                     }.bind(this),
                     error: function (response) {
@@ -844,7 +844,7 @@
             /**
              * @brief Gets variable values of a given library instance (identified by its unique id).
              * @details This is an asynchronous call.
-             * @param[in] uid the library unique identifier. 
+             * @param[in] uid the library unique identifier.
              * @param[in] successFun function with prototype (void) f(variablesValues), that will be called if the library variables values were successfully retrieved .
              * @param[in] errorFun function with prototype (void) f(), that will be called if the libraries variables values could not be retrieved.
              */
@@ -859,7 +859,7 @@
                     success: function (response) {
                         if(this.checkServerResponse(response)) {
                             var libraries = $.parseJSON(response);
-                            successFun(libraries); 
+                            successFun(libraries);
                         }
                     }.bind(this),
                     error: function (response) {
@@ -872,10 +872,10 @@
             /**
              * @brief Saves a library.
              * @details This is an asynchronous call.
-             * @param[in] libraryType the library type. 
-             * @param[in] libraryName the library name. 
-             * @param[in] libraryDescription the library description. 
-             * @param[in] variables the library variables/values key-pairs. 
+             * @param[in] libraryType the library type.
+             * @param[in] libraryName the library name.
+             * @param[in] libraryDescription the library description.
+             * @param[in] variables the library variables/values key-pairs.
              * @param[in] successFun function with prototype (void) f(library), that will be called if the library was successfully saved.
              * @param[in] errorFun function with prototype (void) f(), that will be called if the libraries variables values could not be saved.
              */
@@ -889,7 +889,7 @@
                         type: libraryType,
                         name: libraryName,
                         description: libraryDescription,
-                        username: user.username, 
+                        username: user.username,
                         variables: JSON.stringify(variables)
                     },
                     success: function (response) {
@@ -897,7 +897,7 @@
                             if (response === HTK_IN_USE) {
                                 parent.htkDialogs.showErrorDialog("Library is being used in other schedules and thus cannot be overwritten (note that it might being used by this same variable. If so unselect if first).");
                                 errorFun();
-                            } 
+                            }
                             else if (response === HTK_UNKNOWN_ERROR) {
                                 parent.htkDialogs.showErrorDialog("Unkown error while saving the library in the server");
                                 errorFun();
@@ -918,7 +918,7 @@
             /**
              * @brief Deletes a set of schedules.
              * @details This is an asynchronous call.
-             * @param[in] scheduleUID the schedule unique identifiers. 
+             * @param[in] scheduleUID the schedule unique identifiers.
              * @param[in] successFun function with prototype (void) f(void), that will be called if the schedule was successfully deleted.
              * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be deleted.
              */
@@ -933,7 +933,7 @@
                             scheduleUID: scheduleUID
                         },
                         success: function (response) {
-                            if(this.checkServerResponse(response)) { 
+                            if(this.checkServerResponse(response)) {
                                 if (response === HTK_OK) {
                                     scheduleUIDs.shift();
                                     if (scheduleUIDs.length > 0) {
@@ -947,7 +947,7 @@
                                     if (response === HTK_IN_USE) {
                                         parent.htkDialogs.showErrorDialog("Schedule " + scheduleUID + " is being used in other schedules and thus cannot be deleted.");
                                         errorFun();
-                                    } 
+                                    }
                                     else if (response === HTK_NOT_FOUND) {
                                         parent.htkDialogs.showErrorDialog("Schedule " + scheduleUID + " could not be found in the server!");
                                         errorFun();
@@ -973,7 +973,7 @@
             /**
              * @brief Obsoletes a set of schedules.
              * @details This is an asynchronous call.
-             * @param[in] scheduleUID the schedule unique identifiers. 
+             * @param[in] scheduleUID the schedule unique identifiers.
              * @param[in] successFun function with prototype (void) f(void), that will be called if the schedule was successfully obsoleted.
              * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be obsoleted.
              */
@@ -985,10 +985,10 @@
                         url: "/obsoleteschedule",
                         data: {
                             token: this.token,
-                            scheduleUID: scheduleUID 
+                            scheduleUID: scheduleUID
                         },
                         success: function (response) {
-                            if(this.checkServerResponse(response)) { 
+                            if(this.checkServerResponse(response)) {
                                 if (response === HTK_OK) {
                                     scheduleUIDs.shift();
                                     if (scheduleUIDs.length > 0) {
@@ -1025,7 +1025,7 @@
             /**
              * @brief Deletes a library.
              * @details This is an asynchronous call.
-             * @param[in] libraryUID the library unique identifier. 
+             * @param[in] libraryUID the library unique identifier.
              * @param[in] successFun function with prototype (void) f(void), that will be called if the library was successfully deleted.
              * @param[in] errorFun function with prototype (void) f(), that will be called if the library could not be deleted.
              */
@@ -1038,7 +1038,7 @@
                         libraryUID: libraryUID
                     },
                     success: function (response) {
-                        if(this.checkServerResponse(response)) { 
+                        if(this.checkServerResponse(response)) {
                             if (response === HTK_OK) {
                                 successFun();
                             }
@@ -1046,7 +1046,7 @@
                                 if (response === HTK_IN_USE) {
                                     parent.htkDialogs.showErrorDialog("Library is being used in other schedules and thus cannot be deleted.");
                                     errorFun();
-                                } 
+                                }
                                 else if (response === HTK_NOT_FOUND) {
                                     parent.htkDialogs.showErrorDialog("Library could not be found in the server!");
                                     errorFun();
@@ -1068,7 +1068,7 @@
             /**
              * @brief Obsoletes a library.
              * @details This is an asynchronous call.
-             * @param[in] libraryUID the library unique identifier. 
+             * @param[in] libraryUID the library unique identifier.
              * @param[in] successFun function with prototype (void) f(void), that will be called if the library was successfully obsoleted.
              * @param[in] errorFun function with prototype (void) f(), that will be called if the library could not be obsoleted.
              */
@@ -1081,7 +1081,7 @@
                         libraryUID: libraryUID
                     },
                     success: function (response) {
-                        if(this.checkServerResponse(response)) { 
+                        if(this.checkServerResponse(response)) {
                             if (response === HTK_OK) {
                                 successFun();
                             }
@@ -1115,7 +1115,7 @@
                     type: "post",
                     url: "/statistics",
                     data: {
-                        token: localStorage.currentToken 
+                        token: localStorage.currentToken
                     },
                     success: function (response) {
                         if (this.checkServerResponse(response)) {
@@ -1148,7 +1148,7 @@
 
             /**
              * @brief Registers a component that is interested in being notified if an HTK_INVALID_TOKEN is received from the server.
-             */ 
+             */
             addInvalidTokenListener(listener) {
                 this.invalidTokenListeners.push(listener);
             }
@@ -1237,7 +1237,7 @@
 
             /**
              * @brief Sets the thread identifier on the remote server which is sending events through the SSE. This is to avoid receiving updates from ourselves.
-             * @param[in] remoteServerTidIn the thread identifier on the remote server. 
+             * @param[in] remoteServerTidIn the thread identifier on the remote server.
              */
             setRemoteServerTid(remoteServerTidIn) {
                 this.remoteServerTid = remoteServerTidIn;
@@ -1298,6 +1298,6 @@
             htkHelper = new HtkHelper();
             setInterval(htkHelper.synchroniseRemote, 2000);
         }
-    
+
     </script>
 </html>

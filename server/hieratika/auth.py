@@ -6,8 +6,8 @@ __copyright__ = """
     by the European Commission - subsequent versions of the EUPL (the "Licence")
     You may not use this work except in compliance with the Licence.
     You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
- 
-    Unless required by applicable law or agreed to in writing, 
+
+    Unless required by applicable law or agreed to in writing,
     software distributed under the Licence is distributed on an "AS IS"
     basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
     or implied. See the Licence permissions and limitations under the Licence.
@@ -46,14 +46,14 @@ log = logging.getLogger("{0}".format(__name__))
 class HieratikaAuth(object):
     """ Abstract class which manages user authentication.
     """
-    
+
     __metaclass__ = ABCMeta
 
     def __init__(self):
         super(HieratikaAuth, self).__init__()
         self.logListeners = []
         self.stdAloneUsername = None
-        
+
 
     def addLogListener(self, listener):
         """ Registers a listener which will be notfied everytime a user logs in or out from the system.
@@ -65,10 +65,10 @@ class HieratikaAuth(object):
 
     def loadCommon(self, config):
         """ Loads parameters that are common to all authentication implementations.
-        
+
         Args:
             config (ConfigParser): parameters that are common to all authenticate implementations:
-            - loginMonitorUpdateRate (int): the time interval in seconds at which the state of logged in users is to be checked. 
+            - loginMonitorUpdateRate (int): the time interval in seconds at which the state of logged in users is to be checked.
             - loginMonitorMaxInactivityTime (int): maximum time that a given user can stay logged in without interacting with the server.
             - loginMaxUsers (int): maximum number of users that can be logged in at any time.
         Returns:
@@ -127,7 +127,7 @@ class HieratikaAuth(object):
                 if ((currentTime - self.tokens[k][1])  > self.loginMonitorMaxInactivityTime):
                     log.info("User {0} was not active for the last {1} seconds. User will be logout".format(self.tokens[k][0], self.loginMonitorMaxInactivityTime))
                     self.mux.release()
-                    self.logout(k) 
+                    self.logout(k)
                     self.mux.acquire()
             self.mux.release()
             #Print current server info
@@ -139,12 +139,13 @@ class HieratikaAuth(object):
             In standalone mode always return True.
 
         Args:
-            tokenId (str): the token to verify.           
- 
+            tokenId (str): the token to verify.
+
         Returns:
             True if the token is valid.
         """
         log.debug(">>Checking if tokenId: {0} is in the tokens list {1}".format(tokenId, self.tokens))
+        ok = True
         if (not self.standalone):
             log.debug(">Checking if tokenId: {0} is in the tokens list {1}".format(tokenId, self.tokens))
             self.mux.acquire()
@@ -176,12 +177,12 @@ class HieratikaAuth(object):
             if (ok):
                 ok = self.authenticate(username, password)
                 if (ok):
-                    user = self.getUser(username) 
+                    user = self.getUser(username)
             else:
                 log.critical("Could not register {0} . No more users allowed to register into the system (max number is: {1})".format(username, self.loginMaxUsers))
                 self.printInfo()
         else:
-            user = self.getUser(username) 
+            user = self.getUser(username)
 
         ok = (user is not None)
         if (ok):
@@ -253,7 +254,7 @@ class HieratikaAuth(object):
     @abstractmethod
     def load(self, config):
         """ Configures the authentication service against a set of parameters. This set of parameters is specific for each implementation.
-        
+
         Args:
             config(ConfigParser): the authentication specific implementation parameters are in the "auth-impl" section.
         Returns:
@@ -261,10 +262,10 @@ class HieratikaAuth(object):
         """
         pass
 
-    @abstractmethod 
+    @abstractmethod
     def authenticate(self, username, password):
         """ Authenticates a user into the system.
-        
+
         Args:
             username (str): the username.
             password (str): the user password.
@@ -283,11 +284,10 @@ class HieratikaAuth(object):
 
     @abstractmethod
     def getUser(self, username):
-        """ 
+        """
         Args:
             username(str): the username of the user to get.
         Returns:
             The user associated to the given username or None if not found.
         """
         pass
-

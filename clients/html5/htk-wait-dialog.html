@@ -49,7 +49,7 @@
                     createdCallback () {
                         var template = importDoc.querySelector("#twaitdialog");
                         var clone = document.importNode(template.content, true);
-                        var root = this.createShadowRoot();
+                        const root = this.attachShadow({mode: 'open'});
                         root.appendChild(clone);
 
                         this.diag = this.shadowRoot.querySelector("#dwaitdialog");

@@ -1,19 +1,19 @@
-<!-- 
+<!--
  date: 04/01/2018
  author: Andre' Neto
- 
+
  copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
  the Development of Fusion Energy ('Fusion for Energy').
  Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  by the European Commission - subsequent versions of the EUPL (the "Licence")
  You may not use this work except in compliance with the Licence.
  You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
- 
- warning: Unless required by applicable law or agreed to in writing, 
+
+ warning: Unless required by applicable law or agreed to in writing,
  software distributed under the Licence is distributed on an "AS IS"
  basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  or implied. See the Licence permissions and limitations under the Licence.
---> 
+-->
 
 <html>
     <head>
@@ -83,12 +83,12 @@
             //This is enclosure is required to protect the importDoc
             (function () {
                 var importDoc = document.currentScript.ownerDocument; // importee
-        
+
                 /**
-                 * @brief Hieratika navigation pane.
+                 * @brief Hieratika navigation panel.
                  */
                 class HtkNav extends HTMLElement {
-        
+
                     /**
                      * @brief Constructor. NOOP.
                      */
@@ -103,7 +103,9 @@
                         var template = importDoc.querySelector("#ttopnav");
                         // import template into
                         var clone = document.importNode(template.content, true);
-                        var root = this.createShadowRoot();
+
+                        // Attach a shadowRoot to htk-nav
+                        const root = this.attachShadow({mode: 'open'});
                         root.appendChild(clone);
 
                         this.sideBar = this.shadowRoot.querySelector("#tsidebar");
@@ -111,11 +113,11 @@
                         var sideBarClose = this.shadowRoot.querySelector("#tsidebarclose");
                         sideBarOpen.onclick = function(evt) {
                             this.sideBar.style.display = "block";
-                        }.bind(this); 
+                        }.bind(this);
 
                         sideBarClose.onclick = function() {
                             this.hideSideBar();
-                        }.bind(this); 
+                        }.bind(this);
 
                         var viewAccordion = this.shadowRoot.querySelector("#tviewacc");
                         var viewAccordionButton = this.shadowRoot.querySelector("#tviewaccbtn");
@@ -141,7 +143,7 @@
                             parent.htkDialogs.showWaitDialog();
                             parent.htkHelper.updatePlant(this.selectedPage.name, this.updatePlantCompleted, this.updatePlantError);
                         }.bind(this);
-            
+
                         this.loadIntoPlantButton = this.shadowRoot.querySelector("#loadintoplantbtn");
                         this.loadIntoPlantButton.onclick = function() {
                             this.hideSideBar();
@@ -161,7 +163,7 @@
                         this.loginDialog.addLoginListener(this);
                         this.loginButton.onclick = function() {
                             this.hideSideBar();
-                            var user = parent.htkHelper.getUser(); 
+                            var user = parent.htkHelper.getUser();
                             if (user === undefined) {
                                 this.loginDialog.show();
                             }
@@ -188,7 +190,7 @@
                             parent.htkHelper.setCurrentScheduleUID(undefined);
                             this.pageSelector.show(this.firePageChanged.bind(this));
                         }.bind(this);
-                       
+
                         this.scheduleSelector = this.shadowRoot.querySelector("#scheduleselector");
                         this.editScheduleButton = this.shadowRoot.querySelector("#editschedulebtn");
                         this.editScheduleButton.onclick = function() {
@@ -220,7 +222,7 @@
                         this.usernameDisplay = this.shadowRoot.querySelector("#username");
                         this.currentDisplay = this.shadowRoot.querySelector("#currentdisplay");
                         this.currentReference = this.shadowRoot.querySelector("#currentreference");
-                        
+
                         var user = parent.htkHelper.getUser();
                         if (user === undefined) {
                             this.loginButton.value = "<i class='fa fa-user-o'> Login</i>";
@@ -236,7 +238,7 @@
                             this.hideSideBar();
                             this.handleAccordionClick(refAccordion);
                             this.setReference(NONE_NAME);
-                            this.currentReference.innerHTML = NONE_NAME; 
+                            this.currentReference.innerHTML = NONE_NAME;
                             this.currentReference.style.color = NONE_COLOR;
                         }.bind(this);
 
@@ -245,7 +247,7 @@
                             this.hideSideBar();
                             this.handleAccordionClick(refAccordion);
                             this.setReference(PLANT_NAME);
-                            this.currentReference.innerHTML = PLANT_NAME; 
+                            this.currentReference.innerHTML = PLANT_NAME;
                         }.bind(this);
 
                         this.referenceSelectScheduleButton = this.shadowRoot.querySelector("#refselectschedulebtn");
@@ -253,7 +255,7 @@
                             this.hideSideBar();
                             this.handleAccordionClick(refAccordion);
                             this.scheduleSelector.show(this.refererenceScheduleChanged.bind(this));
-                        }.bind(this); 
+                        }.bind(this);
 
                         this.copyFromReferenceScheduleButton = this.shadowRoot.querySelector("#cpyreferenceschedulebtn");
                         this.copyFromReferenceScheduleButton.onclick = function () {
@@ -297,8 +299,9 @@
                             this.transformationsViewer.show();
                         }.bind(this);
 
-
-                        this.streamer.addTransformationListener(this.transformationsViewer);
+                        if(!this.standalone){
+                            this.streamer.addTransformationListener(this.transformationsViewer);
+                        }
 
                         parent.htkHelper.addInvalidTokenListener(this);
                         this.pageListeners = [this];
@@ -307,14 +310,14 @@
                         this.addPageListener(this.scheduleSelector);
                         this.disableAllButPageSelect();
                     }
-        
+
 
                     /**
                      * @brief See HTMLElement.attachedCallback.
                      */
                     attachedCallback() {
                         if (this.standalone) {
-                            this.loginDialog.loginToServer("", "");
+                            parent.htkHelper.loginToServer("", "", this.loginSuccessful.bind(this), this.loginError.bind(this));
                         }
                     }
 
@@ -379,7 +382,7 @@
                     handleAccordionClick(acc) {
                         if (acc.className.indexOf("w3-show") == -1) {
                             acc.className += " w3-show";
-                        } else { 
+                        } else {
                             acc.className = acc.className.replace(" w3-show", "");
                         }
                     }
@@ -407,13 +410,23 @@
                      * @details Starts the HtkStream and allows the user to interact with the system.
                      */
                     loginSuccessful(user) {
-                        this.user = user;
+                        if(!this.standalone){
+                          this.user = user;
+                        }
                         parent.htkHelper.getUsers(
                             function (allUsers) {
-                                this.streamer.start();
-                                this.usernameDisplay.innerHTML = this.user.username; 
-                                this.usernameDisplay.title = "username: " + this.user.username;
-                                this.loginButton.innerHTML = "<i class='fa fa-user-o'> Logout</i>";
+                                if(!this.standalone){
+                                    this.streamer.start();
+                                    this.usernameDisplay.innerHTML = this.user.username;
+                                    this.usernameDisplay.title = "username: " + this.user.username;
+                                    this.loginButton.innerHTML = "<i class='fa fa-user-o'> Logout</i>";
+                                }
+                                else {
+                                  this.usernameDisplay.innerHTML = allUsers[0].username;
+                                  this.usernameDisplay.title = "username: " + allUsers[0].username;
+                                  this.loginButton.innerHTML = "<i class='fa fa-user-o'> Logout</i>";
+                                  localStorage.user = JSON.stringify(allUsers[0]);
+                                }
                                 this.pageSelectButton.disabled = false;
                             }.bind(this),
                             function (response) {
@@ -426,17 +439,17 @@
                     /**
                      * @brief Informs all registered components that a new schedule has been selected to be displayed.
                      * @param[in] schedule the schedule that was selected.
-                     */ 
+                     */
                     fireScheduleChanged(schedule) {
                         for(var l in this.scheduleChangeListeners) {
                             this.scheduleChangeListeners[l].scheduleChanged(schedule);
                         }
                     }
-                  
+
                     /**
                      * @brief Informs all registered components that a new page has been selected.
                      * @param[in] page the page that was selected.
-                     */ 
+                     */
                     firePageChanged(page) {
                         for(var l in this.pageListeners) {
                             this.pageListeners[l].pageChanged(page);
@@ -445,7 +458,7 @@
 
                     /**
                      * @brief Informs all registered components that a user was logged out.
-                     */ 
+                     */
                     fireUserLogout() {
                         for(var l in this.userLogoutListeners) {
                             this.userLogoutListeners[l].userLogout();
@@ -461,6 +474,10 @@
                         this.fireUserLogout();
                     }
 
+                    loginError() {
+                      parent.htkDialogs.showErrorDialog("Error during login. Please try again.");
+                    }
+
                     /**
                      * @brief Logsout a user from the system and disables the buttons that allow to interact with the system.
                      */
@@ -470,10 +487,10 @@
                                 localStorage.removeItem("user");
                                 localStorage.removeItem("schedule");
                                 this.usernameDisplay.innerHTML = "(login first)"
-                                this.currentDisplay.innerHTML = NONE_NAME; 
-                                this.currentDisplay.style.color = NONE_COLOR; 
-                                this.currentReference.innerHTML = NONE_NAME; 
-                                this.currentReference.style.color = NONE_COLOR; 
+                                this.currentDisplay.innerHTML = NONE_NAME;
+                                this.currentDisplay.style.color = NONE_COLOR;
+                                this.currentReference.innerHTML = NONE_NAME;
+                                this.currentReference.style.color = NONE_COLOR;
                                 this.loginButton.innerHTML = "<i class='fa fa-user-o'> Login</i>";
                                 this.pageSelectButton.disabled = true;
                                 this.disableAllButPageSelect();
@@ -550,7 +567,7 @@
                         if (schedule.inheritsFromUID !== undefined) {
                             if (schedule.inheritsFromUID.length > 0) {
                                 parent.htkHelper.getSchedule(
-                                    schedule.inheritsFromUID, 
+                                    schedule.inheritsFromUID,
                                     function (parentSchedule) {
                                         currentScheduleText += " (" + parentSchedule.name + ")";
                                         this.currentDisplay.innerHTML = currentScheduleText;
@@ -570,11 +587,11 @@
                      */
                     refererenceScheduleChanged(schedule) {
                         var referenceScheduleText = schedule.name;
-                        this.currentReference.innerHTML = referenceScheduleText; 
+                        this.currentReference.innerHTML = referenceScheduleText;
                         if (schedule.inheritsFromUID !== undefined) {
                             if (schedule.inheritsFromUID.length > 0) {
                                 parent.htkHelper.getSchedule(
-                                    schedule.inheritsFromUID, 
+                                    schedule.inheritsFromUID,
                                     function (parentSchedule) {
                                         referenceScheduleText += " (" + parentSchedule.name + ")";
                                         this.currentReference.innerHTML = referenceScheduleText;
@@ -620,7 +637,7 @@
                             this.fireScheduleChanged(schedule);
                         }.bind(this));
                     }
-              
+
                     /**
                      * @brief Registers a component that wants to be informed about schedule changes.
                      * @param[in] listener the component to register.
@@ -628,7 +645,7 @@
                     addScheduleChangedListener(listener) {
                         this.scheduleChangeListeners.push(listener);
                     }
- 
+
                     /**
                      * @brief Registers a component that wants to be informed about page changes.
                      * @param[in] listener the component to register.
@@ -636,7 +653,7 @@
                     addPageListener(listener) {
                         this.pageListeners.push(listener);
                     }
-        
+
                     /**
                      * @brief Registers a component that wants to be informed when the user logsout from the system.
                      * @param[in] listener the component to register.
@@ -685,7 +702,7 @@
                                 currentReference,
                                 function(variables) {
                                     var keys = Object.keys(variables);
-                                    for (var i in keys) { 
+                                    for (var i in keys) {
                                         var variableName = keys[i];
                                         var variableValue = variables[keys[i]];
                                         var htkCompArray = mainFrameHtkComponents[variableName];
@@ -706,7 +723,7 @@
                             );
                         }
                     }
-                    
+
                     /**
                      * @brief Copies the values from a given schedule into all the components.
                      * @param[in] schUID the schedule identifier (i.e. the schedule name).
@@ -718,11 +735,11 @@
                     copyFromSchedule(schUID, resetValue, updateRemote, setNotEditable, successFun) {
                         parent.htkDialogs.showWaitDialog();
                         parent.htkHelper.getScheduleVariablesValues(
-                            schUID, 
+                            schUID,
                             function (variables) {
                                 var keys = Object.keys(variables);
                                 var mainFrameHtkComponents = parent.htkHelper.getAllMainFrameHtkComponents();
-                                for (var i in keys) { 
+                                for (var i in keys) {
                                     var variableName = keys[i];
                                     var variableValue = variables[keys[i]];
                                     var targetElements = mainFrameHtkComponents[variableName];
@@ -773,7 +790,7 @@
 
                 /**
                  * @brief Registers the element.
-                 */ 
+                 */
                 document.registerElement("htk-nav", {
                     prototype: HtkNav.prototype,
                 });
