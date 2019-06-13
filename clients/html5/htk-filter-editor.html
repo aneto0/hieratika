@@ -1,19 +1,19 @@
-<!-- 
+<!--
  date: 04/01/2018
  author: Andre' Neto
- 
+
  copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
  the Development of Fusion Energy ('Fusion for Energy').
  Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  by the European Commission - subsequent versions of the EUPL (the "Licence")
  You may not use this work except in compliance with the Licence.
  You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
- 
- warning: Unless required by applicable law or agreed to in writing, 
+
+ warning: Unless required by applicable law or agreed to in writing,
  software distributed under the Licence is distributed on an "AS IS"
  basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  or implied. See the Licence permissions and limitations under the Licence.
---> 
+-->
 
 <html>
     <head>
@@ -27,10 +27,10 @@
         <!-- HTML5 component template-->
         <template id="tfilter">
             <style>
-                @import url("/js/jqmath-0.4.3.css")
+                @import url("/js/jqmath-0.4.3.css");
             </style>
             <canvas width="600" height="300" id="tcanvas"></canvas>
-            <table border=0">
+            <table border="0">
                 <tr>
                     <td>Frequency Step</td><td><input type="text" id="frequencyStepInput"></input></td>
                     <td>Maximum frequency</td><td><input type="text" id="maxFrequencyInput"></input></td>
@@ -92,7 +92,7 @@
                             if (expVal > 0) {
                                 if (expVal === 1) {
                                     polynomialInnerHTML += "<mi>s</mi>";
-                                } 
+                                }
                                 else {
                                     polynomialInnerHTML += "<msup>";
                                     polynomialInnerHTML += "<mi>s</mi>";
@@ -102,7 +102,7 @@
                                     polynomialInnerHTML += "</msup>";
                                 }
                             }
-                        } 
+                        }
                     }
                     polynomialInnerHTML += "</mrow>";
                     return polynomialInnerHTML;
@@ -123,7 +123,7 @@
                     transferFunctionInnerHTML += "</mfrac>";
                     transferFunctionInnerHTML += "</math>";
                     return transferFunctionInnerHTML;
-                } 
+                }
 
                 /**
                  * @brief Gets the transfer function filter response by evaluating the function for N frequencyStep and up to the selected maxFrequency.
@@ -136,7 +136,7 @@
                     var amplitude = new Array(numberOfFrequencies);
                     w[0] = this.frequencyStep;
                     for (var i=1; i<numberOfFrequencies; i++) {
-                        w[i] = w[i-1] + this.frequencyStep; 
+                        w[i] = w[i-1] + this.frequencyStep;
                     }
                     for (var i=0; i<numberOfFrequencies; i++) {
                         var a = parseFloat(num[num.length - 1]);
@@ -154,7 +154,7 @@
                             }
                         }
                         var numAbs = Math.sqrt(a*a + b*b);
-                        
+
                         a = parseFloat(den[den.length - 1]);
                         b = 0;
                         for (var j=den.length-2; j>=0; j--) {
@@ -232,9 +232,9 @@
                             var den = this.value[1];
                             this.numeratorInput.value = num;
                             this.denominatorInput.value = den;
-                            
+
                             this.chart.data.datasets[0].data = this.getFilterResponse(num, den);
-                             
+
                             this.currentTransferFunction.innerHTML = this.generateTransferFunctionMathML(num, den);
                             jqMath.parseMath(this.currentTransferFunction);
                             var initValue = this.getInitialValue();
@@ -268,7 +268,7 @@
                                 var numRef = refValue[0];
                                 var denRef = refValue[1];
                                 if (plantValue === undefined) {
-                                    plantValue = [[],[]];    
+                                    plantValue = [[],[]];
                                 }
                                 var numPlant = plantValue[0];
                                 var denPlant = plantValue[1];
@@ -306,7 +306,7 @@
                         }
                         this.chart.update();
                     }
-                    
+
 
                     this.title = this.toString();
                 }
@@ -361,7 +361,7 @@
                             }
                             this.value[0] = this.numeratorInput.value.split(",");
                             this.value[1] = this.denominatorInput.value.split(",");
-                            this.checkValues(true); 
+                            this.checkValues(true);
                         }.bind(this));
                     }
                 }
@@ -436,7 +436,7 @@
 
             /**
              * @brief Registers the element.
-             */ 
+             */
             document.registerElement("htk-filter-editor", {
                 prototype: HtkFilterEditor.prototype
             });
