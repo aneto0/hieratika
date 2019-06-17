@@ -1,19 +1,19 @@
-<!-- 
+<!--
  date: 04/01/2018
  author: Andre' Neto
- 
+
  copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
  the Development of Fusion Energy ('Fusion for Energy').
  Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  by the European Commission - subsequent versions of the EUPL (the "Licence")
  You may not use this work except in compliance with the Licence.
  You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
- 
- warning: Unless required by applicable law or agreed to in writing, 
+
+ warning: Unless required by applicable law or agreed to in writing,
  software distributed under the Licence is distributed on an "AS IS"
  basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  or implied. See the Licence permissions and limitations under the Licence.
---> 
+-->
 
 <!-- Standard imports -->
 
@@ -25,13 +25,13 @@
 <script type="text/javascript">
     /**
      * @brief The root of the Hieratika HTML5 components class hierarchy.
-     * @details All the Hieratika HTML5 user-interface components shall inherit from HtkComponent. 
+     * @details All the Hieratika HTML5 user-interface components shall inherit from HtkComponent.
      * This component is responsible for implementing all the logical interfaces to the hieratika server, so that components inheriting from this component will (mostly) have to handle only with appropriate data transformation for user display (by implementing the refresh method and querying the getValue()).
      *
      * Typically an HtkComponent is associated and represents an Hieratika variable (identified by a unique name). See setVariable.
      */
     class HtkComponent extends HTMLElement {
-        
+
         /**
          * @brief Constructor. NOOP.
          */
@@ -55,8 +55,8 @@
             this.setPermissionGroups(variable.permissions);
             this.setIsStruct(variable.isStruct);
             //Loop through all the elements and try to find structures (by looking for the property name of any of the members)
-            var keys = Object.keys(variable); 
-            for (var keyIdx in keys) { 
+            var keys = Object.keys(variable);
+            for (var keyIdx in keys) {
                 var memberName = keys[keyIdx];
                 var memberVariable = variable[memberName];
                 if (memberVariable !== undefined) {
@@ -258,7 +258,7 @@
             this.value = valueToSet;
             this.fireValueChanged(HtkComponent.VALUE_CHANGED);
             if (updateRemote) {
-                this.updateRemote(valueToSet); 
+                this.updateRemote(valueToSet);
             }
             this.refresh();
         }
@@ -329,15 +329,15 @@
         }
 
         /**
-         * @brief Returns the number of elements as an array where each entry contains the number of elements on any given direction. 
-         * @return the number of elements. 
+         * @brief Returns the number of elements as an array where each entry contains the number of elements on any given direction.
+         * @return the number of elements.
          */
         getNumberOfElements() {
             return this.numberOfElements;
         }
 
         /**
-         * @brief Sets the number of elements as an array where each entry contains the number of elements on any given direction. 
+         * @brief Sets the number of elements as an array where each entry contains the number of elements on any given direction.
          * @param[in] numberOfElements the new number of elements array.
          */
         setNumberOfElements(numberOfElementsIn) {
@@ -441,7 +441,7 @@
         getTemplate() {
         }
 
-        /** 
+        /**
          * @brief This method will be called when on the components that have been registered with addValueChangedListener.
          * @param[in] source the component triggering the change of value.
          * @param[in] typeOfChange the type of change as one of: VALUE_CHANGED, VALUE_CHANGED_INITIAL, VALUE_CHANGED_REFERENCE, VALUE_CHANGED_PLANT, VALUE_CHANGED_REFERENCE_NAME.
@@ -494,13 +494,13 @@
 
         /**
          * @brief HTML5 createdCallback function. Initialise all the component variables and register the component to listen for information from the server.
-         * @details Note that the component will be registered in a dictionary that is private to the document (_frameComponents) so that it can be accessed from an iframe. Also note 
+         * @details Note that the component will be registered in a dictionary that is private to the document (_frameComponents) so that it can be accessed from an iframe. Also note
          * that the _frameComponents dictionary variable must be private to the iframe (i.e. to the document), otherwise there will be name clashes between different instance of libraries of the same type (given that each of them
             renders the contents in a iframe and the components are the same for the same library type).
          */
         createdCallback() {
             var template = this.getTemplate();
-            
+
             this.valueChangedListeners = [];
             this.lockStatusChangedListeners = [];
             this.permissionGroups = [];
@@ -584,7 +584,7 @@
         checkUserAllowedToWrite(user) {
             var userAllowed = false;
             for (var g in user.groups) {
-                userAllowed = this.permissionGroups.includes(user.groups[g]); 
+                userAllowed = this.permissionGroups.includes(user.groups[g]);
                 if (userAllowed) {
                     break;
                 }
@@ -603,4 +603,3 @@
     HtkComponent.VALUE_CHANGED_PLANT = 3;
     HtkComponent.VALUE_CHANGED_REFERENCE_NAME = 4;
 </script>
-
