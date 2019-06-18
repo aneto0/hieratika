@@ -37,7 +37,7 @@
       var importDoc = document.currentScript.ownerDocument; // importee
 
       /**
-       * @brief A text input component.
+       * @brief A check box component.
        */
       class HtkCheckBox extends HtkAbstractInput {
 
@@ -53,8 +53,8 @@
          */
         createdCallback() {
           super.createdCallback();
-          this.elementsToUpdate = [];
-          this.updateIndexes = [];
+          // this.elementsToUpdate = [];
+          // this.updateIndexes = [];
           this.onlyEnable = false;
           this.checkInput = this.shadowRoot.querySelector("#tinput");
           this.checkInput.addEventListener("click", function(e) {
@@ -65,9 +65,9 @@
                 this.setValue(0);
               }
             }
-            for (var i = 0; i < this.elementsToUpdate.length; i++) {
-              this.elementsToUpdate[i].updateValue(true, this.updateIndexes[i]);
-            }
+            // for (var i = 0; i < this.elementsToUpdate.length; i++) {
+            //   this.elementsToUpdate[i].updateValue(true, this.updateIndexes[i]);
+            // }
           }.bind(this));
         }
 
@@ -105,12 +105,14 @@
          */
         setReadOnly(isReadOnly) {
           super.setReadOnly(isReadOnly);
+          this.checkInput.disabled = isReadOnly;
+
         }
 
-        setUpdateValFun(elementToUpdate, updateIndex) {
-          this.elementsToUpdate.push(elementToUpdate);
-          this.updateIndexes.push(updateIndex);
-        }
+        // setUpdateValFun(elementToUpdate, updateIndex) {
+        //   this.elementsToUpdate.push(elementToUpdate);
+        //   this.updateIndexes.push(updateIndex);
+        // }
 
         getTheCorrectValue(valueToSet) {
           var val = valueToSet;

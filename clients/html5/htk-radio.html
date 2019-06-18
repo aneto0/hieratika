@@ -1,0 +1,241 @@
+<!--
+ date: 04/01/2018
+ author: Andre' Neto
+
+ copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
+ the Development of Fusion Energy ('Fusion for Energy').
+ Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ by the European Commission - subsequent versions of the EUPL (the "Licence")
+ You may not use this work except in compliance with the Licence.
+ You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+
+ warning: Unless required by applicable law or agreed to in writing,
+ software distributed under the Licence is distributed on an "AS IS"
+ basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ or implied. See the Licence permissions and limitations under the Licence.
+-->
+
+<html>
+
+<head>
+  <!-- Standard imports -->
+
+  <!-- Project imports -->
+  <link rel="import" href="/libraries.html">
+  <link rel="import" href="/htk-component.html">
+  <link rel="import" href="/htk-abstract-input.html">
+</head>
+
+<body>
+
+  <!-- HTML5 component template-->
+  <template id="trinput">
+    <input type="radio" id="rinput"></input>
+  </template>
+
+  <script>
+    //This is enclosure is required to protect the importDoc
+    (function() {
+      var importDoc = document.currentScript.ownerDocument; // importee
+
+      /**
+       * @brief A radio box component.
+       */
+      class HtkRadioBox extends HtkAbstractInput {
+
+        /**
+         * @brief Constructor. NOOP.
+         */
+        constructor() {
+          super();
+        }
+
+        /**
+         * @brief See HtkComponent.createdCallback.
+         */
+        createdCallback() {
+          super.createdCallback();
+          this.radioInput = this.shadowRoot.querySelector("#rinput");
+          this.radioInput.checked = false;
+          this.setValue(0);
+          this.radioInput.addEventListener("click", function(e) {
+            if (this.radioInput.checked) {
+              this.setValue(1);
+            } else {
+              this.setValue(0);
+            }
+          }.bind(this));
+        }
+
+        getTemplate() {
+          var template = importDoc.querySelector("#trinput");
+          return template;
+        }
+
+
+        static get observedAttributes() {
+          return ['checked'];
+        }
+
+        attributeChangedCallback(attrName, oldVal, newVal) {
+          if (newVal != oldVal) {
+            if (newVal == "true") {
+              this.radioInput.checked = true;
+              this.setValue(1);
+            } else {
+              this.radioInput.checked = false;
+              this.setValue(0);
+            }
+          }
+        }
+
+        /**
+         * @brief See HtkComponent.getValue.
+         */
+        getValue() {
+          var rValue = this.value;
+          var typeValue = this.getTypeValue();
+          return parent.htkHelper.textToTypeValue(rValue, typeValue);
+        }
+
+        /**
+         * @brief See HtkComponent.setReadOnly.
+         */
+        setReadOnly(isReadOnly) {
+          super.setReadOnly(isReadOnly);
+          this.radioInput.disabled = isReadOnly;
+        }
+
+        getTheCorrectValue(valueToSet) {
+          var val = valueToSet;
+          if (Array.isArray(valueToSet)) {
+            val = valueToSet[0];
+          }
+          return val;
+        }
+
+        setValue(valueToSet, updateRemote = true) {
+          this.value = this.getTheCorrectValue(valueToSet);
+          this.fireValueChanged(HtkComponent.VALUE_CHANGED);
+          if (updateRemote) {
+            this.updateRemote(valueToSet);
+          }
+          this.refresh();
+        }
+
+
+        setReference(referenceToSet) {
+          this.referenceValue = this.getTheCorrectValue(referenceToSet);
+          this.refresh();
+        }
+
+        setPlantValue(plantValueToSet) {
+          this.plantValue = this.getTheCorrectValue(plantValueToSet);
+          this.fireValueChanged(HtkComponent.VALUE_CHANGED);
+          this.refresh();
+        }
+
+        checkAllValues() {
+          this.checkValues(this.radioInput);
+        }
+
+        /**
+         * @brief See HtkComponent.refresh.
+         */
+        refresh() {
+          if (this.value > 0) {
+            this.radioInput.checked = true;
+          } else {
+            this.radioInput.checked = false;
+          }
+          this.checkValues(this.radioInput);
+        }
+
+      }
+
+      document.registerElement("htk-radio-box", {
+        prototype: HtkRadioBox.prototype,
+      });
+
+      /**
+       * @brief A check box component.
+       */
+      class HtkRadioGroup extends HTMLElement {
+
+        /**
+         * @brief Constructor. NOOP.
+         */
+        constructor() {
+          super();
+        }
+
+        /**
+         * @brief See HtkComponent.
+         */
+        createdCallback() {
+          this.setAttribute('role', 'radiogroup');
+          this.radios = Array.from(this.querySelectorAll('htk-radio-box'));
+        }
+
+        attachedCallback() {
+          // Setup initial state
+          if (this.hasAttribute('selected')) {
+            var selected = this.getAttribute('selected');
+            this._selected = selected;
+            //this.radios[selected].setAttribute('checked', true);
+          } else {
+            this._selected = 1;
+            this.setSelected(1);
+            //this.radios[0].setAttribute('checked', true);
+          }
+          this.addEventListener('click', function(e) {
+            const idx = this.radios.indexOf(e.target);
+            if (idx === -1) {
+              return;
+            }
+            this.setSelected(idx);
+          }.bind(this));
+
+          //this.onlyEnable = false;
+        }
+
+        setSelected(idx) {
+          if (isFinite(this.getSelected())) {
+            // Set the old button to tabindex -1
+            var previousSelected = this.radios[this.getSelected()];
+            previousSelected.setAttribute('checked', false);
+          }
+          // Set the new button to tabindex 0 and focus it
+          var newSelected = this.radios[idx];
+          newSelected.setAttribute('checked', true);
+          newSelected.focus();
+          this.setAttribute('selected', idx);
+          this._selected = idx;
+        }
+
+        getSelected() {
+          return this._selected;
+        }
+
+        /**
+         * @brief See HtkComponent.refresh.
+         */
+        refresh() {
+          for (var i = 0; i < this.radios.length; i++) {
+            if (this.radios[i].value > 0) {
+              this.radios[i].setAttribute('checked', true);
+            }
+          }
+        }
+      }
+      /**
+       * @brief Registers the element.
+       */
+      document.registerElement("htk-radio-group", {
+        prototype: HtkRadioGroup.prototype,
+      });
+    })();
+  </script>
+</body>
+
+</html>

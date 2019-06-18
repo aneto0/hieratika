@@ -11,6 +11,7 @@
 	<link rel="import" href="/htk-matrix-editor.html">
 	<link rel="import" href="/htk-library-button.html">
 	<link rel="import" href="/htk-lock-button.html">
+	<link rel="import" href="/htk-radio.html">
 	<link rel='import' href='/htk-struct-browser.html'>
 	<link rel="import" href="/htk-schedule-button.html">
 	<link rel="import" href="/htk-falcon-opi.html">
@@ -1149,20 +1150,19 @@
 				<td>
 					<table>
 						<tr>
-							<td width='100'>Arm</td>
+							<!-- <td width='100'>Arm</td>
 							<td width='100'>Cancel</td>
-							<td width='100'>Release</td>
+							<td width='100'>Release</td> -->
 						</tr>
 						<tr>
-							<td>
-								<htk-checkbox id='CPS@FOLDBACK_A0'></htk-checkbox>
-							</td>
-							<td>
-								<htk-checkbox id='CPS@FOLDBACK_C0'></htk-checkbox>
-							</td>
-							<td>
-								<htk-checkbox id='CPS@FOLDBACK_R0'></htk-checkbox>
-							</td>
+							<htk-radio-group>
+								<htk-radio-box id='CPS@FOLDBACK_A0'></htk-radio-box>
+								<label for='CPS@FOLDBACK_A0'>Arm</label>
+								<htk-radio-box id='CPS@FOLDBACK_C0'></htk-radio-box>
+								<label for='CPS@FOLDBACK_C0'>Cancel</label>
+								<htk-radio-box id='CPS@FOLDBACK_R0'></htk-radio-box>
+								<label for='CPS@FOLDBACK_R0'>Release</label>
+							</htk-radio-group>
 						</tr>
 					</table>
 				</td>
@@ -1217,20 +1217,19 @@
 				<td>
 					<table>
 						<tr>
-							<td width='100'>Arm</td>
+							<!-- <td width='100'>Arm</td>
 							<td width='100'>Cancel</td>
-							<td width='100'>Release</td>
+							<td width='100'>Release</td> -->
 						</tr>
 						<tr>
-							<td>
-								<htk-checkbox id='GCPS@FOLDBACK_A1'></htk-checkbox>
-							</td>
-							<td>
-								<htk-checkbox id='GCPS@FOLDBACK_C1'></htk-checkbox>
-							</td>
-							<td>
-								<htk-checkbox id='GCPS@FOLDBACK_R1'></htk-checkbox>
-							</td>
+							<htk-radio-group>
+								<htk-radio-box id='GCPS@FOLDBACK_A1'></htk-radio-box>
+								<label for='GCPS@FOLDBACK_A1'>Arm</label>
+								<htk-radio-box id='GCPS@FOLDBACK_C1'></htk-radio-box>
+								<label for='GCPS@FOLDBACK_C1'>Cancel</label>
+								<htk-radio-box id='GCPS@FOLDBACK_R1'></htk-radio-box>
+								<label for='GCPS@FOLDBACK_R1'>Release</label>
+							</htk-radio-group>
 						</tr>
 					</table>
 				</td>

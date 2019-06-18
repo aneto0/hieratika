@@ -5,3 +5,8 @@
 -   Setup the unit testing infrastructure for the client - NOT DONE
 -   Write unit tests for the client - NOT DONE
 -   DAP are just normal schedules associated to a given user (make sure that the standalone implementation also supports this) - TODO - make sure this is clear in the documentation.
+
+Luca:
+-   Lock checkbox and radiobox with htk-lock
+-   Add component htk-tab
+-   
