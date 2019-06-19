@@ -54,23 +54,23 @@
 
 				domLoaded() {
 
-					this.firstLevTabs = [];
-					this.nFirstLevTabs = 0;
-					while (1) {
-						var varName = "data-tab_" + this.nFirstLevTabs;
-						var varNameId = this.getAttribute(varName);
-						var htkCompArray = document.getElementById(varNameId);
-						if ((htkCompArray == null) || (htkCompArray == undefined)) {
-							break;
-						}
-						this.firstLevTabs.push(htkCompArray);
-						this.firstLevTabs[this.nFirstLevTabs].onclick = function(e) {
-							var caller = e.target || e.srcElement;
-							var tabNameX = caller.id + "_tab";
-							this.openTab(tabNameX);
-						}.bind(this);
-						this.nFirstLevTabs++;
-					}
+					// this.firstLevTabs = [];
+					// this.nFirstLevTabs = 0;
+					// while (1) {
+					// 	var varName = "data-tab_" + this.nFirstLevTabs;
+					// 	var varNameId = this.getAttribute(varName);
+					// 	var htkCompArray = document.getElementById(varNameId);
+					// 	if ((htkCompArray == null) || (htkCompArray == undefined)) {
+					// 		break;
+					// 	}
+					// 	this.firstLevTabs.push(htkCompArray);
+					// 	this.firstLevTabs[this.nFirstLevTabs].onclick = function(e) {
+					// 		var caller = e.target || e.srcElement;
+					// 		var tabNameX = caller.id + "_tab";
+					// 		this.openTab(tabNameX);
+					// 	}.bind(this);
+					// 	this.nFirstLevTabs++;
+					// }
 
 					var tot = 0;
 
@@ -183,9 +183,9 @@
 						// this.gcps[i].setUpdateValFun(this, tot + i);
 						this.gcps[i].setReadOnly(false);
 					}
-					this.gcps[1].setEnableOnly(true);
-					this.gcps[2].setEnableOnly(true);
-					this.gcps[3].setEnableOnly(true);
+					// this.gcps[1].setEnableOnly(true);
+					// this.gcps[2].setEnableOnly(true);
+					// this.gcps[3].setEnableOnly(true);
 
 
 					tot += this.nGcspFields;
@@ -340,7 +340,7 @@
 					}
 					tot += this.nRswpFields;
 
-					this.openTab("RU_Main_tab");
+					// this.openTab("RU_Main_tab");
 
 				}
 
@@ -409,19 +409,19 @@
 
 
 
-				openTab(tabName) {
-					var i, tabcontent, tablinks;
-					tabcontent = document.getElementsByClassName("tabcontent");
-					for (i = 0; i < tabcontent.length; i++) {
-						tabcontent[i].style.display = "none";
-					}
-					tablinks = document.getElementsByClassName("tablinks");
-					for (i = 0; i < tablinks.length; i++) {
-						tablinks[i].className = tablinks[i].className.replace(" active", "");
-					}
-					document.getElementById(tabName).style.display = "block";
-					//evt.currentTarget.className += " active";
-				}
+				// openTab(tabName) {
+				// 	var i, tabcontent, tablinks;
+				// 	tabcontent = document.getElementsByClassName("tabcontent");
+				// 	for (i = 0; i < tabcontent.length; i++) {
+				// 		tabcontent[i].style.display = "none";
+				// 	}
+				// 	tablinks = document.getElementsByClassName("tablinks");
+				// 	for (i = 0; i < tablinks.length; i++) {
+				// 		tablinks[i].className = tablinks[i].className.replace(" active", "");
+				// 	}
+				// 	document.getElementById(tabName).style.display = "block";
+				// 	//evt.currentTarget.className += " active";
+				// }
 
 				checkValue() {}
 

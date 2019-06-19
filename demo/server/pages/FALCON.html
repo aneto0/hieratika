@@ -17,32 +17,70 @@
 	<link rel="import" href="/htk-falcon-opi.html">
 	<link rel="import" href="/htk-bps-plot-editor.html">
 	<link rel="import" href="/htk-hvps-plot-editor.html">
+	<style>
+		.tab {
+			overflow: hidden;
+			border: 1px solid #ccc;
+			background-color: #f1f1f1;
+		}
+
+		/* Style the buttons inside the tab */
+		.tab button {
+			background-color: inherit;
+			float: left;
+			border: none;
+			outline: none;
+			cursor: pointer;
+			padding: 14px 16px;
+			transition: 0.3s;
+			font-size: 17px;
+		}
+
+		/* Change background color of buttons on hover */
+		.tab button:hover {
+			background-color: #ddd;
+		}
+
+		/* Create an active/current tablink class */
+		.tab button.active {
+			background-color: #b3b3b3;
+		}
+
+		/* Style the tab content */
+		.tabcontent {
+			display: none;
+			padding: 6px 12px;
+			border: 1px solid #ccc;
+			border-top: none;
+		}
+
+		table {
+			table-layout: fixed;
+		}
+	</style>
 </head>
 
 <body>
 
 
 	<div class="tab">
-		<button class="tablinks" id="RU_Main">RU Main</button>
-		<button class="tablinks" id="RU_Alarms">RU Alarms</button>
-		<button class="tablinks" id="RU_CWS_Alarms">RU CWS Alarms</button>
-		<button class="tablinks" id="BPS">BPS</button>
-		<button class="tablinks" id="CPS">CPS</button>
-		<button class="tablinks" id="GCPS">GCPS</button>
-		<button class="tablinks" id="HVPS">HVPS</button>
-		<button class="tablinks" id="IPS1">IPS1</button>
-		<button class="tablinks" id="IPS2">IPS2</button>
-		<button class="tablinks" id="PMP1">PMP1</button>
-		<button class="tablinks" id="PMP2">PMP2</button>
-		<button class="tablinks" id="RFIL">RFIL</button>
-		<button class="tablinks" id="RSCM">RSCM</button>
-		<button class="tablinks" id="RSWP">RSWP</button>
+		<button class="tablinks" id="RU_Main" onclick="openTab(event, 'RU_Main_tab')">RU Main</button>
+		<button class="tablinks" id="RU_Alarms" onclick="openTab(event, 'RU_Alarms_tab')">RU Alarms</button>
+		<button class="tablinks" id="RU_CWS_Alarms" onclick="openTab(event, 'RU_CWS_Alarms_tab')">RU CWS Alarms</button>
+		<button class="tablinks" id="BPS" onclick="openTab(event, 'BPS_tab')">BPS</button>
+		<button class="tablinks" id="CPS" onclick="openTab(event, 'CPS_tab')">CPS</button>
+		<button class="tablinks" id="GCPS" onclick="openTab(event, 'GCPS_tab')">GCPS</button>
+		<button class="tablinks" id="HVPS" onclick="openTab(event, 'HVPS_tab')">HVPS</button>
+		<button class="tablinks" id="IPS1" onclick="openTab(event, 'IPS1_tab')">IPS1</button>
+		<button class="tablinks" id="IPS2" onclick="openTab(event, 'IPS2_tab')">IPS2</button>
+		<button class="tablinks" id="PMP1" onclick="openTab(event, 'PMP1_tab')">PMP1</button>
+		<button class="tablinks" id="PMP2" onclick="openTab(event, 'PMP2_tab')">PMP2</button>
+		<button class="tablinks" id="RFIL" onclick="openTab(event, 'RFIL_tab')">RFIL</button>
+		<button class="tablinks" id="RSCM" onclick="openTab(event, 'RSCM_tab')">RSCM</button>
+		<button class="tablinks" id="RSWP" onclick="openTab(event, 'RSWP_tab')">RSWP</button>
 	</div>
 
-
-
 	<div id="RU_Main_tab" class="tabcontent">
-		<h3>RU Main</h3>
 		<p>RU Main Configuration</p>
 		<table align="center">
 			<tr>
@@ -184,7 +222,6 @@
 
 
 	<div id="RU_Alarms_tab" class="tabcontent">
-		<h3>RU Alarms</h3>
 		<p>RU Alarms Configuration</p>
 		<table align="center">
 			<tr>
@@ -520,8 +557,7 @@
 
 
 	<div id="RU_CWS_Alarms_tab" class="tabcontent">
-		<h3>RU Alarms</h3>
-		<p>RU Alarms Configuration</p>
+		<p>RU CWS Alarms Configuration</p>
 		<table align="center">
 			<tr>
 				<td>Lock <htk-lock-button id='RU_CWS_ALARMS@LOCK'></htk-lock-button>
@@ -1032,7 +1068,6 @@
 
 
 	<div id="BPS_tab" class="tabcontent">
-		<h3>BPS</h3>
 		<p>BPS Configuration</p>
 
 		<table>
@@ -1129,7 +1164,6 @@
 	</div>
 
 	<div id="CPS_tab" class="tabcontent">
-		<h3>CPS</h3>
 		<p>CPS Configuration</p>
 
 		<table>
@@ -1150,9 +1184,6 @@
 				<td>
 					<table>
 						<tr>
-							<!-- <td width='100'>Arm</td>
-							<td width='100'>Cancel</td>
-							<td width='100'>Release</td> -->
 						</tr>
 						<tr>
 							<htk-radio-group>
@@ -1196,7 +1227,6 @@
 	</div>
 
 	<div id="GCPS_tab" class="tabcontent">
-		<h3>GCPS</h3>
 		<p>GCPS Configuration</p>
 
 		<table>
@@ -1217,9 +1247,6 @@
 				<td>
 					<table>
 						<tr>
-							<!-- <td width='100'>Arm</td>
-							<td width='100'>Cancel</td>
-							<td width='100'>Release</td> -->
 						</tr>
 						<tr>
 							<htk-radio-group>
@@ -1263,7 +1290,6 @@
 	</div>
 
 	<div id="HVPS_tab" class="tabcontent">
-		<h3>HVPS</h3>
 		<p>HVPS Configuration</p>
 
 		<table>
@@ -1324,7 +1350,6 @@
 
 
 	<div id="IPS1_tab" class="tabcontent">
-		<h3>IPS1</h3>
 		<p>IPS1 Configuration</p>
 
 		<table>
@@ -1368,7 +1393,6 @@
 	</div>
 
 	<div id="IPS2_tab" class="tabcontent">
-		<h3>IPS2</h3>
 		<p>IPS2 Configuration</p>
 
 
@@ -1414,7 +1438,6 @@
 
 
 	<div id="PMP1_tab" class="tabcontent">
-		<h3>PMP1</h3>
 		<p>PMP1 Configuration</p>
 
 
@@ -1490,7 +1513,6 @@
 
 
 	<div id="PMP2_tab" class="tabcontent">
-		<h3>PMP2</h3>
 		<p>PMP2 Configuration</p>
 
 
@@ -1566,7 +1588,6 @@
 
 
 	<div id="RFIL_tab" class="tabcontent">
-		<h3>RFIL</h3>
 		<p>RFIL Configuration</p>
 
 
@@ -1624,7 +1645,6 @@
 
 
 	<div id="RSCM_tab" class="tabcontent">
-		<h3>RSCM</h3>
 		<p>RSCM Configuration</p>
 
 
@@ -1659,7 +1679,6 @@
 
 
 	<div id="RSWP_tab" class="tabcontent">
-		<h3>RSWP</h3>
 		<p>RSWP Configuration</p>
 
 
@@ -1694,50 +1713,60 @@
 
 	<table>
 		<tr>
-
-
-
-
-
 			<td>
-				<htk-falcon-opi id='FALCON@FALCON' data-tab_0='RU_Main' data-tab_1='RU_Alarms' data-tab_2='RU_CWS_Alarms' data-tab_3='BPS' data-tab_4='CPS' data-tab_5='GCPS' data-tab_6='HVPS' data-tab_7='IPS1' data-tab_8='IPS2' data-tab_9='PMP1'
-					data-tab_10='PMP2' data-tab_11='RFIL' data-tab_12='RSCM' data-tab_13='RSWP' data-ru_main_0='RU_MAIN@MHVPS_VOLTAGE' data-ru_main_1='RU_MAIN@TOTAL_VOLTAGE' data-ru_main_2='RU_MAIN@PULSE_MINUTES' data-ru_main_3='RU_MAIN@PULSE_SECONDS'
-					data-ru_main_4='RU_MAIN@PULSE_MSECONDS' data-ru_main_5='RU_MAIN@VARIABLE_BODY_VOLTAGE' data-ru_main_6='RU_MAIN@SCM_HEATER_ON' data-ru_main_7='RU_MAIN@SCM_SP_CURRENT' data-ru_main_8='RU_MAIN@FILAMENT_CURRENT_SP'
-					data-ru_main_9='RU_MAIN@GYRO_CURRENT_SP' data-ru_main_10='RU_MAIN@STABILIZATION_MODE' data-ru_main_11='RU_MAIN@RESET_ERRORS' data-ru_alarms_0='RU_ALARMS@FIL_CUR_HHLL_THRES' data-ru_alarms_1='RU_ALARMS@SCM_SCM_CUR_HHLL1_THRES'
-					data-ru_alarms_2='RU_ALARMS@SCM_SCM_CUR_HHLL2_THRES' data-ru_alarms_3='RU_ALARMS@SCM_LEM_CUR_HHLL1_THRES' data-ru_alarms_4='RU_ALARMS@SCM_LEM_CUR_HHLL2_THRES' data-ru_alarms_5='RU_ALARMS@SCM_SERIAL_CUR_HHLL1_THRES'
-					data-ru_alarms_6='RU_ALARMS@SCM_SERIAL_CUR_HHLL2_THRES' data-ru_alarms_7='RU_ALARMS@COLL_CUR_HW_HHLL1_THRES' data-ru_alarms_8='RU_ALARMS@COLL_CUR_HW_HHLL2_THRES' data-ru_alarms_9='RU_ALARMS@COLL_SERIAL_CUR_HHLL1_THRES'
-					data-ru_alarms_10='RU_ALARMS@COLL_SERIAL_CUR_HHLL2_THRES' data-ru_alarms_11='RU_ALARMS@RF_TX1_HHLL_THRES' data-ru_alarms_12='RU_ALARMS@RF_TX2_HHLL_THRES' data-ru_alarms_13='RU_ALARMS@RF_TX3_HHLL_THRES'
-					data-ru_alarms_14='RU_ALARMS@IPS1_CUR_HW_HHLL1_THRES' data-ru_alarms_15='RU_ALARMS@IPS1_CUR_HW_HHLL2_THRES' data-ru_alarms_16='RU_ALARMS@IPS1_SERIAL_CUR_HHLL1_THRES' data-ru_alarms_17='RU_ALARMS@IPS1_SERIAL_CUR_HHLL2_THRES'
-					data-ru_alarms_18='RU_ALARMS@IPS1_SERIAL_VOL_HHLL_THRES' data-ru_alarms_19='RU_ALARMS@GC_CUR_HW_HHLL1_THRES' data-ru_alarms_20='RU_ALARMS@GC_CUR_HW_HHLL2_THRES' data-ru_alarms_21='RU_ALARMS@GC_CUR_SER_HHLL1_THRES'
-					data-ru_alarms_22='RU_ALARMS@GC_CUR_SER_HHLL2_THRES' data-ru_alarms_23='RU_ALARMS@VPUMPL_PRES_LOAD_HW_HHLL_THRES' data-ru_alarms_24='RU_ALARMS@VPUMPM_PRES_LOAD_HW_HHLL_THRES' data-ru_alarms_25='RU_ALARMS@SWEEP_SEMI_PERIOD_THRES'
-					data-ru_alarms_26='RU_ALARMS@SWEEP_H_THRES' data-ru_alarms_27='RU_ALARMS@SWEEP_L_THRES' data-ru_cws_alarms_0='RU_CWS_ALARMS@COL_TEMP_IN_HHLL_THRES' data-ru_cws_alarms_1='RU_CWS_ALARMS@COL_DTEMP_HHLL_THRES'
-					data-ru_cws_alarms_2='RU_CWS_ALARMS@COL_FL_HHLL1_THRES' data-ru_cws_alarms_3='RU_CWS_ALARMS@COL_FL_HHLL2_THRES' data-ru_cws_alarms_4='RU_CWS_ALARMS@LOAD_TEMP_IN_HHLL_THRES' data-ru_cws_alarms_5='RU_CWS_ALARMS@LOAD_DTEMP_HHLL_THRES'
-					data-ru_cws_alarms_6='RU_CWS_ALARMS@LOAD_FL_LP_HHLL1_THRES' data-ru_cws_alarms_7='RU_CWS_ALARMS@LOAD_FL_LP_HHLL2_THRES' data-ru_cws_alarms_8='RU_CWS_ALARMS@BP1_TEMP_IN_HHLL_THRES' data-ru_cws_alarms_9='RU_CWS_ALARMS@BP1_FL_HHLL1_THRES'
-					data-ru_cws_alarms_10='RU_CWS_ALARMS@BP1_FL_HHLL2_THRES' data-ru_cws_alarms_11='RU_CWS_ALARMS@BP4_TEMP_IN_HHLL_THRES' data-ru_cws_alarms_12='RU_CWS_ALARMS@BP4_FL_HHLL1_THRES' data-ru_cws_alarms_13='RU_CWS_ALARMS@BP4_FL_HHLL2_THRES'
-					data-ru_cws_alarms_14='RU_CWS_ALARMS@BP5_TEMP_IN_HHLL_THRES' data-ru_cws_alarms_15='RU_CWS_ALARMS@BP5_DTEMP_IN_HHLL_THRES' data-ru_cws_alarms_16='RU_CWS_ALARMS@BP5_FL_HHLL1_THRES' data-ru_cws_alarms_17='RU_CWS_ALARMS@BP5_FL_HHLL2_THRES'
-					data-ru_cws_alarms_18='RU_CWS_ALARMS@BP6_FL_HHLL1_THRES' data-ru_cws_alarms_19='RU_CWS_ALARMS@BP6_FL_HHLL2_THRES' data-ru_cws_alarms_20='RU_CWS_ALARMS@BP8_TEMP_IN_HHLL_THRES' data-ru_cws_alarms_21='RU_CWS_ALARMS@BP8_FL_HHLL1_THRES'
-					data-ru_cws_alarms_22='RU_CWS_ALARMS@BP8_FL_HHLL2_THRES' data-ru_cws_alarms_23='RU_CWS_ALARMS@BP10_TEMP_IN_HHLL_THRES' data-ru_cws_alarms_24='RU_CWS_ALARMS@BP10_FL_HHLL1_THRES' data-ru_cws_alarms_25='RU_CWS_ALARMS@BP10_FL_HHLL2_THRES'
-					data-ru_cws_alarms_26='RU_CWS_ALARMS@BP11_TEMP_IN_HHLL_THRES' data-ru_cws_alarms_27='RU_CWS_ALARMS@BP11_FL_HHLL1_THRES' data-ru_cws_alarms_28='RU_CWS_ALARMS@BP11_FL_HHLL2_THRES' data-ru_cws_alarms_29='RU_CWS_ALARMS@HP4_TEMP_IN_HHLL_THRES'
-					data-ru_cws_alarms_30='RU_CWS_ALARMS@HP4_FL_HHLL1_THRES' data-ru_cws_alarms_31='RU_CWS_ALARMS@HP4_FL_HHLL2_THRES' data-ru_cws_alarms_32='RU_CWS_ALARMS@HP8_TEMP_IN_HHLL_THRES' data-ru_cws_alarms_33='RU_CWS_ALARMS@HP8_FL_HHLL1_THRES'
-					data-ru_cws_alarms_34='RU_CWS_ALARMS@HP8_FL_HHLL2_THRES' data-ru_cws_alarms_35='RU_CWS_ALARMS@HP9_TEMP_IN_HHLL_THRES' data-ru_cws_alarms_36='RU_CWS_ALARMS@HP9_FL_HHLL1_THRES' data-ru_cws_alarms_37='RU_CWS_ALARMS@HP9_FL_HHLL2_THRES'
-					data-ru_cws_alarms_38='RU_CWS_ALARMS@HP10_TEMP_IN_HHLL_THRES' data-ru_cws_alarms_39='RU_CWS_ALARMS@HP10_FL_HHLL1_THRES' data-ru_cws_alarms_40='RU_CWS_ALARMS@HP10_FL_HHLL2_THRES' data-ru_cws_alarms_41='RU_CWS_ALARMS@HP11_TEMP_IN_HHLL_THRES'
-					data-ru_cws_alarms_42='RU_CWS_ALARMS@HP11_FL_HHLL1_THRES' data-ru_cws_alarms_43='RU_CWS_ALARMS@HP11_FL_HHLL2_THRES' data-bps_0='BPS@PULSE_LENG0' data-bps_1='BPS@RAMP_DOWN_0' data-bps_2='BPS@RAMP_UP_TI0' data-bps_3='BPS@RAMP_UP_TI1'
-					data-bps_4='BPS@RAMP_UP_TI2' data-bps_5='BPS@TIME_1_REA0' data-bps_6='BPS@TIME_2_REA0' data-bps_7='BPS@TIME_3_REA0' data-bps_8='BPS@VOLTAGE_LE0' data-bps_9='BPS@VOLTAGE_LE1' data-bps_10='BPS@VOLTAGE_LE2' data-bps_11='BPS@PL_IN_SEC_0'
-					data-bps_12='BPS@VAR_BODY_V0' data-cps_0='CPS@AUTORESTAR0' data-cps_1='CPS@FOLDBACK_A0' data-cps_2='CPS@FOLDBACK_C0' data-cps_3='CPS@FOLDBACK_R0' data-cps_4='CPS@OVERVOLTAG0' data-cps_5='CPS@SP_CURRENT0' data-cps_6='CPS@SP_VOLTAGE0'
-					data-cps_7='CPS@UNDERVOLTA0' data-gcps_0='GCPS@AUTORESTAR1' data-gcps_1='GCPS@FOLDBACK_A1' data-gcps_2='GCPS@FOLDBACK_C1' data-gcps_3='GCPS@FOLDBACK_R1' data-gcps_4='GCPS@OVERVOLTAG1' data-gcps_5='GCPS@SP_CURRENT7'
-					data-gcps_6='GCPS@SP_VOLTAGE1' data-gcps_7='GCPS@UNDERVOLTA1' data-hvps_0='HVPS@PULSE_DURA0' data-hvps_1='HVPS@PULSE_NUMB1' data-hvps_2='HVPS@PULSE_UNIT0' data-hvps_3='HVPS@RAMP_DOWN_1' data-hvps_4='HVPS@RAMP_UP_TI4'
-					data-hvps_5='HVPS@TIME_BET_P0' data-hvps_6='HVPS@VOLTAGE_LE4' data-ips1_0='IPS1@OUTPUT_VOL0' data-ips1_1='IPS1@OUTPUT_VOL1' data-ips1_2='IPS1@OUTPUT_VOL2' data-ips1_3='IPS1@PROTECTION0' data-ips1_4='IPS1@START_MODE0'
-					data-ips2_0='IPS2@OUTPUT_VOL3' data-ips2_1='IPS2@OUTPUT_VOL4' data-ips2_2='IPS2@OUTPUT_VOL5' data-ips2_3='IPS2@PROTECTION1' data-ips2_4='IPS2@START_MODE1' data-pmp1_0='PMP1@PBR260_CAL0' data-pmp1_1='PMP1@PBR260_ON_0'
-					data-pmp1_2='PMP1@PBR260_SP_0' data-pmp1_3='PMP1@PBR260_SP_1' data-pmp1_4='PMP1@PBR260_UND0' data-pmp1_5='PMP1@TPR280_CAL0' data-pmp1_6='PMP1@TPR280_ON_0' data-pmp1_7='PMP1@TPR280_SP_0' data-pmp1_8='PMP1@TPR280_SP_1'
-					data-pmp1_9='PMP1@TPR280_UND0' data-pmp2_0='PMP2@PBR260_CAL1' data-pmp2_1='PMP2@PBR260_ON_1' data-pmp2_2='PMP2@PBR260_SP_2' data-pmp2_3='PMP2@PBR260_SP_3' data-pmp2_4='PMP2@PBR260_UND1' data-pmp2_5='PMP2@TPR280_CAL1'
-					data-pmp2_6='PMP2@TPR280_ON_1' data-pmp2_7='PMP2@TPR280_SP_2' data-pmp2_8='PMP2@TPR280_SP_3' data-pmp2_9='PMP2@TPR280_UND1' data-rfil_0='RFIL@ERR_RESET_0' data-rfil_1='RFIL@IF_MAX_CUR0' data-rfil_2='RFIL@IF_SP_CURR0'
-					data-rfil_3='RFIL@IG_SP_CURR0' data-rfil_4='RFIL@STABILIZAT0' data-rfil_5='RFIL@SWEEP_RATE0' data-rfil_6='RFIL@SWEEP_RATE1' data-rscm_0='RSCM@HEATER_ON_0' data-rscm_1='RSCM@SP_CURRENT8' data-rscm_2='RSCM@SWEEP_RATE2'
-					data-rswp_0='RSWP@THRESHOLD_0' data-rswp_1='RSWP@THRESHOLD_1' data-rswp_2='RSWP@WAVE_PERIO1'></htk-falcon-opi>
+				<htk-falcon-opi id='FALCON@FALCON' data-ru_main_0='RU_MAIN@MHVPS_VOLTAGE' data-ru_main_1='RU_MAIN@TOTAL_VOLTAGE' data-ru_main_2='RU_MAIN@PULSE_MINUTES' data-ru_main_3='RU_MAIN@PULSE_SECONDS' data-ru_main_4='RU_MAIN@PULSE_MSECONDS'
+					data-ru_main_5='RU_MAIN@VARIABLE_BODY_VOLTAGE' data-ru_main_6='RU_MAIN@SCM_HEATER_ON' data-ru_main_7='RU_MAIN@SCM_SP_CURRENT' data-ru_main_8='RU_MAIN@FILAMENT_CURRENT_SP' data-ru_main_9='RU_MAIN@GYRO_CURRENT_SP'
+					data-ru_main_10='RU_MAIN@STABILIZATION_MODE' data-ru_main_11='RU_MAIN@RESET_ERRORS' data-ru_alarms_0='RU_ALARMS@FIL_CUR_HHLL_THRES' data-ru_alarms_1='RU_ALARMS@SCM_SCM_CUR_HHLL1_THRES' data-ru_alarms_2='RU_ALARMS@SCM_SCM_CUR_HHLL2_THRES'
+					data-ru_alarms_3='RU_ALARMS@SCM_LEM_CUR_HHLL1_THRES' data-ru_alarms_4='RU_ALARMS@SCM_LEM_CUR_HHLL2_THRES' data-ru_alarms_5='RU_ALARMS@SCM_SERIAL_CUR_HHLL1_THRES' data-ru_alarms_6='RU_ALARMS@SCM_SERIAL_CUR_HHLL2_THRES'
+					data-ru_alarms_7='RU_ALARMS@COLL_CUR_HW_HHLL1_THRES' data-ru_alarms_8='RU_ALARMS@COLL_CUR_HW_HHLL2_THRES' data-ru_alarms_9='RU_ALARMS@COLL_SERIAL_CUR_HHLL1_THRES' data-ru_alarms_10='RU_ALARMS@COLL_SERIAL_CUR_HHLL2_THRES'
+					data-ru_alarms_11='RU_ALARMS@RF_TX1_HHLL_THRES' data-ru_alarms_12='RU_ALARMS@RF_TX2_HHLL_THRES' data-ru_alarms_13='RU_ALARMS@RF_TX3_HHLL_THRES' data-ru_alarms_14='RU_ALARMS@IPS1_CUR_HW_HHLL1_THRES'
+					data-ru_alarms_15='RU_ALARMS@IPS1_CUR_HW_HHLL2_THRES' data-ru_alarms_16='RU_ALARMS@IPS1_SERIAL_CUR_HHLL1_THRES' data-ru_alarms_17='RU_ALARMS@IPS1_SERIAL_CUR_HHLL2_THRES' data-ru_alarms_18='RU_ALARMS@IPS1_SERIAL_VOL_HHLL_THRES'
+					data-ru_alarms_19='RU_ALARMS@GC_CUR_HW_HHLL1_THRES' data-ru_alarms_20='RU_ALARMS@GC_CUR_HW_HHLL2_THRES' data-ru_alarms_21='RU_ALARMS@GC_CUR_SER_HHLL1_THRES' data-ru_alarms_22='RU_ALARMS@GC_CUR_SER_HHLL2_THRES'
+					data-ru_alarms_23='RU_ALARMS@VPUMPL_PRES_LOAD_HW_HHLL_THRES' data-ru_alarms_24='RU_ALARMS@VPUMPM_PRES_LOAD_HW_HHLL_THRES' data-ru_alarms_25='RU_ALARMS@SWEEP_SEMI_PERIOD_THRES' data-ru_alarms_26='RU_ALARMS@SWEEP_H_THRES'
+					data-ru_alarms_27='RU_ALARMS@SWEEP_L_THRES' data-ru_cws_alarms_0='RU_CWS_ALARMS@COL_TEMP_IN_HHLL_THRES' data-ru_cws_alarms_1='RU_CWS_ALARMS@COL_DTEMP_HHLL_THRES' data-ru_cws_alarms_2='RU_CWS_ALARMS@COL_FL_HHLL1_THRES'
+					data-ru_cws_alarms_3='RU_CWS_ALARMS@COL_FL_HHLL2_THRES' data-ru_cws_alarms_4='RU_CWS_ALARMS@LOAD_TEMP_IN_HHLL_THRES' data-ru_cws_alarms_5='RU_CWS_ALARMS@LOAD_DTEMP_HHLL_THRES' data-ru_cws_alarms_6='RU_CWS_ALARMS@LOAD_FL_LP_HHLL1_THRES'
+					data-ru_cws_alarms_7='RU_CWS_ALARMS@LOAD_FL_LP_HHLL2_THRES' data-ru_cws_alarms_8='RU_CWS_ALARMS@BP1_TEMP_IN_HHLL_THRES' data-ru_cws_alarms_9='RU_CWS_ALARMS@BP1_FL_HHLL1_THRES' data-ru_cws_alarms_10='RU_CWS_ALARMS@BP1_FL_HHLL2_THRES'
+					data-ru_cws_alarms_11='RU_CWS_ALARMS@BP4_TEMP_IN_HHLL_THRES' data-ru_cws_alarms_12='RU_CWS_ALARMS@BP4_FL_HHLL1_THRES' data-ru_cws_alarms_13='RU_CWS_ALARMS@BP4_FL_HHLL2_THRES' data-ru_cws_alarms_14='RU_CWS_ALARMS@BP5_TEMP_IN_HHLL_THRES'
+					data-ru_cws_alarms_15='RU_CWS_ALARMS@BP5_DTEMP_IN_HHLL_THRES' data-ru_cws_alarms_16='RU_CWS_ALARMS@BP5_FL_HHLL1_THRES' data-ru_cws_alarms_17='RU_CWS_ALARMS@BP5_FL_HHLL2_THRES' data-ru_cws_alarms_18='RU_CWS_ALARMS@BP6_FL_HHLL1_THRES'
+					data-ru_cws_alarms_19='RU_CWS_ALARMS@BP6_FL_HHLL2_THRES' data-ru_cws_alarms_20='RU_CWS_ALARMS@BP8_TEMP_IN_HHLL_THRES' data-ru_cws_alarms_21='RU_CWS_ALARMS@BP8_FL_HHLL1_THRES' data-ru_cws_alarms_22='RU_CWS_ALARMS@BP8_FL_HHLL2_THRES'
+					data-ru_cws_alarms_23='RU_CWS_ALARMS@BP10_TEMP_IN_HHLL_THRES' data-ru_cws_alarms_24='RU_CWS_ALARMS@BP10_FL_HHLL1_THRES' data-ru_cws_alarms_25='RU_CWS_ALARMS@BP10_FL_HHLL2_THRES' data-ru_cws_alarms_26='RU_CWS_ALARMS@BP11_TEMP_IN_HHLL_THRES'
+					data-ru_cws_alarms_27='RU_CWS_ALARMS@BP11_FL_HHLL1_THRES' data-ru_cws_alarms_28='RU_CWS_ALARMS@BP11_FL_HHLL2_THRES' data-ru_cws_alarms_29='RU_CWS_ALARMS@HP4_TEMP_IN_HHLL_THRES' data-ru_cws_alarms_30='RU_CWS_ALARMS@HP4_FL_HHLL1_THRES'
+					data-ru_cws_alarms_31='RU_CWS_ALARMS@HP4_FL_HHLL2_THRES' data-ru_cws_alarms_32='RU_CWS_ALARMS@HP8_TEMP_IN_HHLL_THRES' data-ru_cws_alarms_33='RU_CWS_ALARMS@HP8_FL_HHLL1_THRES' data-ru_cws_alarms_34='RU_CWS_ALARMS@HP8_FL_HHLL2_THRES'
+					data-ru_cws_alarms_35='RU_CWS_ALARMS@HP9_TEMP_IN_HHLL_THRES' data-ru_cws_alarms_36='RU_CWS_ALARMS@HP9_FL_HHLL1_THRES' data-ru_cws_alarms_37='RU_CWS_ALARMS@HP9_FL_HHLL2_THRES' data-ru_cws_alarms_38='RU_CWS_ALARMS@HP10_TEMP_IN_HHLL_THRES'
+					data-ru_cws_alarms_39='RU_CWS_ALARMS@HP10_FL_HHLL1_THRES' data-ru_cws_alarms_40='RU_CWS_ALARMS@HP10_FL_HHLL2_THRES' data-ru_cws_alarms_41='RU_CWS_ALARMS@HP11_TEMP_IN_HHLL_THRES' data-ru_cws_alarms_42='RU_CWS_ALARMS@HP11_FL_HHLL1_THRES'
+					data-ru_cws_alarms_43='RU_CWS_ALARMS@HP11_FL_HHLL2_THRES' data-bps_0='BPS@PULSE_LENG0' data-bps_1='BPS@RAMP_DOWN_0' data-bps_2='BPS@RAMP_UP_TI0' data-bps_3='BPS@RAMP_UP_TI1' data-bps_4='BPS@RAMP_UP_TI2' data-bps_5='BPS@TIME_1_REA0'
+					data-bps_6='BPS@TIME_2_REA0' data-bps_7='BPS@TIME_3_REA0' data-bps_8='BPS@VOLTAGE_LE0' data-bps_9='BPS@VOLTAGE_LE1' data-bps_10='BPS@VOLTAGE_LE2' data-bps_11='BPS@PL_IN_SEC_0' data-bps_12='BPS@VAR_BODY_V0' data-cps_0='CPS@AUTORESTAR0'
+					data-cps_1='CPS@FOLDBACK_A0' data-cps_2='CPS@FOLDBACK_C0' data-cps_3='CPS@FOLDBACK_R0' data-cps_4='CPS@OVERVOLTAG0' data-cps_5='CPS@SP_CURRENT0' data-cps_6='CPS@SP_VOLTAGE0' data-cps_7='CPS@UNDERVOLTA0' data-gcps_0='GCPS@AUTORESTAR1'
+					data-gcps_1='GCPS@FOLDBACK_A1' data-gcps_2='GCPS@FOLDBACK_C1' data-gcps_3='GCPS@FOLDBACK_R1' data-gcps_4='GCPS@OVERVOLTAG1' data-gcps_5='GCPS@SP_CURRENT7' data-gcps_6='GCPS@SP_VOLTAGE1' data-gcps_7='GCPS@UNDERVOLTA1'
+					data-hvps_0='HVPS@PULSE_DURA0' data-hvps_1='HVPS@PULSE_NUMB1' data-hvps_2='HVPS@PULSE_UNIT0' data-hvps_3='HVPS@RAMP_DOWN_1' data-hvps_4='HVPS@RAMP_UP_TI4' data-hvps_5='HVPS@TIME_BET_P0' data-hvps_6='HVPS@VOLTAGE_LE4'
+					data-ips1_0='IPS1@OUTPUT_VOL0' data-ips1_1='IPS1@OUTPUT_VOL1' data-ips1_2='IPS1@OUTPUT_VOL2' data-ips1_3='IPS1@PROTECTION0' data-ips1_4='IPS1@START_MODE0' data-ips2_0='IPS2@OUTPUT_VOL3' data-ips2_1='IPS2@OUTPUT_VOL4'
+					data-ips2_2='IPS2@OUTPUT_VOL5' data-ips2_3='IPS2@PROTECTION1' data-ips2_4='IPS2@START_MODE1' data-pmp1_0='PMP1@PBR260_CAL0' data-pmp1_1='PMP1@PBR260_ON_0' data-pmp1_2='PMP1@PBR260_SP_0' data-pmp1_3='PMP1@PBR260_SP_1'
+					data-pmp1_4='PMP1@PBR260_UND0' data-pmp1_5='PMP1@TPR280_CAL0' data-pmp1_6='PMP1@TPR280_ON_0' data-pmp1_7='PMP1@TPR280_SP_0' data-pmp1_8='PMP1@TPR280_SP_1' data-pmp1_9='PMP1@TPR280_UND0' data-pmp2_0='PMP2@PBR260_CAL1'
+					data-pmp2_1='PMP2@PBR260_ON_1' data-pmp2_2='PMP2@PBR260_SP_2' data-pmp2_3='PMP2@PBR260_SP_3' data-pmp2_4='PMP2@PBR260_UND1' data-pmp2_5='PMP2@TPR280_CAL1' data-pmp2_6='PMP2@TPR280_ON_1' data-pmp2_7='PMP2@TPR280_SP_2'
+					data-pmp2_8='PMP2@TPR280_SP_3' data-pmp2_9='PMP2@TPR280_UND1' data-rfil_0='RFIL@ERR_RESET_0' data-rfil_1='RFIL@IF_MAX_CUR0' data-rfil_2='RFIL@IF_SP_CURR0' data-rfil_3='RFIL@IG_SP_CURR0' data-rfil_4='RFIL@STABILIZAT0'
+					data-rfil_5='RFIL@SWEEP_RATE0' data-rfil_6='RFIL@SWEEP_RATE1' data-rscm_0='RSCM@HEATER_ON_0' data-rscm_1='RSCM@SP_CURRENT8' data-rscm_2='RSCM@SWEEP_RATE2' data-rswp_0='RSWP@THRESHOLD_0' data-rswp_1='RSWP@THRESHOLD_1'
+					data-rswp_2='RSWP@WAVE_PERIO1'></htk-falcon-opi>
 			</td>
 		</tr>
 	</table>
 
+	<script type="text/javascript">
+		function openTab(evt, tabName) {
+			var i, tabcontent, tablinks;
+			tabcontent = document.getElementsByClassName("tabcontent");
+			for (i = 0; i < tabcontent.length; i++) {
+				tabcontent[i].style.display = "none";
+			}
+			tablinks = document.getElementsByClassName("tablinks");
+			for (i = 0; i < tablinks.length; i++) {
+				tablinks[i].className = tablinks[i].className.replace(" active", "");
+			}
+			document.getElementById(tabName).style.display = "block";
+			evt.currentTarget.className += " active";
+		}
 
+		document.getElementById("RU_Main").click();
+	</script>
 
 </body>
 
