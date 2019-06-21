@@ -77,13 +77,15 @@
         }
 
         attributeChangedCallback(attrName, oldVal, newVal) {
-          if (newVal != oldVal) {
-            if (newVal == "true") {
-              this.radioInput.checked = true;
-              this.setValue(1);
-            } else {
-              this.radioInput.checked = false;
-              this.setValue(0);
+          if (!this.isReadOnly()) {
+            if (newVal != oldVal) {
+              if (newVal == "true") {
+                this.radioInput.checked = true;
+                this.setValue(1);
+              } else {
+                this.radioInput.checked = false;
+                this.setValue(0);
+              }
             }
           }
         }

@@ -17,7 +17,7 @@
             <ns0:name>LOCK</ns0:name>
             <ns0:alias>LOCK</ns0:alias>
           	<ns0:description>Main lock</ns0:description>
-          <ns0:values><ns0:value>[1]</ns0:value></ns0:values></ns0:record>
+          <ns0:values><ns0:value>1</ns0:value></ns0:values></ns0:record>
           <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>MHVPS_VOLTAGE</ns0:name>
             <ns0:alias>MHVPS_VOLTAGE</ns0:alias>
@@ -141,7 +141,7 @@
             <ns0:name>LOCK</ns0:name>
             <ns0:alias>LOCK</ns0:alias>
           	<ns0:description>Alarms lock</ns0:description>
-          <ns0:values><ns0:value>[1]</ns0:value></ns0:values></ns0:record>
+          <ns0:values><ns0:value>1</ns0:value></ns0:values></ns0:record>
           <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>FIL_CUR_HHLL_THRES</ns0:name>
             <ns0:alias>FIL_CUR_HHLL_THRES</ns0:alias>
@@ -410,7 +410,7 @@
             <ns0:name>LOCK</ns0:name>
             <ns0:alias>LOCK</ns0:alias>
           	<ns0:description>RU CWS Alarms lock</ns0:description>
-          <ns0:values><ns0:value>[1]</ns0:value></ns0:values></ns0:record>
+          <ns0:values><ns0:value>1</ns0:value></ns0:values></ns0:record>
           <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>COL_TEMP_IN_HHLL_THRES</ns0:name>
             <ns0:alias>COL_TEMP_IN_HHLL_THRES</ns0:alias>
@@ -823,7 +823,7 @@
             <ns0:name>LOCK</ns0:name>
             <ns0:alias>LOCK</ns0:alias>
           	<ns0:description>BPS lock</ns0:description>
-          <ns0:values><ns0:value>[1]</ns0:value></ns0:values></ns0:record>
+          <ns0:values><ns0:value>1</ns0:value></ns0:values></ns0:record>
           <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>PULSE_LENG0</ns0:name>
             <ns0:alias>PULSE_LENG0</ns0:alias>
@@ -966,7 +966,7 @@
             <ns0:name>LOCK</ns0:name>
             <ns0:alias>LOCK</ns0:alias>
           	<ns0:description>CPS lock</ns0:description>
-          <ns0:values><ns0:value>[1]</ns0:value></ns0:values></ns0:record>
+          <ns0:values><ns0:value>1</ns0:value></ns0:values></ns0:record>
  
           <ns0:record size="1" xsi:type="recordLong">
             <ns0:name>AUTORESTAR0</ns0:name>
@@ -982,28 +982,19 @@
             <ns0:alias>FOLDBACK_A0</ns0:alias>
             <ns0:description>FOLDBACK_A0</ns0:description>
 			<ns0:lock>CPS@LOCK</ns0:lock>
-            <ns0:values>
-              <ns0:value>0</ns0:value>
-            </ns0:values>
-          </ns0:record>
+            <ns0:values><ns0:value>1</ns0:value></ns0:values></ns0:record>
           <ns0:record size="1" xsi:type="recordLong">
             <ns0:name>FOLDBACK_C0</ns0:name>
             <ns0:alias>FOLDBACK_C0</ns0:alias>
             <ns0:description>FOLDBACK_C0</ns0:description>
 			<ns0:lock>CPS@LOCK</ns0:lock>
-            <ns0:values>
-              <ns0:value>1</ns0:value>
-            </ns0:values>
-          </ns0:record>
+            <ns0:values><ns0:value>0</ns0:value></ns0:values></ns0:record>
           <ns0:record size="1" xsi:type="recordLong">
             <ns0:name>FOLDBACK_R0</ns0:name>
             <ns0:alias>FOLDBACK_R0</ns0:alias>
             <ns0:description>FOLDBACK_R0</ns0:description>
 			<ns0:lock>CPS@LOCK</ns0:lock>
-            <ns0:values>
-              <ns0:value>0</ns0:value>
-            </ns0:values>
-          </ns0:record>
+            <ns0:values><ns0:value>0</ns0:value></ns0:values></ns0:record>
           <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>OVERVOLTAG0</ns0:name>
             <ns0:alias>OVERVOLTAG0</ns0:alias>
@@ -1055,44 +1046,32 @@
             <ns0:name>LOCK</ns0:name>
             <ns0:alias>LOCK</ns0:alias>
           	<ns0:description>GCPS lock</ns0:description>
-          <ns0:values><ns0:value>[1]</ns0:value></ns0:values></ns0:record>
+          <ns0:values><ns0:value>1</ns0:value></ns0:values></ns0:record>
  
           <ns0:record size="1" xsi:type="recordLong">
             <ns0:name>AUTORESTAR1</ns0:name>
             <ns0:alias>AUTORESTAR1</ns0:alias>
             <ns0:description>AUTORESTAR1</ns0:description>
 			<ns0:lock>GCPS@LOCK</ns0:lock>
-            <ns0:values>
-              <ns0:value>0</ns0:value>
-            </ns0:values>
-          </ns0:record>
+            <ns0:values><ns0:value>1</ns0:value></ns0:values></ns0:record>
           <ns0:record size="1" xsi:type="recordLong">
             <ns0:name>FOLDBACK_A1</ns0:name>
             <ns0:alias>FOLDBACK_A1</ns0:alias>
             <ns0:description>FOLDBACK_A1</ns0:description>
 			<ns0:lock>GCPS@LOCK</ns0:lock>
-            <ns0:values>
-              <ns0:value>0</ns0:value>
-            </ns0:values>
-          </ns0:record>
+            <ns0:values><ns0:value>0</ns0:value></ns0:values></ns0:record>
           <ns0:record size="1" xsi:type="recordLong">
             <ns0:name>FOLDBACK_C1</ns0:name>
             <ns0:alias>FOLDBACK_C1</ns0:alias>
             <ns0:description>FOLDBACK_C1</ns0:description>
 			<ns0:lock>GCPS@LOCK</ns0:lock>
-            <ns0:values>
-              <ns0:value>1</ns0:value>
-            </ns0:values>
-          </ns0:record>
+            <ns0:values><ns0:value>0</ns0:value></ns0:values></ns0:record>
           <ns0:record size="1" xsi:type="recordLong">
             <ns0:name>FOLDBACK_R1</ns0:name>
             <ns0:alias>FOLDBACK_R1</ns0:alias>
             <ns0:description>FOLDBACK_R1</ns0:description>
 			<ns0:lock>GCPS@LOCK</ns0:lock>
-            <ns0:values>
-              <ns0:value>0</ns0:value>
-            </ns0:values>
-          </ns0:record>
+            <ns0:values><ns0:value>1</ns0:value></ns0:values></ns0:record>
           <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>OVERVOLTAG1</ns0:name>
             <ns0:alias>OVERVOLTAG1</ns0:alias>
@@ -1144,7 +1123,7 @@
             <ns0:name>LOCK</ns0:name>
             <ns0:alias>LOCK</ns0:alias>
           	<ns0:description>HVPS lock</ns0:description>
-          <ns0:values><ns0:value>[1]</ns0:value></ns0:values></ns0:record>
+          <ns0:values><ns0:value>1</ns0:value></ns0:values></ns0:record>
  
           <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>PULSE_DURA0</ns0:name>
@@ -1169,10 +1148,7 @@
             <ns0:alias>PULSE_UNIT0</ns0:alias>
             <ns0:description>PULSE_UNIT0</ns0:description>
 			<ns0:lock>HVPS@LOCK</ns0:lock>
-            <ns0:values>
-              <ns0:value>0</ns0:value>
-            </ns0:values>
-          </ns0:record>
+            <ns0:values><ns0:value>0</ns0:value></ns0:values></ns0:record>
           <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>RAMP_DOWN_1</ns0:name>
             <ns0:alias>RAMP_DOWN_1</ns0:alias>
@@ -1233,7 +1209,7 @@
             <ns0:name>LOCK</ns0:name>
             <ns0:alias>LOCK</ns0:alias>
           	<ns0:description>IPS1 lock</ns0:description>
-          <ns0:values><ns0:value>[1]</ns0:value></ns0:values></ns0:record>
+          <ns0:values><ns0:value>1</ns0:value></ns0:values></ns0:record>
  
           <ns0:record size="1" xsi:type="recordLong">
             <ns0:name>OUTPUT_VOL0</ns0:name>
@@ -1691,7 +1667,7 @@
             <ns0:name>LOCK</ns0:name>
             <ns0:alias>LOCK</ns0:alias>
           	<ns0:description>RSWP lock</ns0:description>
-          <ns0:values><ns0:value>[1]</ns0:value></ns0:values></ns0:record>
+          <ns0:values><ns0:value>1</ns0:value></ns0:values></ns0:record>
           <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>THRESHOLD_0</ns0:name>
             <ns0:alias>THRESHOLD_0</ns0:alias>
