@@ -6,8 +6,8 @@ __copyright__ = """
     by the European Commission - subsequent versions of the EUPL (the "Licence")
     You may not use this work except in compliance with the Licence.
     You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
- 
-    Unless required by applicable law or agreed to in writing, 
+
+    Unless required by applicable law or agreed to in writing,
     software distributed under the Licence is distributed on an "AS IS"
     basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
     or implied. See the Licence permissions and limitations under the Licence.
@@ -166,7 +166,7 @@ def load(config):
         transformations = []
         if (ok):
             for transformationModuleName, transformationClassName in zip(transformationModuleNames, transformationClassNames):
-                transformationModule = importlib.import_module(transformationModuleName) 
+                transformationModule = importlib.import_module(transformationModuleName)
                 transformationClass = getattr(transformationModule, transformationClassName)
                 transformationInstance = transformationClass()
                 transformations.append(transformationInstance)
@@ -190,7 +190,7 @@ def load(config):
         loaders = []
         if (ok):
             for loaderModuleName, loaderClassName in zip(loaderModuleNames, loaderClassNames):
-                loaderModule = importlib.import_module(loaderModuleName) 
+                loaderModule = importlib.import_module(loaderModuleName)
                 loaderClass = getattr(loaderModule, loaderClassName)
                 loaderInstance = loaderClass()
                 loaders.append(loaderInstance)
@@ -214,7 +214,7 @@ def load(config):
         monitors = []
         if (ok):
             for monitorModuleName, monitorClassName in zip(monitorModuleNames, monitorClassNames):
-                monitorModule = importlib.import_module(monitorModuleName) 
+                monitorModule = importlib.import_module(monitorModuleName)
                 monitorClass = getattr(monitorModule, monitorClassName)
                 monitorInstance = monitorClass()
                 monitors.append(monitorInstance)
@@ -243,9 +243,9 @@ def load(config):
             #monkey.patch_socket()
             return application
         else:
-            log.critical("Failed to load either the server or the auth service") 
+            log.critical("Failed to load either the server or the auth service")
     except (KeyError, ValueError, ConfigParser.Error) as e:
-        #Trap both IOError 
+        #Trap both IOError
         log.critical("Failed to load configuration: {0}".format(e))
         exit()
 
@@ -257,7 +257,7 @@ def start(*args, **kwargs):
             config.readfp(configFile)
             return load(config)
     except (IOError, ConfigParser.Error) as e:
-        #Trap both IOError 
+        #Trap both IOError
         log.critical("Failed to load configuration file {0} : {1}".format(configFile, e))
         exit()
 
@@ -289,7 +289,7 @@ def getlivevariablesinfo():
     else:
         return HieratikaConstants.INVALID_TOKEN
 
-  
+
 #Gets all the variables information for a given library
 @application.route("/getlibraryvariablesinfo", methods=["POST", "GET"])
 def getlibraryvariablesinfo():
@@ -368,7 +368,7 @@ def getlibraries():
     if (wserver.isTokenValid(request)):
         log.debug("/IN getlibraries")
         wstatistics.startUpdate("getlibraries")
-        ret = wserver.getLibraries(request) 
+        ret = wserver.getLibraries(request)
         wstatistics.endUpdate("getlibraries")
         log.debug("/OUT getlibraries")
         return ret
@@ -381,13 +381,13 @@ def savelibrary():
     log.debug("/savelibrary")
     if (wserver.isTokenValid(request)):
         log.debug("/IN savelibrary")
-        ret = wserver.saveLibrary(request) 
+        ret = wserver.saveLibrary(request)
         log.debug("/OUT savelibrary")
         return ret
     else:
         return HieratikaConstants.INVALID_TOKEN
 
-#Deletes an existent library 
+#Deletes an existent library
 @application.route("/deletelibrary", methods=["POST", "GET"])
 def deletelibrary():
     log.debug("/deletelibrary")
@@ -414,7 +414,7 @@ def obsoletelibrary():
         return ret
     else:
         return HieratikaConstants.INVALID_TOKEN
-    
+
 #Return the available schedules
 @application.route("/getschedules", methods=["POST", "GET"])
 def getschedules():
@@ -422,7 +422,7 @@ def getschedules():
     if (wserver.isTokenValid(request)):
         log.debug("/IN getschedules")
         wstatistics.startUpdate("getschedules")
-        ret = wserver.getSchedules(request) 
+        ret = wserver.getSchedules(request)
         wstatistics.endUpdate("getschedules")
         log.debug("/OUT getschedules")
         return ret
@@ -436,7 +436,7 @@ def getschedulefolders():
     if (wserver.isTokenValid(request)):
         log.debug("/IN getschedulefolders")
         wstatistics.startUpdate("getschedulefolders")
-        ret = wserver.getScheduleFolders(request) 
+        ret = wserver.getScheduleFolders(request)
         wstatistics.endUpdate("getschedulefolders")
         log.debug("/OUT getschedulefolders")
         return ret
@@ -451,7 +451,7 @@ def getusers():
     if (wserver.isTokenValid(request)):
         log.debug("/IN getusers")
         wstatistics.startUpdate("getusers")
-        ret = wserver.getUsers(request) 
+        ret = wserver.getUsers(request)
         wstatistics.endUpdate("getusers")
         log.debug("/OUT getusers")
         return ret
@@ -465,7 +465,7 @@ def getuser():
     if (wserver.isTokenValid(request)):
         log.debug("/IN getuser")
         wstatistics.startUpdate("getuser")
-        ret = wserver.getUser(request) 
+        ret = wserver.getUser(request)
         wstatistics.endUpdate("getuser")
         log.debug("/OUT getuser")
         return ret
@@ -480,21 +480,21 @@ def getpages():
     if (wserver.isTokenValid(request)):
         log.debug("/IN getpages")
         wstatistics.startUpdate("getpages")
-        ret = wserver.getPages(request) 
+        ret = wserver.getPages(request)
         wstatistics.endUpdate("getpages")
         log.debug("/OUT getpages")
         return ret
     else:
         return HieratikaConstants.INVALID_TOKEN
 
-#Returns the properties of a given page 
+#Returns the properties of a given page
 @application.route("/getpage", methods=["POST", "GET"])
 def getpage():
     log.debug("/getpage")
     if (wserver.isTokenValid(request)):
         log.debug("/IN getpage")
         wstatistics.startUpdate("getpage")
-        ret = wserver.getPage(request) 
+        ret = wserver.getPage(request)
         wstatistics.endUpdate("getpage")
         log.debug("/OUT getpage")
         return ret
@@ -508,7 +508,7 @@ def getschedule():
     if (wserver.isTokenValid(request)):
         log.debug("/IN getschedule")
         wstatistics.startUpdate("getschedule")
-        ret = wserver.getSchedule(request)    
+        ret = wserver.getSchedule(request)
         wstatistics.endUpdate("getschedule")
         log.debug("/OUT getschedule")
         return ret
@@ -548,7 +548,7 @@ def getlibraryvariablesvalues():
 def login():
     log.debug("/IN login")
     wstatistics.startUpdate("login")
-    ret = wserver.login(request) 
+    ret = wserver.login(request)
     wstatistics.endUpdate("login")
     log.debug("/OUT login")
     return ret
@@ -559,7 +559,7 @@ def logout():
     log.debug("/IN logout")
     if (wserver.isTokenValid(request)):
         wstatistics.startUpdate("logout")
-        wserver.logout(request) 
+        wserver.logout(request)
         wstatistics.endUpdate("logout")
         log.debug("/OUT logout")
         return ""
@@ -573,7 +573,7 @@ def updateschedule():
     if (wserver.isTokenValid(request)):
         log.debug("/IN updateschedule")
         wstatistics.startUpdate("updateschedule")
-        ret = wserver.updateSchedule(request)    
+        ret = wserver.updateSchedule(request)
         wstatistics.endUpdate("updateschedule")
         log.debug("/OUT updateschedule")
         return ret
@@ -587,7 +587,7 @@ def commitschedule():
     if (wserver.isTokenValid(request)):
         log.debug("/IN commitschedule")
         wstatistics.startUpdate("commitschedule")
-        ret = wserver.commitSchedule(request)    
+        ret = wserver.commitSchedule(request)
         wstatistics.endUpdate("commitschedule")
         log.debug("/OUT commitschedule")
         return ret
@@ -692,7 +692,7 @@ def transform():
         return ret
     else:
         return HieratikaConstants.INVALID_TOKEN
-    
+
 @application.route("/stream", methods=["POST", "GET"])
 def stream():
     log.debug("/stream")
@@ -703,7 +703,7 @@ def stream():
             tokenId = request.args["token"]
 
         username = wserver.getAuth().getUsernameFromToken(tokenId)
-        if (username is not None): 
+        if (username is not None):
             #Note that this cannot be interfaced through the wserver (otherwise the yield reply will not work properly)
             return Response(wserver.getServer().streamData(username, tokenId), mimetype="text/event-stream")
     else:
@@ -714,7 +714,7 @@ def statistics():
     log.debug("/statistics")
     if (wserver.isTokenValid(request)):
         log.debug("/IN statistics")
-        ret = json.dumps(wstatistics.getStatistics()) 
+        ret = json.dumps(wstatistics.getStatistics())
         log.debug("/OUT statistics")
         return ret
     else:
@@ -728,7 +728,7 @@ def index():
     else:
         return application.send_static_file("index.html")
 
-@application.route("/pages/<filename>")
+@application.route("/pages/<path:filename>")
 def pages(filename):
     return send_from_directory(wserver.getPagesFolder(), filename)
 
@@ -737,7 +737,7 @@ def tmp(filename):
     return send_from_directory('../../tmp', filename)
 
 if __name__ == "__main__":
-   
+
     #wserver.start()
     parser = argparse.ArgumentParser(description = "Flask http wserver for hieratika")
     parser.add_argument("-H", "--host", type=str, default="127.0.0.1", help="Server port")
@@ -752,16 +752,15 @@ if __name__ == "__main__":
     print "The preferred way to start this service is with gunicorn:"
     print "gunicorn --preload --log-file=- -k gevent -w 16 -b 0.0.0.0:80 'hieratika.wservermain:start(config=\"PATH_TO_CONFIG.ini\")'"
     print "==============================================================================================================================="
-   
+
     try:
         with open(args.ini, "r") as configFile:
             config = ConfigParser.ConfigParser()
             config.readfp(configFile)
-            application = load(config) 
+            application = load(config)
             if (application is not None):
                 application.run(threaded=True, use_reloader = False, host=args.host, port=args.port)
     except (IOError, ConfigParser.Error) as e:
-        #Trap both IOError 
+        #Trap both IOError
         log.critical("Failed to load configuration file {0} : {1}".format(configFile, e))
         exit()
-

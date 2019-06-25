@@ -1188,12 +1188,16 @@ class PSPSServer(HieratikaServer):
                     else:
                         log.warning("No configuration xml was found for {0}".format(page.name))
 
-                #Check if the page html exists
-                pageHtmlPath = "{0}/{1}.html".format(self.pagesFolder, page.name)
-                if (not os.path.exists(pageHtmlPath)):
-                    log.warning("The {0} file does not exist".format(pageHtmlPath))
-                    if (self.autoCreatePages):
-                        self.createHtmlPage(pageHtmlPath, plantXmlFileLocation)
+                #Check if the folder exists
+                pageFolder = page.name
+                pageHtmlPathFolder = "{0}/{1}/{2}.html".format(self.pagesFolder, pageFolder, page.name)
+                if (not os.path.exists(pageHtmlPathFolder)):
+                    #Check if the page html exists
+                    pageHtmlPath = "{0}/{1}.html".format(self.pagesFolder, page.name)
+                    if (not os.path.exists(pageHtmlPath)):
+                        log.warning("The {0} file does not exist".format(pageHtmlPath))
+                        if (self.autoCreatePages):
+                            self.createHtmlPage(pageHtmlPath, plantXmlFileLocation)
 
 
             #Only want the first sub level

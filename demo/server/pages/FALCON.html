@@ -17,96 +17,9 @@
 	<link rel="import" href="/htk-falcon-opi.html">
 	<link rel="import" href="/htk-bps-plot-editor.html">
 	<link rel="import" href="/htk-hvps-plot-editor.html">
-	<!-- Custom CSS style -->
-	<style>
-		.tab {
-			overflow: hidden;
-			border: 1px solid #999;
-			background-color: #f1f1f1;
-		}
 
-		/* Style the buttons inside the tab */
-		.tab button {
-			background-color: inherit;
-			float: left;
-			border: none;
-			outline: none;
-			cursor: pointer;
-			padding: 14px 16px;
-			transition: 0.3s;
-			font-size: 17px;
-		}
+	<link rel="stylesheet" href="/pages/css/FALCON.css">
 
-		/* Change background color of buttons on hover */
-		.tab button:hover {
-			background-color: #ddd;
-		}
-
-		/* Create an active/current tablink class */
-		.tab button.active {
-			background-color: #b3b3b3;
-		}
-
-		/* Style the tab content */
-		.tabcontent {
-			display: none;
-			padding: 6px 12px;
-			border: 1px solid #999;
-			border-top: none;
-		}
-
-		/* style the table */
-		.table {
-			display: table;
-			width: 90%;
-			height: fit-content;
-			table-layout: fixed;
-			margin-left: auto;
-			margin-right: auto;
-		}
-
-		.table-single {
-			display: table;
-			width: 90%;
-			height: fit-content;
-			table-layout: fixed;
-		}
-
-		.col {
-			display: table-cell;
-			padding: 2px 16px;
-			height: 100%;
-			border: 1px solid #cacaca;
-		}
-
-		.col-40 {
-			float: left;
-			width: 40%;
-			margin-top: 3px;
-			margin-bottom: 3px;
-		}
-
-		.col-60 {
-			float: left;
-			width: 60%;
-			margin-top: 3px;
-			margin-bottom: 3px;
-		}
-
-		.col-single {
-			float: left;
-			width: 50%;
-			border: 1px solid #cacaca;
-		}
-
-		.grey {
-			background-color: #f2f2f2
-		}
-
-		.row {
-			display: table-row;
-		}
-	</style>
 </head>
 
 <body>
@@ -136,10 +49,10 @@
 			<div class="row">
 				<div class="col">
 					<h4><b>Pulse Configuration</b></h4>
-					<h5>
-						MHVPS
-					</h5>
 					<div class="table">
+						<h5>
+							MHVPS
+						</h5>
 						<div class="row grey">
 							<div class="col-60">
 								MHVPS Voltage
@@ -272,10 +185,9 @@
 			<div class="row">
 				<div class="col">
 					<h4><b>Russian Filament PS</b></h4>
-					<h5>
-						MHVPS
-					</h5>
 					<div class="table">
+						<h5>
+						</h5>
 						<div class="row grey">
 							<div class="col-60">
 								Filament Current HHLL Threshold
@@ -449,10 +361,10 @@
 				</div>
 				<div class="col">
 					<h4><b>RF Detectors</b></h4>
-					<h5>
-						Mode Loss
-					</h5>
 					<div class="table">
+						<h5>
+							Mode Loss
+						</h5>
 						<div class="row grey">
 							<div class="col-60">
 								RF Transmitter 1 Threshold
@@ -1928,7 +1840,7 @@
 	<table>
 		<tr>
 			<td>
-				<htk-falcon-opi id='FALCON@FALCON' data-ru_main_0='RU_MAIN@MHVPS_VOLTAGE' data-ru_main_1='RU_MAIN@TOTAL_VOLTAGE' data-ru_main_2='RU_MAIN@PULSE_MINUTES' data-ru_main_3='RU_MAIN@PULSE_SECONDS' data-ru_main_4='RU_MAIN@PULSE_MSECONDS'
+				<!-- <htk-falcon-opi id='FALCON@FALCON' data-ru_main_0='RU_MAIN@MHVPS_VOLTAGE' data-ru_main_1='RU_MAIN@TOTAL_VOLTAGE' data-ru_main_2='RU_MAIN@PULSE_MINUTES' data-ru_main_3='RU_MAIN@PULSE_SECONDS' data-ru_main_4='RU_MAIN@PULSE_MSECONDS'
 					data-ru_main_5='RU_MAIN@VARIABLE_BODY_VOLTAGE' data-ru_main_6='RU_MAIN@SCM_HEATER_ON' data-ru_main_7='RU_MAIN@SCM_SP_CURRENT' data-ru_main_8='RU_MAIN@FILAMENT_CURRENT_SP' data-ru_main_9='RU_MAIN@GYRO_CURRENT_SP'
 					data-ru_main_10='RU_MAIN@STABILIZATION_MODE' data-ru_main_11='RU_MAIN@RESET_ERRORS' data-ru_alarms_0='RU_ALARMS@FIL_CUR_HHLL_THRES' data-ru_alarms_1='RU_ALARMS@SCM_SCM_CUR_HHLL1_THRES' data-ru_alarms_2='RU_ALARMS@SCM_SCM_CUR_HHLL2_THRES'
 					data-ru_alarms_3='RU_ALARMS@SCM_LEM_CUR_HHLL1_THRES' data-ru_alarms_4='RU_ALARMS@SCM_LEM_CUR_HHLL2_THRES' data-ru_alarms_5='RU_ALARMS@SCM_SERIAL_CUR_HHLL1_THRES' data-ru_alarms_6='RU_ALARMS@SCM_SERIAL_CUR_HHLL2_THRES'
@@ -1959,30 +1871,12 @@
 					data-pmp2_1='PMP2@PBR260_ON_1' data-pmp2_2='PMP2@PBR260_SP_2' data-pmp2_3='PMP2@PBR260_SP_3' data-pmp2_4='PMP2@PBR260_UND1' data-pmp2_5='PMP2@TPR280_CAL1' data-pmp2_6='PMP2@TPR280_ON_1' data-pmp2_7='PMP2@TPR280_SP_2'
 					data-pmp2_8='PMP2@TPR280_SP_3' data-pmp2_9='PMP2@TPR280_UND1' data-rfil_0='RFIL@ERR_RESET_0' data-rfil_1='RFIL@IF_MAX_CUR0' data-rfil_2='RFIL@IF_SP_CURR0' data-rfil_3='RFIL@IG_SP_CURR0' data-rfil_4='RFIL@STABILIZAT0'
 					data-rfil_5='RFIL@SWEEP_RATE0' data-rfil_6='RFIL@SWEEP_RATE1' data-rscm_0='RSCM@HEATER_ON_0' data-rscm_1='RSCM@SP_CURRENT8' data-rscm_2='RSCM@SWEEP_RATE2' data-rswp_0='RSWP@THRESHOLD_0' data-rswp_1='RSWP@THRESHOLD_1'
-					data-rswp_2='RSWP@WAVE_PERIO1'></htk-falcon-opi>
+					data-rswp_2='RSWP@WAVE_PERIO1'></htk-falcon-opi> -->
 			</td>
 		</tr>
 	</table>
 
-	<!-- Custom Javascript -->
-	<script type="text/javascript">
-		// onclick action on tab buttons
-		function openTab(evt, tabName) {
-			var i, tabcontent, tablinks;
-			tabcontent = document.getElementsByClassName("tabcontent");
-			for (i = 0; i < tabcontent.length; i++) {
-				tabcontent[i].style.display = "none";
-			}
-			tablinks = document.getElementsByClassName("tablinks");
-			for (i = 0; i < tablinks.length; i++) {
-				tablinks[i].className = tablinks[i].className.replace(" active", "");
-			}
-			document.getElementById(tabName).style.display = "block";
-			evt.currentTarget.className += " active";
-		}
-		// open first tab by default
-		document.getElementById("RU_Main").click();
-	</script>
+	<script type="text/javascript" src="/pages/js/FALCON.js"></script>
 
 </body>
 

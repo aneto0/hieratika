@@ -6,9 +6,9 @@ log = logging.getLogger("psps-{0}".format(__name__))
 
 class PageManager(object):
     """ Manages all the system Pages.
-        Pages are html based user-interfaces that group a collection of variables. 
+        Pages are html based user-interfaces that group a collection of variables.
     """
-    
+
     def __init__(self):
         """Default constructor.
         """
@@ -35,12 +35,12 @@ class PageManager(object):
                 pageUrl = pageXml.find("./ns0:url", self.xmlns).text
                 pageDescription = pageXml.find("./ns0:description", self.xmlns).text
                 page = Page(pageName, pageUrl, pageDescription)
-                self.pages.append(page) 
-
+                self.pages.append(page)
+                
                 log.info("Registered page: {0}".format(page))
         except Exception as e:
             log.critical("Error loading xml file {0} : {1}".format(pageXml, str(e)))
-            ok = False 
+            ok = False
 
         return ok
 
@@ -64,10 +64,10 @@ class PageManager(object):
         """
         try:
             page = self.pages.index(name)
-        except KeyError: 
+        except KeyError:
             page = None
         return page
- 
+
     def __str__(self):
         """Returns a string representation of a list with all the pages that are available.
         """
