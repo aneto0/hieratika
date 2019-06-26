@@ -16,4 +16,6 @@ function openTab(evt, tabName) {
   evt.currentTarget.className += " active";
 }
 // open first tab by default
-document.getElementById("RU_Main").click();
+document.getElementById("CPS").click();
+
+// validaiton functions

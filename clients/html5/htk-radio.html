@@ -32,6 +32,7 @@
   <template id="trinput">
     <input type="radio" id="rinput"></input>
   </template>
+  <template id="trbox"></template>
 
   <script>
     //This is enclosure is required to protect the importDoc
@@ -56,9 +57,10 @@
         createdCallback() {
           super.createdCallback();
           this.radioInput = this.shadowRoot.querySelector("#rinput");
+          this.value = 0;
           this.radioInput.checked = false;
           this.radioInput.addEventListener("click", function(e) {
-            if (this.radioInput.checked) {
+            if (this.radioInput.checked == true) {
               this.setValue(1);
             } else {
               this.setValue(0);
@@ -77,16 +79,12 @@
         }
 
         attributeChangedCallback(attrName, oldVal, newVal) {
-          if (!this.isReadOnly()) {
-            if (newVal != oldVal) {
-              if (newVal == "true") {
-                this.radioInput.checked = true;
-                this.setValue(1);
-              } else {
-                this.radioInput.checked = false;
-                this.setValue(0);
-              }
-            }
+          if (newVal == "true") {
+            this.radioInput.checked = true;
+            this.value = 1;
+          } else {
+            this.radioInput.checked = false;
+            this.value = 0;
           }
         }
 
@@ -127,12 +125,13 @@
 
         setReference(referenceToSet) {
           this.referenceValue = this.getTheCorrectValue(referenceToSet);
+          this.fireValueChanged(HtkComponent.VALUE_CHANGED_REFERENCE);
           this.refresh();
         }
 
         setPlantValue(plantValueToSet) {
           this.plantValue = this.getTheCorrectValue(plantValueToSet);
-          this.fireValueChanged(HtkComponent.VALUE_CHANGED);
+          this.fireValueChanged(HtkComponent.VALUE_CHANGED_PLANT);
           this.refresh();
         }
 
@@ -175,20 +174,8 @@
          */
         createdCallback() {
           this.setAttribute('role', 'radiogroup');
+          this._selected = 0;
           this.radios = Array.from(this.querySelectorAll('htk-radio-box'));
-        }
-
-        attachedCallback() {
-          // Setup initial state
-          if (this.hasAttribute('selected')) {
-            var selected = this.getAttribute('selected');
-            this._selected = selected;
-            //this.radios[selected].setAttribute('checked', true);
-          } else {
-            this._selected = 1;
-            this.setSelected(1);
-            //this.radios[0].setAttribute('checked', true);
-          }
           this.addEventListener('click', function(e) {
             const idx = this.radios.indexOf(e.target);
             if (idx === -1) {
@@ -196,21 +183,25 @@
             }
             this.setSelected(idx);
           }.bind(this));
-
-          //this.onlyEnable = false;
+          document.addEventListener('DOMContentLoaded', function(e) {
+            for (let i = 0; i < this.radios.length; i++) {
+              this.radios[i].setAttribute('checked', false);
+              document._frameComponents[this.radios[i].id][0].addValueChangedListener(this);
+            }
+          }.bind(this));
         }
 
         setSelected(idx) {
           if (isFinite(this.getSelected())) {
-            // Set the old button to tabindex -1
+            // Set the old button to false
             var previousSelected = this.radios[this.getSelected()];
             previousSelected.setAttribute('checked', false);
           }
-          // Set the new button to tabindex 0 and focus it
+          // Set the new button true and focus it
           var newSelected = this.radios[idx];
           newSelected.setAttribute('checked', true);
           newSelected.focus();
-          this.setAttribute('selected', idx);
+          // this.setAttribute('checked', idx);
           this._selected = idx;
         }
 
@@ -218,13 +209,15 @@
           return this._selected;
         }
 
-        /**
-         * @brief See HtkComponent.refresh.
-         */
-        refresh() {
-          for (var i = 0; i < this.radios.length; i++) {
-            if (this.radios[i].value > 0) {
-              this.radios[i].setAttribute('checked', true);
+        valueChanged(source, typeOfChange) {
+          if (typeOfChange == HtkComponent.VALUE_CHANGED) {
+            if (source.getValue() == 1) {
+              //Setup initial state
+              for (let i = 0; i < this.radios.length; i++) {
+                if (this.radios[i].id == source.id) {
+                  this.setSelected(i);
+                }
+              }
             }
           }
         }
