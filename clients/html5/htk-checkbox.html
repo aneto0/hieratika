@@ -53,22 +53,24 @@
          */
         createdCallback() {
           super.createdCallback();
-          // this.elementsToUpdate = [];
-          // this.updateIndexes = [];
-          this.onlyEnable = false;
+
+          // this.onlyEnable = false;
           this.checkInput = this.shadowRoot.querySelector("#tinput");
           this.checkInput.addEventListener("click", function(e) {
-            if (this.checkInput.checked) {
+            if (this.checkInput.checked == true) {
               this.setValue(1);
             } else {
               if (!this.onlyEnable) {
                 this.setValue(0);
               }
             }
-            // for (var i = 0; i < this.elementsToUpdate.length; i++) {
-            //   this.elementsToUpdate[i].updateValue(true, this.updateIndexes[i]);
-            // }
           }.bind(this));
+          // add a fixed width span for validations
+          this.validationSpan = document.createElement('span');
+          this.validationSpan.style.width = "12px";
+          this.validationSpan.style.height = "12px";
+          this.validationSpan.style.display = "inline-block";
+          this.shadowRoot.appendChild(this.validationSpan);
         }
 
         /**
@@ -95,7 +97,7 @@
          * @brief See HtkComponent.getValue.
          */
         getValue() {
-          var txtValue = this.checkInput.value;
+          var txtValue = this.value;
           var typeValue = this.getTypeValue();
           return parent.htkHelper.textToTypeValue(txtValue, typeValue);
         }
@@ -106,27 +108,14 @@
         setReadOnly(isReadOnly) {
           super.setReadOnly(isReadOnly);
           this.checkInput.disabled = isReadOnly;
-
         }
-
-        // setUpdateValFun(elementToUpdate, updateIndex) {
-        //   this.elementsToUpdate.push(elementToUpdate);
-        //   this.updateIndexes.push(updateIndex);
-        // }
 
         getTheCorrectValue(valueToSet) {
           var val = valueToSet;
           if (Array.isArray(valueToSet)) {
             val = valueToSet[0];
           }
-
-
-          if (this.typeValue.startsWith("float")) {
-            return parseFloat(val);
-          }
-          if ((this.typeValue.startsWith("int")) || (this.typeValue.startsWith("uint"))) {
-            return parseInt(val);
-          }
+          return val;
         }
 
         setValue(valueToSet, updateRemote = true) {
@@ -139,8 +128,9 @@
         }
 
 
-        setReference(referenceToSet) {
+        setReferenceValue(referenceToSet) {
           this.referenceValue = this.getTheCorrectValue(referenceToSet);
+          this.fireValueChanged(HtkComponent.VALUE_CHANGED_REFERENCE);
           this.refresh();
         }
 
@@ -150,12 +140,26 @@
           this.refresh();
         }
 
-        setEnableOnly(isOnlyEnable) {
-          this.onlyEnable = isOnlyEnable;
-        }
+        // setEnableOnly(isOnlyEnable) {
+        //   this.onlyEnable = isOnlyEnable;
+        // }
 
         checkAllValues() {
           this.checkValues(this.checkInput);
+        }
+
+        checkValues(component) {
+          if (component === undefined) {
+            component = this;
+          }
+          //If the current value does not match the initial value set the font color blue
+          if (!this.compareValues(this.getValue(), this.getInitialValue())) {
+            this.validationSpan.style.backgroundColor = DIFF_INIT_CHANGED_COLOR;
+          } else {
+            this.validationSpan.style.backgroundColor = "transparent";
+          }
+          var titleString = this.toString();
+          component.title = titleString;
         }
       }
 
