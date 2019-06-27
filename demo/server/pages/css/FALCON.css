@@ -1,9 +1,8 @@
 /* FALCON.html Custom stylesheet */
-
 .tab {
   overflow: hidden;
-  border: 1px solid #999;
-  background-color: #f1f1f1;
+  /* border: 1px solid #999; */
+  background-color: #aaa;
 }
 
 /* Style the buttons inside the tab */
@@ -20,20 +19,20 @@
 
 /* Change background color of buttons on hover */
 .tab button:hover {
-  background-color: #ddd;
+  background-color: #ccc;
 }
 
 /* Create an active/current tablink class */
 .tab button.active {
-  background-color: #b3b3b3;
+  background-color: #ffffff;
 }
 
 /* Style the tab content */
 .tabcontent {
   display: none;
   padding: 6px 12px;
-  border: 1px solid #999;
-  border-top: none;
+  border-bottom: 1px solid #999;
+  background-color: white;
 }
 
 /* style the table */
@@ -44,13 +43,6 @@
   table-layout: fixed;
   margin-left: auto;
   margin-right: auto;
-}
-
-.table-single {
-  display: table;
-  width: 90%;
-  height: fit-content;
-  table-layout: fixed;
 }
 
 .col {
@@ -74,16 +66,25 @@
   margin-bottom: 3px;
 }
 
+.row {
+  display: table-row;
+}
+
+/* style the single column layout */
+.table-single {
+  display: table;
+  width: 90%;
+  height: fit-content;
+  table-layout: fixed;
+}
+
 .col-single {
   float: left;
+  padding: 2px 16px;
   width: 50%;
   border: 1px solid #cacaca;
 }
 
 .grey {
   background-color: #f2f2f2
-}
-
-.row {
-  display: table-row;
 }
