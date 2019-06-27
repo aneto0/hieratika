@@ -2,10 +2,10 @@
   <ns0:schemaVersion>1.2</ns0:schemaVersion>
   <ns0:version>00.00</ns0:version>
   <ns0:sddVersion>1</ns0:sddVersion>
-  <ns0:name>2019-06-17T10:01:15.285Z.xml</ns0:name>
-  <ns0:description>Schedule created on the 2019-06-17T10:01:15.285Z</ns0:description>
+  <ns0:name>TEST.xml</ns0:name>
+  <ns0:description>Schedule created on the 2019-06-27T16:13:31.729Z</ns0:description>
   <ns0:plantSystems>
-  
+
     <ns0:plantSystem>
       <ns0:name>RU_MAIN</ns0:name>
       <ns0:version>1.0</ns0:version>
@@ -17,7 +17,7 @@
             <ns0:name>LOCK</ns0:name>
             <ns0:alias>LOCK</ns0:alias>
           	<ns0:description>Main lock</ns0:description>
-          <ns0:values><ns0:value>1</ns0:value></ns0:values></ns0:record>
+          <ns0:values><ns0:value>[1]</ns0:value></ns0:values></ns0:record>
           <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>MHVPS_VOLTAGE</ns0:name>
             <ns0:alias>MHVPS_VOLTAGE</ns0:alias>
@@ -129,7 +129,7 @@
         </ns0:records>
       </ns0:plantRecords>
     </ns0:plantSystem>
-  
+
     <ns0:plantSystem>
       <ns0:name>RU_ALARMS</ns0:name>
       <ns0:version>1.0</ns0:version>
@@ -141,7 +141,7 @@
             <ns0:name>LOCK</ns0:name>
             <ns0:alias>LOCK</ns0:alias>
           	<ns0:description>Alarms lock</ns0:description>
-          <ns0:values><ns0:value>1</ns0:value></ns0:values></ns0:record>
+          <ns0:values><ns0:value>[1]</ns0:value></ns0:values></ns0:record>
           <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>FIL_CUR_HHLL_THRES</ns0:name>
             <ns0:alias>FIL_CUR_HHLL_THRES</ns0:alias>
@@ -294,7 +294,7 @@
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
-          </ns0:record>          
+          </ns0:record>
           <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>IPS1_SERIAL_CUR_HHLL2_THRES</ns0:name>
             <ns0:alias>IPS1_SERIAL_CUR_HHLL2_THRES</ns0:alias>
@@ -303,7 +303,7 @@
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
-          </ns0:record>   
+          </ns0:record>
           <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>IPS1_SERIAL_VOL_HHLL_THRES</ns0:name>
             <ns0:alias>IPS1_SERIAL_VOL_HHLL_THRES</ns0:alias>
@@ -312,7 +312,7 @@
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
-          </ns0:record>  
+          </ns0:record>
           <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>GC_CUR_HW_HHLL1_THRES</ns0:name>
             <ns0:alias>GC_CUR_HW_HHLL1_THRES</ns0:alias>
@@ -321,7 +321,7 @@
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
-          </ns0:record>  
+          </ns0:record>
           <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>GC_CUR_HW_HHLL2_THRES</ns0:name>
             <ns0:alias>GC_CUR_HW_HHLL2_THRES</ns0:alias>
@@ -330,7 +330,7 @@
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
-          </ns0:record>  
+          </ns0:record>
           <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>GC_CUR_SER_HHLL1_THRES</ns0:name>
             <ns0:alias>GC_CUR_SER_HHLL1_THRES</ns0:alias>
@@ -339,7 +339,7 @@
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
-          </ns0:record>  
+          </ns0:record>
           <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>GC_CUR_SER_HHLL2_THRES</ns0:name>
             <ns0:alias>GC_CUR_SER_HHLL2_THRES</ns0:alias>
@@ -348,7 +348,7 @@
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
-          </ns0:record>  
+          </ns0:record>
           <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>VPUMPL_PRES_LOAD_HW_HHLL_THRES</ns0:name>
             <ns0:alias>VPUMPL_PRES_LOAD_HW_HHLL_THRES</ns0:alias>
@@ -357,7 +357,7 @@
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
-          </ns0:record>  
+          </ns0:record>
           <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>VPUMPM_PRES_LOAD_HW_HHLL_THRES</ns0:name>
             <ns0:alias>VPUMPM_PRES_LOAD_HW_HHLL_THRES</ns0:alias>
@@ -366,7 +366,7 @@
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
-          </ns0:record>  
+          </ns0:record>
           <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>SWEEP_SEMI_PERIOD_THRES</ns0:name>
             <ns0:alias>SWEEP_SEMI_PERIOD_THRES</ns0:alias>
@@ -375,7 +375,7 @@
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
-          </ns0:record>  
+          </ns0:record>
           <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>SWEEP_H_THRES</ns0:name>
             <ns0:alias>SWEEP_H_THRES</ns0:alias>
@@ -384,7 +384,7 @@
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
-          </ns0:record>  
+          </ns0:record>
           <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>SWEEP_L_THRES</ns0:name>
             <ns0:alias>SWEEP_L_THRES</ns0:alias>
@@ -393,12 +393,12 @@
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
-          </ns0:record>  
+          </ns0:record>
         </ns0:records>
       </ns0:plantRecords>
     </ns0:plantSystem>
-    
-    
+
+
     <ns0:plantSystem>
       <ns0:name>RU_CWS_ALARMS</ns0:name>
       <ns0:version>1.0</ns0:version>
@@ -410,7 +410,7 @@
             <ns0:name>LOCK</ns0:name>
             <ns0:alias>LOCK</ns0:alias>
           	<ns0:description>RU CWS Alarms lock</ns0:description>
-          <ns0:values><ns0:value>1</ns0:value></ns0:values></ns0:record>
+          <ns0:values><ns0:value>[1]</ns0:value></ns0:values></ns0:record>
           <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>COL_TEMP_IN_HHLL_THRES</ns0:name>
             <ns0:alias>COL_TEMP_IN_HHLL_THRES</ns0:alias>
@@ -554,7 +554,7 @@
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
-          </ns0:record>  
+          </ns0:record>
         <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>BP5_FL_HHLL1_THRES</ns0:name>
             <ns0:alias>BP5_FL_HHLL1_THRES</ns0:alias>
@@ -563,7 +563,7 @@
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
-          </ns0:record>  
+          </ns0:record>
         <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>BP5_FL_HHLL2_THRES</ns0:name>
             <ns0:alias>BP5_FL_HHLL2_THRES</ns0:alias>
@@ -572,7 +572,7 @@
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
-          </ns0:record> 
+          </ns0:record>
         <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>BP6_FL_HHLL1_THRES</ns0:name>
             <ns0:alias>BP6_FL_HHLL1_THRES</ns0:alias>
@@ -581,7 +581,7 @@
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
-          </ns0:record> 
+          </ns0:record>
         <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>BP6_FL_HHLL2_THRES</ns0:name>
             <ns0:alias>BP6_FL_HHLL2_THRES</ns0:alias>
@@ -590,7 +590,7 @@
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
-          </ns0:record> 
+          </ns0:record>
         <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>BP8_TEMP_IN_HHLL_THRES</ns0:name>
             <ns0:alias>BP8_TEMP_IN_HHLL_THRES</ns0:alias>
@@ -599,7 +599,7 @@
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
-          </ns0:record> 
+          </ns0:record>
        <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>BP8_FL_HHLL1_THRES</ns0:name>
             <ns0:alias>BP8_FL_HHLL1_THRES</ns0:alias>
@@ -608,7 +608,7 @@
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
-          </ns0:record> 
+          </ns0:record>
        <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>BP8_FL_HHLL2_THRES</ns0:name>
             <ns0:alias>BP8_FL_HHLL2_THRES</ns0:alias>
@@ -617,7 +617,7 @@
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
-          </ns0:record> 
+          </ns0:record>
        <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>BP10_TEMP_IN_HHLL_THRES</ns0:name>
             <ns0:alias>BP10_TEMP_IN_HHLL_THRES</ns0:alias>
@@ -626,7 +626,7 @@
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
-          </ns0:record> 
+          </ns0:record>
        <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>BP10_FL_HHLL1_THRES</ns0:name>
             <ns0:alias>BP10_FL_HHLL1_THRES</ns0:alias>
@@ -635,7 +635,7 @@
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
-          </ns0:record> 
+          </ns0:record>
        <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>BP10_FL_HHLL2_THRES</ns0:name>
             <ns0:alias>BP10_FL_HHLL2_THRES</ns0:alias>
@@ -644,7 +644,7 @@
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
-          </ns0:record> 
+          </ns0:record>
        <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>BP11_TEMP_IN_HHLL_THRES</ns0:name>
             <ns0:alias>BP11_TEMP_IN_HHLL_THRES</ns0:alias>
@@ -698,7 +698,7 @@
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
-          </ns0:record>                        
+          </ns0:record>
        <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>HP8_TEMP_IN_HHLL_THRES</ns0:name>
             <ns0:alias>HP8_TEMP_IN_HHLL_THRES</ns0:alias>
@@ -725,7 +725,7 @@
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
-          </ns0:record>                              
+          </ns0:record>
        <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>HP9_TEMP_IN_HHLL_THRES</ns0:name>
             <ns0:alias>HP9_TEMP_IN_HHLL_THRES</ns0:alias>
@@ -806,12 +806,12 @@
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
-          </ns0:record>                                                                                                          
+          </ns0:record>
         </ns0:records>
       </ns0:plantRecords>
     </ns0:plantSystem>
-    
-  
+
+
     <ns0:plantSystem>
       <ns0:name>BPS</ns0:name>
       <ns0:version>1.0</ns0:version>
@@ -823,7 +823,7 @@
             <ns0:name>LOCK</ns0:name>
             <ns0:alias>LOCK</ns0:alias>
           	<ns0:description>BPS lock</ns0:description>
-          <ns0:values><ns0:value>1</ns0:value></ns0:values></ns0:record>
+          <ns0:values><ns0:value>[1]</ns0:value></ns0:values></ns0:record>
           <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>PULSE_LENG0</ns0:name>
             <ns0:alias>PULSE_LENG0</ns0:alias>
@@ -952,9 +952,118 @@
           </ns0:record>
         </ns0:records>
       </ns0:plantRecords>
+      <ns0:plantConstraints>
+          <ns0:folders>
+              <ns0:folder>
+                  <ns0:name>From BPS</ns0:name>
+                  <ns0:folders/>
+                  <ns0:constraints>
+                      <ns0:constraint>
+                          <ns0:name>Positive time</ns0:name>
+                          <ns0:description>Validates positive time</ns0:description>
+                          <ns0:hint>Change the value of BPS@TIME_1_REA0&gt;=0</ns0:hint>
+                          <ns0:function name="schedule.validate">='BPS@TIME_1_REA0'&gt;=0</ns0:function>
+                          <ns0:origin>BPS</ns0:origin>
+                      </ns0:constraint>
+                      <ns0:constraint>
+                          <ns0:name>Positive time</ns0:name>
+                          <ns0:description>Validates positive time</ns0:description>
+                          <ns0:hint>Change the value of BPS@TIME_2_REA0&gt;=0</ns0:hint>
+                          <ns0:function name="schedule.validate">='BPS@TIME_2_REA0'&gt;=0</ns0:function>
+                          <ns0:origin>BPS</ns0:origin>
+                      </ns0:constraint>
+                      <ns0:constraint>
+                          <ns0:name>Positive time</ns0:name>
+                          <ns0:description>Validates positive time</ns0:description>
+                          <ns0:hint>Change the value of BPS@TIME_3_REA0&gt;=0</ns0:hint>
+                          <ns0:function name="schedule.validate">='BPS@TIME_3_REA0'&gt;=0</ns0:function>
+                          <ns0:origin>BPS</ns0:origin>
+                      </ns0:constraint>
+                      <ns0:constraint>
+                          <ns0:name>Positive voltage</ns0:name>
+                          <ns0:description>Validates positive voltage</ns0:description>
+                          <ns0:hint>Change the value of BPS@VOLTAGE_LE0&gt;=0</ns0:hint>
+                          <ns0:function name="schedule.validate">='BPS@VOLTAGE_LE0'&gt;=0</ns0:function>
+                          <ns0:origin>BPS</ns0:origin>
+                      </ns0:constraint>
+                      <ns0:constraint>
+                          <ns0:name>Positive voltage</ns0:name>
+                          <ns0:description>Validates positive voltage</ns0:description>
+                          <ns0:hint>Change the value of BPS@VOLTAGE_LE1&gt;=0</ns0:hint>
+                          <ns0:function name="schedule.validate">='BPS@VOLTAGE_LE1'&gt;=0</ns0:function>
+                          <ns0:origin>BPS</ns0:origin>
+                      </ns0:constraint>
+                      <ns0:constraint>
+                          <ns0:name>Positive voltage</ns0:name>
+                          <ns0:description>Validates positive voltage</ns0:description>
+                          <ns0:hint>Change the value of BPS@VOLTAGE_LE2&gt;=0</ns0:hint>
+                          <ns0:function name="schedule.validate">='BPS@VOLTAGE_LE2'&gt;=0</ns0:function>
+                          <ns0:origin>BPS</ns0:origin>
+                      </ns0:constraint>
+                      <ns0:constraint>
+                          <ns0:name>Time interval length</ns0:name>
+                          <ns0:description>Validates time interval length</ns0:description>
+                          <ns0:hint>Make sure that BPS@TIME_1_REA0 + BPS@RAMP_UP_TI0&lt;=BPS@TIME_2_REA0</ns0:hint>
+                          <ns0:function name="schedule.validate">=('BPS@TIME_1_REA0'+'BPS@RAMP_UP_TI0')&lt;='BPS@TIME_2_REA0'</ns0:function>
+                          <ns0:origin>BPS</ns0:origin>
+                      </ns0:constraint>
+                      <ns0:constraint>
+                          <ns0:name>Time interval length</ns0:name>
+                          <ns0:description>Validates time interval length</ns0:description>
+                          <ns0:hint>Make sure that BPS@TIME_2_REA0 + BPS@RAMP_UP_TI1&lt;=BPS@TIME_3_REA0</ns0:hint>
+                          <ns0:function name="schedule.validate">=('BPS@TIME_2_REA0'+'BPS@RAMP_UP_TI1')&lt;='BPS@TIME_3_REA0'</ns0:function>
+                          <ns0:origin>BPS</ns0:origin>
+                      </ns0:constraint>
+                      <ns0:constraint>
+                          <ns0:name>Time interval length</ns0:name>
+                          <ns0:description>Validates time interval length</ns0:description>
+                          <ns0:hint>Make sure that BPS@TIME_3_REA0 + BPS@RAMP_UP_TI2+BPS@RAMP_DOWN_0&lt;=BPS@PULSE_LENG0</ns0:hint>
+                          <ns0:function name="schedule.validate">=('BPS@TIME_3_REA0'+'BPS@RAMP_UP_TI2'+'BPS@RAMP_DOWN_0')&lt;='BPS@PULSE_LENG0'</ns0:function>
+                          <ns0:origin>BPS</ns0:origin>
+                      </ns0:constraint>
+                      <ns0:constraint>
+                          <ns0:name>Time range</ns0:name>
+                          <ns0:description>Validates time range</ns0:description>
+                          <ns0:hint>Make sure that 100&lt;=BPS@RAMP_UP_TI0&lt;=1000</ns0:hint>
+                          <ns0:function name="schedule.validate">='BPS@RAMP_UP_TI0'&lt;=1000 and 'BPS@RAMP_UP_TI0'&gt;=100</ns0:function>
+                          <ns0:origin>BPS</ns0:origin>
+                      </ns0:constraint>
+                      <ns0:constraint>
+                          <ns0:name>Time range</ns0:name>
+                          <ns0:description>Validates time range</ns0:description>
+                          <ns0:hint>Make sure that 100&lt;=BPS@RAMP_UP_TI1&lt;=1000</ns0:hint>
+                          <ns0:function name="schedule.validate">='BPS@RAMP_UP_TI1'&lt;=1000 and 'BPS@RAMP_UP_TI1'&gt;=100</ns0:function>
+                          <ns0:origin>BPS</ns0:origin>
+                      </ns0:constraint>
+                      <ns0:constraint>
+                          <ns0:name>Time range</ns0:name>
+                          <ns0:description>Validates time range</ns0:description>
+                          <ns0:hint>Make sure that 100&lt;=BPS@RAMP_UP_TI2&lt;=1000</ns0:hint>
+                          <ns0:function name="schedule.validate">='BPS@RAMP_UP_TI2'&lt;=1000 and 'BPS@RAMP_UP_TI2'&gt;=100</ns0:function>
+                          <ns0:origin>BPS</ns0:origin>
+                      </ns0:constraint>
+                      <ns0:constraint>
+                          <ns0:name>Time range</ns0:name>
+                          <ns0:description>Validates time range</ns0:description>
+                          <ns0:hint>Make sure that 100&lt;=BPS@RAMP_DOWN_0&lt;=1000</ns0:hint>
+                          <ns0:function name="schedule.validate">='BPS@RAMP_DOWN_0'&lt;=1000 and 'BPS@RAMP_DOWN_0'&gt;=100</ns0:function>
+                          <ns0:origin>BPS</ns0:origin>
+                      </ns0:constraint>
+                      <ns0:constraint>
+                          <ns0:name>Conditional values</ns0:name>
+                          <ns0:description>Validates times and voltages</ns0:description>
+                          <ns0:hint>Make sure that if BPS@VAR_BODY_V0=1 all times and voltages are equal</ns0:hint>
+                          <ns0:function name="schedule.validate">=('BPS@VAR_BODY_V0'*'BPS@TIME_1_REA0')==('BPS@VAR_BODY_V0'*'BPS@TIME_2_REA0') and ('BPS@VAR_BODY_V0'*'BPS@TIME_3_REA0')==('BPS@VAR_BODY_V0'*'BPS@VOLTAGE_LE0') and ('BPS@VAR_BODY_V0'*'BPS@VOLTAGE_LE1')==('BPS@VAR_BODY_V0'*'BPS@VOLTAGE_LE2')</ns0:function>
+                          <ns0:origin>BPS</ns0:origin>
+                      </ns0:constraint>
+                  </ns0:constraints>
+              </ns0:folder>
+          </ns0:folders>
+          <ns0:constraints/>
+      </ns0:plantConstraints>
     </ns0:plantSystem>
-    
-    
+
+
     <ns0:plantSystem>
       <ns0:name>CPS</ns0:name>
       <ns0:version>1.0</ns0:version>
@@ -966,8 +1075,8 @@
             <ns0:name>LOCK</ns0:name>
             <ns0:alias>LOCK</ns0:alias>
           	<ns0:description>CPS lock</ns0:description>
-          <ns0:values><ns0:value>1</ns0:value></ns0:values></ns0:record>
- 
+          <ns0:values><ns0:value>[1]</ns0:value></ns0:values></ns0:record>
+
           <ns0:record size="1" xsi:type="recordLong">
             <ns0:name>AUTORESTAR0</ns0:name>
             <ns0:alias>AUTORESTAR0</ns0:alias>
@@ -982,19 +1091,28 @@
             <ns0:alias>FOLDBACK_A0</ns0:alias>
             <ns0:description>FOLDBACK_A0</ns0:description>
 			<ns0:lock>CPS@LOCK</ns0:lock>
-            <ns0:values><ns0:value>1</ns0:value></ns0:values></ns0:record>
+            <ns0:values>
+              <ns0:value>0</ns0:value>
+            </ns0:values>
+          </ns0:record>
           <ns0:record size="1" xsi:type="recordLong">
             <ns0:name>FOLDBACK_C0</ns0:name>
             <ns0:alias>FOLDBACK_C0</ns0:alias>
             <ns0:description>FOLDBACK_C0</ns0:description>
 			<ns0:lock>CPS@LOCK</ns0:lock>
-            <ns0:values><ns0:value>0</ns0:value></ns0:values></ns0:record>
+            <ns0:values>
+              <ns0:value>1</ns0:value>
+            </ns0:values>
+          </ns0:record>
           <ns0:record size="1" xsi:type="recordLong">
             <ns0:name>FOLDBACK_R0</ns0:name>
             <ns0:alias>FOLDBACK_R0</ns0:alias>
             <ns0:description>FOLDBACK_R0</ns0:description>
 			<ns0:lock>CPS@LOCK</ns0:lock>
-            <ns0:values><ns0:value>0</ns0:value></ns0:values></ns0:record>
+            <ns0:values>
+              <ns0:value>0</ns0:value>
+            </ns0:values>
+          </ns0:record>
           <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>OVERVOLTAG0</ns0:name>
             <ns0:alias>OVERVOLTAG0</ns0:alias>
@@ -1033,8 +1151,8 @@
           </ns0:record>
         </ns0:records>
       </ns0:plantRecords>
-    </ns0:plantSystem>   
-    
+    </ns0:plantSystem>
+
   <ns0:plantSystem>
       <ns0:name>GCPS</ns0:name>
       <ns0:version>1.0</ns0:version>
@@ -1046,32 +1164,44 @@
             <ns0:name>LOCK</ns0:name>
             <ns0:alias>LOCK</ns0:alias>
           	<ns0:description>GCPS lock</ns0:description>
-          <ns0:values><ns0:value>1</ns0:value></ns0:values></ns0:record>
- 
+          <ns0:values><ns0:value>[1]</ns0:value></ns0:values></ns0:record>
+
           <ns0:record size="1" xsi:type="recordLong">
             <ns0:name>AUTORESTAR1</ns0:name>
             <ns0:alias>AUTORESTAR1</ns0:alias>
             <ns0:description>AUTORESTAR1</ns0:description>
 			<ns0:lock>GCPS@LOCK</ns0:lock>
-            <ns0:values><ns0:value>1</ns0:value></ns0:values></ns0:record>
+            <ns0:values>
+              <ns0:value>0</ns0:value>
+            </ns0:values>
+          </ns0:record>
           <ns0:record size="1" xsi:type="recordLong">
             <ns0:name>FOLDBACK_A1</ns0:name>
             <ns0:alias>FOLDBACK_A1</ns0:alias>
             <ns0:description>FOLDBACK_A1</ns0:description>
 			<ns0:lock>GCPS@LOCK</ns0:lock>
-            <ns0:values><ns0:value>0</ns0:value></ns0:values></ns0:record>
+            <ns0:values>
+              <ns0:value>0</ns0:value>
+            </ns0:values>
+          </ns0:record>
           <ns0:record size="1" xsi:type="recordLong">
             <ns0:name>FOLDBACK_C1</ns0:name>
             <ns0:alias>FOLDBACK_C1</ns0:alias>
             <ns0:description>FOLDBACK_C1</ns0:description>
 			<ns0:lock>GCPS@LOCK</ns0:lock>
-            <ns0:values><ns0:value>0</ns0:value></ns0:values></ns0:record>
+            <ns0:values>
+              <ns0:value>1</ns0:value>
+            </ns0:values>
+          </ns0:record>
           <ns0:record size="1" xsi:type="recordLong">
             <ns0:name>FOLDBACK_R1</ns0:name>
             <ns0:alias>FOLDBACK_R1</ns0:alias>
             <ns0:description>FOLDBACK_R1</ns0:description>
 			<ns0:lock>GCPS@LOCK</ns0:lock>
-            <ns0:values><ns0:value>1</ns0:value></ns0:values></ns0:record>
+            <ns0:values>
+              <ns0:value>0</ns0:value>
+            </ns0:values>
+          </ns0:record>
           <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>OVERVOLTAG1</ns0:name>
             <ns0:alias>OVERVOLTAG1</ns0:alias>
@@ -1111,7 +1241,7 @@
         </ns0:records>
       </ns0:plantRecords>
     </ns0:plantSystem>
-     
+
 	<ns0:plantSystem>
       <ns0:name>HVPS</ns0:name>
       <ns0:version>1.0</ns0:version>
@@ -1123,8 +1253,8 @@
             <ns0:name>LOCK</ns0:name>
             <ns0:alias>LOCK</ns0:alias>
           	<ns0:description>HVPS lock</ns0:description>
-          <ns0:values><ns0:value>1</ns0:value></ns0:values></ns0:record>
- 
+          <ns0:values><ns0:value>[1]</ns0:value></ns0:values></ns0:record>
+
           <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>PULSE_DURA0</ns0:name>
             <ns0:alias>PULSE_DURA0</ns0:alias>
@@ -1148,7 +1278,10 @@
             <ns0:alias>PULSE_UNIT0</ns0:alias>
             <ns0:description>PULSE_UNIT0</ns0:description>
 			<ns0:lock>HVPS@LOCK</ns0:lock>
-            <ns0:values><ns0:value>0</ns0:value></ns0:values></ns0:record>
+            <ns0:values>
+              <ns0:value>0</ns0:value>
+            </ns0:values>
+          </ns0:record>
           <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>RAMP_DOWN_1</ns0:name>
             <ns0:alias>RAMP_DOWN_1</ns0:alias>
@@ -1209,8 +1342,8 @@
             <ns0:name>LOCK</ns0:name>
             <ns0:alias>LOCK</ns0:alias>
           	<ns0:description>IPS1 lock</ns0:description>
-          <ns0:values><ns0:value>1</ns0:value></ns0:values></ns0:record>
- 
+          <ns0:values><ns0:value>[1]</ns0:value></ns0:values></ns0:record>
+
           <ns0:record size="1" xsi:type="recordLong">
             <ns0:name>OUTPUT_VOL0</ns0:name>
             <ns0:alias>OUTPUT_VOL0</ns0:alias>
@@ -1321,7 +1454,7 @@
         </ns0:records>
       </ns0:plantRecords>
     </ns0:plantSystem>
-    
+
     <ns0:plantSystem>
       <ns0:name>PMP1</ns0:name>
       <ns0:version>1.0</ns0:version>
@@ -1427,7 +1560,7 @@
         </ns0:records>
       </ns0:plantRecords>
     </ns0:plantSystem>
-    
+
     <ns0:plantSystem>
       <ns0:name>PMP2</ns0:name>
       <ns0:version>1.0</ns0:version>
@@ -1667,7 +1800,7 @@
             <ns0:name>LOCK</ns0:name>
             <ns0:alias>LOCK</ns0:alias>
           	<ns0:description>RSWP lock</ns0:description>
-          <ns0:values><ns0:value>1</ns0:value></ns0:values></ns0:record>
+          <ns0:values><ns0:value>[1]</ns0:value></ns0:values></ns0:record>
           <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>THRESHOLD_0</ns0:name>
             <ns0:alias>THRESHOLD_0</ns0:alias>
@@ -1716,9 +1849,9 @@
           </ns0:record>
         </ns0:records>
       </ns0:plantRecords>
-    </ns0:plantSystem>    
+    </ns0:plantSystem>
 
-    
-    
+
+
   </ns0:plantSystems>
 <ns0:owner>lporzio</ns0:owner><ns0:references><ns0:counter>0</ns0:counter></ns0:references></configurationContainer>

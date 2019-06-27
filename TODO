@@ -7,3 +7,4 @@
 -   DAP are just normal schedules associated to a given user (make sure that the standalone implementation also supports this) - TODO - make sure this is clear in the documentation.
 
 -   Adding jQuery DNA Template for constructing HTML automatically (https://github.com/webdevelopers-eu/jquery-dna-template)
+-   Correct documentation for PlantConstraints
