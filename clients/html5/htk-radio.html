@@ -178,6 +178,24 @@
           if (!this.compareWithReference(this.getValue(), this.getPlantValue(), this.getReferenceValue())) {
               newBackgroundColor = PLANT_OR_REF_CHANGED_COLOR;
           }
+          var error = false;
+          var errorIdx = 0;
+          if (this.validations !== undefined) {
+            for (errorIdx = 0;
+              (errorIdx < this.validations.length) && (!error); errorIdx++) {
+              if (this.validations[errorIdx].test !== undefined) {
+                error = !this.validations[errorIdx].test();
+              } else {
+                console.log("Invalid validation function for " + this.id);
+              }
+            }
+          }
+          var titleString = this.toString();
+          if (error) {
+              errorIdx--;
+              newBackgroundColor = ERROR_BCOLOR;
+              titleString = "Failed @ " + this.validations[errorIdx].getValidationFunction();
+          }
           this.label.style.backgroundColor = newBackgroundColor;
 
           var titleString = this.toString();

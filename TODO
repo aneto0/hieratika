@@ -8,3 +8,4 @@
 
 -   Adding jQuery DNA Template for constructing HTML automatically (https://github.com/webdevelopers-eu/jquery-dna-template)
 -   Correct documentation for PlantConstraints
+-   Create validation python class
