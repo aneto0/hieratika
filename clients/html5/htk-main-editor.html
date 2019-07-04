@@ -1,19 +1,19 @@
-<!-- 
+<!--
  date: 04/01/2018
  author: Andre' Neto
- 
+
  copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
  the Development of Fusion Energy ('Fusion for Energy').
  Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  by the European Commission - subsequent versions of the EUPL (the "Licence")
  You may not use this work except in compliance with the Licence.
  You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
- 
- warning: Unless required by applicable law or agreed to in writing, 
+
+ warning: Unless required by applicable law or agreed to in writing,
  software distributed under the Licence is distributed on an "AS IS"
  basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  or implied. See the Licence permissions and limitations under the Licence.
---> 
+-->
 
 <html>
     <head>
@@ -66,7 +66,7 @@
                      */
                     attachedCallback() {
                         var topNav = document.getElementById("nav-pane");
-                        topNav.addPageListener(this); 
+                        topNav.addPageListener(this);
                         topNav.addUserLogoutListener(this);
                         //Cannot be done from the topNav since the topNav createdCallback and attachedCallback are called before the mainEditor created and attached callbacks
                         this.addVariablesInfoLoadedListener(topNav);
@@ -110,7 +110,7 @@
                             }
                         }
                         parent.htkHelper.getLiveVariablesInfo(
-                            allLiveVariableIds, 
+                            allLiveVariableIds,
                             function (variables) {
                                 var user = parent.htkHelper.getUser();
                                 for (var i in variables) {
@@ -124,7 +124,7 @@
                                 }
                                 parent.htkHelper.getVariablesInfo(
                                     pageName,
-                                    allVariableIds, 
+                                    allVariableIds,
                                     function (variables) {
                                         var user = parent.htkHelper.getUser();
                                         var lockVariableNames = [];
@@ -142,7 +142,7 @@
                                                             for (var z in targetLockElements) {
                                                                 targetLockElements[z].addLockStatusChangedListener(targetElements[j]);
                                                             }
-                                                        } 
+                                                        }
                                                     }
                                                 }
                                             }
@@ -173,7 +173,7 @@
                      * @param[in] pageName the page that was loaded.
                      */
                     iFrameLoaded(pageName) {
-                        this.loadVariablesInfo(pageName); 
+                        this.loadVariablesInfo(pageName);
 
                         $.each(this.mainEditorIFrame.contentDocument._frameComponents, function (i, htkCompArray) {
                             $.each(htkCompArray, function (j, htkComp) {
@@ -196,17 +196,17 @@
                         }.bind(this);
                         this.mainEditorIFrame.src = pageUrl;
                     }
-  
+
                     /**
                      * @brief Callback function that is called when all the variables information has been loaded.
-                     */ 
+                     */
                     variablesInfoLoaded() {
                         parent.htkHelper.displayPlant();
-                    } 
+                    }
 
                     /**
                      * @brief Function called when a user logsout from the system. Displays the help page.
-                     */  
+                     */
                     userLogout () {
                         this.mainEditorIFrame.onload = function(evt) {
                         }.bind(this);
@@ -230,16 +230,25 @@
                         }.bind(this);
                         this.mainEditorIFrame.src = "/statistics.html?" + new Date().getTime(); //new Date... to force reloading with no caching
                     }
+
+                    /**
+                     * @brief Shows the statistics page.
+                     */
+                    showPlantBuilder() {
+                        this.mainEditorIFrame.onload = function(evt) {
+                        }.bind(this);
+                        this.mainEditorIFrame.src = "/plant-builder.html?" + new Date().getTime(); //new Date... to force reloading with no caching
+                    }
                 }
 
 
                 /**
                  * @brief Registers the element.
-                 */ 
+                 */
                 document.registerElement("htk-main-editor", {
                     prototype: HtkMainEditor.prototype,
                 });
-            })(); 
+            })();
         </script>
     </body>
 </html>

@@ -63,6 +63,7 @@
                 <button class="w3-bar-item w3-button w3-border-top" title="Manage transformations" id="transformationsbtn"><i class="fa fa-cogs"></i> f(x)</button>
                 <button class="w3-bar-item w3-button w3-border-top" title="Load the current plant into the system" id="loadintoplantbtn"><i class="fa fa-upload"></i> Load</button>
                 <button class="w3-bar-item w3-button w3-border-top" title="Show system statistics" id="showstatisticsbtn"><i class="fa fa-area-chart"></i> Statistics</button>
+                <button class="w3-bar-item w3-button w3-border-top w3-blue" title="Create new plant configuration" id="plantbuilder"><i class="fa fa-paint-brush"></i> Plant Builder</button>
             </div>
             <div class="w3-bar w3-dark-grey w3-tiny">
                 <button class="w3-button" id="tsidebaropen">&#9776;</button>
@@ -155,6 +156,12 @@
                         this.showStatisticsButton.onclick = function() {
                             this.hideSideBar();
                             parent.htkHelper.getHtkMainEditor().showStatistics();
+                        }.bind(this);
+
+                        this.showPlantBuilderButton = this.shadowRoot.querySelector("#plantbuilder");
+                        this.showPlantBuilderButton.onclick = function() {
+                            this.hideSideBar();
+                            parent.htkHelper.getHtkMainEditor().showPlantBuilder();
                         }.bind(this);
 
                         this.pageSelectButton = this.shadowRoot.querySelector("#pageselectbtn");

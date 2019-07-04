@@ -1,0 +1,150 @@
+<!--
+ date: 23/01/2018
+ author: Andre' Neto
+
+ copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
+ the Development of Fusion Energy ('Fusion for Energy').
+ Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ by the European Commission - subsequent versions of the EUPL (the "Licence")
+ You may not use this work except in compliance with the Licence.
+ You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+
+ warning: Unless required by applicable law or agreed to in writing,
+ software distributed under the Licence is distributed on an "AS IS"
+ basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ or implied. See the Licence permissions and limitations under the Licence.
+-->
+
+<html>
+
+<head>
+  <!-- Standard imports -->
+
+  <!-- Project imports -->
+  <link rel="import" href="/libraries.html">
+
+  <style>
+    .configcontent {
+      padding: 6px 12px;
+      border: 2px solid #666;
+    }
+    .tabcontent {
+      display: none;
+      padding: 6px 12px;
+      border-bottom: 1px solid #999;
+      background-color: white;
+    }
+    .table {
+      display: table;
+      width: 90%;
+      height: fit-content;
+      table-layout: fixed;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .col {
+      display: table-cell;
+      padding: 2px 16px;
+      height: 100%;
+      border: 1px solid #cacaca;
+    }
+    .col-40 {
+      float: left;
+      width: 40%;
+      margin-top: 3px;
+      margin-bottom: 3px;
+    }
+    .col-60 {
+      float: left;
+      width: 60%;
+      margin-top: 3px;
+      margin-bottom: 3px;
+    }
+    .row {
+      display: table-row;
+    }
+    .table-single {
+      display: table;
+      width: 90%;
+      height: fit-content;
+      table-layout: fixed;
+    }
+    .col-single {
+      float: left;
+      padding: 2px 16px;
+      width: 50%;
+      border: 1px solid #cacaca;
+    }
+    .grey {
+      background-color: #f2f2f2
+    }
+    .hidden {
+      display: none
+    }
+  </style>
+</head>
+
+<body>
+  <div style="padding-left: 10px;" id="intro">
+    <h2><b>Hieratika Plant Builder</b></h2>
+    <p>A tool for creating Plant Configurations. Automatically generates the <i>plant.xml</i> file using ITER PSPS configuration model.</p>
+  </div>
+  <div class="hidden" style="padding-left: 10px;" id="instructions">
+    <h2><b>New Configuration</b></h2>
+    <p>Insert all the Plant information below and create a new Plant Configuration.</p>
+  </div>
+  <div align="center">
+      <button type="button" onclick="newConfig()" id="btnNewConfig"><i class="fa fa-plus"></i> ADD NEW CONFIGURATION</button>
+  </div>
+
+  <div class="table-single hidden" id="plantDetailsForm">
+    <form action="#">
+      Plant Name: <input type="text" name="plantName" placeholder="FALCON"><br>
+      Plant Description: <input type="text" name="plantDescription" placeholder="FALCON Configuration for Pulse 5185"><br>
+      Schema Version: <input type="text" name="schemaVersion" value="1.2" disabled> SDD Version: <input type="text" name="sddVersion" value="1" disabled><br>
+      Plant Version: <input type="text" name="plantVersion" placeholder="00.00"><br>
+      <input type="submit" value="Create">
+    </form>
+  </div>
+
+  <!-- Container for generated HTML -->
+  <div class="configcontent hidden" id="configdiv">
+  </div>
+
+  <script>
+    function newConfig() {
+      document.getElementById("btnNewConfig").style.display = "none";
+      document.getElementById("instructions").style.display = "block";
+      document.getElementById("intro").style.display = "none";
+      let form = document.getElementById("plantDetailsForm");
+      form.style.display = "block";
+    }
+    function loadHTML() {
+      var title = "PLANT BUILDER!";
+      let html = [
+      '<div id="RU_Main_tab" class="tabcontent">',
+    		'<h4>' + title + '</h4>',
+    		'<div class="table">',
+    			'<div class="row">',
+    				'<div class="col">',
+    					'<h4><b>Pulse Configuration</b></h4>',
+    					'<div class="table">',
+    						'<h5> TEST </h5>',
+    						'<div class="row grey">',
+    							'<div class="col-60"> test </div>',
+    							'<div class="col-40">',
+    								'<p>TEST</p>',
+    							'</div>',
+    						'</div>',
+    					'</div>',
+    				'</div>',
+    			'</div>',
+    		'</div>',
+    	'</div>'
+      ].join("\n");
+      $(html).appendTo('#configdiv');
+    }
+  </script>
+</body>
+
+</html>
