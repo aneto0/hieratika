@@ -1,11 +1,12 @@
 // Hieratika Plant Builder Javascript functions
-//Author: Luca Porzio
+// Author: Luca Porzio
+
+var tabList = [];
 
 function newConfig() {
-  document.getElementById("btnNewConfig").style.display = "none";
-  document.getElementById("instructions").style.display = "block";
-  document.getElementById("intro").style.display = "none";
-  document.getElementById("plantDetailsForm").style.display = "block";
+  $('#intro').hide(500);
+  $('#instructions').show(500);
+  $('#plantDetailsForm').show(500);
 }
 
 function savePlantDetails() {
@@ -14,11 +15,42 @@ function savePlantDetails() {
   document.getElementById("sVersion").disabled = true;
   document.getElementById("sdd").disabled = true;
   document.getElementById("pVersion").disabled = true;
-  document.getElementById("configdiv").style.display = "block";
+
+  $('#instructions').hide(500);
+  $('#plantDetailsForm').hide(500);
+
+  $('#configdiv').show(500);
+  $('#addPlant').show(500);
+
 }
 
-function loadHTML() {
-  var title = "PLANT SYSTEM CONFIGURATION";
-  let html = $("#template-single").html();
-  $(html).appendTo('#configdiv');
+function addPlantSystem() {
+  // jQuery html select
+  let psName = document.getElementById("psName");
+  tabList.push(psName.value);
+  // Refreshing template
+  $('.tab').template({
+    'tabList': tabList
+  });
+  // Adding tab template
+  let htmlTab = $("#template-tabcontent").html();
+  $(htmlTab).appendTo('#configdiv');
+  // Setting ids
+  let tabContentId = psName.value + "_tab";
+  document.getElementById("newTabContent").id = tabContentId;
+}
+
+// onclick action on tab buttons
+function openTab(evt, tabName) {
+  let i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace("active", "");
+  }
+  document.getElementById(tabName).style.display = "block";
+  evt.currentTarget.className += " active";
 }

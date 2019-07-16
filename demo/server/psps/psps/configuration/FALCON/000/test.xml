@@ -13,16 +13,19 @@
       <ns0:plantRecords>
         <ns0:folders/>
         <ns0:records>
-           <ns0:record size="1" xsi:type="recordLock">
+          <ns0:record size="1" xsi:type="recordLock">
             <ns0:name>LOCK</ns0:name>
             <ns0:alias>LOCK</ns0:alias>
-          	<ns0:description>Main lock</ns0:description>
-          <ns0:values><ns0:value>[1]</ns0:value></ns0:values></ns0:record>
+            <ns0:description>Main lock</ns0:description>
+            <ns0:values>
+              <ns0:value>[1]</ns0:value>
+            </ns0:values>
+          </ns0:record>
           <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>MHVPS_VOLTAGE</ns0:name>
             <ns0:alias>MHVPS_VOLTAGE</ns0:alias>
             <ns0:description>MHVPS_VOLTAGE</ns0:description>
-			<ns0:lock>RU_MAIN@LOCK</ns0:lock>
+            <ns0:lock>RU_MAIN@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -31,7 +34,7 @@
             <ns0:name>TOTAL_VOLTAGE</ns0:name>
             <ns0:alias>TOTAL_VOLTAGE</ns0:alias>
             <ns0:description>TOTAL_VOLTAGE</ns0:description>
-			<ns0:lock>RU_MAIN@LOCK</ns0:lock>
+            <ns0:lock>RU_MAIN@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>1</ns0:value>
             </ns0:values>
@@ -40,7 +43,7 @@
             <ns0:name>PULSE_MINUTES</ns0:name>
             <ns0:alias>PULSE_MINUTES</ns0:alias>
             <ns0:description>PULSE_MINUTES</ns0:description>
-			<ns0:lock>RU_MAIN@LOCK</ns0:lock>
+            <ns0:lock>RU_MAIN@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -49,7 +52,7 @@
             <ns0:name>PULSE_SECONDS</ns0:name>
             <ns0:alias>PULSE_SECONDS</ns0:alias>
             <ns0:description>PULSE_SECONDS</ns0:description>
-			<ns0:lock>RU_MAIN@LOCK</ns0:lock>
+            <ns0:lock>RU_MAIN@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -58,7 +61,7 @@
             <ns0:name>PULSE_MSECONDS</ns0:name>
             <ns0:alias>PULSE_MSECONDS</ns0:alias>
             <ns0:description>PULSE_MSECONDS</ns0:description>
-			<ns0:lock>RU_MAIN@LOCK</ns0:lock>
+            <ns0:lock>RU_MAIN@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -67,7 +70,7 @@
             <ns0:name>VARIABLE_BODY_VOLTAGE</ns0:name>
             <ns0:alias>VARIABLE_BODY_VOLTAGE</ns0:alias>
             <ns0:description>VARIABLE_BODY_VOLTAGE</ns0:description>
-			<ns0:lock>RU_MAIN@LOCK</ns0:lock>
+            <ns0:lock>RU_MAIN@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -76,7 +79,7 @@
             <ns0:name>SCM_HEATER_ON</ns0:name>
             <ns0:alias>SCM_HEATER_ON</ns0:alias>
             <ns0:description>SCM_HEATER_ON</ns0:description>
-			<ns0:lock>RU_MAIN@LOCK</ns0:lock>
+            <ns0:lock>RU_MAIN@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -85,7 +88,7 @@
             <ns0:name>SCM_SP_CURRENT</ns0:name>
             <ns0:alias>SCM_SP_CURRENT</ns0:alias>
             <ns0:description>SCM_SP_CURRENT</ns0:description>
-			<ns0:lock>RU_MAIN@LOCK</ns0:lock>
+            <ns0:lock>RU_MAIN@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -94,7 +97,7 @@
             <ns0:name>FILAMENT_CURRENT_SP</ns0:name>
             <ns0:alias>FILAMENT_CURRENT_SP</ns0:alias>
             <ns0:description>FILAMENT_CURRENT_SP</ns0:description>
-			<ns0:lock>RU_MAIN@LOCK</ns0:lock>
+            <ns0:lock>RU_MAIN@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -103,7 +106,7 @@
             <ns0:name>GYRO_CURRENT_SP</ns0:name>
             <ns0:alias>GYRO_CURRENT_SP</ns0:alias>
             <ns0:description>GYRO_CURRENT_SP</ns0:description>
-			<ns0:lock>RU_MAIN@LOCK</ns0:lock>
+            <ns0:lock>RU_MAIN@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -112,7 +115,7 @@
             <ns0:name>STABILIZATION_MODE</ns0:name>
             <ns0:alias>STABILIZATION_MODE</ns0:alias>
             <ns0:description>STABILIZATION_MODE</ns0:description>
-			<ns0:lock>RU_MAIN@LOCK</ns0:lock>
+            <ns0:lock>RU_MAIN@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -121,7 +124,7 @@
             <ns0:name>RESET_ERRORS</ns0:name>
             <ns0:alias>RESET_ERRORS</ns0:alias>
             <ns0:description>RESET_ERRORS</ns0:description>
-			<ns0:lock>RU_MAIN@LOCK</ns0:lock>
+            <ns0:lock>RU_MAIN@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -137,16 +140,19 @@
       <ns0:plantRecords>
         <ns0:folders/>
         <ns0:records>
-           <ns0:record size="1" xsi:type="recordLock">
+          <ns0:record size="1" xsi:type="recordLock">
             <ns0:name>LOCK</ns0:name>
             <ns0:alias>LOCK</ns0:alias>
-          	<ns0:description>Alarms lock</ns0:description>
-          <ns0:values><ns0:value>[1]</ns0:value></ns0:values></ns0:record>
+            <ns0:description>Alarms lock</ns0:description>
+            <ns0:values>
+              <ns0:value>[1]</ns0:value>
+            </ns0:values>
+          </ns0:record>
           <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>FIL_CUR_HHLL_THRES</ns0:name>
             <ns0:alias>FIL_CUR_HHLL_THRES</ns0:alias>
             <ns0:description>FIL_CUR_HHLL_THRES</ns0:description>
-			<ns0:lock>RU_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -155,7 +161,7 @@
             <ns0:name>SCM_SCM_CUR_HHLL1_THRES</ns0:name>
             <ns0:alias>SCM_SCM_CUR_HHLL1_THRES</ns0:alias>
             <ns0:description>SCM_SCM_CUR_HHLL1_THRES</ns0:description>
-			<ns0:lock>RU_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -164,7 +170,7 @@
             <ns0:name>SCM_SCM_CUR_HHLL2_THRES</ns0:name>
             <ns0:alias>SCM_SCM_CUR_HHLL2_THRES</ns0:alias>
             <ns0:description>SCM_SCM_CUR_HHLL2_THRES</ns0:description>
-			<ns0:lock>RU_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -173,7 +179,7 @@
             <ns0:name>SCM_LEM_CUR_HHLL1_THRES</ns0:name>
             <ns0:alias>SCM_LEM_CUR_HHLL1_THRES</ns0:alias>
             <ns0:description>SCM_LEM_CUR_HHLL1_THRES</ns0:description>
-			<ns0:lock>RU_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -182,7 +188,7 @@
             <ns0:name>SCM_LEM_CUR_HHLL2_THRES</ns0:name>
             <ns0:alias>SCM_LEM_CUR_HHLL2_THRES</ns0:alias>
             <ns0:description>SCM_LEM_CUR_HHLL2_THRES</ns0:description>
-			<ns0:lock>RU_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -191,7 +197,7 @@
             <ns0:name>SCM_SERIAL_CUR_HHLL1_THRES</ns0:name>
             <ns0:alias>SCM_SERIAL_CUR_HHLL1_THRES</ns0:alias>
             <ns0:description>SCM_SERIAL_CUR_HHLL1_THRES</ns0:description>
-			<ns0:lock>RU_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -200,7 +206,7 @@
             <ns0:name>SCM_SERIAL_CUR_HHLL2_THRES</ns0:name>
             <ns0:alias>SCM_SERIAL_CUR_HHLL2_THRES</ns0:alias>
             <ns0:description>SCM_SERIAL_CUR_HHLL2_THRES</ns0:description>
-			<ns0:lock>RU_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -209,7 +215,7 @@
             <ns0:name>COLL_CUR_HW_HHLL1_THRES</ns0:name>
             <ns0:alias>COLL_CUR_HW_HHLL1_THRES</ns0:alias>
             <ns0:description>COLL_CUR_HW_HHLL1_THRES</ns0:description>
-			<ns0:lock>RU_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -218,7 +224,7 @@
             <ns0:name>COLL_CUR_HW_HHLL2_THRES</ns0:name>
             <ns0:alias>COLL_CUR_HW_HHLL2_THRES</ns0:alias>
             <ns0:description>COLL_CUR_HW_HHLL2_THRES</ns0:description>
-			<ns0:lock>RU_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -227,7 +233,7 @@
             <ns0:name>COLL_SERIAL_CUR_HHLL1_THRES</ns0:name>
             <ns0:alias>COLL_SERIAL_CUR_HHLL1_THRES</ns0:alias>
             <ns0:description>COLL_SERIAL_CUR_HHLL1_THRES</ns0:description>
-			<ns0:lock>RU_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -236,7 +242,7 @@
             <ns0:name>COLL_SERIAL_CUR_HHLL2_THRES</ns0:name>
             <ns0:alias>COLL_SERIAL_CUR_HHLL2_THRES</ns0:alias>
             <ns0:description>COLL_SERIAL_CUR_HHLL2_THRES</ns0:description>
-			<ns0:lock>RU_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -245,7 +251,7 @@
             <ns0:name>RF_TX1_HHLL_THRES</ns0:name>
             <ns0:alias>RF_TX1_HHLL_THRES</ns0:alias>
             <ns0:description>RF_TX1_HHLL_THRES</ns0:description>
-			<ns0:lock>RU_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -254,7 +260,7 @@
             <ns0:name>RF_TX2_HHLL_THRES</ns0:name>
             <ns0:alias>RF_TX2_HHLL_THRES</ns0:alias>
             <ns0:description>RF_TX2_HHLL_THRES</ns0:description>
-			<ns0:lock>RU_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -263,7 +269,7 @@
             <ns0:name>RF_TX3_HHLL_THRES</ns0:name>
             <ns0:alias>RF_TX3_HHLL_THRES</ns0:alias>
             <ns0:description>RF_TX3_HHLL_THRES</ns0:description>
-			<ns0:lock>RU_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -272,7 +278,7 @@
             <ns0:name>IPS1_CUR_HW_HHLL1_THRES</ns0:name>
             <ns0:alias>IPS1_CUR_HW_HHLL1_THRES</ns0:alias>
             <ns0:description>IPS1_CUR_HW_HHLL1_THRES</ns0:description>
-			<ns0:lock>RU_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -281,7 +287,7 @@
             <ns0:name>IPS1_CUR_HW_HHLL2_THRES</ns0:name>
             <ns0:alias>IPS1_CUR_HW_HHLL2_THRES</ns0:alias>
             <ns0:description>IPS1_CUR_HW_HHLL2_THRES</ns0:description>
-			<ns0:lock>RU_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -290,7 +296,7 @@
             <ns0:name>IPS1_SERIAL_CUR_HHLL1_THRES</ns0:name>
             <ns0:alias>IPS1_SERIAL_CUR_HHLL1_THRES</ns0:alias>
             <ns0:description>IPS1_SERIAL_CUR_HHLL1_THRES</ns0:description>
-			<ns0:lock>RU_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -299,7 +305,7 @@
             <ns0:name>IPS1_SERIAL_CUR_HHLL2_THRES</ns0:name>
             <ns0:alias>IPS1_SERIAL_CUR_HHLL2_THRES</ns0:alias>
             <ns0:description>IPS1_SERIAL_CUR_HHLL2_THRES</ns0:description>
-			<ns0:lock>RU_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -308,7 +314,7 @@
             <ns0:name>IPS1_SERIAL_VOL_HHLL_THRES</ns0:name>
             <ns0:alias>IPS1_SERIAL_VOL_HHLL_THRES</ns0:alias>
             <ns0:description>IPS1_SERIAL_VOL_HHLL_THRES</ns0:description>
-			<ns0:lock>RU_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -317,7 +323,7 @@
             <ns0:name>GC_CUR_HW_HHLL1_THRES</ns0:name>
             <ns0:alias>GC_CUR_HW_HHLL1_THRES</ns0:alias>
             <ns0:description>GC_CUR_HW_HHLL1_THRES</ns0:description>
-			<ns0:lock>RU_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -326,7 +332,7 @@
             <ns0:name>GC_CUR_HW_HHLL2_THRES</ns0:name>
             <ns0:alias>GC_CUR_HW_HHLL2_THRES</ns0:alias>
             <ns0:description>GC_CUR_HW_HHLL2_THRES</ns0:description>
-			<ns0:lock>RU_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -335,7 +341,7 @@
             <ns0:name>GC_CUR_SER_HHLL1_THRES</ns0:name>
             <ns0:alias>GC_CUR_SER_HHLL1_THRES</ns0:alias>
             <ns0:description>GC_CUR_SER_HHLL1_THRES</ns0:description>
-			<ns0:lock>RU_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -344,7 +350,7 @@
             <ns0:name>GC_CUR_SER_HHLL2_THRES</ns0:name>
             <ns0:alias>GC_CUR_SER_HHLL2_THRES</ns0:alias>
             <ns0:description>GC_CUR_SER_HHLL2_THRES</ns0:description>
-			<ns0:lock>RU_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -353,7 +359,7 @@
             <ns0:name>VPUMPL_PRES_LOAD_HW_HHLL_THRES</ns0:name>
             <ns0:alias>VPUMPL_PRES_LOAD_HW_HHLL_THRES</ns0:alias>
             <ns0:description>VPUMPL_PRES_LOAD_HW_HHLL_THRES</ns0:description>
-			<ns0:lock>RU_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -362,7 +368,7 @@
             <ns0:name>VPUMPM_PRES_LOAD_HW_HHLL_THRES</ns0:name>
             <ns0:alias>VPUMPM_PRES_LOAD_HW_HHLL_THRES</ns0:alias>
             <ns0:description>VPUMPM_PRES_LOAD_HW_HHLL_THRES</ns0:description>
-			<ns0:lock>RU_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -371,7 +377,7 @@
             <ns0:name>SWEEP_SEMI_PERIOD_THRES</ns0:name>
             <ns0:alias>SWEEP_SEMI_PERIOD_THRES</ns0:alias>
             <ns0:description>SWEEP_SEMI_PERIOD_THRES</ns0:description>
-			<ns0:lock>RU_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -380,7 +386,7 @@
             <ns0:name>SWEEP_H_THRES</ns0:name>
             <ns0:alias>SWEEP_H_THRES</ns0:alias>
             <ns0:description>SWEEP_H_THRES</ns0:description>
-			<ns0:lock>RU_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -389,7 +395,7 @@
             <ns0:name>SWEEP_L_THRES</ns0:name>
             <ns0:alias>SWEEP_L_THRES</ns0:alias>
             <ns0:description>SWEEP_L_THRES</ns0:description>
-			<ns0:lock>RU_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -397,7 +403,6 @@
         </ns0:records>
       </ns0:plantRecords>
     </ns0:plantSystem>
-
 
     <ns0:plantSystem>
       <ns0:name>RU_CWS_ALARMS</ns0:name>
@@ -406,16 +411,19 @@
       <ns0:plantRecords>
         <ns0:folders/>
         <ns0:records>
-           <ns0:record size="1" xsi:type="recordLock">
+          <ns0:record size="1" xsi:type="recordLock">
             <ns0:name>LOCK</ns0:name>
             <ns0:alias>LOCK</ns0:alias>
-          	<ns0:description>RU CWS Alarms lock</ns0:description>
-          <ns0:values><ns0:value>[1]</ns0:value></ns0:values></ns0:record>
+            <ns0:description>RU CWS Alarms lock</ns0:description>
+            <ns0:values>
+              <ns0:value>[1]</ns0:value>
+            </ns0:values>
+          </ns0:record>
           <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>COL_TEMP_IN_HHLL_THRES</ns0:name>
             <ns0:alias>COL_TEMP_IN_HHLL_THRES</ns0:alias>
             <ns0:description>COL_TEMP_IN_HHLL_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -424,7 +432,7 @@
             <ns0:name>COL_DTEMP_HHLL_THRES</ns0:name>
             <ns0:alias>COL_DTEMP_HHLL_THRES</ns0:alias>
             <ns0:description>COL_DTEMP_HHLL_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -433,7 +441,7 @@
             <ns0:name>COL_FL_HHLL1_THRES</ns0:name>
             <ns0:alias>COL_FL_HHLL1_THRES</ns0:alias>
             <ns0:description>COL_FL_HHLL1_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -442,7 +450,7 @@
             <ns0:name>COL_FL_HHLL2_THRES</ns0:name>
             <ns0:alias>COL_FL_HHLL2_THRES</ns0:alias>
             <ns0:description>COL_FL_HHLL2_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -451,7 +459,7 @@
             <ns0:name>LOAD_TEMP_IN_HHLL_THRES</ns0:name>
             <ns0:alias>LOAD_TEMP_IN_HHLL_THRES</ns0:alias>
             <ns0:description>LOAD_TEMP_IN_HHLL_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -460,7 +468,7 @@
             <ns0:name>LOAD_DTEMP_HHLL_THRES</ns0:name>
             <ns0:alias>LOAD_DTEMP_HHLL_THRES</ns0:alias>
             <ns0:description>LOAD_DTEMP_HHLL_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -469,7 +477,7 @@
             <ns0:name>LOAD_FL_LP_HHLL1_THRES</ns0:name>
             <ns0:alias>LOAD_FL_LP_HHLL1_THRES</ns0:alias>
             <ns0:description>LOAD_FL_LP_HHLL1_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -478,7 +486,7 @@
             <ns0:name>LOAD_FL_LP_HHLL2_THRES</ns0:name>
             <ns0:alias>LOAD_FL_LP_HHLL2_THRES</ns0:alias>
             <ns0:description>LOAD_FL_LP_HHLL2_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -487,7 +495,7 @@
             <ns0:name>BP1_TEMP_IN_HHLL_THRES</ns0:name>
             <ns0:alias>BP1_TEMP_IN_HHLL_THRES</ns0:alias>
             <ns0:description>BP1_TEMP_IN_HHLL_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -496,7 +504,7 @@
             <ns0:name>BP1_FL_HHLL1_THRES</ns0:name>
             <ns0:alias>BP1_FL_HHLL1_THRES</ns0:alias>
             <ns0:description>BP1_FL_HHLL1_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -505,7 +513,7 @@
             <ns0:name>BP1_FL_HHLL2_THRES</ns0:name>
             <ns0:alias>BP1_FL_HHLL2_THRES</ns0:alias>
             <ns0:description>BP1_FL_HHLL2_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -514,7 +522,7 @@
             <ns0:name>BP4_TEMP_IN_HHLL_THRES</ns0:name>
             <ns0:alias>BP4_TEMP_IN_HHLL_THRES</ns0:alias>
             <ns0:description>BP4_TEMP_IN_HHLL_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -523,7 +531,7 @@
             <ns0:name>BP4_FL_HHLL1_THRES</ns0:name>
             <ns0:alias>BP4_FL_HHLL1_THRES</ns0:alias>
             <ns0:description>BP4_FL_HHLL1_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -532,7 +540,7 @@
             <ns0:name>BP4_FL_HHLL2_THRES</ns0:name>
             <ns0:alias>BP4_FL_HHLL2_THRES</ns0:alias>
             <ns0:description>BP4_FL_HHLL2_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -541,7 +549,7 @@
             <ns0:name>BP5_TEMP_IN_HHLL_THRES</ns0:name>
             <ns0:alias>BP5_TEMP_IN_HHLL_THRES</ns0:alias>
             <ns0:description>BP5_TEMP_IN_HHLL_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -550,259 +558,259 @@
             <ns0:name>BP5_DTEMP_IN_HHLL_THRES</ns0:name>
             <ns0:alias>BP5_DTEMP_IN_HHLL_THRES</ns0:alias>
             <ns0:description>BP5_DTEMP_IN_HHLL_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
           </ns0:record>
-        <ns0:record size="1" xsi:type="recordDouble">
+          <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>BP5_FL_HHLL1_THRES</ns0:name>
             <ns0:alias>BP5_FL_HHLL1_THRES</ns0:alias>
             <ns0:description>BP5_FL_HHLL1_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
           </ns0:record>
-        <ns0:record size="1" xsi:type="recordDouble">
+          <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>BP5_FL_HHLL2_THRES</ns0:name>
             <ns0:alias>BP5_FL_HHLL2_THRES</ns0:alias>
             <ns0:description>BP5_FL_HHLL2_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
           </ns0:record>
-        <ns0:record size="1" xsi:type="recordDouble">
+          <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>BP6_FL_HHLL1_THRES</ns0:name>
             <ns0:alias>BP6_FL_HHLL1_THRES</ns0:alias>
             <ns0:description>BP6_FL_HHLL1_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
           </ns0:record>
-        <ns0:record size="1" xsi:type="recordDouble">
+          <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>BP6_FL_HHLL2_THRES</ns0:name>
             <ns0:alias>BP6_FL_HHLL2_THRES</ns0:alias>
             <ns0:description>BP6_FL_HHLL2_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
           </ns0:record>
-        <ns0:record size="1" xsi:type="recordDouble">
+          <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>BP8_TEMP_IN_HHLL_THRES</ns0:name>
             <ns0:alias>BP8_TEMP_IN_HHLL_THRES</ns0:alias>
             <ns0:description>BP8_TEMP_IN_HHLL_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
           </ns0:record>
-       <ns0:record size="1" xsi:type="recordDouble">
+          <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>BP8_FL_HHLL1_THRES</ns0:name>
             <ns0:alias>BP8_FL_HHLL1_THRES</ns0:alias>
             <ns0:description>BP8_FL_HHLL1_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
           </ns0:record>
-       <ns0:record size="1" xsi:type="recordDouble">
+          <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>BP8_FL_HHLL2_THRES</ns0:name>
             <ns0:alias>BP8_FL_HHLL2_THRES</ns0:alias>
             <ns0:description>BP8_FL_HHLL2_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
           </ns0:record>
-       <ns0:record size="1" xsi:type="recordDouble">
+          <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>BP10_TEMP_IN_HHLL_THRES</ns0:name>
             <ns0:alias>BP10_TEMP_IN_HHLL_THRES</ns0:alias>
             <ns0:description>BP10_TEMP_IN_HHLL_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
           </ns0:record>
-       <ns0:record size="1" xsi:type="recordDouble">
+          <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>BP10_FL_HHLL1_THRES</ns0:name>
             <ns0:alias>BP10_FL_HHLL1_THRES</ns0:alias>
             <ns0:description>BP10_FL_HHLL1_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
           </ns0:record>
-       <ns0:record size="1" xsi:type="recordDouble">
+          <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>BP10_FL_HHLL2_THRES</ns0:name>
             <ns0:alias>BP10_FL_HHLL2_THRES</ns0:alias>
             <ns0:description>BP10_FL_HHLL2_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
           </ns0:record>
-       <ns0:record size="1" xsi:type="recordDouble">
+          <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>BP11_TEMP_IN_HHLL_THRES</ns0:name>
             <ns0:alias>BP11_TEMP_IN_HHLL_THRES</ns0:alias>
             <ns0:description>BP11_TEMP_IN_HHLL_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
           </ns0:record>
-       <ns0:record size="1" xsi:type="recordDouble">
+          <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>BP11_FL_HHLL1_THRES</ns0:name>
             <ns0:alias>BP11_FL_HHLL1_THRES</ns0:alias>
             <ns0:description>BP11_FL_HHLL1_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
           </ns0:record>
-       <ns0:record size="1" xsi:type="recordDouble">
+          <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>BP11_FL_HHLL2_THRES</ns0:name>
             <ns0:alias>BP11_FL_HHLL2_THRES</ns0:alias>
             <ns0:description>BP11_FL_HHLL2_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
           </ns0:record>
-       <ns0:record size="1" xsi:type="recordDouble">
+          <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>HP4_TEMP_IN_HHLL_THRES</ns0:name>
             <ns0:alias>HP4_TEMP_IN_HHLL_THRES</ns0:alias>
             <ns0:description>HP4_TEMP_IN_HHLL_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
           </ns0:record>
-       <ns0:record size="1" xsi:type="recordDouble">
+          <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>HP4_FL_HHLL1_THRES</ns0:name>
             <ns0:alias>HP4_FL_HHLL1_THRES</ns0:alias>
             <ns0:description>HP4_FL_HHLL1_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
           </ns0:record>
-       <ns0:record size="1" xsi:type="recordDouble">
+          <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>HP4_FL_HHLL2_THRES</ns0:name>
             <ns0:alias>HP4_FL_HHLL2_THRES</ns0:alias>
             <ns0:description>HP4_FL_HHLL2_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
           </ns0:record>
-       <ns0:record size="1" xsi:type="recordDouble">
+          <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>HP8_TEMP_IN_HHLL_THRES</ns0:name>
             <ns0:alias>HP8_TEMP_IN_HHLL_THRES</ns0:alias>
             <ns0:description>HP8_TEMP_IN_HHLL_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
           </ns0:record>
-       <ns0:record size="1" xsi:type="recordDouble">
+          <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>HP8_FL_HHLL1_THRES</ns0:name>
             <ns0:alias>HP8_FL_HHLL1_THRES</ns0:alias>
             <ns0:description>HP8_FL_HHLL1_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
           </ns0:record>
-       <ns0:record size="1" xsi:type="recordDouble">
+          <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>HP8_FL_HHLL2_THRES</ns0:name>
             <ns0:alias>HP8_FL_HHLL2_THRES</ns0:alias>
             <ns0:description>HP8_FL_HHLL2_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
           </ns0:record>
-       <ns0:record size="1" xsi:type="recordDouble">
+          <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>HP9_TEMP_IN_HHLL_THRES</ns0:name>
             <ns0:alias>HP9_TEMP_IN_HHLL_THRES</ns0:alias>
             <ns0:description>HP9_TEMP_IN_HHLL_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
           </ns0:record>
-       <ns0:record size="1" xsi:type="recordDouble">
+          <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>HP9_FL_HHLL1_THRES</ns0:name>
             <ns0:alias>HP9_FL_HHLL1_THRES</ns0:alias>
             <ns0:description>HP9_FL_HHLL1_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
           </ns0:record>
-       <ns0:record size="1" xsi:type="recordDouble">
+          <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>HP9_FL_HHLL2_THRES</ns0:name>
             <ns0:alias>HP9_FL_HHLL2_THRES</ns0:alias>
             <ns0:description>HP9_FL_HHLL2_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
           </ns0:record>
-       <ns0:record size="1" xsi:type="recordDouble">
+          <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>HP10_TEMP_IN_HHLL_THRES</ns0:name>
             <ns0:alias>HP10_TEMP_IN_HHLL_THRES</ns0:alias>
             <ns0:description>HP10_TEMP_IN_HHLL_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
           </ns0:record>
-       <ns0:record size="1" xsi:type="recordDouble">
+          <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>HP10_FL_HHLL1_THRES</ns0:name>
             <ns0:alias>HP10_FL_HHLL1_THRES</ns0:alias>
             <ns0:description>HP10_FL_HHLL1_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
           </ns0:record>
-       <ns0:record size="1" xsi:type="recordDouble">
+          <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>HP10_FL_HHLL2_THRES</ns0:name>
             <ns0:alias>HP10_FL_HHLL2_THRES</ns0:alias>
             <ns0:description>HP10_FL_HHLL2_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
           </ns0:record>
-       <ns0:record size="1" xsi:type="recordDouble">
+          <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>HP11_TEMP_IN_HHLL_THRES</ns0:name>
             <ns0:alias>HP11_TEMP_IN_HHLL_THRES</ns0:alias>
             <ns0:description>HP11_TEMP_IN_HHLL_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
           </ns0:record>
-       <ns0:record size="1" xsi:type="recordDouble">
+          <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>HP11_FL_HHLL1_THRES</ns0:name>
             <ns0:alias>HP11_FL_HHLL1_THRES</ns0:alias>
             <ns0:description>HP11_FL_HHLL1_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
           </ns0:record>
-       <ns0:record size="1" xsi:type="recordDouble">
+          <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>HP11_FL_HHLL2_THRES</ns0:name>
             <ns0:alias>HP11_FL_HHLL2_THRES</ns0:alias>
             <ns0:description>HP11_FL_HHLL2_THRES</ns0:description>
-			<ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
+            <ns0:lock>RU_CWS_ALARMS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -810,7 +818,6 @@
         </ns0:records>
       </ns0:plantRecords>
     </ns0:plantSystem>
-
 
     <ns0:plantSystem>
       <ns0:name>BPS</ns0:name>
@@ -819,16 +826,19 @@
       <ns0:plantRecords>
         <ns0:folders/>
         <ns0:records>
-           <ns0:record size="1" xsi:type="recordLock">
+          <ns0:record size="1" xsi:type="recordLock">
             <ns0:name>LOCK</ns0:name>
             <ns0:alias>LOCK</ns0:alias>
-          	<ns0:description>BPS lock</ns0:description>
-          <ns0:values><ns0:value>[1]</ns0:value></ns0:values></ns0:record>
+            <ns0:description>BPS lock</ns0:description>
+            <ns0:values>
+              <ns0:value>[1]</ns0:value>
+            </ns0:values>
+          </ns0:record>
           <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>PULSE_LENG0</ns0:name>
             <ns0:alias>PULSE_LENG0</ns0:alias>
             <ns0:description>PULSE_LENG0</ns0:description>
-			<ns0:lock>BPS@LOCK</ns0:lock>
+            <ns0:lock>BPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>8000.0</ns0:value>
             </ns0:values>
@@ -837,7 +847,7 @@
             <ns0:name>RAMP_DOWN_0</ns0:name>
             <ns0:alias>RAMP_DOWN_0</ns0:alias>
             <ns0:description>RAMP_DOWN_0</ns0:description>
-			<ns0:lock>BPS@LOCK</ns0:lock>
+            <ns0:lock>BPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>1000.0</ns0:value>
             </ns0:values>
@@ -846,7 +856,7 @@
             <ns0:name>RAMP_UP_TI0</ns0:name>
             <ns0:alias>RAMP_UP_TI0</ns0:alias>
             <ns0:description>RAMP_UP_TI0</ns0:description>
-			<ns0:lock>BPS@LOCK</ns0:lock>
+            <ns0:lock>BPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>1000.0</ns0:value>
             </ns0:values>
@@ -855,7 +865,7 @@
             <ns0:name>RAMP_UP_TI1</ns0:name>
             <ns0:alias>RAMP_UP_TI1</ns0:alias>
             <ns0:description>RAMP_UP_TI1</ns0:description>
-			<ns0:lock>BPS@LOCK</ns0:lock>
+            <ns0:lock>BPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>1000.0</ns0:value>
             </ns0:values>
@@ -864,7 +874,7 @@
             <ns0:name>RAMP_UP_TI2</ns0:name>
             <ns0:alias>RAMP_UP_TI2</ns0:alias>
             <ns0:description>RAMP_UP_TI2</ns0:description>
-			<ns0:lock>BPS@LOCK</ns0:lock>
+            <ns0:lock>BPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>1000.0</ns0:value>
             </ns0:values>
@@ -873,7 +883,7 @@
             <ns0:name>TIME_1_REA0</ns0:name>
             <ns0:alias>TIME_1_REA0</ns0:alias>
             <ns0:description>TIME_1_REA0</ns0:description>
-			<ns0:lock>BPS@LOCK</ns0:lock>
+            <ns0:lock>BPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -882,7 +892,7 @@
             <ns0:name>TIME_2_REA0</ns0:name>
             <ns0:alias>TIME_2_REA0</ns0:alias>
             <ns0:description>TIME_2_REA0</ns0:description>
-			<ns0:lock>BPS@LOCK</ns0:lock>
+            <ns0:lock>BPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>2000.0</ns0:value>
             </ns0:values>
@@ -891,7 +901,7 @@
             <ns0:name>TIME_3_REA0</ns0:name>
             <ns0:alias>TIME_3_REA0</ns0:alias>
             <ns0:description>TIME_3_REA0</ns0:description>
-			<ns0:lock>BPS@LOCK</ns0:lock>
+            <ns0:lock>BPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>5000.0</ns0:value>
             </ns0:values>
@@ -900,7 +910,7 @@
             <ns0:name>VOLTAGE_LE0</ns0:name>
             <ns0:alias>VOLTAGE_LE0</ns0:alias>
             <ns0:description>VOLTAGE_LE0</ns0:description>
-			<ns0:lock>BPS@LOCK</ns0:lock>
+            <ns0:lock>BPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>60000.0</ns0:value>
             </ns0:values>
@@ -909,7 +919,7 @@
             <ns0:name>VOLTAGE_LE1</ns0:name>
             <ns0:alias>VOLTAGE_LE1</ns0:alias>
             <ns0:description>VOLTAGE_LE1</ns0:description>
-			<ns0:lock>BPS@LOCK</ns0:lock>
+            <ns0:lock>BPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>40000.0</ns0:value>
             </ns0:values>
@@ -918,7 +928,7 @@
             <ns0:name>VOLTAGE_LE2</ns0:name>
             <ns0:alias>VOLTAGE_LE2</ns0:alias>
             <ns0:description>VOLTAGE_LE2</ns0:description>
-			<ns0:lock>BPS@LOCK</ns0:lock>
+            <ns0:lock>BPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>60000.0</ns0:value>
             </ns0:values>
@@ -927,7 +937,7 @@
             <ns0:name>PL_IN_SEC_0</ns0:name>
             <ns0:alias>PL_IN_SEC_0</ns0:alias>
             <ns0:description>PL_IN_SEC_0</ns0:description>
-			<ns0:lock>BPS@LOCK</ns0:lock>
+            <ns0:lock>BPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0</ns0:value>
             </ns0:values>
@@ -936,7 +946,7 @@
             <ns0:name>VAR_BODY_V0</ns0:name>
             <ns0:alias>VAR_BODY_V0</ns0:alias>
             <ns0:description>VAR_BODY_V0</ns0:description>
-			<ns0:lock>BPS@LOCK</ns0:lock>
+            <ns0:lock>BPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0</ns0:value>
             </ns0:values>
@@ -945,7 +955,7 @@
             <ns0:name>PLOT</ns0:name>
             <ns0:alias>PLOT</ns0:alias>
             <ns0:description>PLOT</ns0:description>
-			<ns0:lock>BPS@LOCK</ns0:lock>
+            <ns0:lock>BPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>10000</ns0:value>
             </ns0:values>
@@ -953,116 +963,115 @@
         </ns0:records>
       </ns0:plantRecords>
       <ns0:plantConstraints>
-          <ns0:folders>
-              <ns0:folder>
-                  <ns0:name>From BPS</ns0:name>
-                  <ns0:folders/>
-                  <ns0:constraints>
-                      <ns0:constraint>
-                          <ns0:name>Positive time</ns0:name>
-                          <ns0:description>Validates positive time</ns0:description>
-                          <ns0:hint>Change the value of BPS@TIME_1_REA0&gt;=0</ns0:hint>
-                          <ns0:function name="schedule.validate">='BPS@TIME_1_REA0'&gt;=0</ns0:function>
-                          <ns0:origin>BPS</ns0:origin>
-                      </ns0:constraint>
-                      <ns0:constraint>
-                          <ns0:name>Positive time</ns0:name>
-                          <ns0:description>Validates positive time</ns0:description>
-                          <ns0:hint>Change the value of BPS@TIME_2_REA0&gt;=0</ns0:hint>
-                          <ns0:function name="schedule.validate">='BPS@TIME_2_REA0'&gt;=0</ns0:function>
-                          <ns0:origin>BPS</ns0:origin>
-                      </ns0:constraint>
-                      <ns0:constraint>
-                          <ns0:name>Positive time</ns0:name>
-                          <ns0:description>Validates positive time</ns0:description>
-                          <ns0:hint>Change the value of BPS@TIME_3_REA0&gt;=0</ns0:hint>
-                          <ns0:function name="schedule.validate">='BPS@TIME_3_REA0'&gt;=0</ns0:function>
-                          <ns0:origin>BPS</ns0:origin>
-                      </ns0:constraint>
-                      <ns0:constraint>
-                          <ns0:name>Positive voltage</ns0:name>
-                          <ns0:description>Validates positive voltage</ns0:description>
-                          <ns0:hint>Change the value of BPS@VOLTAGE_LE0&gt;=0</ns0:hint>
-                          <ns0:function name="schedule.validate">='BPS@VOLTAGE_LE0'&gt;=0</ns0:function>
-                          <ns0:origin>BPS</ns0:origin>
-                      </ns0:constraint>
-                      <ns0:constraint>
-                          <ns0:name>Positive voltage</ns0:name>
-                          <ns0:description>Validates positive voltage</ns0:description>
-                          <ns0:hint>Change the value of BPS@VOLTAGE_LE1&gt;=0</ns0:hint>
-                          <ns0:function name="schedule.validate">='BPS@VOLTAGE_LE1'&gt;=0</ns0:function>
-                          <ns0:origin>BPS</ns0:origin>
-                      </ns0:constraint>
-                      <ns0:constraint>
-                          <ns0:name>Positive voltage</ns0:name>
-                          <ns0:description>Validates positive voltage</ns0:description>
-                          <ns0:hint>Change the value of BPS@VOLTAGE_LE2&gt;=0</ns0:hint>
-                          <ns0:function name="schedule.validate">='BPS@VOLTAGE_LE2'&gt;=0</ns0:function>
-                          <ns0:origin>BPS</ns0:origin>
-                      </ns0:constraint>
-                      <ns0:constraint>
-                          <ns0:name>Time interval length</ns0:name>
-                          <ns0:description>Validates time interval length</ns0:description>
-                          <ns0:hint>Make sure that BPS@TIME_1_REA0 + BPS@RAMP_UP_TI0&lt;=BPS@TIME_2_REA0</ns0:hint>
-                          <ns0:function name="schedule.validate">=('BPS@TIME_1_REA0'+'BPS@RAMP_UP_TI0')&lt;='BPS@TIME_2_REA0'</ns0:function>
-                          <ns0:origin>BPS</ns0:origin>
-                      </ns0:constraint>
-                      <ns0:constraint>
-                          <ns0:name>Time interval length</ns0:name>
-                          <ns0:description>Validates time interval length</ns0:description>
-                          <ns0:hint>Make sure that BPS@TIME_2_REA0 + BPS@RAMP_UP_TI1&lt;=BPS@TIME_3_REA0</ns0:hint>
-                          <ns0:function name="schedule.validate">=('BPS@TIME_2_REA0'+'BPS@RAMP_UP_TI1')&lt;='BPS@TIME_3_REA0'</ns0:function>
-                          <ns0:origin>BPS</ns0:origin>
-                      </ns0:constraint>
-                      <ns0:constraint>
-                          <ns0:name>Time interval length</ns0:name>
-                          <ns0:description>Validates time interval length</ns0:description>
-                          <ns0:hint>Make sure that BPS@TIME_3_REA0 + BPS@RAMP_UP_TI2+BPS@RAMP_DOWN_0&lt;=BPS@PULSE_LENG0</ns0:hint>
-                          <ns0:function name="schedule.validate">=('BPS@TIME_3_REA0'+'BPS@RAMP_UP_TI2'+'BPS@RAMP_DOWN_0')&lt;='BPS@PULSE_LENG0'</ns0:function>
-                          <ns0:origin>BPS</ns0:origin>
-                      </ns0:constraint>
-                      <ns0:constraint>
-                          <ns0:name>Time range</ns0:name>
-                          <ns0:description>Validates time range</ns0:description>
-                          <ns0:hint>Make sure that 100&lt;=BPS@RAMP_UP_TI0&lt;=1000</ns0:hint>
-                          <ns0:function name="schedule.validate">='BPS@RAMP_UP_TI0'&lt;=1000 and 'BPS@RAMP_UP_TI0'&gt;=100</ns0:function>
-                          <ns0:origin>BPS</ns0:origin>
-                      </ns0:constraint>
-                      <ns0:constraint>
-                          <ns0:name>Time range</ns0:name>
-                          <ns0:description>Validates time range</ns0:description>
-                          <ns0:hint>Make sure that 100&lt;=BPS@RAMP_UP_TI1&lt;=1000</ns0:hint>
-                          <ns0:function name="schedule.validate">='BPS@RAMP_UP_TI1'&lt;=1000 and 'BPS@RAMP_UP_TI1'&gt;=100</ns0:function>
-                          <ns0:origin>BPS</ns0:origin>
-                      </ns0:constraint>
-                      <ns0:constraint>
-                          <ns0:name>Time range</ns0:name>
-                          <ns0:description>Validates time range</ns0:description>
-                          <ns0:hint>Make sure that 100&lt;=BPS@RAMP_UP_TI2&lt;=1000</ns0:hint>
-                          <ns0:function name="schedule.validate">='BPS@RAMP_UP_TI2'&lt;=1000 and 'BPS@RAMP_UP_TI2'&gt;=100</ns0:function>
-                          <ns0:origin>BPS</ns0:origin>
-                      </ns0:constraint>
-                      <ns0:constraint>
-                          <ns0:name>Time range</ns0:name>
-                          <ns0:description>Validates time range</ns0:description>
-                          <ns0:hint>Make sure that 100&lt;=BPS@RAMP_DOWN_0&lt;=1000</ns0:hint>
-                          <ns0:function name="schedule.validate">='BPS@RAMP_DOWN_0'&lt;=1000 and 'BPS@RAMP_DOWN_0'&gt;=100</ns0:function>
-                          <ns0:origin>BPS</ns0:origin>
-                      </ns0:constraint>
-                      <ns0:constraint>
-                          <ns0:name>Conditional values</ns0:name>
-                          <ns0:description>Validates times and voltages</ns0:description>
-                          <ns0:hint>Make sure that if BPS@VAR_BODY_V0=1 all times and voltages are equal</ns0:hint>
-                          <ns0:function name="schedule.validate">=('BPS@VAR_BODY_V0'*'BPS@TIME_1_REA0')==('BPS@VAR_BODY_V0'*'BPS@TIME_2_REA0') and ('BPS@VAR_BODY_V0'*'BPS@TIME_3_REA0')==('BPS@VAR_BODY_V0'*'BPS@VOLTAGE_LE0') and ('BPS@VAR_BODY_V0'*'BPS@VOLTAGE_LE1')==('BPS@VAR_BODY_V0'*'BPS@VOLTAGE_LE2')</ns0:function>
-                          <ns0:origin>BPS</ns0:origin>
-                      </ns0:constraint>
-                  </ns0:constraints>
-              </ns0:folder>
-          </ns0:folders>
-          <ns0:constraints/>
+        <ns0:folders>
+          <ns0:folder>
+            <ns0:name>From BPS</ns0:name>
+            <ns0:folders/>
+            <ns0:constraints>
+              <ns0:constraint>
+                <ns0:name>Positive time</ns0:name>
+                <ns0:description>Validates positive time</ns0:description>
+                <ns0:hint>Change the value of BPS@TIME_1_REA0&gt;=0</ns0:hint>
+                <ns0:function name="schedule.validate">='BPS@TIME_1_REA0'&gt;=0</ns0:function>
+                <ns0:origin>BPS</ns0:origin>
+              </ns0:constraint>
+              <ns0:constraint>
+                <ns0:name>Positive time</ns0:name>
+                <ns0:description>Validates positive time</ns0:description>
+                <ns0:hint>Change the value of BPS@TIME_2_REA0&gt;=0</ns0:hint>
+                <ns0:function name="schedule.validate">='BPS@TIME_2_REA0'&gt;=0</ns0:function>
+                <ns0:origin>BPS</ns0:origin>
+              </ns0:constraint>
+              <ns0:constraint>
+                <ns0:name>Positive time</ns0:name>
+                <ns0:description>Validates positive time</ns0:description>
+                <ns0:hint>Change the value of BPS@TIME_3_REA0&gt;=0</ns0:hint>
+                <ns0:function name="schedule.validate">='BPS@TIME_3_REA0'&gt;=0</ns0:function>
+                <ns0:origin>BPS</ns0:origin>
+              </ns0:constraint>
+              <ns0:constraint>
+                <ns0:name>Positive voltage</ns0:name>
+                <ns0:description>Validates positive voltage</ns0:description>
+                <ns0:hint>Change the value of BPS@VOLTAGE_LE0&gt;=0</ns0:hint>
+                <ns0:function name="schedule.validate">='BPS@VOLTAGE_LE0'&gt;=0</ns0:function>
+                <ns0:origin>BPS</ns0:origin>
+              </ns0:constraint>
+              <ns0:constraint>
+                <ns0:name>Positive voltage</ns0:name>
+                <ns0:description>Validates positive voltage</ns0:description>
+                <ns0:hint>Change the value of BPS@VOLTAGE_LE1&gt;=0</ns0:hint>
+                <ns0:function name="schedule.validate">='BPS@VOLTAGE_LE1'&gt;=0</ns0:function>
+                <ns0:origin>BPS</ns0:origin>
+              </ns0:constraint>
+              <ns0:constraint>
+                <ns0:name>Positive voltage</ns0:name>
+                <ns0:description>Validates positive voltage</ns0:description>
+                <ns0:hint>Change the value of BPS@VOLTAGE_LE2&gt;=0</ns0:hint>
+                <ns0:function name="schedule.validate">='BPS@VOLTAGE_LE2'&gt;=0</ns0:function>
+                <ns0:origin>BPS</ns0:origin>
+              </ns0:constraint>
+              <ns0:constraint>
+                <ns0:name>Time interval length</ns0:name>
+                <ns0:description>Validates time interval length</ns0:description>
+                <ns0:hint>Make sure that BPS@TIME_1_REA0 + BPS@RAMP_UP_TI0&lt;=BPS@TIME_2_REA0</ns0:hint>
+                <ns0:function name="schedule.validate">=('BPS@TIME_1_REA0'+'BPS@RAMP_UP_TI0')&lt;='BPS@TIME_2_REA0'</ns0:function>
+                <ns0:origin>BPS</ns0:origin>
+              </ns0:constraint>
+              <ns0:constraint>
+                <ns0:name>Time interval length</ns0:name>
+                <ns0:description>Validates time interval length</ns0:description>
+                <ns0:hint>Make sure that BPS@TIME_2_REA0 + BPS@RAMP_UP_TI1&lt;=BPS@TIME_3_REA0</ns0:hint>
+                <ns0:function name="schedule.validate">=('BPS@TIME_2_REA0'+'BPS@RAMP_UP_TI1')&lt;='BPS@TIME_3_REA0'</ns0:function>
+                <ns0:origin>BPS</ns0:origin>
+              </ns0:constraint>
+              <ns0:constraint>
+                <ns0:name>Time interval length</ns0:name>
+                <ns0:description>Validates time interval length</ns0:description>
+                <ns0:hint>Make sure that BPS@TIME_3_REA0 + BPS@RAMP_UP_TI2+BPS@RAMP_DOWN_0&lt;=BPS@PULSE_LENG0</ns0:hint>
+                <ns0:function name="schedule.validate">=('BPS@TIME_3_REA0'+'BPS@RAMP_UP_TI2'+'BPS@RAMP_DOWN_0')&lt;='BPS@PULSE_LENG0'</ns0:function>
+                <ns0:origin>BPS</ns0:origin>
+              </ns0:constraint>
+              <ns0:constraint>
+                <ns0:name>Time range</ns0:name>
+                <ns0:description>Validates time range</ns0:description>
+                <ns0:hint>Make sure that 100&lt;=BPS@RAMP_UP_TI0&lt;=1000</ns0:hint>
+                <ns0:function name="schedule.validate">='BPS@RAMP_UP_TI0'&lt;=1000 and 'BPS@RAMP_UP_TI0'&gt;=100</ns0:function>
+                <ns0:origin>BPS</ns0:origin>
+              </ns0:constraint>
+              <ns0:constraint>
+                <ns0:name>Time range</ns0:name>
+                <ns0:description>Validates time range</ns0:description>
+                <ns0:hint>Make sure that 100&lt;=BPS@RAMP_UP_TI1&lt;=1000</ns0:hint>
+                <ns0:function name="schedule.validate">='BPS@RAMP_UP_TI1'&lt;=1000 and 'BPS@RAMP_UP_TI1'&gt;=100</ns0:function>
+                <ns0:origin>BPS</ns0:origin>
+              </ns0:constraint>
+              <ns0:constraint>
+                <ns0:name>Time range</ns0:name>
+                <ns0:description>Validates time range</ns0:description>
+                <ns0:hint>Make sure that 100&lt;=BPS@RAMP_UP_TI2&lt;=1000</ns0:hint>
+                <ns0:function name="schedule.validate">='BPS@RAMP_UP_TI2'&lt;=1000 and 'BPS@RAMP_UP_TI2'&gt;=100</ns0:function>
+                <ns0:origin>BPS</ns0:origin>
+              </ns0:constraint>
+              <ns0:constraint>
+                <ns0:name>Time range</ns0:name>
+                <ns0:description>Validates time range</ns0:description>
+                <ns0:hint>Make sure that 100&lt;=BPS@RAMP_DOWN_0&lt;=1000</ns0:hint>
+                <ns0:function name="schedule.validate">='BPS@RAMP_DOWN_0'&lt;=1000 and 'BPS@RAMP_DOWN_0'&gt;=100</ns0:function>
+                <ns0:origin>BPS</ns0:origin>
+              </ns0:constraint>
+              <ns0:constraint>
+                <ns0:name>Conditional values</ns0:name>
+                <ns0:description>Validates times and voltages</ns0:description>
+                <ns0:hint>Make sure that if BPS@VAR_BODY_V0=1 all times and voltages are equal</ns0:hint>
+                <ns0:function name="schedule.validate">=('BPS@VAR_BODY_V0'*'BPS@TIME_1_REA0')==('BPS@VAR_BODY_V0'*'BPS@TIME_2_REA0') and ('BPS@VAR_BODY_V0'*'BPS@TIME_3_REA0')==('BPS@VAR_BODY_V0'*'BPS@VOLTAGE_LE0') and ('BPS@VAR_BODY_V0'*'BPS@VOLTAGE_LE1')==('BPS@VAR_BODY_V0'*'BPS@VOLTAGE_LE2')</ns0:function>
+                <ns0:origin>BPS</ns0:origin>
+              </ns0:constraint>
+            </ns0:constraints>
+          </ns0:folder>
+        </ns0:folders>
+        <ns0:constraints/>
       </ns0:plantConstraints>
     </ns0:plantSystem>
-
 
     <ns0:plantSystem>
       <ns0:name>CPS</ns0:name>
@@ -1074,14 +1083,17 @@
           <ns0:record size="1" xsi:type="recordLock">
             <ns0:name>LOCK</ns0:name>
             <ns0:alias>LOCK</ns0:alias>
-          	<ns0:description>CPS lock</ns0:description>
-          <ns0:values><ns0:value>[1]</ns0:value></ns0:values></ns0:record>
+            <ns0:description>CPS lock</ns0:description>
+            <ns0:values>
+              <ns0:value>[1]</ns0:value>
+            </ns0:values>
+          </ns0:record>
 
           <ns0:record size="1" xsi:type="recordLong">
             <ns0:name>AUTORESTAR0</ns0:name>
             <ns0:alias>AUTORESTAR0</ns0:alias>
             <ns0:description>AUTORESTAR0</ns0:description>
-			<ns0:lock>CPS@LOCK</ns0:lock>
+            <ns0:lock>CPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0</ns0:value>
             </ns0:values>
@@ -1090,7 +1102,7 @@
             <ns0:name>FOLDBACK_A0</ns0:name>
             <ns0:alias>FOLDBACK_A0</ns0:alias>
             <ns0:description>FOLDBACK_A0</ns0:description>
-			<ns0:lock>CPS@LOCK</ns0:lock>
+            <ns0:lock>CPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0</ns0:value>
             </ns0:values>
@@ -1099,7 +1111,7 @@
             <ns0:name>FOLDBACK_C0</ns0:name>
             <ns0:alias>FOLDBACK_C0</ns0:alias>
             <ns0:description>FOLDBACK_C0</ns0:description>
-			<ns0:lock>CPS@LOCK</ns0:lock>
+            <ns0:lock>CPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>1</ns0:value>
             </ns0:values>
@@ -1108,7 +1120,7 @@
             <ns0:name>FOLDBACK_R0</ns0:name>
             <ns0:alias>FOLDBACK_R0</ns0:alias>
             <ns0:description>FOLDBACK_R0</ns0:description>
-			<ns0:lock>CPS@LOCK</ns0:lock>
+            <ns0:lock>CPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0</ns0:value>
             </ns0:values>
@@ -1117,7 +1129,7 @@
             <ns0:name>OVERVOLTAG0</ns0:name>
             <ns0:alias>OVERVOLTAG0</ns0:alias>
             <ns0:description>OVERVOLTAG0</ns0:description>
-			<ns0:lock>CPS@LOCK</ns0:lock>
+            <ns0:lock>CPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>32.0</ns0:value>
             </ns0:values>
@@ -1126,7 +1138,7 @@
             <ns0:name>SP_CURRENT0</ns0:name>
             <ns0:alias>SP_CURRENT0</ns0:alias>
             <ns0:description>SP_CURRENT0</ns0:description>
-			<ns0:lock>CPS@LOCK</ns0:lock>
+            <ns0:lock>CPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>10.0</ns0:value>
             </ns0:values>
@@ -1135,7 +1147,7 @@
             <ns0:name>SP_VOLTAGE0</ns0:name>
             <ns0:alias>SP_VOLTAGE0</ns0:alias>
             <ns0:description>SP_VOLTAGE0</ns0:description>
-			<ns0:lock>CPS@LOCK</ns0:lock>
+            <ns0:lock>CPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>30.0</ns0:value>
             </ns0:values>
@@ -1144,7 +1156,7 @@
             <ns0:name>UNDERVOLTA0</ns0:name>
             <ns0:alias>UNDERVOLTA0</ns0:alias>
             <ns0:description>UNDERVOLTA0</ns0:description>
-			<ns0:lock>CPS@LOCK</ns0:lock>
+            <ns0:lock>CPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -1153,7 +1165,7 @@
       </ns0:plantRecords>
     </ns0:plantSystem>
 
-  <ns0:plantSystem>
+    <ns0:plantSystem>
       <ns0:name>GCPS</ns0:name>
       <ns0:version>1.0</ns0:version>
       <ns0:description>Falcon configuration structure for plant system GCPS</ns0:description>
@@ -1163,14 +1175,17 @@
           <ns0:record size="1" xsi:type="recordLock">
             <ns0:name>LOCK</ns0:name>
             <ns0:alias>LOCK</ns0:alias>
-          	<ns0:description>GCPS lock</ns0:description>
-          <ns0:values><ns0:value>[1]</ns0:value></ns0:values></ns0:record>
+            <ns0:description>GCPS lock</ns0:description>
+            <ns0:values>
+              <ns0:value>[1]</ns0:value>
+            </ns0:values>
+          </ns0:record>
 
           <ns0:record size="1" xsi:type="recordLong">
             <ns0:name>AUTORESTAR1</ns0:name>
             <ns0:alias>AUTORESTAR1</ns0:alias>
             <ns0:description>AUTORESTAR1</ns0:description>
-			<ns0:lock>GCPS@LOCK</ns0:lock>
+            <ns0:lock>GCPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0</ns0:value>
             </ns0:values>
@@ -1179,7 +1194,7 @@
             <ns0:name>FOLDBACK_A1</ns0:name>
             <ns0:alias>FOLDBACK_A1</ns0:alias>
             <ns0:description>FOLDBACK_A1</ns0:description>
-			<ns0:lock>GCPS@LOCK</ns0:lock>
+            <ns0:lock>GCPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0</ns0:value>
             </ns0:values>
@@ -1188,7 +1203,7 @@
             <ns0:name>FOLDBACK_C1</ns0:name>
             <ns0:alias>FOLDBACK_C1</ns0:alias>
             <ns0:description>FOLDBACK_C1</ns0:description>
-			<ns0:lock>GCPS@LOCK</ns0:lock>
+            <ns0:lock>GCPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>1</ns0:value>
             </ns0:values>
@@ -1197,7 +1212,7 @@
             <ns0:name>FOLDBACK_R1</ns0:name>
             <ns0:alias>FOLDBACK_R1</ns0:alias>
             <ns0:description>FOLDBACK_R1</ns0:description>
-			<ns0:lock>GCPS@LOCK</ns0:lock>
+            <ns0:lock>GCPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0</ns0:value>
             </ns0:values>
@@ -1206,7 +1221,7 @@
             <ns0:name>OVERVOLTAG1</ns0:name>
             <ns0:alias>OVERVOLTAG1</ns0:alias>
             <ns0:description>OVERVOLTAG1</ns0:description>
-			<ns0:lock>GCPS@LOCK</ns0:lock>
+            <ns0:lock>GCPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>12.0</ns0:value>
             </ns0:values>
@@ -1215,7 +1230,7 @@
             <ns0:name>SP_CURRENT7</ns0:name>
             <ns0:alias>SP_CURRENT7</ns0:alias>
             <ns0:description>SP_CURRENT7</ns0:description>
-			<ns0:lock>GCPS@LOCK</ns0:lock>
+            <ns0:lock>GCPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -1224,7 +1239,7 @@
             <ns0:name>SP_VOLTAGE1</ns0:name>
             <ns0:alias>SP_VOLTAGE1</ns0:alias>
             <ns0:description>SP_VOLTAGE1</ns0:description>
-			<ns0:lock>GCPS@LOCK</ns0:lock>
+            <ns0:lock>GCPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>10.0</ns0:value>
             </ns0:values>
@@ -1233,7 +1248,7 @@
             <ns0:name>UNDERVOLTA1</ns0:name>
             <ns0:alias>UNDERVOLTA1</ns0:alias>
             <ns0:description>UNDERVOLTA1</ns0:description>
-			<ns0:lock>GCPS@LOCK</ns0:lock>
+            <ns0:lock>GCPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -1242,24 +1257,27 @@
       </ns0:plantRecords>
     </ns0:plantSystem>
 
-	<ns0:plantSystem>
+    <ns0:plantSystem>
       <ns0:name>HVPS</ns0:name>
       <ns0:version>1.0</ns0:version>
       <ns0:description>Falcon configuration structure for plant system HVPS</ns0:description>
       <ns0:plantRecords>
         <ns0:folders/>
         <ns0:records>
-         <ns0:record size="1" xsi:type="recordLock">
+          <ns0:record size="1" xsi:type="recordLock">
             <ns0:name>LOCK</ns0:name>
             <ns0:alias>LOCK</ns0:alias>
-          	<ns0:description>HVPS lock</ns0:description>
-          <ns0:values><ns0:value>[1]</ns0:value></ns0:values></ns0:record>
+            <ns0:description>HVPS lock</ns0:description>
+            <ns0:values>
+              <ns0:value>[1]</ns0:value>
+            </ns0:values>
+          </ns0:record>
 
           <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>PULSE_DURA0</ns0:name>
             <ns0:alias>PULSE_DURA0</ns0:alias>
             <ns0:description>PULSE_DURA0</ns0:description>
-			<ns0:lock>HVPS@LOCK</ns0:lock>
+            <ns0:lock>HVPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>6.0</ns0:value>
             </ns0:values>
@@ -1268,7 +1286,7 @@
             <ns0:name>PULSE_NUMB1</ns0:name>
             <ns0:alias>PULSE_NUMB1</ns0:alias>
             <ns0:description>PULSE_NUMB1</ns0:description>
-			<ns0:lock>HVPS@LOCK</ns0:lock>
+            <ns0:lock>HVPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>1.0</ns0:value>
             </ns0:values>
@@ -1277,7 +1295,7 @@
             <ns0:name>PULSE_UNIT0</ns0:name>
             <ns0:alias>PULSE_UNIT0</ns0:alias>
             <ns0:description>PULSE_UNIT0</ns0:description>
-			<ns0:lock>HVPS@LOCK</ns0:lock>
+            <ns0:lock>HVPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0</ns0:value>
             </ns0:values>
@@ -1286,7 +1304,7 @@
             <ns0:name>RAMP_DOWN_1</ns0:name>
             <ns0:alias>RAMP_DOWN_1</ns0:alias>
             <ns0:description>RAMP_DOWN_1</ns0:description>
-			<ns0:lock>HVPS@LOCK</ns0:lock>
+            <ns0:lock>HVPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>1000.0</ns0:value>
             </ns0:values>
@@ -1295,7 +1313,7 @@
             <ns0:name>RAMP_UP_TI4</ns0:name>
             <ns0:alias>RAMP_UP_TI4</ns0:alias>
             <ns0:description>RAMP_UP_TI4</ns0:description>
-			<ns0:lock>HVPS@LOCK</ns0:lock>
+            <ns0:lock>HVPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>1000.0</ns0:value>
             </ns0:values>
@@ -1304,7 +1322,7 @@
             <ns0:name>TIME_BET_P0</ns0:name>
             <ns0:alias>TIME_BET_P0</ns0:alias>
             <ns0:description>TIME_BET_P0</ns0:description>
-			<ns0:lock>HVPS@LOCK</ns0:lock>
+            <ns0:lock>HVPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0</ns0:value>
             </ns0:values>
@@ -1313,7 +1331,7 @@
             <ns0:name>VOLTAGE_LE4</ns0:name>
             <ns0:alias>VOLTAGE_LE4</ns0:alias>
             <ns0:description>VOLTAGE_LE4</ns0:description>
-			<ns0:lock>HVPS@LOCK</ns0:lock>
+            <ns0:lock>HVPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>40000.0</ns0:value>
             </ns0:values>
@@ -1322,7 +1340,7 @@
             <ns0:name>PLOT</ns0:name>
             <ns0:alias>PLOT</ns0:alias>
             <ns0:description>PLOT</ns0:description>
-			<ns0:lock>HVPS@LOCK</ns0:lock>
+            <ns0:lock>HVPS@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>10000</ns0:value>
             </ns0:values>
@@ -1338,17 +1356,20 @@
       <ns0:plantRecords>
         <ns0:folders/>
         <ns0:records>
-        <ns0:record size="1" xsi:type="recordLock">
+          <ns0:record size="1" xsi:type="recordLock">
             <ns0:name>LOCK</ns0:name>
             <ns0:alias>LOCK</ns0:alias>
-          	<ns0:description>IPS1 lock</ns0:description>
-          <ns0:values><ns0:value>[1]</ns0:value></ns0:values></ns0:record>
+            <ns0:description>IPS1 lock</ns0:description>
+            <ns0:values>
+              <ns0:value>[1]</ns0:value>
+            </ns0:values>
+          </ns0:record>
 
           <ns0:record size="1" xsi:type="recordLong">
             <ns0:name>OUTPUT_VOL0</ns0:name>
             <ns0:alias>OUTPUT_VOL0</ns0:alias>
             <ns0:description>OUTPUT_VOL0</ns0:description>
-			<ns0:lock>IPS1@LOCK</ns0:lock>
+            <ns0:lock>IPS1@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>1</ns0:value>
             </ns0:values>
@@ -1357,7 +1378,7 @@
             <ns0:name>OUTPUT_VOL1</ns0:name>
             <ns0:alias>OUTPUT_VOL1</ns0:alias>
             <ns0:description>OUTPUT_VOL1</ns0:description>
-			<ns0:lock>IPS1@LOCK</ns0:lock>
+            <ns0:lock>IPS1@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0</ns0:value>
             </ns0:values>
@@ -1366,7 +1387,7 @@
             <ns0:name>OUTPUT_VOL2</ns0:name>
             <ns0:alias>OUTPUT_VOL2</ns0:alias>
             <ns0:description>OUTPUT_VOL2</ns0:description>
-			<ns0:lock>IPS1@LOCK</ns0:lock>
+            <ns0:lock>IPS1@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0</ns0:value>
             </ns0:values>
@@ -1375,7 +1396,7 @@
             <ns0:name>PROTECTION0</ns0:name>
             <ns0:alias>PROTECTION0</ns0:alias>
             <ns0:description>PROTECTION0</ns0:description>
-			<ns0:lock>IPS1@LOCK</ns0:lock>
+            <ns0:lock>IPS1@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0</ns0:value>
             </ns0:values>
@@ -1384,7 +1405,7 @@
             <ns0:name>START_MODE0</ns0:name>
             <ns0:alias>START_MODE0</ns0:alias>
             <ns0:description>START_MODE0</ns0:description>
-			<ns0:lock>IPS1@LOCK</ns0:lock>
+            <ns0:lock>IPS1@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>1</ns0:value>
             </ns0:values>
@@ -1400,17 +1421,20 @@
       <ns0:plantRecords>
         <ns0:folders/>
         <ns0:records>
- 	      <ns0:record size="1" xsi:type="recordLock">
+          <ns0:record size="1" xsi:type="recordLock">
             <ns0:name>LOCK</ns0:name>
             <ns0:alias>LOCK</ns0:alias>
-          	<ns0:description>IPS2 lock</ns0:description>
-          <ns0:values><ns0:value>[1]</ns0:value></ns0:values></ns0:record>
+            <ns0:description>IPS2 lock</ns0:description>
+            <ns0:values>
+              <ns0:value>[1]</ns0:value>
+            </ns0:values>
+          </ns0:record>
 
           <ns0:record size="1" xsi:type="recordLong">
             <ns0:name>OUTPUT_VOL3</ns0:name>
             <ns0:alias>OUTPUT_VOL3</ns0:alias>
             <ns0:description>OUTPUT_VOL3</ns0:description>
-			<ns0:lock>IPS2@LOCK</ns0:lock>
+            <ns0:lock>IPS2@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0</ns0:value>
             </ns0:values>
@@ -1419,7 +1443,7 @@
             <ns0:name>OUTPUT_VOL4</ns0:name>
             <ns0:alias>OUTPUT_VOL4</ns0:alias>
             <ns0:description>OUTPUT_VOL4</ns0:description>
-			<ns0:lock>IPS2@LOCK</ns0:lock>
+            <ns0:lock>IPS2@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>1</ns0:value>
             </ns0:values>
@@ -1428,7 +1452,7 @@
             <ns0:name>OUTPUT_VOL5</ns0:name>
             <ns0:alias>OUTPUT_VOL5</ns0:alias>
             <ns0:description>OUTPUT_VOL5</ns0:description>
-			<ns0:lock>IPS2@LOCK</ns0:lock>
+            <ns0:lock>IPS2@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0</ns0:value>
             </ns0:values>
@@ -1437,7 +1461,7 @@
             <ns0:name>PROTECTION1</ns0:name>
             <ns0:alias>PROTECTION1</ns0:alias>
             <ns0:description>PROTECTION1</ns0:description>
-			<ns0:lock>IPS2@LOCK</ns0:lock>
+            <ns0:lock>IPS2@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0</ns0:value>
             </ns0:values>
@@ -1446,7 +1470,7 @@
             <ns0:name>START_MODE1</ns0:name>
             <ns0:alias>START_MODE1</ns0:alias>
             <ns0:description>START_MODE1</ns0:description>
-			<ns0:lock>IPS2@LOCK</ns0:lock>
+            <ns0:lock>IPS2@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>1</ns0:value>
             </ns0:values>
@@ -1462,16 +1486,19 @@
       <ns0:plantRecords>
         <ns0:folders/>
         <ns0:records>
- 	      <ns0:record size="1" xsi:type="recordLock">
+          <ns0:record size="1" xsi:type="recordLock">
             <ns0:name>LOCK</ns0:name>
             <ns0:alias>LOCK</ns0:alias>
-          	<ns0:description>PMP1 lock</ns0:description>
-          <ns0:values><ns0:value>[1]</ns0:value></ns0:values></ns0:record>
+            <ns0:description>PMP1 lock</ns0:description>
+            <ns0:values>
+              <ns0:value>[1]</ns0:value>
+            </ns0:values>
+          </ns0:record>
           <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>PBR260_CAL0</ns0:name>
             <ns0:alias>PBR260_CAL0</ns0:alias>
             <ns0:description>PBR260_CAL0</ns0:description>
-			<ns0:lock>PMP1@LOCK</ns0:lock>
+            <ns0:lock>PMP1@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>1.0</ns0:value>
             </ns0:values>
@@ -1480,7 +1507,7 @@
             <ns0:name>PBR260_ON_0</ns0:name>
             <ns0:alias>PBR260_ON_0</ns0:alias>
             <ns0:description>PBR260_ON_0</ns0:description>
-			<ns0:lock>PMP1@LOCK</ns0:lock>
+            <ns0:lock>PMP1@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0</ns0:value>
             </ns0:values>
@@ -1489,7 +1516,7 @@
             <ns0:name>PBR260_SP_0</ns0:name>
             <ns0:alias>PBR260_SP_0</ns0:alias>
             <ns0:description>PBR260_SP_0</ns0:description>
-			<ns0:lock>PMP1@LOCK</ns0:lock>
+            <ns0:lock>PMP1@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.00012</ns0:value>
             </ns0:values>
@@ -1498,7 +1525,7 @@
             <ns0:name>PBR260_SP_1</ns0:name>
             <ns0:alias>PBR260_SP_1</ns0:alias>
             <ns0:description>PBR260_SP_1</ns0:description>
-			<ns0:lock>PMP1@LOCK</ns0:lock>
+            <ns0:lock>PMP1@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0001</ns0:value>
             </ns0:values>
@@ -1507,7 +1534,7 @@
             <ns0:name>PBR260_UND0</ns0:name>
             <ns0:alias>PBR260_UND0</ns0:alias>
             <ns0:description>PBR260_UND0</ns0:description>
-			<ns0:lock>PMP1@LOCK</ns0:lock>
+            <ns0:lock>PMP1@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0</ns0:value>
             </ns0:values>
@@ -1516,7 +1543,7 @@
             <ns0:name>TPR280_CAL0</ns0:name>
             <ns0:alias>TPR280_CAL0</ns0:alias>
             <ns0:description>TPR280_CAL0</ns0:description>
-			<ns0:lock>PMP1@LOCK</ns0:lock>
+            <ns0:lock>PMP1@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>1.0</ns0:value>
             </ns0:values>
@@ -1525,7 +1552,7 @@
             <ns0:name>TPR280_ON_0</ns0:name>
             <ns0:alias>TPR280_ON_0</ns0:alias>
             <ns0:description>TPR280_ON_0</ns0:description>
-			<ns0:lock>PMP1@LOCK</ns0:lock>
+            <ns0:lock>PMP1@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0</ns0:value>
             </ns0:values>
@@ -1534,7 +1561,7 @@
             <ns0:name>TPR280_SP_0</ns0:name>
             <ns0:alias>TPR280_SP_0</ns0:alias>
             <ns0:description>TPR280_SP_0</ns0:description>
-			<ns0:lock>PMP1@LOCK</ns0:lock>
+            <ns0:lock>PMP1@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.5</ns0:value>
             </ns0:values>
@@ -1543,7 +1570,7 @@
             <ns0:name>TPR280_SP_1</ns0:name>
             <ns0:alias>TPR280_SP_1</ns0:alias>
             <ns0:description>TPR280_SP_1</ns0:description>
-			<ns0:lock>PMP1@LOCK</ns0:lock>
+            <ns0:lock>PMP1@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.3</ns0:value>
             </ns0:values>
@@ -1552,7 +1579,7 @@
             <ns0:name>TPR280_UND0</ns0:name>
             <ns0:alias>TPR280_UND0</ns0:alias>
             <ns0:description>TPR280_UND0</ns0:description>
-			<ns0:lock>PMP1@LOCK</ns0:lock>
+            <ns0:lock>PMP1@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0</ns0:value>
             </ns0:values>
@@ -1568,16 +1595,19 @@
       <ns0:plantRecords>
         <ns0:folders/>
         <ns0:records>
- 	      <ns0:record size="1" xsi:type="recordLock">
+          <ns0:record size="1" xsi:type="recordLock">
             <ns0:name>LOCK</ns0:name>
             <ns0:alias>LOCK</ns0:alias>
-          	<ns0:description>PMP2 lock</ns0:description>
-          <ns0:values><ns0:value>[1]</ns0:value></ns0:values></ns0:record>
+            <ns0:description>PMP2 lock</ns0:description>
+            <ns0:values>
+              <ns0:value>[1]</ns0:value>
+            </ns0:values>
+          </ns0:record>
           <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>PBR260_CAL1</ns0:name>
             <ns0:alias>PBR260_CAL1</ns0:alias>
             <ns0:description>PBR260_CAL1</ns0:description>
-			<ns0:lock>PMP2@LOCK</ns0:lock>
+            <ns0:lock>PMP2@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>1.0</ns0:value>
             </ns0:values>
@@ -1586,7 +1616,7 @@
             <ns0:name>PBR260_ON_1</ns0:name>
             <ns0:alias>PBR260_ON_1</ns0:alias>
             <ns0:description>PBR260_ON_1</ns0:description>
-			<ns0:lock>PMP2@LOCK</ns0:lock>
+            <ns0:lock>PMP2@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0</ns0:value>
             </ns0:values>
@@ -1595,7 +1625,7 @@
             <ns0:name>PBR260_SP_2</ns0:name>
             <ns0:alias>PBR260_SP_2</ns0:alias>
             <ns0:description>PBR260_SP_2</ns0:description>
-			<ns0:lock>PMP2@LOCK</ns0:lock>
+            <ns0:lock>PMP2@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.00012</ns0:value>
             </ns0:values>
@@ -1604,7 +1634,7 @@
             <ns0:name>PBR260_SP_3</ns0:name>
             <ns0:alias>PBR260_SP_3</ns0:alias>
             <ns0:description>PBR260_SP_3</ns0:description>
-			<ns0:lock>PMP2@LOCK</ns0:lock>
+            <ns0:lock>PMP2@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.0001</ns0:value>
             </ns0:values>
@@ -1613,7 +1643,7 @@
             <ns0:name>PBR260_UND1</ns0:name>
             <ns0:alias>PBR260_UND1</ns0:alias>
             <ns0:description>PBR260_UND1</ns0:description>
-			<ns0:lock>PMP2@LOCK</ns0:lock>
+            <ns0:lock>PMP2@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0</ns0:value>
             </ns0:values>
@@ -1622,7 +1652,7 @@
             <ns0:name>TPR280_CAL1</ns0:name>
             <ns0:alias>TPR280_CAL1</ns0:alias>
             <ns0:description>TPR280_CAL1</ns0:description>
-			<ns0:lock>PMP2@LOCK</ns0:lock>
+            <ns0:lock>PMP2@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>1.0</ns0:value>
             </ns0:values>
@@ -1631,7 +1661,7 @@
             <ns0:name>TPR280_ON_1</ns0:name>
             <ns0:alias>TPR280_ON_1</ns0:alias>
             <ns0:description>TPR280_ON_1</ns0:description>
-			<ns0:lock>PMP2@LOCK</ns0:lock>
+            <ns0:lock>PMP2@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0</ns0:value>
             </ns0:values>
@@ -1640,7 +1670,7 @@
             <ns0:name>TPR280_SP_2</ns0:name>
             <ns0:alias>TPR280_SP_2</ns0:alias>
             <ns0:description>TPR280_SP_2</ns0:description>
-			<ns0:lock>PMP2@LOCK</ns0:lock>
+            <ns0:lock>PMP2@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.5</ns0:value>
             </ns0:values>
@@ -1649,7 +1679,7 @@
             <ns0:name>TPR280_SP_3</ns0:name>
             <ns0:alias>TPR280_SP_3</ns0:alias>
             <ns0:description>TPR280_SP_3</ns0:description>
-			<ns0:lock>PMP2@LOCK</ns0:lock>
+            <ns0:lock>PMP2@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.3</ns0:value>
             </ns0:values>
@@ -1658,7 +1688,7 @@
             <ns0:name>TPR280_UND1</ns0:name>
             <ns0:alias>TPR280_UND1</ns0:alias>
             <ns0:description>TPR280_UND1</ns0:description>
-			<ns0:lock>PMP2@LOCK</ns0:lock>
+            <ns0:lock>PMP2@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0</ns0:value>
             </ns0:values>
@@ -1674,16 +1704,19 @@
       <ns0:plantRecords>
         <ns0:folders/>
         <ns0:records>
- 	      <ns0:record size="1" xsi:type="recordLock">
+          <ns0:record size="1" xsi:type="recordLock">
             <ns0:name>LOCK</ns0:name>
             <ns0:alias>LOCK</ns0:alias>
-          	<ns0:description>RFIL lock</ns0:description>
-          <ns0:values><ns0:value>[1]</ns0:value></ns0:values></ns0:record>
+            <ns0:description>RFIL lock</ns0:description>
+            <ns0:values>
+              <ns0:value>[1]</ns0:value>
+            </ns0:values>
+          </ns0:record>
           <ns0:record size="1" xsi:type="recordLong">
             <ns0:name>ERR_RESET_0</ns0:name>
             <ns0:alias>ERR_RESET_0</ns0:alias>
             <ns0:description>ERR_RESET_0</ns0:description>
-			<ns0:lock>RFIL@LOCK</ns0:lock>
+            <ns0:lock>RFIL@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0</ns0:value>
             </ns0:values>
@@ -1692,7 +1725,7 @@
             <ns0:name>IF_MAX_CUR0</ns0:name>
             <ns0:alias>IF_MAX_CUR0</ns0:alias>
             <ns0:description>IF_MAX_CUR0</ns0:description>
-			<ns0:lock>RFIL@LOCK</ns0:lock>
+            <ns0:lock>RFIL@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>28.0</ns0:value>
             </ns0:values>
@@ -1701,7 +1734,7 @@
             <ns0:name>IF_SP_CURR0</ns0:name>
             <ns0:alias>IF_SP_CURR0</ns0:alias>
             <ns0:description>IF_SP_CURR0</ns0:description>
-			<ns0:lock>RFIL@LOCK</ns0:lock>
+            <ns0:lock>RFIL@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>22.0</ns0:value>
             </ns0:values>
@@ -1710,7 +1743,7 @@
             <ns0:name>IG_SP_CURR0</ns0:name>
             <ns0:alias>IG_SP_CURR0</ns0:alias>
             <ns0:description>IG_SP_CURR0</ns0:description>
-			<ns0:lock>RFIL@LOCK</ns0:lock>
+            <ns0:lock>RFIL@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>42.5</ns0:value>
             </ns0:values>
@@ -1719,7 +1752,7 @@
             <ns0:name>STABILIZAT0</ns0:name>
             <ns0:alias>STABILIZAT0</ns0:alias>
             <ns0:description>STABILIZAT0</ns0:description>
-			<ns0:lock>RFIL@LOCK</ns0:lock>
+            <ns0:lock>RFIL@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0</ns0:value>
             </ns0:values>
@@ -1728,7 +1761,7 @@
             <ns0:name>SWEEP_RATE0</ns0:name>
             <ns0:alias>SWEEP_RATE0</ns0:alias>
             <ns0:description>SWEEP_RATE0</ns0:description>
-			<ns0:lock>RFIL@LOCK</ns0:lock>
+            <ns0:lock>RFIL@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.6</ns0:value>
             </ns0:values>
@@ -1737,7 +1770,7 @@
             <ns0:name>SWEEP_RATE1</ns0:name>
             <ns0:alias>SWEEP_RATE1</ns0:alias>
             <ns0:description>SWEEP_RATE1</ns0:description>
-			<ns0:lock>RFIL@LOCK</ns0:lock>
+            <ns0:lock>RFIL@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>0.6</ns0:value>
             </ns0:values>
@@ -1753,16 +1786,19 @@
       <ns0:plantRecords>
         <ns0:folders/>
         <ns0:records>
- 	      <ns0:record size="1" xsi:type="recordLock">
+          <ns0:record size="1" xsi:type="recordLock">
             <ns0:name>LOCK</ns0:name>
             <ns0:alias>LOCK</ns0:alias>
-          	<ns0:description>RSCM lock</ns0:description>
-          <ns0:values><ns0:value>[1]</ns0:value></ns0:values></ns0:record>
+            <ns0:description>RSCM lock</ns0:description>
+            <ns0:values>
+              <ns0:value>[1]</ns0:value>
+            </ns0:values>
+          </ns0:record>
           <ns0:record size="1" xsi:type="recordLong">
             <ns0:name>HEATER_ON_0</ns0:name>
             <ns0:alias>HEATER_ON_0</ns0:alias>
             <ns0:description>HEATER_ON_0</ns0:description>
-			<ns0:lock>RSCM@LOCK</ns0:lock>
+            <ns0:lock>RSCM@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>1</ns0:value>
             </ns0:values>
@@ -1771,7 +1807,7 @@
             <ns0:name>SP_CURRENT8</ns0:name>
             <ns0:alias>SP_CURRENT8</ns0:alias>
             <ns0:description>SP_CURRENT8</ns0:description>
-			<ns0:lock>RSCM@LOCK</ns0:lock>
+            <ns0:lock>RSCM@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>110.0</ns0:value>
             </ns0:values>
@@ -1780,7 +1816,7 @@
             <ns0:name>SWEEP_RATE2</ns0:name>
             <ns0:alias>SWEEP_RATE2</ns0:alias>
             <ns0:description>SWEEP_RATE2</ns0:description>
-			<ns0:lock>RSCM@LOCK</ns0:lock>
+            <ns0:lock>RSCM@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>1.99</ns0:value>
             </ns0:values>
@@ -1796,16 +1832,19 @@
       <ns0:plantRecords>
         <ns0:folders/>
         <ns0:records>
- 	      <ns0:record size="1" xsi:type="recordLock">
+          <ns0:record size="1" xsi:type="recordLock">
             <ns0:name>LOCK</ns0:name>
             <ns0:alias>LOCK</ns0:alias>
-          	<ns0:description>RSWP lock</ns0:description>
-          <ns0:values><ns0:value>[1]</ns0:value></ns0:values></ns0:record>
+            <ns0:description>RSWP lock</ns0:description>
+            <ns0:values>
+              <ns0:value>[1]</ns0:value>
+            </ns0:values>
+          </ns0:record>
           <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>THRESHOLD_0</ns0:name>
             <ns0:alias>THRESHOLD_0</ns0:alias>
             <ns0:description>THRESHOLD_0</ns0:description>
-			<ns0:lock>RSWP@LOCK</ns0:lock>
+            <ns0:lock>RSWP@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>21.0</ns0:value>
             </ns0:values>
@@ -1814,7 +1853,7 @@
             <ns0:name>THRESHOLD_1</ns0:name>
             <ns0:alias>THRESHOLD_1</ns0:alias>
             <ns0:description>THRESHOLD_1</ns0:description>
-			<ns0:lock>RSWP@LOCK</ns0:lock>
+            <ns0:lock>RSWP@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>1.0</ns0:value>
             </ns0:values>
@@ -1823,7 +1862,7 @@
             <ns0:name>WAVE_PERIO1</ns0:name>
             <ns0:alias>WAVE_PERIO1</ns0:alias>
             <ns0:description>WAVE_PERIO1</ns0:description>
-			<ns0:lock>RSWP@LOCK</ns0:lock>
+            <ns0:lock>RSWP@LOCK</ns0:lock>
             <ns0:values>
               <ns0:value>43.0</ns0:value>
             </ns0:values>
@@ -1839,19 +1878,23 @@
       <ns0:plantRecords>
         <ns0:folders/>
         <ns0:records>
-           <ns0:record size="1" xsi:type="recordDouble">
+          <ns0:record size="1" xsi:type="recordDouble">
             <ns0:name>FALCON</ns0:name>
             <ns0:alias>FALCON</ns0:alias>
             <ns0:description>FALCON</ns0:description>
             <ns0:values>
-              <ns0:value>[[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0], [0, 0, 0], [0, 0, 0]]</ns0:value>
+              <ns0:value>[[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0,
+                0, 0], [0, 0, 0], [0, 0, 0]]</ns0:value>
             </ns0:values>
           </ns0:record>
         </ns0:records>
       </ns0:plantRecords>
     </ns0:plantSystem>
 
-
-
   </ns0:plantSystems>
-<ns0:owner>lporzio</ns0:owner><ns0:references><ns0:counter>0</ns0:counter></ns0:references></configurationContainer>
+  <ns0:owner>lporzio</ns0:owner>
+  <ns0:references>
+    <ns0:counter>0</ns0:counter>
+  </ns0:references>
+</configurationContainer>
