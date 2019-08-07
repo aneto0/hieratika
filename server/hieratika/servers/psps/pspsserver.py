@@ -1056,6 +1056,12 @@ class PSPSServer(HieratikaServer):
         toReturn = "string"
         if (xmlVariableType == "recordLong"):
             toReturn = "int32"
+        elif (xmlVariableType == "recordLongLong"):
+            toReturn = "int64"
+        elif (xmlVariableType == "recordULong"):
+            toReturn = "uint32"
+        elif (xmlVariableType == "recordULongLong"):
+            toReturn = "uint64"
         elif (xmlVariableType == "recordFloat"):
             toReturn = "float32"
         elif (xmlVariableType == "recordDouble"):

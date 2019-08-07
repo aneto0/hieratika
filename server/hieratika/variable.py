@@ -21,6 +21,7 @@ __date__ = "22/11/2017"
 # Standard imports
 ##
 import logging
+from collections import OrderedDict
 
 ##
 # Project imports
@@ -62,7 +63,8 @@ class Variable(object):
         self.value = value
         self.parent = None
         self.isStruct = False
-        self.members = {}
+        #Keep the order of the members (OrderedDicts are the standard from python >= 3.6)
+        self.members = OrderedDict()
         self.validations = validations
         self.lockVariable = lockVariable
 

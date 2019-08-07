@@ -1,0 +1,57 @@
+<ns0:configurationContainer xmlns:ns0="http://www.iter.org/CODAC/PlantSystemConfig/2014" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <ns0:schemaVersion>1.2</ns0:schemaVersion>
+    <ns0:version>00.00</ns0:version>
+    <ns0:sddVersion>1</ns0:sddVersion>
+    <ns0:name>55A0-sup-demo</ns0:name>
+    <ns0:description>55A0 SUP demo</ns0:description>
+    <ns0:plantSystems>
+        <ns0:plantSystem>
+            <ns0:name>D1-A0</ns0:name>
+            <ns0:version>1.0</ns0:version>
+            <ns0:description>The 55.A0 plant</ns0:description>
+            <ns0:plantRecords>
+                <ns0:folders>
+                    <ns0:folder>
+                        <ns0:name>MainFPGA</ns0:name>
+                        <ns0:folders>
+                            <ns0:folder>
+                                <ns0:name>FPGA0</ns0:name>
+                                <ns0:records>
+                                    <ns0:record size="[32]" xsi:type="recordFloat">
+                                        <ns0:name>M</ns0:name>
+                                        <ns0:pvName>D1-A0-MainFGPAs:FPGA:0:M</ns0:pvName>
+                                        <ns0:alias>Volts to physics units offset</ns0:alias>
+                                        <ns0:description>Volts to physics units offset</ns0:description>
+                                        <ns0:origin/>
+                                        <ns0:values><ns0:value>[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]</ns0:value></ns0:values></ns0:record>
+                                    <ns0:record size="[32]" xsi:type="recordFloat">
+                                        <ns0:name>Y0</ns0:name>
+                                        <ns0:pvName>D1-A0-MainFGPAs:FPGA:0:Y0</ns0:pvName>
+                                        <ns0:alias>Volts to physics units multiplier</ns0:alias>
+                                        <ns0:description>Volts to physics units multiplier</ns0:description>
+                                        <ns0:origin/>
+                                        <ns0:values><ns0:value>[4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]</ns0:value></ns0:values></ns0:record>
+                                    <ns0:record size="1" xsi:type="recordULongLong">
+                                        <ns0:name>WOTime</ns0:name>
+                                        <ns0:pvName>D1-A0-MainFGPAs:FPGA:0:WOTime</ns0:pvName>
+                                        <ns0:alias>WO time</ns0:alias>
+                                        <ns0:description>WO time</ns0:description>
+                                        <ns0:origin/>
+                                        <ns0:values><ns0:value>2</ns0:value></ns0:values></ns0:record>
+                                    <ns0:record size="1" xsi:type="recordULongLong">
+                                        <ns0:name>EOTime</ns0:name>
+                                        <ns0:pvName>D1-A0-MainFGPAs:FPGA:0:EOTime</ns0:pvName>
+                                        <ns0:alias>EO time</ns0:alias>
+                                        <ns0:description>EO time</ns0:description>
+                                        <ns0:origin/>
+                                        <ns0:values><ns0:value>3</ns0:value></ns0:values></ns0:record>
+                                </ns0:records>
+                            </ns0:folder>
+                        </ns0:folders>
+                    </ns0:folder>
+                </ns0:folders>
+            </ns0:plantRecords>
+        </ns0:plantSystem>
+    </ns0:plantSystems>
+    <ns0:plantConstraints/>
+</ns0:configurationContainer>
