@@ -2,6 +2,7 @@
 // Author: Luca Porzio
 
 var tabList = [];
+var multiLayer = false;
 
 function newConfig() {
   $('#intro').hide(500);
@@ -19,8 +20,7 @@ function savePlantDetails() {
   $('#instructions').hide(500);
   $('#plantDetailsForm').hide(500);
 
-  $('#configdiv').show(500);
-  $('#addPlant').show(500);
+  $('#plantConfigurator').show(500);
 
 }
 
@@ -29,15 +29,30 @@ function addPlantSystem() {
   let psName = document.getElementById("psName");
   tabList.push(psName.value);
   // Refreshing template
-  $('.tab').template({
+  $(".tab").template({
     'tabList': tabList
   });
   // Adding tab template
   let htmlTab = $("#template-tabcontent").html();
-  $(htmlTab).appendTo('#configdiv');
-  // Setting ids
+  $(htmlTab).appendTo("#configdiv");
+  // Adding title and description to tab content
+  let title = $("<h4>");
+  title.text(psName.value);
+  let psDesc = document.getElementById("psDesc");
+  let desc = $("<p>");
+  desc.text(psDesc.value);
+  $("#newTabContent").append(title);
+  $("#newTabContent").append(desc);
+  // Setting id
   let tabContentId = psName.value + "_tab";
   document.getElementById("newTabContent").id = tabContentId;
+  // Setting layers
+  let layers = document.getElementsByName("layers");
+  if (layers[1].checked) {
+    multiLayer = true;
+  } else {
+    multiLayer = false;
+  }
 }
 
 // onclick action on tab buttons

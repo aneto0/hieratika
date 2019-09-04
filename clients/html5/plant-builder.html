@@ -23,124 +23,8 @@
   <!-- Project imports -->
   <link rel="import" href="/libraries.html">
 
-  <!-- Templates list -->
-  <script id="template-single" type="text/template">
-    <div class="table-single">
-      <div class="row">
-        <div class="col-single">
-          <h5>
-          </h5>
-          <div class="table">
-          </div>
-        </div>
-      </div>
-    </div>
-  </script>
-
-  <script id="template-tabcontent" type="text/template">
-    <div id="newTabContent" class="tabcontent">
-    </div>
-  </script>
-
   <!-- Custom CSS style -->
-  <style>
-    .tab {
-      overflow: hidden;
-      /* border: 1px solid #999; */
-      background-color: #aaa;
-    }
-
-    /* Style the buttons inside the tab */
-    .tab button {
-      background-color: inherit;
-      float: left;
-      border: none;
-      outline: none;
-      cursor: pointer;
-      padding: 14px 16px;
-      transition: 0.3s;
-      font-size: 17px;
-    }
-
-    /* Change background color of buttons on hover */
-    .tab button:hover {
-      background-color: #ccc;
-    }
-
-    /* Create an active/current tablink class */
-    .tab button.active {
-      background-color: #ffffff;
-    }
-
-    .configcontent {
-      padding: 6px 12px;
-      border: 2px solid #666;
-      margin-top: 5px;
-    }
-
-    .tabcontent {
-      padding: 6px 12px;
-      display: none;
-      border-bottom: 1px solid #999;
-      background-color: white;
-    }
-
-    .table {
-      display: table;
-      width: 90%;
-      height: fit-content;
-      table-layout: fixed;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .col {
-      display: table-cell;
-      padding: 2px 16px;
-      height: 100%;
-      border: 1px solid #cacaca;
-    }
-
-    .col-40 {
-      float: left;
-      width: 40%;
-      margin-top: 3px;
-      margin-bottom: 3px;
-    }
-
-    .col-60 {
-      float: left;
-      width: 60%;
-      margin-top: 3px;
-      margin-bottom: 3px;
-    }
-
-    .row {
-      display: table-row;
-    }
-
-    .table-single {
-      display: table;
-      width: 90%;
-      height: fit-content;
-      table-layout: fixed;
-    }
-
-    .col-single {
-      float: left;
-      padding: 2px 16px;
-      width: 50%;
-      border: 1px solid #cacaca;
-    }
-
-    .grey {
-      background-color: #f2f2f2
-    }
-
-    .hidden {
-      display: none
-    }
-  </style>
+  <link rel="stylesheet" href="/css/builder.css">
 </head>
 
 <body>
@@ -217,66 +101,139 @@
     </div>
   </div>
 
+  <div class="hidden" style="padding-left: 10px;" id="plantConfigurator">
+    <div class="table-single" id="addPlant">
+      <h3><b>Plant Systems</b></h3>
+      <p>Add a new Plant System. The HTML preview is showed below.</p>
+      <div class="row">
+        <div class="col-single">
+          <h5>
+          </h5>
+          <div class="table">
+            <div class="row grey">
+              <div class="col-40">
+                Plant System Name:
+              </div>
+              <div class="col-60">
+                <input type="text" name="plantSysName" placeholder="RU_MAIN" id="psName">
+              </div>
+            </div>
+            <div class="row grey">
+              <div class="col-40">
+                Plant System Description:
+              </div>
+              <div class="col-60">
+                <input type="text" name="plantSysDescription" placeholder="Falcon configuration structure for RU_Main" id="psDesc">
+              </div>
+            </div>
+            <div class="row grey">
+              <div class="col-40">
+                Plant System Version:
+              </div>
+              <div class="col-60">
+                <input type="text" name="schemaSysVersion" value="1.0" id="psVersion">
+              </div>
+            </div>
+            <div class="row grey">
+              <div class="col-40">
+                Layers:
+              </div>
+              <div class="col-60">
+                <input type="radio" name="layers" value="single"> Single
+                <input type="radio" name="layers" value="multi"> Multi<br>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-40">
 
-  <div class="table-single hidden" id="addPlant">
-    <h3><b>Plant Systems</b></h3>
-    <p>Add a new Plant System. The HTML preview is showed below.</p>
-    <div class="row">
-      <div class="col-single">
-        <h5>
-        </h5>
-        <div class="table">
-          <div class="row grey">
-            <div class="col-40">
-              Plant System Name:
-            </div>
-            <div class="col-60">
-              <input type="text" name="plantSysName" placeholder="RU_MAIN" id="psName">
-            </div>
-          </div>
-          <div class="row grey">
-            <div class="col-40">
-              Plant System Description:
-            </div>
-            <div class="col-60">
-              <input type="text" name="plantSysDescription" placeholder="Falcon configuration structure for RU_Main" id="psDesc">
-            </div>
-          </div>
-          <div class="row grey">
-            <div class="col-40">
-              Plant System Version:
-            </div>
-            <div class="col-60">
-              <input type="text" name="schemaSysVersion" value="1.0" id="psVersion">
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-40">
-
-            </div>
-            <div class="col-60">
-              <button type="button" onclick="addPlantSystem()">ADD PLANT SYSTEM</button>
+              </div>
+              <div class="col-60">
+                <button type="button" onclick="addPlantSystem()">ADD PLANT SYSTEM</button>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <h3>Generated HTML</h3>
-  </div>
 
-  <!-- Generated HTML Container -->
-  <div class="configcontent hidden" id="configdiv">
-    <div class="tab">
-      <!-- Using DNA Template  -->
-      <button class="tablinks" template="[tabList]" z-var="value ., value @id, value @onclick" onclick="openTab(event, '${value}_tab')"></button>
+    <div class="table-single" id="addRecords">
+      <h3><b>Plant Records</b></h3>
+      <p>Add a new Record. Select first the Plant System.</p>
+      <div class="row">
+        <div class="col-single">
+          <h5>
+          </h5>
+          <div class="table">
+            <div class="row grey">
+              <div class="col-40">
+                Plant System Name:
+              </div>
+              <div class="col-60">
+                <input type="text" name="plantSysName" placeholder="RU_MAIN" id="psName">
+              </div>
+            </div>
+            <div class="row grey">
+              <div class="col-40">
+                Plant System Description:
+              </div>
+              <div class="col-60">
+                <input type="text" name="plantSysDescription" placeholder="Falcon configuration structure for RU_Main" id="psDesc">
+              </div>
+            </div>
+            <div class="row grey">
+              <div class="col-40">
+                Plant System Version:
+              </div>
+              <div class="col-60">
+                <input type="text" name="schemaSysVersion" value="1.0" id="psVersion">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-40">
+
+              </div>
+              <div class="col-60">
+                <button type="button" onclick="addPlantSystem()">ADD PLANT SYSTEM</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
+    <!-- Generated HTML Container -->
+    <div class="configcontent" id="configdiv">
+      <div class="tab">
+        <!-- Using DNA Template  -->
+        <button class="tablinks" template="[tabList]" z-var="value ., value @id, value @onclick" onclick="openTab(event, '${value}_tab')"></button>
+      </div>
+
+    </div>
   </div>
 
   <!-- Custom Javascript  -->
   <script type="text/javascript" src="/js/builder.js"></script>
   <!-- jQuery DNA Template  -->
   <script src="/js/jquery.template.min.js"></script>
+
+  <!-- Templates list -->
+  <script id="template-single" type="text/template">
+    <div class="table-single">
+      <div class="row">
+        <div class="col-single">
+          <h5>
+          </h5>
+          <div class="table">
+          </div>
+        </div>
+      </div>
+    </div>
+  </script>
+
+  <script id="template-tabcontent" type="text/template">
+    <div id="newTabContent" class="tabcontent">
+    </div>
+  </script>
 
 </body>
 
