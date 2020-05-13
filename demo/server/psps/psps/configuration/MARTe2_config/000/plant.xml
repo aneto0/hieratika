@@ -173,7 +173,7 @@
                                 <description>String Array</description>
                                 <lock>DT@BT@LOCK2</lock>
                                 <values><value>[[[["Signal1", "1"], ["Signal2", "1"]], [["uint32"], ["uint16"]], [["0"], ["1"]], ["FileDataSource"]]]</value></values></record>
-                                
+
                             <record size="[4]" xsi:type="recordString">
                                 <name>DBLTHRDSIGN</name>
                                 <alias>DBLTHRDSIGN</alias>

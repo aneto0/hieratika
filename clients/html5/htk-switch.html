@@ -1,19 +1,19 @@
-<!-- 
+<!--
  date: 04/01/2018
  author: Andre' Neto
- 
+
  copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
  the Development of Fusion Energy ('Fusion for Energy').
  Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  by the European Commission - subsequent versions of the EUPL (the "Licence")
  You may not use this work except in compliance with the Licence.
  You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
- 
- warning: Unless required by applicable law or agreed to in writing, 
+
+ warning: Unless required by applicable law or agreed to in writing,
  software distributed under the Licence is distributed on an "AS IS"
  basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  or implied. See the Licence permissions and limitations under the Licence.
---> 
+-->
 
 <html>
     <head>
@@ -30,7 +30,7 @@
             <!--Export in inkscape with viewBox and with optimised svg!-->
             <?xml version="1.0" encoding="UTF-8" standalone="no"?>
             <!-- Created with Inkscape (http://www.inkscape.org/) -->
-            <svg xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 383 43" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/"">
+            <svg xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 383 43" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/">
              <metadata id="metadata7">
               <rdf:RDF>
                <cc:Work rdf:about="">
@@ -90,14 +90,14 @@
                      */
                     cubicleUnitsToPixels(units) {
                         return CU_UNITS_TO_INCHES * INCHES_TO_PX * units;
-                    } 
+                    }
 
-                    /** 
+                    /**
                      * @return INCHES_TO_PX * inches;
                      */
                     inchesToPixels(inches) {
                         return INCHES_TO_PX * inches;
-                    } 
+                    }
 
                     /**
                      * @brief See HtkComponent.createdCallback .
@@ -175,7 +175,7 @@
 
                 /**
                  * @brief Registers the element.
-                 */ 
+                 */
                 document.registerElement("htk-switch", {
                     prototype: HtkSwitch.prototype
                 });

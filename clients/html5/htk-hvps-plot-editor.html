@@ -1,19 +1,19 @@
-<!-- 
+<!--
  date: 04/01/2018
  author: Andre' Neto
- 
+
  copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
  the Development of Fusion Energy ('Fusion for Energy').
  Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  by the European Commission - subsequent versions of the EUPL (the "Licence")
  You may not use this work except in compliance with the Licence.
  You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
- 
- warning: Unless required by applicable law or agreed to in writing, 
+
+ warning: Unless required by applicable law or agreed to in writing,
  software distributed under the Licence is distributed on an "AS IS"
  basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  or implied. See the Licence permissions and limitations under the Licence.
---> 
+-->
 
 <html>
     <head>
@@ -27,7 +27,7 @@
         <!-- HTML5 component template-->
         <template id="tfilter">
             <style>
-                @import url("/js/jqmath-0.4.3.css")
+                @import url("/js/jqmath-0.4.3.css");
             </style>
             <input type="range" id="trange" min="1000" max="100000" value="10000" background="#4CAF50" border="1">
             <input type="text" id="tinput"></input>
@@ -53,8 +53,8 @@
 
 
 				domLoaded(){
-                    
-                    var varName="data-ru";         			
+
+                    var varName="data-ru";
 	            	var varNameId=this.getAttribute(varName);
     	            var htkCompArray = document._frameComponents[varNameId];
         	        this.ru=htkCompArray[0];
@@ -62,7 +62,7 @@
                     this.ru.setUpdateValFun(this, 0);
                     this.ru.setReadOnly(false);
 
-                    var varName="data-v";         			
+                    var varName="data-v";
 	            	var varNameId=this.getAttribute(varName);
     	            var htkCompArray = document._frameComponents[varNameId];
         	        this.v=htkCompArray[0];
@@ -70,7 +70,7 @@
                     this.v.setUpdateValFun(this, 1);
                     this.v.setReadOnly(false);
 
-                    var varName="data-rd";         			
+                    var varName="data-rd";
 	            	var varNameId=this.getAttribute(varName);
     	            var htkCompArray = document._frameComponents[varNameId];
         	        this.rd=htkCompArray[0];
@@ -79,7 +79,7 @@
                     this.rd.setReadOnly(false);
 
 
-                    var varName="data-pl";         			
+                    var varName="data-pl";
 	            	var varNameId=this.getAttribute(varName);
     	            var htkCompArray = document._frameComponents[varNameId];
         	        this.pl=htkCompArray[0];
@@ -87,7 +87,7 @@
                     this.pl.setUpdateValFun(this, 3);
                     this.pl.setReadOnly(false);
 
-                    var varName="data-pl-unit";         			
+                    var varName="data-pl-unit";
 	            	var varNameId=this.getAttribute(varName);
     	            var htkCompArray = document._frameComponents[varNameId];
         	        this.plInSec=htkCompArray[0];
@@ -114,21 +114,21 @@
                     	this.rangeSlider.value=this.value;
       			        this.updateValue(true, 0);
                     }.bind(this));
-                    
+
 				}
 
                 /**
                  * @brief Checks if the plot should be updated due to a value change (of the component itself or from the reference).
                  * @param[in] userChanged true if the value update was triggered by a user action.
                  */
-                 
+
                 updateValue(userChanged, caller){
 					this.variablesInfoLoaded();
-                } 
-                
-                
+                }
 
-					
+
+
+
 				scheduleChanged(x){
 					this.variablesInfoLoaded();
 				}
@@ -137,7 +137,7 @@
 				variablesInfoLoaded(){
                     this.rangeSlider.value=this.value;
                    	this.rangeInput.value=this.value.toString();
-                   	
+
                    	var plValue=parseFloat(this.pl.value);
                    	if(this.plInSec.value>0){
                    		plValue*=1000.0;
@@ -161,35 +161,35 @@
                    	if(this.plInSec.plantValue>0){
                    		plPlantValue*=1000.0;
                    	}
-                	
+
                 	var timesPlant=[0, plPlantValue-(parseFloat(this.rd.plantValue)/1000.0)];
                 	var ruTimesPlant=[parseFloat(this.ru.plantValue)/1000.0, parseFloat(this.rd.plantValue)/1000.0];
                 	var voltagPlant=[parseFloat(this.v.plantValue), 0];
-                	
-                	
+
+
 	                this.chart.data.datasets[0].data = this.compute(times,ruTimes,voltag, plValue);
 	                this.chart.data.datasets[1].data = this.compute(timesRef,ruTimesRef,voltagRef, plRefValue);
 	                this.chart.data.datasets[2].data = this.compute(timesPlant,ruTimesPlant,voltagPlant, plPlantValue);
 
 	                this.chart.update();
-                   	
+
 				}
 
-                
+
                 /**
                  * @brief Gets the transfer function filter response by evaluating the function for N frequencyStep and up to the selected maxFrequency.
                  * @param[in] num the transfer function numerator polynomial.
                  * @param[in] den the transfer function denominator polynomial.
                  */
                 compute(t, ru, v, pl) {
-                
+
                 	var lengthX=pl;
                 	var nPoints=this.value;
                 	var yOut=[];
                 	var tLength=t.length;
-                	
+
                 	var dt=pl/nPoints;
-                
+
                 	var tr=0;
                 	var v_1=0;
                 	yOut[0]={x: 0, y: 0};
@@ -213,10 +213,10 @@
 							}
 						}
 					}
-					return yOut;				
+					return yOut;
                 }
 
-                    
+
                     getTheCorrectValue(valueToSet){
                 		if (Array.isArray(valueToSet)) {
                     		return valueToSet[0];
@@ -224,15 +224,15 @@
                     	else{
                     		return valueToSet;
                     	}
-                    	
+
                     }
-                    
-                    
+
+
                     setValue (valueToSet, updateRemote = true) {
                    		this.value=this.getTheCorrectValue(valueToSet);
             			this.fireValueChanged(HtkComponent.VALUE_CHANGED);
             			if (updateRemote) {
-                			this.updateRemote(valueToSet); 
+                			this.updateRemote(valueToSet);
             			}
            				this.refresh();
                     }
@@ -249,7 +249,7 @@
            				this.refresh();
 	                }
 
-                    
+
                 /**
                  * @brief Calls checkValues
                  */
@@ -338,7 +338,7 @@
 
             /**
              * @brief Registers the element.
-             */ 
+             */
             document.registerElement("htk-hvps-plot-editor", {
                 prototype: HtkHvpsPlotEditor.prototype
             });

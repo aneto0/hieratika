@@ -6,8 +6,8 @@ __copyright__ = """
     by the European Commission - subsequent versions of the EUPL (the "Licence")
     You may not use this work except in compliance with the Licence.
     You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
- 
-    Unless required by applicable law or agreed to in writing, 
+
+    Unless required by applicable law or agreed to in writing,
     software distributed under the Licence is distributed on an "AS IS"
     basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
     or implied. See the Licence permissions and limitations under the Licence.
@@ -25,6 +25,7 @@ import os
 import threading
 import time
 import timeit
+import ConfigParser
 
 ##
 # Project imports
@@ -64,8 +65,8 @@ class WStatistics:
             self.lockPool = LockPool(numberOfLocks)
         except (ConfigParser.Error, KeyError) as e:
             log.critical(str(e))
-            ok = False 
-   
+            ok = False
+
         if (ok):
             statisticsThread= threading.Thread(target=self.updateStatistics, args=(statisticsUpdatePeriod, ))
             statisticsThread.daemon = True
@@ -80,7 +81,7 @@ class WStatistics:
         """
         tid = str(os.getpid())
         tid += "_"
-        tid += str(threading.current_thread().ident) 
+        tid += str(threading.current_thread().ident)
         return tid
 
     def startUpdate(self, key):
@@ -92,7 +93,7 @@ class WStatistics:
         now = timeit.default_timer()
         self.updatedTimesLocal[keyTidPid] = now
         self.lockPool.release(key)
-        
+
     def endUpdate(self, key):
         """ To be called after the key against which the statistics are to be updated has finished its function.
         """
@@ -101,10 +102,10 @@ class WStatistics:
         self.lockPool.acquire(key)
         self.updatedTimes.append((key, now - self.updatedTimesLocal[keyTidPid]))
         self.lockPool.release(key)
-       
+
     def updateStatistics(self, statisticsUpdatePeriod):
         """ Updates the available statistics for all the keys used so far. It shall be called in the background by a single process (i.e. it is not multi-process/multi-thread safe)
-        
+
         Args:
             statisticsUpdatePeriod(int): update rate of the statistics loop.
         """
@@ -117,7 +118,7 @@ class WStatistics:
                     stats = self.statistics[key]
                     cnt = stats["cnt"]
                     cnt = cnt + 1
-                    stats["cnt"] = cnt 
+                    stats["cnt"] = cnt
                     stats["min"] = min(stats["min"], timeu)
                     stats["max"] = max(stats["max"], timeu)
                     acc = stats["acc"] + timeu
@@ -138,7 +139,7 @@ class WStatistics:
                 stats["last"] = timeu
                 self.statistics[key] = stats
             time.sleep(statisticsUpdatePeriod)
-           
+
     def getStatistics(self):
         stats = {}
         keys = self.statistics.keys()

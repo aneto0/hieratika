@@ -53,7 +53,7 @@
                     createdCallback () {
                         var template = importDoc.querySelector("#tmaineditor");
                         var clone = document.importNode(template.content, true);
-                        var root = this.createShadowRoot();
+                        const root = this.attachShadow({mode: 'open'});
                         root.appendChild(clone);
                         this.variablesInfoLoadedListeners = [this];
                         parent.htkHelper.setHtkMainEditor(this);

@@ -66,7 +66,7 @@
                         var template = importDoc.querySelector("#ttransformations");
                         // import template into
                         var clone = document.importNode(template.content, true);
-                        var root = this.createShadowRoot();
+                        const root = this.attachShadow({mode: 'open'});
                         root.appendChild(clone);
                    
                         this.diag = this.shadowRoot.querySelector("#dtransformations");
