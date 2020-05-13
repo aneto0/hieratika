@@ -25,6 +25,7 @@ import epics
 import json
 import logging
 import time
+import struct
 
 ##
 # Project imports
@@ -51,7 +52,7 @@ class PLCLoader(HieratikaLoader):
         self.pvLoadCounter = ""
         self.pvLoadCommand = ""
         self.pageName = "PLC_config"
-        self.fileId = open("config.fls", "rw+b")
+        self.fileId = open("config.fls", "w+b")
 
     def load(self, config):
         """ Loads the mapping between the hieratika variables and the EPICS records, defined in a json file whose path shall be defined in
@@ -88,7 +89,6 @@ class PLCLoader(HieratikaLoader):
         return True
 
     def loadIntoPlant(self, pageName):
-	print "ciao"
         log.info("Loading {0}".format(pageName)) 
         variablesPlantInfo = self.server.getVariablesInfo(self.pageName, self.variables)
         address = 0
@@ -98,10 +98,9 @@ class PLCLoader(HieratikaLoader):
         functionNameValue=[""]
         functionSignalNameValue=[""]
         #preprocessing input
-        #print("Preprocessing Stage")
+        print("Preprocessing Stage")
         for var in variablesPlantInfo:
             varName = var.getName()
-            print(varName)
             if varName=="DT@BT@DBLMA2":
                 signalInputMode=var.getValue()
                 for value in signalInputMode:
@@ -116,8 +115,7 @@ class PLCLoader(HieratikaLoader):
                         log.critical("Unrecognized signal mode {0}", signalInputMode)
                         return False
                     print(config, address)
-                    self.fileId.write(bytearray(config))
-                    self.fileId.write(bytearray(address))
+                    self.fileId.write(struct.pack("4B",config%256, config/256, address%256, address/256))
 	            address=address+1
                     #todo write it on file
             if varName=="DT@BT@DBLMA":
@@ -160,8 +158,7 @@ class PLCLoader(HieratikaLoader):
                                 config=(1<<signalIndex)
                             signalIndex=signalIndex+1
                         print(config, address)
-                        self.fileId.write(bytearray(config))
-                        self.fileId.write(bytearray(address))
+                        self.fileId.write(struct.pack("4B",config%256,config/256,address%256,address/256))
                         address=address+1
                         inputIndex=inputIndex+1
                     functionIndex=functionIndex+1
@@ -194,8 +191,7 @@ class PLCLoader(HieratikaLoader):
                            retVal|=rowVal
                        #print(retVal,address,signalTestVal,functionIndex)
                        print(retVal,address)
-                       self.fileId.write(bytearray(retVal))
-                       self.fileId.write(bytearray(address))
+                       self.fileId.write(struct.pack("4B",retVal%256, retVal/256, address%256, address/256))
                        address=address+1
                    functionIndex=functionIndex+1                               
 
@@ -218,9 +214,9 @@ class PLCLoader(HieratikaLoader):
                                     logicIndex=logicIndex+1
                             elementIndex=elementIndex+1
                         print(config, address)
-                        self.fileId.write(bytearray(config))
-                        self.fileId.write(bytearray(address))
+                        self.fileId.write(struct.pack("4B",config%256, config/256, address%256, address/256))
                         address=address+1
+        self.fileId.flush()
 	return True
 
     def isLoadable(self, pageName):

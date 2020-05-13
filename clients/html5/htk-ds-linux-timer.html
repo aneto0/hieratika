@@ -1,0 +1,227 @@
+<!-- 
+ date: 04/01/2018
+ author: Andre' Neto
+ 
+ copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
+ the Development of Fusion Energy ('Fusion for Energy').
+ Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ by the European Commission - subsequent versions of the EUPL (the "Licence")
+ You may not use this work except in compliance with the Licence.
+ You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+ 
+ warning: Unless required by applicable law or agreed to in writing, 
+ software distributed under the Licence is distributed on an "AS IS"
+ basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ or implied. See the Licence permissions and limitations under the Licence.
+-->
+
+<html>
+<head>
+<!-- Standard imports -->
+
+<!-- Project imports -->
+<link rel="import" href="/libraries.html">
+<link rel="import" href="/htk-abstract-input.html">
+</head>
+<body>
+	<!-- HTML5 component template-->
+	<template id="ttinput">
+	<table>
+		<tr>
+			<td><h3>Sleep Nature</h3></td>
+		</tr>
+		<tr>
+			<td>Busy/Default</td>
+			<td><input type="checkbox" id="sleepNatCB"></input></td>
+		</tr>
+		<tr>
+			<td><h3>Execution Mode</h3></td>
+		</tr>
+		<tr>
+			<td>Independent/RealTime Thread</td>
+			<td><input type="checkbox" id="execModeCB"></input></td>
+		</tr>
+		<tr>
+			<td><h3>CPU Mask</h3></td>
+			<td><input type="text" id="cpuMaskIn"></input></td>
+		</tr>
+		<tr>
+			<td><h3>Stack Size</h3></td>
+			<td><input type="text" id="StackSizeIn"></input></td>
+		</tr>
+		<tr>
+			<td><button type="button" id="AddDataSource">Add</button></td>
+			<td><input type="text" id="DsNameIn"></input></td>
+		</tr>
+	</table>
+	</template>
+
+	<script>
+            //This is enclosure is required to protect the importDoc
+            (function () {
+                var importDoc = document.currentScript.ownerDocument; // importee
+
+                /**
+                 * @brief A text input component.
+                 */
+                class HtkDsLinuxTimer extends HtkAbstractInput {
+
+                    /**
+                     * @brief Constructor. NOOP.
+                     */
+                    constructor() {
+                        super();
+                    }
+
+                    /**
+                     * @brief See HtkComponent.createdCallback.
+                     */
+                    createdCallback () {
+                        super.createdCallback();
+                        this.cpuMaskIn = this.shadowRoot.querySelector("#cpuMaskIn");
+                        this.cpuMaskIn.contentEditable="true";
+                        this.cpuMaskIn.addEventListener("input", function (e) {
+                        	this.value[1][1][2]=this.cpuMaskIn.innerHTML;
+                        }.bind(this));
+
+                        this.stackSizeIn = this.shadowRoot.querySelector("#stackSizeIn");
+                        this.stackSizeIn.contentEditable="true";
+                        this.stackSizeIn.addEventListener("input", function (e) {
+                        	this.value[1][1][3]=this.stackSizeIn.innerHTML;
+                        }.bind(this));
+
+                        
+                        this.sleepNat=this.shadowRoot.querySelector("#sleepNatCB");
+                        this.sleepNat.addEventListener("click", function (e) {
+                        	if(this.sleepNat.checked){
+                        		this.value[1][1][0]="Busy";
+                        	}
+                        	else{
+                        		this.value[1][1][0]="Default";
+                        	}
+                        }.bind(this));
+                        
+                        this.execMode=this.shadowRoot.querySelector("#execModeCB");
+                        this.execMode.addEventListener("click", function (e) {
+                        	if(this.execMode.checked){
+                        		this.value[1][1][1]="RealTimeThread";
+                        	}
+                        	else{
+                        		this.value[1][1][0]="IndependentThread";
+                        	}
+                        }.bind(this));
+                        
+                        this.dsName=this.shadowRoot.querySelector("DsNameIn");
+                        this.AddButton=this.shadowRoot.querySelector("#AddDataSource");
+                        this.execMode.addEventListener("click", function (e) {
+                        	this.value[0].push(dsName.innerHTML);
+                    		this.value[1].push=([["SleepNature", "executionModeStr", "CPUMask", "StackSize"], ["Default", "IndependentThread", "0xFF", "Default"]]);
+                    		this.value[2].push([["Counter","Timer"], [[["Type"],["uint32"]],[["Type"],["uint32"]]]]);
+                        }.bind(this));
+                        this.value[0]=["LinuxTimer_0"];
+                    	this.value[1]=[[["SleepNature", "executionModeStr", "CPUMask", "StackSize"], ["Default", "IndependentThread", "0xFF", "Default"]]];
+                    	this.value[2]=[[["Counter","Timer"], [[["Type"],["uint32"]],[["Type"],["uint32"]]]]];  
+                        
+                    }
+                    
+                    
+                    variablesInfoLoaded(){
+                    }
+                    
+                    scheduleChanged(x){
+						this.variablesInfoLoaded();
+					}
+                    
+                    /**
+                     * @brief See HtkComponent.getTemplat.
+                     */
+                    getTemplate() {
+                        var template = importDoc.querySelector("#ttinput");
+                        return template;
+                    }
+
+                    /**
+                     * @brief See HtkComponent.refresh.
+                     */
+                    refresh() {
+                        //this.checkValues(this.textInput);
+                    }
+
+                    /**
+                     * @brief See HtkComponent.getValue.
+                     */
+                    getValue() {
+                        var txtValue = this.cpuMaskIn.value;
+                        var typeValue = this.getTypeValue();
+                        return parent.htkHelper.textToTypeValue(txtValue, typeValue);
+                    }
+
+                    /**
+                     * @brief See HtkComponent.setReadOnly.
+                     */
+                    setReadOnly (isReadOnly) {
+                        super.setReadOnly(isReadOnly);
+                    }
+                    
+                    
+                    getTheCorrectValue(valueToSet){
+                    	var val=valueToSet;
+                		if (Array.isArray(valueToSet)) {
+                			val=valueToSet[0];
+                    	}
+                    	return val;
+                    }
+                    
+                    
+                    setValue (valueToSet, updateRemote = true) {
+                   		this.value=this.getTheCorrectValue(valueToSet);
+
+           				this.refresh();
+                    	if(this.typeValue.startsWith("float")){
+                    		this.value= parseFloat(this.value);
+                    	}
+                    	if((this.typeValue.startsWith("int")) || (this.typeValue.startsWith("uint"))){
+                    		this.value= parseInt(this.value);
+                    	}
+            			this.fireValueChanged(HtkComponent.VALUE_CHANGED);
+            			if (updateRemote) {
+                			this.updateRemote(valueToSet); 
+            			}
+                    }
+
+
+			        setReference (referenceToSet) {
+                   		this.referenceValue=this.getTheCorrectValue(referenceToSet);
+            			this.refresh();
+                    	if(this.typeValue.startsWith("float")){
+                    		this.referenceValue= parseFloat(this.referenceValue);
+                    	}
+                    	if((this.typeValue.startsWith("int")) || (this.typeValue.startsWith("uint"))){
+                    		this.referenceValue= parseInt(this.referenceValue);
+                    	}
+        			}
+
+       			    setPlantValue (plantValueToSet) {
+                      	this.plantValue=this.getTheCorrectValue(plantValueToSet);
+            			this.fireValueChanged(HtkComponent.VALUE_CHANGED);
+           				this.refresh();
+                    	if(this.typeValue.startsWith("float")){
+                    		this.plantValue= parseFloat(this.plantValue);
+                    	}
+                    	if((this.typeValue.startsWith("int")) || (this.typeValue.startsWith("uint"))){
+                    		this.plantValue= parseInt(this.plantValue);
+                    	}
+	                }	
+	                
+	                
+				}
+                /**
+                 * @brief Registers the element.
+                 */ 
+                document.registerElement("htk-ds-linux-timer", {
+                    prototype: HtkDsLinuxTimer.prototype,
+                });
+            })(); 
+        </script>
+</body>
+</html>

@@ -354,9 +354,10 @@
                      * @brief See HtkComponent.setReadOnly
                      */
                     setReadOnly (isReadOnly) {
+                    /*
                         super.setReadOnly(isReadOnly);
                         this.addRowButton.disabled = isReadOnly;
-                        this.removeRowButton.disabled = isReadOnly;
+                        this.removeRowButton.disabled = isReadOnly;*/
                     }
 
                     /** 
@@ -533,6 +534,7 @@
                         this.removeLogicButton = this.shadowRoot.querySelector("#removeLogicButton");
                         this.removeLogicButton.onclick = function() {
 							//remove a logic to the elements of matrix2
+							/*
 							var choices=this.matrix2.enum.getChoices();
 							var nChoices=choices.length;
 							var options=new Array(nChoices-1);
@@ -547,7 +549,8 @@
 									options[i]=choices[i];
 								}
 							}
-							this.matrix2.refreshEnum(options);
+							this.matrix2.refreshEnum(options);*/
+							this.matrix2.removeColCallback();
                         }.bind(this);
 
                         this.testInput=this.shadowRoot.querySelector("#testInput");

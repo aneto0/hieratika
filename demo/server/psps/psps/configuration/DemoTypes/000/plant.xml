@@ -49,28 +49,28 @@
                                 <alias>DBLA</alias>
                                 <description>Double value array</description>
                                 <lock>DT@BT@LOCK2</lock>
-                                <values><value>[2, 2, 3, 4, 5, 6]</value></values></record>
+                                <values><value>[2, 3, 4, 5, 6, 9, 1]</value></values></record>
                             <record size="[2,3]" xsi:type="recordDouble">
                                 <name>DBLM</name>
                                 <alias>DBLM</alias>
                                 <description>Double value matrix</description>
                                 <lock>DT@BT@LOCK3</lock>
-                                <values><value>[[1, 1], [1, 1, 1]]</value></values></record>
+                                <values><value>[["1", "2"], ["1", "1", "1"]]</value></values></record>
                             <record size="1" xsi:type="recordLock">
                                 <name>LOCK1</name>
                                 <alias>LOCK1</alias>
                                 <description>A lock</description>
-                                <values><value>[1]</value></values></record>
+                                <values><value>0</value></values></record>
                             <record size="1" xsi:type="recordLock">
                                 <name>LOCK2</name>
                                 <alias>LOCK2</alias>
                                 <description>Another lock</description>
-                                <values><value>[0]</value></values></record>
+                                <values><value>0</value></values></record>
                             <record size="1" xsi:type="recordLock">
                                 <name>LOCK3</name>
                                 <alias>LOCK3</alias>
                                 <description>And another lock</description>
-                                <values><value>[0]</value></values></record>
+                                <values><value>0</value></values></record>
                         </records>
                     </folder>
                     <folder>

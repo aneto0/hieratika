@@ -1,0 +1,174 @@
+<html>
+<head>
+<link rel="import" href="/libraries.html">
+<link rel="import" href="/htk-component.html">
+<link rel="import" href="/htk-enum.html">
+<link rel="import" href="/htk-input.html">
+<link rel="import" href="/htk-library-button.html">
+<link rel="import" href="/htk-lock-button.html">
+<link rel="import" href="/htk-enum.html">
+<link rel="import" href="/htk-marte2-maintabs.html">
+<link rel="import" href="/htk-ds-linux-timer.html">
+</head>
+<body>
+
+
+
+	<div class="tab">
+		<table>
+			<tr>
+				<td>
+					<button class="tablinks" id="DataSources">DataSources</button>
+				</td>
+				<td>
+					<button class="tablinks" id="GAMs">GAMs</button>
+				</td>
+				<td>
+					<button class="tablinks" id="Interfaces">Interfaces</button>
+				</td>
+		</table>
+	</div>
+	</div>
+
+
+
+	<div id="DataSources_tab" class="tabcontent">
+		<h3>Data Sources</h3>
+		<p>DataSources Configuration</p>
+
+
+		<div class="tab">
+			<table>
+				<tr>
+					<td>
+						<button class="tablinks" id="LinuxTimer">LinuxTimer</button>
+					</td>
+					<td>
+						<button class="tablinks" id="LoggerDataSource">LoggerDataSource</button>
+					</td>
+				</tr>
+			</table>
+		</div>
+
+		<div id="LinuxTimer_tab" class="tabcontent">
+			<h3>LinuxTimer</h3>
+			<p>LinuxTimer Configuration</p>
+
+			<table>
+				<tr>
+					<td><htk-ds-linux-timer id='DS@LINUXTIM'></htk-ds-linux-timer></td>
+			</table>
+		</div>
+
+		<div id="LoggerDataSource_tab" class="tabcontent">
+			<h3>Interfaces</h3>
+			<p>Interfaces Configuration</p>
+
+			<table>
+				<tr>
+					<td>Lock</td>
+					<td><htk-lock-button id='IPS2@LOCK'></htk-lock-button></td>
+				</tr>
+				<tr>
+					<td>Output Voltage 3KV</td>
+					<td><htk-input id='IPS2@OUTPUT_VOL3'></htk-input></td>
+				</tr>
+				<tr>
+					<td>Output Voltage 5KV</td>
+					<td><htk-input id='IPS2@OUTPUT_VOL4'></htk-input></td>
+				</tr>
+			</table>
+		</div>
+
+	</div>
+
+
+
+
+	<div id="GAMs_tab" class="tabcontent">
+		<h3>GAMs</h3>
+		<p>GAMs Configuration</p>
+
+
+		<table>
+			<tr>
+				<td>Lock</td>
+				<td><htk-lock-button id='IPS2@LOCK'></htk-lock-button></td>
+			</tr>
+			<tr>
+				<td>Output Voltage 3KV</td>
+				<td><htk-input id='IPS2@OUTPUT_VOL3'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Output Voltage 5KV</td>
+				<td><htk-input id='IPS2@OUTPUT_VOL4'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Output Voltage 7KV</td>
+				<td><htk-input id='IPS2@OUTPUT_VOL5'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Protection Mode</td>
+				<td><htk-input id='IPS2@PROTECTION1'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Start Mode</td>
+				<td><htk-input id='IPS2@START_MODE1'></htk-input></td>
+			</tr>
+		</table>
+	</div>
+
+
+	<div id="Interfaces_tab" class="tabcontent">
+		<h3>Interfaces</h3>
+		<p>Interfaces Configuration</p>
+
+
+		<table>
+			<tr>
+				<td>Lock</td>
+				<td><htk-lock-button id='IPS1@LOCK'></htk-lock-button></td>
+			</tr>
+			<tr>
+				<td>Output Voltage 3KV</td>
+				<td><htk-input id='IPS1@OUTPUT_VOL0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Output Voltage 5KV</td>
+				<td><htk-input id='IPS1@OUTPUT_VOL1'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Output Voltage 7KV</td>
+				<td><htk-input id='IPS1@OUTPUT_VOL2'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Protection Mode</td>
+				<td><htk-input id='IPS1@PROTECTION0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Start Mode</td>
+				<td><htk-input id='IPS1@START_MODE0'></htk-input></td>
+			</tr>
+		</table>
+	</div>
+
+
+
+	<table>
+		<tr>
+			<td><htk-marte2-maintabs id='MARTE@MAIN'
+					data-tab_0='DataSources' data-tab_1='GAMs' data-tab_2='Interfaces'></htk-marte2-maintabs></td>
+		</tr>
+		<tr>
+			<td><htk-marte2-maintabs id='MARTE@DATASOURCE'
+					data-fatherId='DataSources_tab' data-tab_0='LinuxTimer'
+					data-tab_1='LoggerDataSource'></htk-marte2-maintabs></td>
+		</tr>
+	</table>
+
+</body>
+</html>
+
+
+
+

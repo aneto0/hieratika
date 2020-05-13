@@ -1,0 +1,386 @@
+<!-- 
+ date: 04/01/2018
+ author: Andre' Neto
+ 
+ copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
+ the Development of Fusion Energy ('Fusion for Energy').
+ Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ by the European Commission - subsequent versions of the EUPL (the "Licence")
+ You may not use this work except in compliance with the Licence.
+ You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+ 
+ warning: Unless required by applicable law or agreed to in writing, 
+ software distributed under the Licence is distributed on an "AS IS"
+ basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ or implied. See the Licence permissions and limitations under the Licence.
+--> 
+
+<html>
+    <head>
+        <!-- Standard imports -->
+
+        <!-- Project imports -->
+        <link rel="import" href="/libraries.html">
+    </head>
+    <body>
+        <!-- HTML5 component template-->
+        <template id="ttinput">
+			<input type="file" id="files" name="file" /> 
+			<button id="entirefile">Entire File</button>
+			<button id="startMonitor">Start Monitor</button>
+			<button id="stopMonitor">Stop Monitor</button>
+			<div id="byte_range"></div>
+			<div id="byte_content"></div>
+			<table border="1" id="tmatrix">
+				<tr></tr>
+			</table>
+        </template>
+
+        <script>
+            //This is enclosure is required to protect the importDoc
+            (function () {
+                var importDoc = document.currentScript.ownerDocument; // importee
+
+                /**
+                 * @brief A text input component.
+                 */
+                class HtkIfmifText extends HtkComponent {
+
+                    /**
+                     * @brief Constructor. NOOP.
+                     */
+                    constructor() {
+                        super();
+                    }
+
+
+
+
+                    /**
+                     * @brief See HtkComponent.createdCallback.
+                     */
+                    createdCallback () {
+                        super.createdCallback();
+                        parent.htkHelper.addVariablesInfoLoadedListener(this);
+						parent.htkHelper.addScheduleChangedListener(this);
+                    }
+                    
+                    domLoaded(){
+                        //this.file = this.shadowRoot.querySelector("#files");
+                        //this.file.addEventListener('change', handleFileSelect, false);
+                        //document.getElementById('files')
+                        this.buttons = this.shadowRoot.querySelector("#entirefile");
+                        //document.querySelector('.readBytesButtons')
+  						this.buttons.addEventListener('click', function(evt) {
+    						if (evt.target.tagName.toLowerCase() == 'button') {
+      							var startByte = evt.target.getAttribute('data-startbyte');
+      							var endByte = evt.target.getAttribute('data-endbyte');
+      							this.readBlob(startByte, endByte);
+    						}
+  						}.bind(this), false);
+  						this.startMonitor = this.shadowRoot.querySelector("#startMonitor");
+  						this.startMonitor.addEventListener('click', function(evt) {
+  							this.monitor();
+  						}.bind(this), false);
+  						
+  						this.stopMonitor = this.shadowRoot.querySelector("#stopMonitor");
+  						this.stopMonitor.addEventListener('click', function(evt) {
+  							this.stopmonitor();
+  						}.bind(this), false);  						
+						this.tbl = this.shadowRoot.querySelector("#tmatrix");
+                    }
+                    
+
+					variablesInfoLoaded(){
+						this.nVars=this.value[0].length;
+						this.refreshGraphics();
+						
+						
+                        this.fireValueChanged("value");
+                        this.updateRemote(this.getValue());
+					}
+
+					scheduleChanged(x){
+						this.variablesInfoLoaded();
+					}
+
+
+					  readBlob(opt_startByte, opt_stopByte) {
+
+					    var files =this.shadowRoot.querySelector("#files").files;
+
+					    if (!files.length) {
+					      alert('Please select a file!');
+					      return;
+					    }
+
+					    var file = files[0];
+					    var start = parseInt(opt_startByte) || 0;
+					    var stop = parseInt(opt_stopByte) || file.size - 1;
+
+					    var reader = new FileReader();
+
+					    // If we use onloadend, we need to check the readyState.
+					    reader.onloadend = function(evt) {
+					      if (evt.target.readyState == FileReader.DONE) { // DONE == 2
+					      	var bcontent=this.shadowRoot.querySelector("#byte_content");
+					      	//bcontent.textContent=evt.target.result;
+					      	var toSplit=evt.target.result;
+					      	var finaltext="";
+					      	var idx=0;
+					      	this.nVars=0;
+					      	
+							this.value=new Array(2);
+					      	this.value[0]=[];
+					      	this.value[1]=[];
+					      	
+					      	while(idx>=0){
+					      		idx=toSplit.indexOf("\n");
+					      		if(idx>0){
+					      			var line=toSplit.substring(0, idx);
+					      			if(line.indexOf("#")==-1){
+					      				var equalIdx=line.indexOf("=");
+					      				if(equalIdx>0){
+					      					var name=line.substring(0, equalIdx);
+					      					var value=line.substring(equalIdx+1, line.length);
+					      					finaltext+=(name+":"+value+"\n");
+					      					this.value[0].push(name);
+					      					this.value[1].push(value);
+					      					this.nVars++;
+					      				}
+					      			}
+					      	
+						      		toSplit=toSplit.slice(idx+1);
+					      		}
+					      	}
+					      	
+					      	
+					      	//bcontent.textContent=finaltext;
+					      	
+					      	this.refreshGraphics();
+                            this.fireValueChanged("value");
+                            this.updateRemote(this.getValue());
+					        //document.getElementById('byte_content').textContent = evt.target.result;
+					        /*brange=this.shadowRoot.querySelector("#byte_range");
+					        brange.textContent = 
+					            ['Read bytes: ', start + 1, ' - ', stop + 1,
+					             ' of ', file.size, ' byte file'].join('');*/
+             
+					        /*document.getElementById('byte_range').textContent = 
+					            ['Read bytes: ', start + 1, ' - ', stop + 1,
+					             ' of ', file.size, ' byte file'].join('');*/
+					      }
+					    }.bind(this);
+
+					    var blob = file.slice(start, stop + 1);
+					    reader.readAsBinaryString(blob);
+					    
+					}
+  
+
+                    
+                    /**
+                     * @brief See HtkComponent.getTemplat.
+                     */
+                    getTemplate() {
+                        var template = importDoc.querySelector("#ttinput");
+                        return template;
+                    }
+
+
+					updateValue(userChanged){
+						                        
+                        for (var i=0; (i<this.tbl.rows.length); i++) {
+                        	var row = this.tbl.rows[i];
+                        	for (var j=0; (j<this.tbl.rows[0].cells.length); j++) { 
+                            	var cell = row.cells[j];
+                            	if (cell !== undefined) {
+                                	var cellValue = cell.innerHTML;
+                                	var numberValue = parent.htkHelper.textToTypeValue(cellValue, typeValue);
+                                	if (numberValue === undefined) {
+	                                    numberValue = cellValue;
+    	                            }
+        	                        this.value[j][i] = numberValue;
+                            	}
+                        	}
+                        }
+                        if (userChanged) {
+                            this.fireValueChanged("value");
+                            this.updateRemote(this.getValue());
+                        }
+					}
+
+                    /**
+                     * @brief See HtkComponent.refresh.
+                     */
+                    refresh() {
+                    	
+
+                        
+                    }
+
+                    refreshGraphics() {
+                    	var currentVariables=this.tbl.rows.length;
+                    	var currentCols=this.tbl.rows[0].cells.length;
+                    	if((currentCols!=2)||(this.nVars!=currentVariables)){
+	                        	for(var i=0; i<currentVariables; i++){
+   	    	                 		this.tbl.deleteRow(0);
+								}                    	
+            	    	    	//this.checkValues(this.textInput);
+                        		for(var i=0; i<this.nVars; i++){
+                		        	var row=this.tbl.insertRow(i);
+                	        		var cellName=row.insertCell(0);
+            	            		var cellValue=row.insertCell(1);
+        	                        cellName.addEventListener("input", function (e) {
+   		                             	this.updateValue(false);
+	 	                         	}.bind(this));
+                                	cellValue.addEventListener("input", function (e) {
+                                		this.updateValue(true);
+ 	                         		}.bind(this));
+                        		}
+                        }
+                        
+                        for(var i=0; i<this.nVars; i++){
+                        	var cellName=this.tbl.rows[i].cells[0];
+                        	var cellValue=this.tbl.rows[i].cells[1];
+                        	cellName.innerHTML=this.value[0][i];
+                        	cellValue.innerHTML=this.value[1][i];
+                        }
+                        
+                        this.checkValue();
+                    }
+                     
+
+					checkValue(){
+						
+						for(var h=0; h<this.tbl.rows.length; h++){
+							this.tbl.rows[h].cells[1].style.backgroundColor = STANDARD_BCOLOR;
+							var plantValue=this.getPlantValue();
+							
+							var plantVar=parseFloat(plantValue[1][h]);
+							var thisVar=parseFloat(this.tbl.rows[h].cells[1].innerHTML);
+							if(thisVar!=plantVar){
+								this.tbl.rows[h].cells[1].style.backgroundColor = PLANT_OR_REF_CHANGED_COLOR;
+							}
+						}
+						
+						var i=0;
+						while(1){
+						var varName="data-varToCheck"+i;
+						var firstVar=this.getAttribute(varName);
+						if(firstVar!=undefined){
+						  i++;
+							var varName2="data-varToCheck"+i;
+							var secondVar=this.getAttribute(varName2);
+							//find the variable
+							for(var h=0; h<this.tbl.rows.length; h++){
+								var row=this.tbl.rows[h];
+								var name=row.cells[0].innerHTML;
+								if(name==firstVar){
+									var content1=parseFloat(row.cells[1].innerHTML);
+									for(var k=0; k<this.tbl.rows.length; k++){
+										var row2=this.tbl.rows[k];
+										var name2=row2.cells[0].innerHTML;
+										if(name2==secondVar){
+											var content2=parseFloat(row2.cells[1].innerHTML);
+											if(content2<content1){
+												row.cells[1].style.backgroundColor = ERROR_BCOLOR;
+												row2.cells[1].style.backgroundColor = ERROR_BCOLOR;
+											}
+										}		
+									}
+								}
+							}	
+							i++;						
+						}
+						else{
+							break;
+						}
+						}
+				 	}
+						
+					
+                     
+                        
+                    /**
+                     * @brief See HtkComponent.getValue.
+                     */
+                    getValue() {
+                       return this.value;
+                    }
+
+                    /**
+                     * @brief See HtkComponent.setReadOnly.
+                     */
+                    setReadOnly (isReadOnly) {
+                        super.setReadOnly(isReadOnly);
+                    }
+                    
+                                    /** 
+                     * @brief See HtkComponent.setValue
+                     */
+                    setValue (elementsToSet, updateRemote=true) {
+                        if (elementsToSet.length > 0) {
+    						super.setValue(elementsToSet.slice(0), updateRemote);
+    						this.initialised=true;
+    					}
+                    }
+			
+					successFun(vars){
+					}
+					
+					errorFun(){
+					}
+			
+					monitor(){
+						parent.htkHelper.htkMainEditor.loadVariablesInfo("IFMIF_Text");
+						//parent.htkHelper.getVariablesInfo("IFMIF_Text", "[\"DB@BT@TIME\"]", this.successFun, this.errorFun);
+						this.intervalID = setInterval(this.monitor, 5000);
+					}
+					
+					stopmonitor(){
+						clearInterval(this.intervalID);
+					}					
+					
+                    /** 
+                     * @brief See HtkComponent.setInitialValue
+                     */
+                    setInitialValue (initialValueToSet) {
+                        if (initialValueToSet.length > 0) {
+                            super.setInitialValue(initialValueToSet.slice(0));
+                        }
+                    }
+
+                    /** 
+                     * @brief See HtkComponent.setPlantValue
+                     */
+                    setPlantValue (plantValueToSet) {
+                        if (plantValueToSet.length > 0) {
+                            super.setPlantValue(plantValueToSet.slice(0));
+                        }
+                    }
+ 
+                    /** 
+                     * @brief See HtkComponent.setReferenceValue
+                     */
+                    setReferenceValue (referenceValueToSet) {
+                        if (referenceValueToSet.length > 0) {
+                            super.setReferenceValue(referenceValueToSet.slice(0));
+                        }
+                    }
+ 
+	                
+	                checkAllValues(){
+	                }
+	                
+				}
+                /**
+                 * @brief Registers the element.
+                 */ 
+                document.registerElement("htk-ifmif-text", {
+                    prototype: HtkIfmifText.prototype,
+                });
+            })(); 
+        </script>
+    </body>
+</html>

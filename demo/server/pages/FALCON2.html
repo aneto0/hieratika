@@ -1,0 +1,1230 @@
+
+<html>
+<head>
+<link rel="import" href="/libraries.html">
+<link rel="import" href="/htk-array-editor.html">
+<link rel="import" href="/htk-array-editor1.html">
+<link rel="import" href="/htk-component.html">
+<link rel="import" href="/htk-enum.html">
+<link rel="import" href="/htk-input.html">
+<link rel="import" href="/htk-checkbox.html">
+<link rel="import" href="/htk-matrix-dropmenu-editor.html">
+<link rel="import" href="/htk-matrix-editor.html">
+<link rel="import" href="/htk-library-button.html">
+<link rel="import" href="/htk-lock-button.html">
+<link rel='import' href='/htk-struct-browser.html'>
+<link rel="import" href="/htk-schedule-button.html">
+<link rel="import" href="/htk-enum.html">
+<link rel="import" href="/htk-falcon-opi.html">
+</head>
+<body>
+
+
+	<div class="tab">
+		<button class="tablinks" id="RU_Main">RU Main</button>
+		<button class="tablinks" id="RU_Alarms">RU Alarms</button>
+		<button class="tablinks" id="RU_CWS_Alarms">RU CWS Alarms</button>
+		<button class="tablinks" id="BPS">BSP</button>
+		<button class="tablinks" id="CPS">CPS</button>
+		<button class="tablinks" id="GCPS">GCPS</button>
+		<button class="tablinks" id="HVPS">HVPS</button>
+		<button class="tablinks" id="IPS1">IPS1</button>
+		<button class="tablinks" id="IPS2">IPS2</button>
+		<button class="tablinks" id="PMP1">PMP1</button>
+		<button class="tablinks" id="PMP2">PMP2</button>
+		<button class="tablinks" id="RFIL">RFIL</button>
+		<button class="tablinks" id="RSCM">RSCM</button>
+		<button class="tablinks" id="RSWP">RSWP</button>
+	</div>
+
+
+
+	<div id="RU_Main_tab" class="tabcontent">
+		<h3>RU Main</h3>
+		<p>RU Main Configuration</p>
+		<table>
+			<tr>
+				<td>Lock</td>
+				<td><htk-lock-button id='RU_MAIN@LOCK'></htk-lock-button></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td><h3>Pulse Configuration</h3></td>
+				<td></td>
+				<td><h3>SCM PS Configuration</h3></td>
+				<td></td>
+				<td><h3>Filament PS Configuration</h3></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>MHVPS Parameters</td>
+			</tr>
+			<tr>
+				<td>MHVPS Voltage</td>
+				<td><htk-input id='RU_MAIN@MHVPS_VOLTAGE'></htk-input></td>
+				<td>Heater On</td>
+				<td><htk-input id='RU_MAIN@SCM_HEATER_ON'></htk-input></td>
+				<td>Filament Current SP</td>
+				<td><htk-input id='RU_MAIN@FILAMENT_CURRENT_SP'></htk-input></td>
+			</tr>
+			<tr>
+				<td>MHVPS Total Voltage</td>
+				<td><htk-input id='RU_MAIN@TOTAL_VOLTAGE'></htk-input></td>
+				<td>SP Current</td>
+				<td><htk-input id='RU_MAIN@SCM_SP_CURRENT'></htk-input></td>
+				<td>Gyrotron Current SP</td>
+				<td><htk-input id='RU_MAIN@GYRO_CURRENT_SP'></htk-input></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>Pulse Length</td>
+			</tr>
+			<tr>
+				<td>Minutes</td>
+				<td><htk-input id='RU_MAIN@PULSE_MINUTES'></htk-input></td>
+				<td></td>
+				<td></td>
+				<td>Stabilization Mode</td>
+				<td><htk-input id='RU_MAIN@STABILIZATION_MODE'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Seconds</td>
+				<td><htk-input id='RU_MAIN@PULSE_SECONDS'></htk-input></td>
+				<td></td>
+				<td></td>
+				<td>Reset Errors</td>
+				<td><htk-input id='RU_MAIN@RESET_ERRORS'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Milliseconds</td>
+				<td><htk-input id='RU_MAIN@PULSE_MSECONDS'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Variable Body Voltage</td>
+				<td><htk-checkbox id='RU_MAIN@VARIABLE_BODY_VOLTAGE'></htk-checkbox></td>
+			</tr>
+		</table>
+	</div>
+
+
+	<div id="RU_Alarms_tab" class="tabcontent">
+		<h3>RU Alarms</h3>
+		<p>RU Alarms Configuration</p>
+		<table>
+			<tr>
+				<td>Lock</td>
+				<td><htk-lock-button id='RU_ALARMS@LOCK'></htk-lock-button></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>Russian Filament PS</td>
+				<td></td>
+				<td>Russian SCM PS</td>
+				<td></td>
+				<td>ION PUMP1 PS</td>
+			</tr>
+			<tr>
+				<td>Filament Current HHLL Threshold</td>
+				<td><htk-input id='RU_ALARMS@FIL_CUR_HHLL_THRES'></htk-input></td>
+				<td>Current SCM HHLL1 Threshold</td>
+				<td><htk-input id='RU_ALARMS@SCM_SCM_CUR_HHLL1_THRES'></htk-input></td>
+				<td>Current HW HHLL1 Threshold</td>
+				<td><htk-input id='RU_ALARMS@IPS1_CUR_HW_HHLL1_THRES'></htk-input></td>
+			</tr>
+
+			<tr>
+				<td></td>
+				<td></td>
+				<td>Current SCM HHLL2 Threshold</td>
+				<td><htk-input id='RU_ALARMS@SCM_SCM_CUR_HHLL2_THRES'></htk-input></td>
+				<td>Current HW HHLL2 Threshold</td>
+				<td><htk-input id='RU_ALARMS@IPS1_CUR_HW_HHLL2_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			
+			<tr>
+				<td></td>
+				<td></td>
+				<td>Current LEM HHLL1 Threshold</td>
+				<td><htk-input id='RU_ALARMS@SCM_LEM_CUR_HHLL1_THRES'></htk-input></td>
+				<td>Current Serial HHLL1 Threshold</td>
+				<td><htk-input id='RU_ALARMS@IPS1_SERIAL_CUR_HHLL1_THRES'></htk-input></td>
+			</tr>
+
+			<tr>
+				<td></td>
+				<td></td>
+				<td>Current LEM HHLL2 Threshold</td>
+				<td><htk-input id='RU_ALARMS@SCM_LEM_CUR_HHLL2_THRES'></htk-input></td>
+				<td>Current Serial HHLL2 Threshold</td>
+				<td><htk-input id='RU_ALARMS@IPS1_SERIAL_CUR_HHLL2_THRES'></htk-input></td>
+			</tr>
+
+			<tr>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+
+			<tr>
+				<td></td>
+				<td></td>
+				<td>Current Serial HHLL1 Threshold</td>
+				<td><htk-input id='RU_ALARMS@SCM_SERIAL_CUR_HHLL1_THRES'></htk-input></td>
+				<td>Voltage Serial HHLL Threshold</td>
+				<td><htk-input id='RU_ALARMS@IPS1_SERIAL_VOL_HHLL_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td></td>
+				<td>Current Serial HHLL2 Threshold</td>
+				<td><htk-input id='RU_ALARMS@SCM_SERIAL_CUR_HHLL2_THRES'></htk-input></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+
+
+
+
+			<tr>
+				<td></td>
+				<td>Collector PS</td>
+			</tr>
+			<tr>
+				<td>Current HW HHLL1 Threshold</td>
+				<td><htk-input id='RU_ALARMS@COLL_CUR_HW_HHLL1_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Current HW HHLL2 Threshold</td>
+				<td><htk-input id='RU_ALARMS@COLL_CUR_HW_HHLL2_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>--------</td>
+			</tr>
+			<tr>
+				<td>Current Serial HHLL1 Threshold</td>
+				<td><htk-input id='RU_ALARMS@COLL_SERIAL_CUR_HHLL1_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Current Serial HHLL2 Threshold</td>
+				<td><htk-input id='RU_ALARMS@COLL_SERIAL_CUR_HHLL2_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>--------</td>
+			</tr>
+
+
+
+			<tr>
+				<td></td>
+				<td>GNU Coil PS</td>
+			</tr>
+			<tr>
+				<td>Current HW HHLL1 Threshold</td>
+				<td><htk-input id='RU_ALARMS@GC_CUR_HW_HHLL1_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Current HW HHLL2 Threshold</td>
+				<td><htk-input id='RU_ALARMS@GC_CUR_HW_HHLL2_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Current Serial HHLL1 Threshold</td>
+				<td><htk-input id='RU_ALARMS@GC_CUR_SER_HHLL1_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Current Serial HHLL2 Threshold</td>
+				<td><htk-input id='RU_ALARMS@GC_CUR_SER_HHLL2_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>--------</td>
+			</tr>
+
+
+			<tr>
+				<td></td>
+				<td>Vacuum Pumping MOU</td>
+			</tr>
+			<tr>
+				<td>Pres Load HW HHLL Threshold</td>
+				<td><htk-input id='RU_ALARMS@VPUMP_PRES_LOAD_HW_HHLL_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>--------</td>
+			</tr>
+
+		</table>
+	</div>
+
+
+	<div id="RU_CWS_Alarms_tab" class="tabcontent">
+		<h3>RU Alarms</h3>
+		<p>RU Alarms Configuration</p>
+		<table>
+			<tr>
+				<td>Lock</td>
+				<td><htk-lock-button id='RU_CWS_ALARMS@LOCK'></htk-lock-button></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>Collector</td>
+			</tr>
+			<tr>
+				<td>Temp In Coll HHLL Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@COL_TEMP_IN_HHLL_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td>DTemp Coll HHLL Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@COL_DTEMP_HHLL_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Fl Coll HHLL1 Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@COL_FL_HHLL1_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Fl Coll HHLL2 Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@COL_FL_HHLL2_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>--------</td>
+			</tr>
+
+			<tr>
+				<td></td>
+				<td>Load</td>
+			</tr>
+			<tr>
+				<td>Temp In LP HHLL Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@LOAD_TEMP_IN_HHLL_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td>DTemp LP HHLL Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@LOAD_DTEMP_HHLL_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Fl LP HHLL1 Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@LOAD_FL_LP_HHLL1_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Fl LP HHLL2 Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@LOAD_FL_LP_HHLL2_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>--------</td>
+			</tr>
+
+
+			<tr>
+				<td></td>
+				<td>BP1 Body 2</td>
+			</tr>
+			<tr>
+				<td>Temp In BP1 HHLL Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@BP1_TEMP_IN_HHLL_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Fl BP1 HHLL1 Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@BP1_FL_HHLL1_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Fl BP1 HHLL2 Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@BP1_FL_HHLL2_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>--------</td>
+			</tr>
+
+			<tr>
+				<td></td>
+				<td>BP4 Anode</td>
+			</tr>
+			<tr>
+				<td>Temp In BP4 HHLL Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@BP4_TEMP_IN_HHLL_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Fl BP4 HHLL1 Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@BP4_FL_HHLL1_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Fl BP4 HHLL2 Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@BP4_FL_HHLL2_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>--------</td>
+			</tr>
+
+			<tr>
+				<td></td>
+				<td>BP5 Main Window</td>
+			</tr>
+			<tr>
+				<td>Temp In BP5 HHLL Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@BP5_TEMP_IN_HHLL_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td>DTemp In BP5 HHLL Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@BP5_DTEMP_IN_HHLL_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Fl BP5 HHLL1 Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@BP5_FL_HHLL1_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Fl BP5 HHLL2 Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@BP5_FL_HHLL2_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>--------</td>
+			</tr>
+
+			<tr>
+				<td></td>
+				<td>BP6 Last Mirror</td>
+			</tr>
+			<tr>
+				<td>Fl BP6 HHLL1 Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@BP6_FL_HHLL1_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Fl BP6 HHLL2 Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@BP6_FL_HHLL2_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>--------</td>
+			</tr>
+
+			<tr>
+				<td></td>
+				<td>BP8 MOU Mirrors</td>
+			</tr>
+			<tr>
+				<td>Temp In BP8 HHLL Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@BP8_TEMP_IN_HHLL_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Fl BP8 HHLL1 Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@BP8_FL_HHLL1_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Fl BP8 HHLL2 Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@BP8_FL_HHLL2_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>--------</td>
+			</tr>
+
+
+			<tr>
+				<td></td>
+				<td>BP10 Relief Window</td>
+			</tr>
+			<tr>
+				<td>Temp In BP10 HHLL Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@BP10_TEMP_IN_HHLL_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Fl BP10 HHLL1 Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@BP10_FL_HHLL1_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Fl BP10 HHLL2 Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@BP10_FL_HHLL2_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>--------</td>
+			</tr>
+
+			<tr>
+				<td></td>
+				<td>BP11 MOU Absorber</td>
+			</tr>
+			<tr>
+				<td>Temp In BP11 HHLL Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@BP11_TEMP_IN_HHLL_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Fl BP11 HHLL1 Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@BP11_FL_HHLL1_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Fl BP11 HHLL2 Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@BP11_FL_HHLL2_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>--------</td>
+			</tr>
+
+			<tr>
+				<td></td>
+				<td>HP4 Oil Tank</td>
+			</tr>
+			<tr>
+				<td>Temp In HP4 HHLL Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@HP4_TEMP_IN_HHLL_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Fl HP4 HHLL1 Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@HP4_FL_HHLL1_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Fl HP4 HHLL2 Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@HP4_FL_HHLL2_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>--------</td>
+			</tr>
+
+
+			<tr>
+				<td></td>
+				<td>HP8 Cavity</td>
+			</tr>
+			<tr>
+				<td>Temp In HP8 HHLL Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@HP8_TEMP_IN_HHLL_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Fl HP8 HHLL1 Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@HP8_FL_HHLL1_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Fl HP8 HHLL2 Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@HP8_FL_HHLL2_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>--------</td>
+			</tr>
+
+			<tr>
+				<td></td>
+				<td>HP9 Relief Absorber</td>
+			</tr>
+			<tr>
+				<td>Temp In HP9 HHLL Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@HP9_TEMP_IN_HHLL_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Fl HP9 HHLL1 Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@HP9_FL_HHLL1_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Fl HP9 HHLL2 Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@HP9_FL_HHLL2_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>--------</td>
+			</tr>
+
+
+			<tr>
+				<td></td>
+				<td>HP10 MOU Ports</td>
+			</tr>
+			<tr>
+				<td>Temp In HP10 HHLL Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@HP10_TEMP_IN_HHLL_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Fl HP10 HHLL1 Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@HP10_FL_HHLL1_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Fl HP10 HHLL2 Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@HP10_FL_HHLL2_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>--------</td>
+			</tr>
+
+			<tr>
+				<td></td>
+				<td>HP11 MOU Body 1</td>
+			</tr>
+			<tr>
+				<td>Temp In HP11 HHLL Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@HP11_TEMP_IN_HHLL_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Fl HP11 HHLL1 Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@HP11_FL_HHLL1_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Fl HP11 HHLL2 Threshold</td>
+				<td><htk-input id='RU_CWS_ALARMS@HP11_FL_HHLL2_THRES'></htk-input></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>--------</td>
+			</tr>
+
+
+		</table>
+	</div>
+
+
+
+
+
+	<div id="BPS_tab" class="tabcontent">
+		<h3>BSP</h3>
+		<p>BSP Configuration</p>
+
+		<table>
+			<tr>
+				<td>Lock</td>
+				<td><htk-lock-button id='BPS@LOCK'></htk-lock-button></td>
+			</tr>
+			<tr>
+				<td>Mod Depth</td>
+				<td><htk-input id='BPS@MOD_DEPTH_0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Mod Frequency</td>
+				<td><htk-input id='BPS@MOD_FREQ_R0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Mod Length</td>
+				<td><htk-input id='BPS@MOD_LENGTH0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Mod Start</td>
+				<td><htk-input id='BPS@MOD_STARTI0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Pulse Length</td>
+				<td><htk-input id='BPS@PULSE_LENG0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Pulse Number</td>
+				<td><htk-input id='BPS@PULSE_NUMB0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Ramp Down Time</td>
+				<td><htk-input id='BPS@RAMP_DOWN_0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Ramp Up Time 1</td>
+				<td><htk-input id='BPS@RAMP_UP_TI0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Ramp Up Time 2</td>
+				<td><htk-input id='BPS@RAMP_UP_TI1'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Ramp Up Time 3</td>
+				<td><htk-input id='BPS@RAMP_UP_TI2'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Ramp Up Time</td>
+				<td><htk-input id='BPS@RAMP_UP_TI3'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Time 1 Read</td>
+				<td><htk-input id='BPS@TIME_1_REA0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Time 2 Read</td>
+				<td><htk-input id='BPS@TIME_2_REA0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Time 3 Read</td>
+				<td><htk-input id='BPS@TIME_3_REA0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Voltage Level 1 Read</td>
+				<td><htk-input id='BPS@VOLTAGE_LE0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Voltage Level 2 Read</td>
+				<td><htk-input id='BPS@VOLTAGE_LE1'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Voltage Level 3 Read</td>
+				<td><htk-input id='BPS@VOLTAGE_LE2'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Voltage Levels Read</td>
+				<td><htk-input id='BPS@VOLTAGE_LE3'></htk-input></td>
+			</tr>
+		</table>
+
+	</div>
+
+	<div id="CPS_tab" class="tabcontent">
+		<h3>CPS</h3>
+		<p>CPS Configuration</p>
+
+		<table>
+			<tr>
+				<td>Lock</td>
+				<td><htk-lock-button id='CPS@LOCK'></htk-lock-button></td>
+			</tr>
+			<tr>
+				<td>Autorestart</td>
+				<td><htk-input id='CPS@AUTORESTAR0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Foldback Arm</td>
+				<td><htk-input id='CPS@FOLDBACK_A0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Foldback Cancel</td>
+				<td><htk-input id='CPS@FOLDBACK_C0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Foldback Release</td>
+				<td><htk-input id='CPS@FOLDBACK_R0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Overvoltage Lim Read</td>
+				<td><htk-input id='CPS@OVERVOLTAG0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>SP Current Read</td>
+				<td><htk-input id='CPS@SP_CURRENT0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>SP Voltage Read</td>
+				<td><htk-input id='CPS@SP_VOLTAGE0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Undervoltage Lim Read</td>
+				<td><htk-input id='CPS@UNDERVOLTA0'></htk-input></td>
+			</tr>
+
+		</table>
+	</div>
+
+	<div id="GCPS_tab" class="tabcontent">
+		<h3>GCPS</h3>
+		<p>GCPS Configuration</p>
+
+		<table>
+			<tr>
+				<td>Lock</td>
+				<td><htk-lock-button id='GCPS@LOCK'></htk-lock-button></td>
+			</tr>
+			<tr>
+				<td>Autorestart</td>
+				<td><htk-input id='GCPS@AUTORESTAR1'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Foldback Arm</td>
+				<td><htk-input id='GCPS@FOLDBACK_A1'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Foldback Cancel</td>
+				<td><htk-input id='GCPS@FOLDBACK_C1'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Foldback Release</td>
+				<td><htk-input id='GCPS@FOLDBACK_R1'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Overvoltage Lim Read</td>
+				<td><htk-input id='GCPS@OVERVOLTAG1'></htk-input></td>
+			</tr>
+			<tr>
+				<td>SP Current Read</td>
+				<td><htk-input id='GCPS@SP_CURRENT7'></htk-input></td>
+			</tr>
+			<tr>
+				<td>SP Voltage Read</td>
+				<td><htk-input id='GCPS@SP_VOLTAGE1'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Undervoltage Lim Read</td>
+				<td><htk-input id='GCPS@UNDERVOLTA1'></htk-input></td>
+			</tr>
+
+		</table>
+	</div>
+
+	<div id="HVPS_tab" class="tabcontent">
+		<h3>HVPS</h3>
+		<p>HVPS Configuration</p>
+
+		<table>
+			<tr>
+				<td>Lock</td>
+				<td><htk-lock-button id='HVPS@LOCK'></htk-lock-button></td>
+			</tr>
+			<tr>
+				<td>Pulse Duration</td>
+				<td><htk-input id='HVPS@PULSE_DURA0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Pulse Number</td>
+				<td><htk-input id='HVPS@PULSE_NUMB1'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Pulse Units</td>
+				<td><htk-input id='HVPS@PULSE_UNIT0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Ramp Down Time</td>
+				<td><htk-input id='HVPS@RAMP_DOWN_1'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Ramp Up Time</td>
+				<td><htk-input id='HVPS@RAMP_UP_TI4'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Time Bet Pulses</td>
+				<td><htk-input id='HVPS@TIME_BET_P0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Voltage Level</td>
+				<td><htk-input id='HVPS@VOLTAGE_LE4'></htk-input></td>
+			</tr>
+		</table>
+	</div>
+
+
+	<div id="IPS1_tab" class="tabcontent">
+		<h3>IPS1</h3>
+		<p>IPS1 Configuration</p>
+
+		<table>
+			<tr>
+				<td>Lock</td>
+				<td><htk-lock-button id='IPS1@LOCK'></htk-lock-button></td>
+			</tr>
+			<tr>
+				<td>Output Voltage 3KV</td>
+				<td><htk-input id='IPS1@OUTPUT_VOL0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Output Voltage 5KV</td>
+				<td><htk-input id='IPS1@OUTPUT_VOL1'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Output Voltage 7KV</td>
+				<td><htk-input id='IPS1@OUTPUT_VOL2'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Protection Mode</td>
+				<td><htk-input id='IPS1@PROTECTION0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Start Mode</td>
+				<td><htk-input id='IPS1@START_MODE0'></htk-input></td>
+			</tr>
+		</table>
+	</div>
+
+	<div id="IPS2_tab" class="tabcontent">
+		<h3>IPS2</h3>
+		<p>IPS2 Configuration</p>
+
+
+		<table>
+			<tr>
+				<td>Lock</td>
+				<td><htk-lock-button id='IPS2@LOCK'></htk-lock-button></td>
+			</tr>
+			<tr>
+				<td>Output Voltage 3KV</td>
+				<td><htk-input id='IPS2@OUTPUT_VOL3'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Output Voltage 5KV</td>
+				<td><htk-input id='IPS2@OUTPUT_VOL4'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Output Voltage 7KV</td>
+				<td><htk-input id='IPS2@OUTPUT_VOL5'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Protection Mode</td>
+				<td><htk-input id='IPS2@PROTECTION1'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Start Mode</td>
+				<td><htk-input id='IPS2@START_MODE1'></htk-input></td>
+			</tr>
+		</table>
+	</div>
+
+
+	<div id="PMP1_tab" class="tabcontent">
+		<h3>PMP1</h3>
+		<p>PMP1 Configuration</p>
+
+
+		<table>
+			<tr>
+				<td>Lock</td>
+				<td><htk-lock-button id='PMP1@LOCK'></htk-lock-button></td>
+			</tr>
+			<tr>
+				<td>PBR260 Calib</td>
+				<td><htk-input id='PMP1@PBR260_CAL0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>PBR260 On Off</td>
+				<td><htk-input id='PMP1@PBR260_ON_0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>PBR260 SP LimH</td>
+				<td><htk-input id='PMP1@PBR260_SP_0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>PBR260 SP LimL</td>
+				<td><htk-input id='PMP1@PBR260_SP_1'></htk-input></td>
+			</tr>
+			<tr>
+				<td>PBR260 UnderRange</td>
+				<td><htk-input id='PMP1@PBR260_UND0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>TPR280 Calib</td>
+				<td><htk-input id='PMP1@TPR280_CAL0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>TPR280 On Off</td>
+				<td><htk-input id='PMP1@TPR280_ON_0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>TPR280 SP LimH</td>
+				<td><htk-input id='PMP1@TPR280_SP_0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>TPR280 SP LimL</td>
+				<td><htk-input id='PMP1@TPR280_SP_1'></htk-input></td>
+			</tr>
+			<tr>
+				<td>TPR280 UnderRange</td>
+				<td><htk-input id='PMP1@TPR280_UND0'></htk-input></td>
+			</tr>
+		</table>
+	</div>
+
+
+	<div id="PMP2_tab" class="tabcontent">
+		<h3>PMP2</h3>
+		<p>PMP2 Configuration</p>
+
+
+		<table>
+			<tr>
+				<td>Lock</td>
+				<td><htk-lock-button id='PMP2@LOCK'></htk-lock-button></td>
+			</tr>
+			<tr>
+				<td>PBR260 Calib</td>
+				<td><htk-input id='PMP2@PBR260_CAL1'></htk-input></td>
+			</tr>
+			<tr>
+				<td>PBR260 On Off</td>
+				<td><htk-input id='PMP2@PBR260_ON_1'></htk-input></td>
+			</tr>
+			<tr>
+				<td>PBR260 SP LimH</td>
+				<td><htk-input id='PMP2@PBR260_SP_2'></htk-input></td>
+			</tr>
+			<tr>
+				<td>PBR260 SP LimL</td>
+				<td><htk-input id='PMP2@PBR260_SP_3'></htk-input></td>
+			</tr>
+			<tr>
+				<td>PBR260 UnderRange</td>
+				<td><htk-input id='PMP2@PBR260_UND1'></htk-input></td>
+			</tr>
+			<tr>
+				<td>TPR280 Calib</td>
+				<td><htk-input id='PMP2@TPR280_CAL1'></htk-input></td>
+			</tr>
+			<tr>
+				<td>TPR280 On Off</td>
+				<td><htk-input id='PMP2@TPR280_ON_1'></htk-input></td>
+			</tr>
+			<tr>
+				<td>TPR280 SP LimH</td>
+				<td><htk-input id='PMP2@TPR280_SP_2'></htk-input></td>
+			</tr>
+			<tr>
+				<td>TPR280 SP LimL</td>
+				<td><htk-input id='PMP2@TPR280_SP_3'></htk-input></td>
+			</tr>
+			<tr>
+				<td>TPR280 UnderRange</td>
+				<td><htk-input id='PMP2@TPR280_UND1'></htk-input></td>
+			</tr>
+		</table>
+	</div>
+
+
+	<div id="RFIL_tab" class="tabcontent">
+		<h3>RFIL</h3>
+		<p>RFIL Configuration</p>
+
+
+		<table>
+			<tr>
+				<td>Lock</td>
+				<td><htk-lock-button id='RFIL@LOCK'></htk-lock-button></td>
+			</tr>
+			<tr>
+				<td>Err Reset</td>
+				<td><htk-input id='RFIL@ERR_RESET_0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>IF Max Current</td>
+				<td><htk-input id='RFIL@IF_MAX_CUR0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>IF SP Current</td>
+				<td><htk-input id='RFIL@IF_SP_CURR0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>IG SP Current</td>
+				<td><htk-input id='RFIL@IG_SP_CURR0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Stabilization</td>
+				<td><htk-input id='RFIL@STABILIZAT0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Sweep Rate Down</td>
+				<td><htk-input id='RFIL@SWEEP_RATE0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Sweep Rate Up</td>
+				<td><htk-input id='RFIL@SWEEP_RATE1'></htk-input></td>
+			</tr>
+		</table>
+	</div>
+
+
+	<div id="RSCM_tab" class="tabcontent">
+		<h3>RFIL</h3>
+		<p>RFIL Configuration</p>
+
+
+		<table>
+			<tr>
+				<td>Lock</td>
+				<td><htk-lock-button id='RSCM@LOCK'></htk-lock-button></td>
+			</tr>
+			<tr>
+				<td>Heater On</td>
+				<td><htk-input id='RSCM@HEATER_ON_0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>SP Current</td>
+				<td><htk-input id='RSCM@SP_CURRENT8'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Sweep Rate</td>
+				<td><htk-input id='RSCM@SWEEP_RATE2'></htk-input></td>
+			</tr>
+		</table>
+	</div>
+
+
+
+	<div id="RSWP_tab" class="tabcontent">
+		<h3>RFIL</h3>
+		<p>RFIL Configuration</p>
+
+
+		<table>
+			<tr>
+				<td>Lock</td>
+				<td><htk-lock-button id='RSWP@LOCK'></htk-lock-button></td>
+			</tr>
+			<tr>
+				<td>Threshold H</td>
+				<td><htk-input id='RSWP@THRESHOLD_0'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Threshold L</td>
+				<td><htk-input id='RSWP@THRESHOLD_1'></htk-input></td>
+			</tr>
+			<tr>
+				<td>Wave Period</td>
+				<td><htk-input id='RSWP@WAVE_PERIO1'></htk-input></td>
+			</tr>
+		</table>
+	</div>
+
+
+	<table>
+		<tr>
+
+
+
+
+
+			<td><htk-falcon-opi id='FALCON@FALCON' data-tab_0='RU_Main'
+					data-tab_1='RU_Alarms' data-tab_2='RU_CWS_Alarms' data-tab_3='BPS'
+					data-tab_4='CPS' data-tab_5='GCPS' data-tab_6='HVPS'
+					data-tab_7='IPS1' data-tab_8='IPS2' data-tab_9='PMP1'
+					data-tab_10='PMP2' data-tab_11='RFIL' data-tab_12='RSCM'
+					data-tab_13='RSWP' 
+					data-ru_main_0='RU_MAIN@MHVPS_VOLTAGE'
+					data-ru_main_1='RU_MAIN@TOTAL_VOLTAGE'
+					data-ru_main_2='RU_MAIN@PULSE_MINUTES'
+					data-ru_main_3='RU_MAIN@PULSE_SECONDS'
+					data-ru_main_4='RU_MAIN@PULSE_MSECONDS'
+					data-ru_main_5='RU_MAIN@VARIABLE_BODY_VOLTAGE'
+					data-ru_main_6='RU_MAIN@SCM_HEATER_ON'
+					data-ru_main_7='RU_MAIN@SCM_SP_CURRENT'
+					data-ru_main_8='RU_MAIN@FILAMENT_CURRENT_SP'
+					data-ru_main_9='RU_MAIN@GYRO_CURRENT_SP'
+					data-ru_main_10='RU_MAIN@STABILIZATION_MODE'
+					data-ru_main_11='RU_MAIN@RESET_ERRORS'
+					data-ru_alarms_0='RU_ALARMS@FIL_CUR_HHLL_THRES'
+					data-ru_alarms_1='RU_ALARMS@SCM_SCM_CUR_HHLL1_THRES'
+					data-ru_alarms_2='RU_ALARMS@SCM_SCM_CUR_HHLL2_THRES'
+					data-ru_alarms_3='RU_ALARMS@SCM_LEM_CUR_HHLL1_THRES'
+					data-ru_alarms_4='RU_ALARMS@SCM_LEM_CUR_HHLL2_THRES'
+					data-ru_alarms_5='RU_ALARMS@SCM_SERIAL_CUR_HHLL1_THRES'
+					data-ru_alarms_6='RU_ALARMS@SCM_SERIAL_CUR_HHLL2_THRES'
+					data-ru_alarms_7='RU_ALARMS@COLL_CUR_HW_HHLL1_THRES'
+					data-ru_alarms_8='RU_ALARMS@COLL_CUR_HW_HHLL2_THRES'
+					data-ru_alarms_9='RU_ALARMS@COLL_SERIAL_CUR_HHLL1_THRES'
+					data-ru_alarms_10='RU_ALARMS@COLL_SERIAL_CUR_HHLL2_THRES'
+					data-ru_alarms_11='RU_ALARMS@IPS1_CUR_HW_HHLL1_THRES'
+					data-ru_alarms_12='RU_ALARMS@IPS1_CUR_HW_HHLL2_THRES'
+					data-ru_alarms_13='RU_ALARMS@IPS1_SERIAL_CUR_HHLL1_THRES'
+					data-ru_alarms_14='RU_ALARMS@IPS1_SERIAL_CUR_HHLL2_THRES'
+					data-ru_alarms_15='RU_ALARMS@IPS1_SERIAL_VOL_HHLL_THRES'
+					data-ru_alarms_16='RU_ALARMS@GC_CUR_HW_HHLL1_THRES'
+					data-ru_alarms_17='RU_ALARMS@GC_CUR_HW_HHLL2_THRES'
+					data-ru_alarms_18='RU_ALARMS@GC_CUR_SER_HHLL1_THRES'
+					data-ru_alarms_19='RU_ALARMS@GC_CUR_SER_HHLL2_THRES'
+					data-ru_alarms_20='RU_ALARMS@VPUMP_PRES_LOAD_HW_HHLL_THRES'
+					data-ru_cws_alarms_0='RU_CWS_ALARMS@COL_TEMP_IN_HHLL_THRES'
+					data-ru_cws_alarms_1='RU_CWS_ALARMS@COL_DTEMP_HHLL_THRES'
+					data-ru_cws_alarms_2='RU_CWS_ALARMS@COL_FL_HHLL1_THRES'
+					data-ru_cws_alarms_3='RU_CWS_ALARMS@COL_FL_HHLL2_THRES'
+					data-ru_cws_alarms_4='RU_CWS_ALARMS@LOAD_TEMP_IN_HHLL_THRES'
+					data-ru_cws_alarms_5='RU_CWS_ALARMS@LOAD_DTEMP_HHLL_THRES'
+					data-ru_cws_alarms_6='RU_CWS_ALARMS@LOAD_FL_LP_HHLL1_THRES'
+					data-ru_cws_alarms_7='RU_CWS_ALARMS@LOAD_FL_LP_HHLL2_THRES'
+					data-ru_cws_alarms_8='RU_CWS_ALARMS@BP1_TEMP_IN_HHLL_THRES'
+					data-ru_cws_alarms_9='RU_CWS_ALARMS@BP1_FL_HHLL1_THRES'
+					data-ru_cws_alarms_10='RU_CWS_ALARMS@BP1_FL_HHLL2_THRES'
+					data-ru_cws_alarms_11='RU_CWS_ALARMS@BP4_TEMP_IN_HHLL_THRES'
+					data-ru_cws_alarms_12='RU_CWS_ALARMS@BP4_FL_HHLL1_THRES'
+					data-ru_cws_alarms_13='RU_CWS_ALARMS@BP4_FL_HHLL2_THRES'
+					data-ru_cws_alarms_14='RU_CWS_ALARMS@BP5_TEMP_IN_HHLL_THRES'
+					data-ru_cws_alarms_15='RU_CWS_ALARMS@BP5_DTEMP_IN_HHLL_THRES'
+					data-ru_cws_alarms_16='RU_CWS_ALARMS@BP5_FL_HHLL1_THRES'
+					data-ru_cws_alarms_17='RU_CWS_ALARMS@BP5_FL_HHLL2_THRES'
+					data-ru_cws_alarms_18='RU_CWS_ALARMS@BP6_FL_HHLL1_THRES'
+					data-ru_cws_alarms_19='RU_CWS_ALARMS@BP6_FL_HHLL2_THRES'
+					data-ru_cws_alarms_20='RU_CWS_ALARMS@BP8_TEMP_IN_HHLL_THRES'
+					data-ru_cws_alarms_21='RU_CWS_ALARMS@BP8_FL_HHLL1_THRES'
+					data-ru_cws_alarms_22='RU_CWS_ALARMS@BP8_FL_HHLL2_THRES'
+					data-ru_cws_alarms_23='RU_CWS_ALARMS@BP10_TEMP_IN_HHLL_THRES'
+					data-ru_cws_alarms_24='RU_CWS_ALARMS@BP10_FL_HHLL1_THRES'
+					data-ru_cws_alarms_25='RU_CWS_ALARMS@BP10_FL_HHLL2_THRES'
+					data-ru_cws_alarms_26='RU_CWS_ALARMS@BP11_TEMP_IN_HHLL_THRES'
+					data-ru_cws_alarms_27='RU_CWS_ALARMS@BP11_FL_HHLL1_THRES'
+					data-ru_cws_alarms_28='RU_CWS_ALARMS@BP11_FL_HHLL2_THRES'
+					data-ru_cws_alarms_29='RU_CWS_ALARMS@HP4_TEMP_IN_HHLL_THRES'
+					data-ru_cws_alarms_30='RU_CWS_ALARMS@HP4_FL_HHLL1_THRES'
+					data-ru_cws_alarms_31='RU_CWS_ALARMS@HP4_FL_HHLL2_THRES'
+					data-ru_cws_alarms_32='RU_CWS_ALARMS@HP8_TEMP_IN_HHLL_THRES'
+					data-ru_cws_alarms_33='RU_CWS_ALARMS@HP8_FL_HHLL1_THRES'
+					data-ru_cws_alarms_34='RU_CWS_ALARMS@HP8_FL_HHLL2_THRES'
+					data-ru_cws_alarms_35='RU_CWS_ALARMS@HP9_TEMP_IN_HHLL_THRES'
+					data-ru_cws_alarms_36='RU_CWS_ALARMS@HP9_FL_HHLL1_THRES'
+					data-ru_cws_alarms_37='RU_CWS_ALARMS@HP9_FL_HHLL2_THRES'
+					data-ru_cws_alarms_38='RU_CWS_ALARMS@HP10_TEMP_IN_HHLL_THRES'
+					data-ru_cws_alarms_39='RU_CWS_ALARMS@HP10_FL_HHLL1_THRES'
+					data-ru_cws_alarms_40='RU_CWS_ALARMS@HP10_FL_HHLL2_THRES'
+					data-ru_cws_alarms_41='RU_CWS_ALARMS@HP11_TEMP_IN_HHLL_THRES'
+					data-ru_cws_alarms_42='RU_CWS_ALARMS@HP11_FL_HHLL1_THRES'
+					data-ru_cws_alarms_43='RU_CWS_ALARMS@HP11_FL_HHLL2_THRES'
+					data-bps_0='BPS@MOD_DEPTH_0' data-bps_1='BPS@MOD_FREQ_R0'
+					data-bps_2='BPS@MOD_LENGTH0' data-bps_3='BPS@MOD_STARTI0'
+					data-bps_4='BPS@PULSE_LENG0' data-bps_5='BPS@PULSE_NUMB0'
+					data-bps_6='BPS@RAMP_DOWN_0' data-bps_7='BPS@RAMP_UP_TI0'
+					data-bps_8='BPS@RAMP_UP_TI1' data-bps_9='BPS@RAMP_UP_TI2'
+					data-bps_10='BPS@RAMP_UP_TI3' data-bps_11='BPS@TIME_1_REA0'
+					data-bps_12='BPS@TIME_2_REA0' data-bps_13='BPS@TIME_3_REA0'
+					data-bps_14='BPS@VOLTAGE_LE0' data-bps_15='BPS@VOLTAGE_LE1'
+					data-bps_16='BPS@VOLTAGE_LE2' data-bps_17='BPS@VOLTAGE_LE3'
+					data-cps_0='CPS@AUTORESTAR0' data-cps_1='CPS@FOLDBACK_A0'
+					data-cps_2='CPS@FOLDBACK_C0' data-cps_3='CPS@FOLDBACK_R0'
+					data-cps_4='CPS@OVERVOLTAG0' data-cps_5='CPS@SP_CURRENT0'
+					data-cps_6='CPS@SP_VOLTAGE0' data-cps_7='CPS@UNDERVOLTA0'
+					data-gcps_0='GCPS@AUTORESTAR1' data-gcps_1='GCPS@FOLDBACK_A1'
+					data-gcps_2='GCPS@FOLDBACK_C1' data-gcps_3='GCPS@FOLDBACK_R1'
+					data-gcps_4='GCPS@OVERVOLTAG1' data-gcps_5='GCPS@SP_CURRENT7'
+					data-gcps_6='GCPS@SP_VOLTAGE1' data-gcps_7='GCPS@UNDERVOLTA1'
+					data-hvps_0='HVPS@PULSE_DURA0' data-hvps_1='HVPS@PULSE_NUMB1'
+					data-hvps_2='HVPS@PULSE_UNIT0' data-hvps_3='HVPS@RAMP_DOWN_1'
+					data-hvps_4='HVPS@RAMP_UP_TI4' data-hvps_5='HVPS@TIME_BET_P0'
+					data-hvps_6='HVPS@VOLTAGE_LE4' data-ips1_0='IPS1@OUTPUT_VOL0'
+					data-ips1_1='IPS1@OUTPUT_VOL1' data-ips1_2='IPS1@OUTPUT_VOL2'
+					data-ips1_3='IPS1@PROTECTION0' data-ips1_4='IPS1@START_MODE0'
+					data-ips2_0='IPS2@OUTPUT_VOL3' data-ips2_1='IPS2@OUTPUT_VOL4'
+					data-ips2_2='IPS2@OUTPUT_VOL5' data-ips2_3='IPS2@PROTECTION1'
+					data-ips2_4='IPS2@START_MODE1' data-pmp1_0='PMP1@PBR260_CAL0'
+					data-pmp1_1='PMP1@PBR260_ON_0' data-pmp1_2='PMP1@PBR260_SP_0'
+					data-pmp1_3='PMP1@PBR260_SP_1' data-pmp1_4='PMP1@PBR260_UND0'
+					data-pmp1_5='PMP1@TPR280_CAL0' data-pmp1_6='PMP1@TPR280_ON_0'
+					data-pmp1_7='PMP1@TPR280_SP_0' data-pmp1_8='PMP1@TPR280_SP_1'
+					data-pmp1_9='PMP1@TPR280_UND0' data-pmp2_0='PMP2@PBR260_CAL1'
+					data-pmp2_1='PMP2@PBR260_ON_1' data-pmp2_2='PMP2@PBR260_SP_2'
+					data-pmp2_3='PMP2@PBR260_SP_3' data-pmp2_4='PMP2@PBR260_UND1'
+					data-pmp2_5='PMP2@TPR280_CAL1' data-pmp2_6='PMP2@TPR280_ON_1'
+					data-pmp2_7='PMP2@TPR280_SP_2' data-pmp2_8='PMP2@TPR280_SP_3'
+					data-pmp2_9='PMP2@TPR280_UND1' data-rfil_0='RFIL@ERR_RESET_0'
+					data-rfil_1='RFIL@IF_MAX_CUR0' data-rfil_2='RFIL@IF_SP_CURR0'
+					data-rfil_3='RFIL@IG_SP_CURR0' data-rfil_4='RFIL@STABILIZAT0'
+					data-rfil_5='RFIL@SWEEP_RATE0' data-rfil_6='RFIL@SWEEP_RATE1'
+					data-rscm_0='RSCM@HEATER_ON_0' data-rscm_1='RSCM@SP_CURRENT8'
+					data-rscm_2='RSCM@SWEEP_RATE2' data-rswp_0='RSWP@THRESHOLD_0'
+					data-rswp_1='RSWP@THRESHOLD_1' data-rswp_2='RSWP@WAVE_PERIO1'></htk-falcon-opi></td>
+		</tr>
+	</table>
+
+
+
+</body>
+</html>
+
+
+
+

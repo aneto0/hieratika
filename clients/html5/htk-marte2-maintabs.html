@@ -1,0 +1,221 @@
+<!-- 
+ date: 04/01/2018
+ author: Andre' Neto
+ 
+ copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
+ the Development of Fusion Energy ('Fusion for Energy').
+ Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ by the European Commission - subsequent versions of the EUPL (the "Licence")
+ You may not use this work except in compliance with the Licence.
+ You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+ 
+ warning: Unless required by applicable law or agreed to in writing, 
+ software distributed under the Licence is distributed on an "AS IS"
+ basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ or implied. See the Licence permissions and limitations under the Licence.
+-->
+
+<html>
+<head>
+<!-- Standard imports -->
+
+<!-- Project imports -->
+<link rel="import" href="/libraries.html">
+<link rel="import" href="/htk-component.html">
+<link rel="import" href="/htk-matrix-dropmenu-editor.html">
+<link rel="import" href="/htk-array-editor.html">
+<link rel="import" href="/htk-input">
+
+</head>
+<body>
+
+
+<!-- HTML5 component template-->
+	<template id="ttemplate">
+	</template>
+	<script>
+            //This is enclosure is required to protect the importDoc
+            (function () {
+                var importDoc = document.currentScript.ownerDocument; // importee
+
+                /**
+                 * @brief Array editor component.
+                 */
+                class Marte2MainTabs extends HtkComponent {
+
+                    /**
+                     * @brief Constructor. NOOP.
+                     */
+                    constructor () {
+                        super();
+                    }
+
+					domLoaded(){
+							this.firstLevTabs=[];
+							this.nFirstLevTabs=0;
+							var firstTabName;
+							while(1){
+            					var varName="data-tab_"+this.nFirstLevTabs;         			
+	                     		var varNameId=this.getAttribute(varName);
+	                     		var htkCompArray=document.getElementById(varNameId);
+    	                 		if((htkCompArray==null) || (htkCompArray==undefined)){
+    	                 			break;
+    	                 		}
+        	             		this.firstLevTabs.push(htkCompArray);
+								this.firstLevTabs[this.nFirstLevTabs].onclick = function(e) {
+									var caller =  e.target || e.srcElement;
+									var tabNameX=caller.id+"_tab";
+									this.openTab(tabNameX);
+								}.bind(this);	  
+								if(this.nFirstLevTabs==0){
+									firstTabName=varNameId;	
+								}      	             		
+        	             		this.nFirstLevTabs++;
+							}
+                     		this.openTab(firstTabName);
+
+					}
+
+					variablesInfoLoaded(){
+						
+					}
+
+					scheduleChanged(x){
+					}
+
+					openTab(tabName) {
+						var varNameId=this.getAttribute("data-fatherId");
+	                    var father=document.getElementById(varNameId);
+
+				        var i, tabcontent, tablinks;
+				        tabcontent = document.getElementsByClassName("tabcontent");
+				        for (i = 0; i < tabcontent.length; i++) {
+				        	if(tabcontent[i]!=father){
+				            	tabcontent[i].style.display = "none";
+				            }
+				        }
+				        tablinks = document.getElementsByClassName("tablinks");
+				        for (i = 0; i < tablinks.length; i++) {
+				            tablinks[i].className = tablinks[i].className.replace(" active", "");
+				        }
+    				    document.getElementById(tabName).style.display = "block";
+    					//evt.currentTarget.className += " active";
+					}
+
+					checkValue(){
+					}
+
+
+
+
+					checkBpsValues(){
+					}
+
+
+                   	chekMutualTdk(caller, valIndex){
+                   	}
+
+
+					checkTdkValues(val){
+					}
+
+
+					checkHvpsValues(){
+					}
+
+                    /**
+                     * @brief Checks if the component style should be updated due to a value change and executes all the validation functions.
+                     * @details For each element array, performs the same actions described in HtkAbstractInput.updateMatrix.
+                     * @param[in] userChanged true if the value update was triggered by a user action.
+                     */
+                    updateValue(userChanged, caller){
+                    	
+                    }                    
+
+
+
+
+                    /**
+                     * @brief See HtkComponent.refresh
+                     */
+                    refresh() {
+
+                    }
+                  
+                    /** 
+                     * @brief See HtkComponent.setValue
+                     */
+                    setValue (elementsToSet, updateRemote=true) {
+                        if (elementsToSet.length > 0) {
+    						super.setValue(elementsToSet.slice(0), updateRemote);
+    						this.initialised=true;
+    					}
+                    }
+
+                    /** 
+                     * @brief See HtkComponent.setInitialValue
+                     */
+                    setInitialValue (initialValueToSet) {
+                        if (initialValueToSet.length > 0) {
+                            super.setInitialValue(initialValueToSet.slice(0));
+                        }
+                    }
+
+                    /** 
+                     * @brief See HtkComponent.setPlantValue
+                     */
+                    setPlantValue (plantValueToSet) {
+                        if (plantValueToSet.length > 0) {
+                            super.setPlantValue(plantValueToSet.slice(0));
+                        }
+                    }
+ 
+                    /** 
+                     * @brief See HtkComponent.setReferenceValue
+                     */
+                    setReferenceValue (referenceValueToSet) {
+                        if (referenceValueToSet.length > 0) {
+                            super.setReferenceValue(referenceValueToSet.slice(0));
+                        }
+                    }
+ 
+                    /** 
+                     * @brief See HtkComponent.setReadOnly
+                     */
+                    setReadOnly (isReadOnly) {
+                        super.setReadOnly(isReadOnly);
+                    }
+
+                    /** 
+                     * @brief See HtkComponent.getTemplate
+                     */
+                    getTemplate() {
+                        var template = importDoc.querySelector("#ttemplate");
+                        return template;
+                    }
+                    
+                    
+                    assignmentNameDoneRefresh(){
+                    }
+                    
+
+                    /** 
+                     * @brief See HtkComponent.createdCallback
+                     */
+                    createdCallback () {
+                    	super.createdCallback();
+                    }
+                }
+               
+                /**
+                 * @brief Registers the element.
+                 */ 
+                document.registerElement("htk-marte2-maintabs", {
+                    prototype: Marte2MainTabs.prototype
+                });
+
+            })();
+        </script>
+
+</body>
+</html>

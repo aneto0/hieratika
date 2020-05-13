@@ -440,7 +440,11 @@
 		            	this.addUpdateValueListeners.push(comp);
 					}
 					
-					
+					setValidations (validationsToSet){
+            			for(var i in validationsToSet) {
+                			this.validations.push(new HtkValidationMath(validationsToSet[i]));
+            			}
+ 		        	}
 					
                     /** 
                      * @brief See HtkComponent.createdCallback
@@ -485,6 +489,9 @@
                     }
  
                 }
+ 
+
+ 
                
                 /**
                  * @brief Registers the element.

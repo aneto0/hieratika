@@ -19,37 +19,37 @@
                                 <alias>DBLMA</alias>
                                 <description>Double value matrix</description>
                                 <lock>DT@BT@LOCK2</lock>
-                                <values><value>[["PLC TRIP 1"], ["PLC TRIP 2"], ["STRAY 1"], ["STRAY 2"]]</value></values></record>
+                                <values><value>[["EU ARC INPUT"], ["RU ARC INPUT"], ["PLC TRIP 1"], ["PLC TRIP 2"], ["MODE LOSS"], ["STRAY 1"], ["STRAY 2"]]</value></values></record>
                             <record size="[1, 1]" xsi:type="recordDouble">
                                 <name>DBLMA1</name>
                                 <alias>DBLMA1</alias>
                                 <description>Double value matrix</description>
                                 <lock>DT@BT@LOCK2</lock>
-                                <values><value>[["MODULE 9 NI 9401 DIO-0"], ["MODULE 9 NI 9401 DIO-3"], ["MODULE 9 NI 9401 DIO-1"], ["MODULE 9 NI 9401 DIO-2"]]</value></values></record>
+                                <values><value>[["MODULE 9 NI 9401 DIO-0"], ["MODULE 9 NI 9401 DIO-3"], ["MODULE 9 NI 9401 DIO-1"], ["MODULE 9 NI 9401 DIO-2"], [null], [null], [null]]</value></values></record>
                             <record size="[1, 1]" xsi:type="recordDouble">
                                 <name>DBLMA2</name>
                                 <alias>DBLMA2</alias>
                                 <description>Double value matrix</description>
                                 <lock>DT@BT@LOCK2</lock>
-                                <values><value>[["Alarm signaled with 0"], ["Alarm signaled with 1"], ["Pulse Train"], ["Alarm signaled with 0"]]</value></values></record>
+                                <values><value>[["Alarm signaled with 1"], ["Alarm signaled with 1"], ["Alarm signaled with 1"], ["Alarm signaled with 1"], ["Alarm signaled with 1"], ["Alarm signaled with 1"], ["Alarm signaled with 1"]]</value></values></record>
                             <record size="[1]" xsi:type="recordDouble">
                                 <name>DBLMA3</name>
                                 <alias>DBLMA3</alias>
                                 <description>Double value matrix</description>
                                 <lock>DT@BT@LOCK2</lock>
-                                <values><value>[["PLC TRIP 1", "GND", "STRAY 2"], ["PLC TRIP 2", "PLC TRIP 2", "STRAY 1"], ["STRAY 1", "PLC TRIP 1", "PLC TRIP 2"]]</value></values></record>
+                                <values><value>[["GND", "GND", "GND", "GND", "GND", "GND", "GND", "GND", "EU ARC INPUT", "GND", "GND", "GND"], ["EU ARC INPUT", "EU ARC INPUT", "EU ARC INPUT", "EU ARC INPUT", "EU ARC INPUT", "EU ARC INPUT", "EU ARC INPUT", "EU ARC INPUT", "EU ARC INPUT", "EU ARC INPUT", "EU ARC INPUT", "EU ARC INPUT"], ["RU ARC INPUT", "RU ARC INPUT", "RU ARC INPUT", "RU ARC INPUT", "RU ARC INPUT", "RU ARC INPUT", "RU ARC INPUT", "RU ARC INPUT", "RU ARC INPUT", "RU ARC INPUT", "RU ARC INPUT", "RU ARC INPUT"], ["PLC TRIP 1", "PLC TRIP 1", "PLC TRIP 1", "PLC TRIP 1", "PLC TRIP 1", "PLC TRIP 1", "PLC TRIP 1", "PLC TRIP 1", "PLC TRIP 1", "PLC TRIP 1", "PLC TRIP 1", "PLC TRIP 1"], ["PLC TRIP 2", "EU ARC INPUT", "PLC TRIP 2", "PLC TRIP 2", "PLC TRIP 2", "PLC TRIP 2", "PLC TRIP 2", "PLC TRIP 2", "PLC TRIP 2", "PLC TRIP 2", "PLC TRIP 2", "PLC TRIP 2"], ["MODE LOSS", "MODE LOSS", "MODE LOSS", "MODE LOSS", "MODE LOSS", "MODE LOSS", "MODE LOSS", "MODE LOSS", "MODE LOSS", "MODE LOSS", "MODE LOSS", "MODE LOSS"], ["STRAY 1", "STRAY 1", "STRAY 1", "STRAY 1", "STRAY 1", "STRAY 1", "STRAY 1", "STRAY 1", "STRAY 1", "STRAY 1", "STRAY 1", "STRAY 1"], ["GND", "GND", "GND", "GND", "GND", "GND", "GND", "GND", "GND", "GND", "GND", "GND"]]</value></values></record>
                             <record size="[1]" xsi:type="recordDouble">
                                 <name>DBLMA4</name>
                                 <alias>DBLMA4</alias>
                                 <description>Double value matrix</description>
                                 <lock>DT@BT@LOCK2</lock>
-                                <values><value>[["PLC TRIP 1"], ["PLC TRIP 2"], ["STRAY 1"], ["STRAY 2"], ["f1"], ["f2"], ["f3"]]</value></values></record>
+                                <values><value>[["LFB1"], ["LFB2"], ["LFB3"], ["LFB4"], ["LFB5"], ["LFB6"], ["LFB7"], ["LFB8"], ["LFB9"], ["LFB10"], ["LFB11"], ["LFB12"], ["EU ARC INPUT"], ["RU ARC INPUT"], ["PLC TRIP 1"], ["EU ARC INPUT"], ["PLC TRIP 2"], ["MODE LOSS"], ["STRAY 1"], ["STRAY 2"]]</value></values></record>
                             <record size="[1]" xsi:type="recordDouble">
                                 <name>DBLMA5</name>
                                 <alias>DBLMA5</alias>
                                 <description>Double value matrix</description>
                                 <lock>DT@BT@LOCK2</lock>
-                                <values><value>[["1"], ["1"], ["1"], ["1"], ["1"], ["1"], ["2"]]</value></values></record>
+                                <values><value>[["1", "1"], ["1", "1"], ["1", "1"], ["1", "1"], ["1", "1"], ["1", "1"], ["1", "1"], ["1", "1"], ["1", "1"], ["1", "1"], ["1", "1"], ["1", "1"], ["0", "0"], ["0", "0"], ["0", "0"], ["0", "0"], ["0", "0"], ["0", "0"], ["0", "0"], ["0", "0"]]</value></values></record>
 							<record size="[[1, 1], [1, 1], [1, 1]]" xsi:type="recordDouble">
                                 <name>DBLSIP</name>
                                 <alias>DBLSIP</alias>
@@ -61,19 +61,19 @@
                                 <alias>DBLSFS</alias>
                                 <description>Double value matrix</description>
                                 <lock>DT@BT@LOCK2</lock>
-                                <values><value>["f1", "f2", "f3"]</value></values></record>
+                                <values><value>["LFB1", "LFB2", "LFB3", "LFB4", "LFB5", "LFB6", "LFB7", "LFB8", "LFB9", "LFB10", "LFB11", "LFB12"]</value></values></record>
 							<record size="[[1]]" xsi:type="recordDouble">
                                 <name>DBLSFL</name>
                                 <alias>DBLSFL</alias>
                                 <description>Double value matrix</description>
                                 <lock>DT@BT@LOCK2</lock>
-                                <values><value>[[["1", "x", "x"], ["x", "1", "x"], ["x", "x", "1"]], [["0", "x", "x"], ["x", "0", "x"], ["x", "x", "0"]], [["x", "x", "1"], ["x", "1", "x"], ["1", "x", "x"]]]</value></values></record>
+                                <values><value>[[["x", "x", "x", "x", "x", "x", "x", "1"], ["x", "x", "x", "x", "x", "x", "1", "x"], ["x", "x", "x", "x", "x", "1", "x", "x"], ["x", "x", "x", "x", "1", "x", "x", "x"], ["x", "x", "x", "1", "x", "x", "x", "x"], ["x", "x", "1", "x", "x", "x", "x", "x"], ["x", "1", "x", "x", "x", "x", "x", "x"], ["1", "x", "x", "x", "x", "x", "x", "x"]], [["x", "x", "x", "x", "x", "x", "x", "1"], ["x", "x", "x", "x", "x", "x", "1", "x"], ["x", "x", "x", "x", "x", "1", "x", "x"], ["x", "x", "x", "x", "1", "x", "x", "x"], ["x", "x", "x", "1", "x", "x", "x", "x"], ["x", "x", "1", "x", "x", "x", "x", "x"], ["x", "1", "x", "x", "x", "x", "x", "x"], ["1", "x", "x", "x", "x", "x", "x", "x"]], [["x", "x", "x", "x", "x", "x", "x", "1"], ["x", "x", "x", "x", "x", "x", "1", "x"], ["x", "x", "x", "x", "x", "1", "x", "x"], ["x", "x", "x", "x", "1", "x", "x", "x"], ["x", "x", "x", "1", "x", "x", "x", "x"], ["x", "x", "1", "x", "x", "x", "x", "x"], ["x", "1", "x", "x", "x", "x", "x", "x"], ["1", "x", "x", "x", "x", "x", "x", "x"]], [["x", "x", "x", "x", "x", "x", "x", "1"], ["x", "x", "x", "x", "x", "x", "1", "x"], ["x", "x", "x", "x", "x", "1", "x", "x"], ["x", "x", "x", "x", "1", "x", "x", "x"], ["x", "x", "x", "1", "x", "x", "x", "x"], ["x", "x", "1", "x", "x", "x", "x", "x"], ["x", "1", "x", "x", "x", "x", "x", "x"], ["1", "x", "x", "x", "x", "x", "x", "x"]], [["x", "x", "x", "x", "x", "x", "x", "1"], ["x", "x", "x", "x", "x", "x", "1", "x"], ["x", "x", "x", "x", "x", "1", "x", "x"], ["x", "x", "x", "x", "1", "x", "x", "x"], ["x", "x", "x", "1", "x", "x", "x", "x"], ["x", "x", "1", "x", "x", "x", "x", "x"], ["x", "1", "x", "x", "x", "x", "x", "x"], ["1", "x", "x", "x", "x", "x", "x", "x"]], [["x", "x", "x", "x", "x", "x", "x", "1"], ["x", "x", "x", "x", "x", "x", "1", "x"], ["x", "x", "x", "x", "x", "1", "x", "x"], ["x", "x", "x", "x", "1", "x", "x", "x"], ["x", "x", "x", "1", "x", "x", "x", "x"], ["x", "x", "1", "x", "x", "x", "x", "x"], ["x", "1", "x", "x", "x", "x", "x", "x"], ["1", "x", "x", "x", "x", "x", "x", "x"]], [["x", "x", "x", "x", "x", "x", "x", "1"], ["x", "x", "x", "x", "x", "x", "1", "x"], ["x", "x", "x", "x", "x", "1", "x", "x"], ["x", "x", "x", "x", "1", "x", "x", "x"], ["x", "x", "x", "1", "x", "x", "x", "x"], ["x", "x", "1", "x", "x", "x", "x", "x"], ["x", "1", "x", "x", "x", "x", "x", "x"], ["1", "x", "x", "x", "x", "x", "x", "x"]], [["x", "x", "x", "x", "x", "x", "x", "1"], ["x", "x", "x", "x", "x", "x", "1", "x"], ["x", "x", "x", "x", "x", "1", "x", "x"], ["x", "x", "x", "x", "1", "x", "x", "x"], ["x", "x", "x", "1", "x", "x", "x", "x"], ["x", "x", "1", "x", "x", "x", "x", "x"], ["x", "1", "x", "x", "x", "x", "x", "x"], ["1", "x", "x", "x", "x", "x", "x", "x"]], [["x", "x", "x", "x", "x", "x", "x", "1"], ["x", "x", "x", "x", "x", "x", "1", "x"], ["x", "x", "x", "x", "x", "1", "x", "x"], ["x", "x", "x", "x", "1", "x", "x", "x"], ["x", "x", "x", "1", "x", "x", "x", "x"], ["x", "x", "1", "x", "x", "x", "x", "x"], ["x", "1", "x", "x", "x", "x", "x", "x"], ["1", "x", "x", "x", "x", "x", "x", "x"]], [["x", "x", "x", "x", "x", "x", "x", "1"], ["x", "x", "x", "x", "x", "x", "1", "x"], ["x", "x", "x", "x", "x", "1", "x", "x"], ["x", "x", "x", "x", "1", "x", "x", "x"], ["x", "x", "x", "1", "x", "x", "x", "x"], ["x", "x", "1", "x", "x", "x", "x", "x"], ["x", "1", "x", "x", "x", "x", "x", "x"], ["1", "x", "x", "x", "x", "x", "x", "x"]], [["x", "x", "x", "x", "x", "x", "x", "1"], ["x", "x", "x", "x", "x", "x", "1", "x"], ["x", "x", "x", "x", "x", "1", "x", "x"], ["x", "x", "x", "x", "1", "x", "x", "x"], ["x", "x", "x", "1", "x", "x", "x", "x"], ["x", "x", "1", "x", "x", "x", "x", "x"], ["x", "1", "x", "x", "x", "x", "x", "x"], ["1", "x", "x", "x", "x", "x", "x", "x"]], [["x", "x", "x", "x", "x", "x", "x", "1"], ["x", "x", "x", "x", "x", "x", "1", "x"], ["x", "x", "x", "x", "x", "1", "x", "x"], ["x", "x", "x", "x", "1", "x", "x", "x"], ["x", "x", "x", "1", "x", "x", "x", "x"], ["x", "x", "1", "x", "x", "x", "x", "x"], ["x", "1", "x", "x", "x", "x", "x", "x"], ["1", "x", "x", "x", "x", "x", "x", "x"]]]</value></values></record>
                             <record size="[1]" xsi:type="recordDouble">
                                 <name>DBLSFO</name>
                                 <alias>DBLSFO</alias>
                                 <description>Double value matrix</description>
                                 <lock>DT@BT@LOCK2</lock>
-                                <values><value>[["Normal Op", [["PLC TRIP 1"], ["PLC TRIP 2"], ["STRAY 1"], ["STRAY 2"], ["f1"], ["f2"], ["f3"]], [["1"], ["1"], ["1"], ["1"], ["1"], ["1"], ["0"]]]]</value></values></record>
+                                <values><value>[["Normal Op", [["LFB1"], ["LFB2"], ["LFB3"], ["LFB4"], ["LFB5"], ["LFB6"], ["LFB7"], ["LFB8"], ["LFB9"], ["LFB10"], ["LFB11"], ["LFB12"], ["EU ARC INPUT"], ["RU ARC INPUT"], ["PLC TRIP 1"], ["EU ARC INPUT"], ["PLC TRIP 2"], ["MODE LOSS"], ["STRAY 1"], ["STRAY 2"]], [["1", "1"], ["1", "1"], ["1", "1"], ["1", "1"], ["1", "1"], ["1", "1"], ["1", "1"], ["1", "1"], ["1", "1"], ["1", "1"], ["1", "1"], ["1", "1"], ["0", "0"], ["0", "0"], ["0", "0"], ["0", "0"], ["0", "0"], ["0", "0"], ["0", "0"], ["0", "0"]]], ["FLS_OR_2", [["LFB1"], ["LFB2"], ["LFB3"], ["LFB4"], ["LFB5"], ["LFB6"], ["LFB7"], ["LFB8"], ["LFB9"], ["LFB10"], ["LFB11"], ["LFB12"], ["EU ARC INPUT"], ["RU ARC INPUT"], ["PLC TRIP 1"], ["PLC TRIP 2"], ["MODE LOSS"], ["STRAY 1"], ["STRAY 2"]], [["1", "1"], ["1", "1"], ["1", "1"], ["1", "1"], ["1", "1"], ["1", "1"], ["1", "1"], ["1", "1"], ["1", "1"], ["1", "1"], ["1", "1"], ["1", "1"], ["0", "0"], ["0", "0"], ["0", "0"], ["0", "0"], ["0", "0"], ["0", "0"], ["0", "0"]]]]</value></values></record>
                             <record size="1" xsi:type="recordEnum">
                                 <name>DBLE</name>
                                 <alias>DBLE</alias>

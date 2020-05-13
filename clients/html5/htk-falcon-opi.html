@@ -354,21 +354,27 @@
 							for(var i =0; i<this.nRuCwsAlarmsFields; i++){
                 	    		this.value[2][i]=this.ru_cws_alarms[i].value;
                 	   		}
-
-							for(var i =0; i<this.nBpsFields; i++){
-                    			this.value[3][i]=this.bps[i].value;
-            	       		}
-
+                    		if(this.checkBpsValues()){
+								for(var i =0; i<this.nBpsFields; i++){
+                    				this.value[3][i]=this.bps[i].value;
+            	       			}
+							}
 							for(var i =0; i<this.nCpsFields; i++){
-                    			this.value[4][i]=this.cps[i].value;
+								if(this.checkTdkValues(this.cps)){
+                    				this.value[4][i]=this.cps[i].value;
+                    			}
         	           		}
 
 							for(var i =0; i<this.nGcpsFields; i++){
-          		          		this.value[5][i]=this.gcps[i].value;
+								if(this.checkTdkValues(this.gcps)){
+          		          			this.value[5][i]=this.gcps[i].value;
+          		          		}
     	               		}
 
 							for(var i =0; i<this.nHvpsFields; i++){
-                	    		this.value[6][i]=this.hvps[i].value;
+								if(this.checkHvpsValues()){
+                	    			this.value[6][i]=this.hvps[i].value;
+                	    		}
 	                   		}
 
 							for(var i =0; i<this.nIps1Fields; i++){
@@ -572,6 +578,55 @@
 						return ret;
 					}
 
+
+					checkHvpsValues(){
+						for(var i=0; i<this.nHvpsFields; i++){
+							this.hvps[i].checkAllValues();
+						}
+						var ret=true;
+						var ru=this.hvps[4];
+						var rd=this.hvps[3]; 
+						var v=this.hvps[6];
+						var pl=this.hvps[0];
+						var isPlSec=this.hvps[2];
+						
+						//check that the voltages and times are positive
+						for(var i=0; (i<this.hvps.length) && (ret); i++){
+							ret=(this.hvps[i].value>=0);
+							if(!ret){
+								this.hvps[i].textInput.style.backgroundColor=ERROR_BCOLOR;
+							}															
+						}
+
+						//chack that (ru+rd)<=pl
+						if(ret){
+							var plTemp=pl.value;
+							if(isPlSec.value>0){
+								plTemp*=1000.0;
+							}
+							ret=((ru.value/1000.0+rd.value/1000.0)<=plTemp);
+							if(!ret){
+								ru.textInput.style.backgroundColor=ERROR_BCOLOR;
+								rd.textInput.style.backgroundColor=ERROR_BCOLOR;
+								pl.textInput.style.backgroundColor=ERROR_BCOLOR;								
+							}															
+						}
+						//check that all the 100<ru<1000 us
+						if(ret){
+							ret=(ru.value>=100) && (ru.value<=1000);
+							if(!ret){
+								ru.textInput.style.backgroundColor=ERROR_BCOLOR;
+							}																						
+						}
+						if(ret){
+							ret=(rd.value>=100) && (rd.value<=1000);
+							if(!ret){
+								rd.textInput.style.backgroundColor=ERROR_BCOLOR;
+							}																						
+						}
+						return ret;		
+					}
+
                     /**
                      * @brief Checks if the component style should be updated due to a value change and executes all the validation functions.
                      * @details For each element array, performs the same actions described in HtkAbstractInput.updateMatrix.
@@ -617,7 +672,9 @@
                     	}
                     	tot+=this.nGcspFields;
                     	if((caller>=tot) && (caller<(tot+this.nHvpsFields))){
-                    		this.value[6][caller-tot]=this.hvps[caller-tot].value;
+                    		if(this.checkHvpsValues()){
+                    			this.value[6][caller-tot]=this.hvps[caller-tot].value;
+                    		}
                     	}                    	
                     	tot+=this.nHvpsFields;
                     	if((caller>=tot) && (caller<(tot+this.nIps1Fields))){
