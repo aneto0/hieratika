@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+    #!/usr/bin/env python
 __copyright__ = """
     Copyright 2017 F4E | European Joint Undertaking for ITER and
     the Development of Fusion Energy ('Fusion for Energy').
@@ -26,6 +26,9 @@ import json
 import logging
 import time
 import struct
+from collections import OrderedDict
+import numpy as np
+from pvaccess import *
 
 ##
 # Project imports
@@ -36,6 +39,53 @@ from hieratika.loader import HieratikaLoader
 # Logger configuration
 ##
 log = logging.getLogger("{0}".format(__name__))
+
+##
+# HelperTools
+##
+
+def InitTable(table, poly, table_init):
+    status = (table_init == False)
+    if status == True:
+        for table_index in range(256):
+            tempCRC = table_index
+            for bit_index in range(8):
+                if 0x01 == (seed & 0x01):
+                    tempCRC = poly ^ (seed >> 1)
+                else:
+                    tempCRC = tempCRC >> 1
+            table[table_index] = tempCRC
+        table_init = True
+        status = True
+    return status
+    
+def ComputeChecksum(cfg_list, seed, checksum):
+    checksum = 0xFFFFFFFF
+    seed_bytes = struct.pack('<I', seed)
+    s1 = np.asarray(struct.unpack('<B',seed_bytes[0]))
+    s2 = np.asarray(struct.unpack('<B',seed_bytes[1]))
+    s3 = np.asarray(struct.unpack('<B',seed_bytes[2]))
+    s4 = np.asarray(struct.unpack('<B',seed_bytes[3]))
+    
+    if seed != 0:
+        checksum = table[(checksum ^ s1[0]) & 0xFF] ^ (checksum >> 8)
+        checksum = table[(checksum ^ s2[0]) & 0xFF] ^ (checksum >> 8)
+        checksum = table[(checksum ^ s3[0]) & 0xFF] ^ (checksum >> 8)
+        checksum = table[(checksum ^ s4[0]) & 0xFF] ^ (checksum >> 8)
+    
+    for index in range(3213):
+        checksum = table[(checksum ^ cfg_list[index]['Address_L']) & 0xFF] ^ (checksum >> 8)
+        checksum = table[(checksum ^ cfg_list[index]['Address_M']) & 0xFF] ^ (checksum >> 8)
+        checksum = table[(checksum ^ cfg_list[index]['ID']) & 0xFF] ^ (checksum >> 8)
+        checksum = table[(checksum ^ cfg_list[index]['Data_M']) & 0xFF] ^ (checksum >> 8)
+        checksum = table[(checksum ^ cfg_list[index]['Data_L']) & 0xFF] ^ (checksum >> 8)
+        
+    checksum = checksum ^ 0xFFFFFFFF
+    
+    checksum = checksum % (1<<32) #convert to unsigned 32
+    print "cacca ",checksum
+    
+    return crc
 
 ##
 # Class definition
@@ -52,7 +102,10 @@ class PLCLoader(HieratikaLoader):
         self.pvLoadCounter = ""
         self.pvLoadCommand = ""
         self.pageName = "PLC_config"
-        self.fileId = open("config.fls", "w+b")
+        #self.fileId = open("config.fls", "w+b")
+        #self.fileId = open("config.json", "w")
+        
+    
 
     def load(self, config):
         """ Loads the mapping between the hieratika variables and the EPICS records, defined in a json file whose path shall be defined in
@@ -97,8 +150,14 @@ class PLCLoader(HieratikaLoader):
         signalNameValue=[""]
         functionNameValue=[""]
         functionSignalNameValue=[""]
+
+        #self.fileId.write("[");
+        
+        config_list = []
+
         #preprocessing input
         print("Preprocessing Stage")
+        first = True
         for var in variablesPlantInfo:
             varName = var.getName()
             if varName=="DT@BT@DBLMA2":
@@ -115,8 +174,17 @@ class PLCLoader(HieratikaLoader):
                         log.critical("Unrecognized signal mode {0}", signalInputMode)
                         return False
                     print(config, address)
-                    self.fileId.write(struct.pack("4B",config%256, config/256, address%256, address/256))
-	            address=address+1
+                    if first:
+                        first = False
+                    #else:
+                    #    self.fileId.write(",");
+                    config_dict = OrderedDict([("Address_L", 2), ("Address_M", config%256), ("ID", config/256), ("Data_M", address%256), ("Data_L", address/256)])
+                    #config_dict = OrderedDict([("ID", 2), ("Data_L", config%256), ("Data_M", config/256), ("Address_L", address%256), ("Address_M", address/256)])
+                    #config_dict = {"ID" : 2, "Address_L" : address%256, "Address_M" : address/256, "Data_L" : config%256, "Data_M" : config/256}
+                    #self.fileId.write(struct.pack("4B",config%256, config/256, address%256, address/256))
+                    #self.fileId.write(json.dumps(config_dict));
+                    config_list.append(config_dict)
+                    address=address+1
                     #todo write it on file
             if varName=="DT@BT@DBLMA":
                 signalInputValue=var.getValue()
@@ -134,8 +202,7 @@ class PLCLoader(HieratikaLoader):
                 numberOfFunctions=len(functionNameValue)   
 
         functionSignalNameValue=functionNameValue+signalNameValue
-        #print(functionSignalNameValue)
-                 
+        #print(functionSignalNameValue)                
         
         #signal assignment
         print("Function Assignment Stage")
@@ -158,7 +225,13 @@ class PLCLoader(HieratikaLoader):
                                 config=(1<<signalIndex)
                             signalIndex=signalIndex+1
                         print(config, address)
-                        self.fileId.write(struct.pack("4B",config%256,config/256,address%256,address/256))
+                        #self.fileId.write(",");
+                        config_dict = OrderedDict([("Address_L", 2), ("Address_M", config%256), ("ID", config/256), ("Data_M", address%256), ("Data_L", address/256)])
+                        #config_dict = OrderedDict([("ID", 2), ("Data_L", config%256), ("Data_M", config/256), ("Address_L", address%256), ("Address_M", address/256)])
+                        #config_dict = {"ID" : 2, "Address_L" : address%256, "Address_M" : address/256, "Data_L" : config%256, "Data_M" : config/256}
+                        #self.fileId.write(json.dumps(config_dict));
+                        #self.fileId.write(struct.pack("4B",config%256,config/256,address%256,address/256))
+                        config_list.append(config_dict)
                         address=address+1
                         inputIndex=inputIndex+1
                     functionIndex=functionIndex+1
@@ -177,8 +250,8 @@ class PLCLoader(HieratikaLoader):
                        rowIndex=0
                        retVal=0
                        for functionInput in functionLogicValue[functionIndex]:
-                           signalIndex=0	
-                           rowVal=1		
+                           signalIndex=0
+                           rowVal=1
                            for signalIn in signalInputValue:
                                inputIndex=0
                                for functionInput2 in functionLogicValue[functionIndex][rowIndex]:
@@ -191,7 +264,13 @@ class PLCLoader(HieratikaLoader):
                            retVal|=rowVal
                        #print(retVal,address,signalTestVal,functionIndex)
                        print(retVal,address)
-                       self.fileId.write(struct.pack("4B",retVal%256, retVal/256, address%256, address/256))
+                       #self.fileId.write(",");
+                       config_dict = OrderedDict([("Address_L", 2), ("Address_M", retVal%256), ("ID", retVal/256), ("Data_M", address%256), ("Data_L", address/256)])
+                       #config_dict = OrderedDict([("ID", 2), ("Data_L", retVal%256), ("Data_M", retVal/256), ("Address_L", address%256), ("Address_M", address/256)])
+                       #config_dict = {"ID" : 2, "Address_L" : address%256, "Address_M" : address/256, "Data_L" : retVal%256, "Data_M" : retVal/256}
+                       #self.fileId.write(json.dumps(config_dict));
+                       #self.fileId.write(struct.pack("4B",retVal%256, retVal/256, address%256, address/256))
+                       config_list.append(config_dict)
                        address=address+1
                    functionIndex=functionIndex+1                               
 
@@ -214,10 +293,84 @@ class PLCLoader(HieratikaLoader):
                                     logicIndex=logicIndex+1
                             elementIndex=elementIndex+1
                         print(config, address)
-                        self.fileId.write(struct.pack("4B",config%256, config/256, address%256, address/256))
+                        #self.fileId.write(",");
+                        config_dict = OrderedDict([("Address_L", 2), ("Address_M", config%256), ("ID", config/256), ("Data_M", address%256), ("Data_L", address/256)])
+                        #config_dict = OrderedDict([("ID", 2), ("Data_L", config%256), ("Data_M", config/256), ("Address_L", address%256), ("Address_M", address/256)])
+                        #config_dict = {"ID" : 2, "Address_L" : address%256, "Address_M" : address/256, "Data_L" : config%256, "Data_M" : config/256}
+                        #self.fileId.write(json.dumps(config_dict));
+                        #self.fileId.write(struct.pack("4B",config%256, config/256, address%256, address/256))
+                        config_list.append(config_dict)
                         address=address+1
-        self.fileId.flush()
-	return True
+        #self.fileId.write("]")
+        #self.fileId.flush()
+        #Setting up RPCClient
+        rpc = RpcClient('55a0::Cfg::Interface')
+        rpc.setTimeout(30.0)
+
+        #Reading configuration
+        readRequest = PvObject({'qualifier' : STRING})
+        readRequest.setString('qualifier', 'read')
+        print "INFO PLCLoader -- Reading configuration..."
+        readResponse = rpc.invoke(readRequest)
+        status = readResponse.getBoolean('status')
+        if status != True:
+            print "...failure"
+        else:
+            print "...success"
+
+        #Initialisation
+        #Retrieving first the seed
+        status = None
+        initRequest = PvObject({'qualifier' : STRING})
+        initRequest.setString('qualifier', 'init')
+        print "INFO PLCLoader -- Retrieving seed..."
+        initResponse = rpc.invoke(initRequest)
+        status = initResponse.getBoolean('status')
+        if status != True:
+            print "...failure"
+        else:
+            print "...success"
+
+        seed = initResponse.getUInt('value')
+        print "...",seed,"..."
+
+        #Initialise table for checksum
+        table = [None] * 256
+        poly = 0xEDB88320
+        table_init = False
+        #InitTable(table, poly, table_init)
+
+        #Loading configuration
+        loadRequest = PvObject({'qualifier' : STRING, 'seed' : UINT, 'hash' : UINT, 'value' : [{'ID' : UBYTE, 'Data_L' : UBYTE, 'Data_M' : UBYTE, 'Address_L' : UBYTE, 'Address_M' : UBYTE}]})
+        loadRequest.setString('qualifier', 'load')
+        cfg_list = readResponse.getStructureArray('value')
+
+        for i in range(0,3213): 
+            cfg_list[i]['Address_L'] = config_list[i]['Address_L'] #ID
+            cfg_list[i]['Address_M'] = config_list[i]['Address_M'] #Data_L
+            cfg_list[i]['ID'] = config_list[i]['ID'] #Data_M
+            cfg_list[i]['Data_M'] = config_list[i]['Data_M'] #Address_L
+            cfg_list[i]['Data_L'] = config_list[i]['Data_L'] #Address_M
+            
+        loadRequest.setStructureArray(cfg_list)
+
+        #Compute checksum
+        crc = None
+        print "INFO PLCLoader -- Computing checksum..."
+        #crc = ComputeChecksum(cfg_list, seed, crc)
+        print "...",crc,"..."
+            
+        loadRequest.setUInt('seed', seed)
+        loadRequest.setUInt('hash', 0)
+        print type(loadRequest['value'])
+        print "INFO PLCLoader -- Loading configuration..."
+        loadResponse = rpc.invoke(loadRequest)
+        status = loadResponse.getBoolean('status')
+        if status != True:
+            print "...failure"
+        else:
+            print "...success"    
+        return True
 
     def isLoadable(self, pageName):
         return True
