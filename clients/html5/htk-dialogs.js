@@ -1,6 +1,6 @@
 /*
- date: 04/01/2018
- author: Andre' Neto
+ date: 25/01/2021
+ author: Luca Porzio
 
  copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
  the Development of Fusion Energy ('Fusion for Energy').
@@ -15,81 +15,71 @@
  or implied. See the Licence permissions and limitations under the Licence.
 */
 
-//Standard imports
+/*
+        <link rel="import" href="/htk-wait-dialog.html">
+*/
 
-//Project imports
+/**
+ * @brief Collection of Hieratika standard dialogs.
+ */
+export class HtkDialogs {
 
-import * as constants from './htk-constants.js'
-import { HtkWaitDialog } from './htk-wait-dialog.js'
+    /**
+     * @brief Constructor. NOOP.
+     */
+    constructor() {
+        this.waitDialog = document.createElement("htk-wait-dialog");
+        document.body.appendChild(this.waitDialog);
+    }
 
+    /**
+     * @brief Shows a modal wait dialog.
+     */
+    showWaitDialog() {
+        this.waitDialog.showModal();
+    }
 
-        /**
-         * @brief Collection of Hieratika standard dialogs.
-         */
-        export class HtkDialogs {
+    /**
+     * @brief Closes the modal wait dialog which was previously shown using showWaitDialog.
+     */
+    closeWaitDialog() {
+        this.waitDialog.close();
+    }
 
-            /**
-             * @brief Constructor. NOOP.
-             */
-            constructor() {
-                this.waitDialog = document.createElement("htk-wait-dialog");
-                document.body.appendChild(this.waitDialog);
-            }
+    /**
+     * @brief Shows an information dialog.
+     * @param[in] msg the message to display.
+     */
+    showInformationDialog(msg) {
+        alert(msg);
+    }
 
-            /**
-             * @brief Shows a modal wait dialog.
-             */
-            showWaitDialog() {
-                this.waitDialog.showModal();
-            }
+    /**
+     * @brief Shows an information dialog.
+     * @param[in] msg the message to display.
+     */
+    showErrorDialog(msg) {
+        alert(msg);
+    }
 
-            /**
-             * @brief Closes the modal wait dialog which was previously shown using showWaitDialog.
-             */
-            closeWaitDialog() {
-                this.waitDialog.close();
-            }
+    /**
+     * @brief Shows an input dialog.
+     * @param[in] msg the message to display.
+     * @param[in] defaultValue the default value to show on the text input box.
+     * @return the user answer or null if the user has pressed cancel.
+     */
+    showInputDialog(msg, defaultValue = "") {
+        return prompt(msg, defaultValue);
+    }
 
-            /**
-             * @brief Shows an information dialog.
-             * @param[in] msg the message to display.
-             */
-            showInformationDialog(msg) {
-                alert(msg);
-            }
-
-            /**
-             * @brief Shows an information dialog.
-             * @param[in] msg the message to display.
-             */
-            showErrorDialog(msg) {
-                alert(msg);
-            }
-
-            /**
-             * @brief Shows an input dialog.
-             * @param[in] msg the message to display.
-             * @param[in] defaultValue the default value to show on the text input box.
-             * @return the user answer or null if the user has pressed cancel.
-             */
-            showInputDialog(msg, defaultValue = "") {
-                return prompt(msg, defaultValue);
-            }
-
-            /**
-             * @brief Shows a confirm dialog.
-             * @param[in] msg the message to display.
-             * @return true if the user pressed OK, false otherwise.
-             */
-            showConfirmDialog(msg) {
-                return confirm(msg);
-            }
+    /**
+     * @brief Shows a confirm dialog.
+     * @param[in] msg the message to display.
+     * @return true if the user pressed OK, false otherwise.
+     */
+    showConfirmDialog(msg) {
+        return confirm(msg);
+    }
 
 
-        }
-
-        //IMPORTANT! Remember when accessing to these global variables to prefix with parent. so that they can be accessed from an iframe
-        htkDialogs = undefined;
-        if (htkDialogs === undefined) {
-            htkDialogs = new HtkDialogs();
-        }
+}

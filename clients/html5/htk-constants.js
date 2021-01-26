@@ -1,6 +1,6 @@
 /*
- date: 04/01/2018
- author: Andre' Neto
+ date: 25/01/2021
+ author: Luca Porzio
 
  copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
  the Development of Fusion Energy ('Fusion for Energy').
@@ -15,26 +15,22 @@
  or implied. See the Licence permissions and limitations under the Licence.
 */
 
-//Standard imports
-
-//Project imports
-
-  export const PLANT_NAME = "plant";
-  export const PLANT_COLOR = "red";
-  export const NONE_COLOR = "white";
-  export const REFERENCE_COLOR = "blue";
-  export const NONE_NAME = "none";
-  export const PLANT_OR_REF_CHANGED_COLOR = "gray";
-  export const DIFF_INIT_CHANGED_COLOR = "blue";
-  export const STANDARD_FCOLOR = "black";
-  export const STANDARD_BCOLOR = "white";
-  export const ERROR_BCOLOR = "red";
-  export const DISABLED_COLOR = "#EAEAEA";
-  export const CU_UNITS_TO_INCHES = 1.75;
-  export const INCHES_TO_PX = 10;
-  export const HTK_INVALID_TOKEN = "InvalidToken";
-  export const HTK_INVALID_PARAMETERS = "InvalidParameters";
-  export const HTK_UNKNOWN_ERROR = "UnknownError";
-  export const HTK_OK = "ok";
-  export const HTK_IN_USE = "InUse";
-  export const HTK_NOT_FOUND = "NotFound";
+export const PLANT_NAME = "plant";
+export const PLANT_COLOR = "red";
+export const NONE_COLOR = "white";
+export const REFERENCE_COLOR = "blue";
+export const NONE_NAME = "none";
+export const PLANT_OR_REF_CHANGED_COLOR = "gray";
+export const DIFF_INIT_CHANGED_COLOR = "blue";
+export const STANDARD_FCOLOR = "black";
+export const STANDARD_BCOLOR = "white";
+export const ERROR_BCOLOR = "red";
+export const DISABLED_COLOR = "#EAEAEA";
+export const CU_UNITS_TO_INCHES = 1.75;
+export const INCHES_TO_PX = 10;
+export const HTK_INVALID_TOKEN = "InvalidToken";
+export const HTK_INVALID_PARAMETERS = "InvalidParameters";
+export const HTK_UNKNOWN_ERROR = "UnknownError";
+export const HTK_OK = "ok";
+export const HTK_IN_USE = "InUse";
+export const HTK_NOT_FOUND = "NotFound";

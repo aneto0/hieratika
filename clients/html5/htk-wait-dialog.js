@@ -14,34 +14,32 @@
  basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  or implied. See the Licence permissions and limitations under the Licence.
 */
-
-//Standard imports
-
-//Project imports
-
 const template = document.createElement('template');
 template.innerHTML = `
-<dialog id="dwaitdialog">
-    <img src="/icons/ajax-loader.gif"></img>
-</dialog>
+  <dialog id="dwaitdialog">
+      <img src="./icons/ajax-loader.gif"></img>
+  </dialog>
 `;
+
+
 
 /**
  * @brief A modal dialog which displays a wait icon.
  */
- export class HtkWaitDialog extends HTMLElement {
+export class HtkWaitDialog extends HTMLElement {
     constructor() {
         super();
-        const root = this.attachShadow({mode: 'open'});
-        root.appendChild(template.content.cloneNode(true));
-        this.diag = root.querySelector("#dwaitdialog");
     }
 
     /**
      * @brief See HTMLElement.createdCallback
      */
     connectedCallback () {
-        console.log('htk-wait-dialog connected');
+        var templateContent = template.content;
+        const root = this.attachShadow({mode: 'open'});
+        root.appendChild(templateContent.cloneNode(true));
+
+        this.diag = root.querySelector('#dwaitdialog');
     }
 
     /**
@@ -61,9 +59,6 @@ template.innerHTML = `
             this.diag.close();
         }
     }
- }
+}
 
-/**
- * @brief Registers the element.
- */
- window.customElements.define('htk-wait-dialog', HtkWaitDialog);
+customElements.define('htk-wait-dialog', HtkWaitDialog);
