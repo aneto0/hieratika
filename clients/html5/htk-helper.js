@@ -22,7 +22,7 @@
 */
 
 import * as Constants from './htk-constants.js'
-import { HtkDialogs } from './htk-dialogs.js'
+import HtkDialogs from './htk-dialogs.js'
 import $ from './js/jquery/jquery.js'
 
 /**
@@ -30,17 +30,19 @@ import $ from './js/jquery/jquery.js'
 */
 export default class HtkHelper {
 
-  constructor() {
-      this.remoteServerTid = "";
-      this.token = "";
-      this.allUsers = [];
-      this.invalidTokenListeners = [];
-      //This reference to the main editor can be used to listen to page events for components that e.g. do not inherit from HtkComponent
-      this.htkMainEditor = undefined;
-      this.valuesToSynchroniseRemote = [];
-      this.scheduleValuesToCommit = {};
-      this.currentScheduleUID = undefined;
-      this.idxx = new Date().toISOString();
+  constructor() {}
+
+  static initialise() {
+    this.remoteServerTid = "";
+    this.token = "";
+    this.allUsers = [];
+    this.invalidTokenListeners = [];
+    //This reference to the main editor can be used to listen to page events for components that e.g. do not inherit from HtkComponent
+    this.htkMainEditor = undefined;
+    this.valuesToSynchroniseRemote = [];
+    this.scheduleValuesToCommit = {};
+    this.currentScheduleUID = undefined;
+    this.idxx = new Date().toISOString();
   }
 
   /**
@@ -48,7 +50,7 @@ export default class HtkHelper {
    * @return the UID of the schedule currently opened by the user.
    */
   static getCurrentScheduleUID() {
-      return this.currentScheduleUID;
+    return this.currentScheduleUID;
   }
 
   /**
@@ -56,7 +58,7 @@ export default class HtkHelper {
    * @param[in] scheduleUIDIn the UID of the schedule currently opened by the user.
    */
   static setCurrentScheduleUID(scheduleUIDIn) {
-      this.currentScheduleUID = scheduleUIDIn;
+    this.currentScheduleUID = scheduleUIDIn;
   }
 
   /**
@@ -65,14 +67,14 @@ export default class HtkHelper {
    * @param[in] value the variable value.
    */
   static updateScheduleValuesToCommit(name, value) {
-      this.scheduleValuesToCommit[name] = value;
+    this.scheduleValuesToCommit[name] = value;
   }
 
   /**
    * @brief Resets the values that are to be commited.
    */
   static resetScheduleValuesToCommit() {
-      this.scheduleValuesToCommit = {};
+    this.scheduleValuesToCommit = {};
   }
 
   /**
@@ -80,7 +82,7 @@ export default class HtkHelper {
    * @param[in] variable the variable to synchronise.
    */
   static addVariableToSynchroniseRemote(variable) {
-      this.valuesToSynchroniseRemote.push(variable);
+    this.valuesToSynchroniseRemote.push(variable);
   }
 
   /**
@@ -88,7 +90,7 @@ export default class HtkHelper {
    * @param[in] htkMainEditorIn the owner of the main frame components.
    */
   static setHtkMainEditor(htkMainEditorIn) {
-      this.htkMainEditor = htkMainEditorIn;
+    this.htkMainEditor = htkMainEditorIn;
   }
 
   /**
@@ -96,7 +98,7 @@ export default class HtkHelper {
    * @return the owner of the main frame components.
    */
   static getHtkMainEditor() {
-      return this.htkMainEditor;
+    return this.htkMainEditor;
   }
 
   /**
@@ -104,7 +106,7 @@ export default class HtkHelper {
    * @return all the components that belong to the main frame.
    */
   static getAllMainFrameHtkComponents() {
-      return this.htkMainEditor.getAllMainFrameHtkComponents();
+    return this.htkMainEditor.getAllMainFrameHtkComponents();
   }
 
 
@@ -113,7 +115,7 @@ export default class HtkHelper {
    * @param[in] listener the component to register.
    */
   static addVariablesInfoLoadedListener(listener) {
-      this.htkMainEditor.addVariablesInfoLoadedListener(listener);
+    this.htkMainEditor.addVariablesInfoLoadedListener(listener);
   }
 
   /**
@@ -124,31 +126,30 @@ export default class HtkHelper {
    * @param[in] errorFun function with prototype (void) f(), that will be called if the variables were not loaded into the plant.
    */
   static loadIntoPlant(configName, successFun, errorFun) {
-      $.ajax({
-          type: "post",
-          url: "/loadintoplant",
-          data: {
-              token: this.token,
-              pageNames: JSON.stringify([configName])
-          },
-          success: function (response) {
-              if (this.checkServerResponse(response)) {
-                  if (response == "ok") {
-                      successFun();
-                  }
-                  else {
-                      errorFun();
-                  }
-              }
-          }.bind(this),
-          error: function (response) {
-              this.showCriticalError(response);
-              errorFun();
-          }.bind(this)
-      });
+    $.ajax({
+      type: "post",
+      url: "/loadintoplant",
+      data: {
+        token: this.token,
+        pageNames: JSON.stringify([configName])
+      },
+      success: function(response) {
+        if (this.checkServerResponse(response)) {
+          if (response == "ok") {
+            successFun();
+          } else {
+            errorFun();
+          }
+        }
+      }.bind(this),
+      error: function(response) {
+        this.showCriticalError(response);
+        errorFun();
+      }.bind(this)
+    });
   }
 
-   /**
+  /**
    * @brief Sets the currently displayed configuration variables as the variables to be loaded into the plant (by calling loadIntoPlant).
    * @details This is an asynchronous call.
    * @param[in] configName the name of the configuration that is to be load into the plant.
@@ -156,47 +157,46 @@ export default class HtkHelper {
    * @param[in] errorFun function with prototype (void) f(), that will be called if the variables were not set.
    */
   static updatePlant(configName, successFun, errorFun) {
-      var allHtkDataJSon = {};
-      //Get the values of all the HtkComponents that are displayed in the main frame.
-      var mainFrameHtkComponents = this.htkMainEditor.getAllMainFrameHtkComponents();
-      var keys = Object.keys(mainFrameHtkComponents);
-      for (var i=0; i<keys.length; i++) {
-          var htkComp = mainFrameHtkComponents[keys[i]];
-          allHtkDataJSon[htkComp[0].id] = htkComp[0].getValue();
-      }
-      $.ajax({
-          type: "post",
-          url: "/updateplant",
-          data: {
-              token: this.token,
-              tid: this.remoteServerTid,
-              pageName: configName,
-              variables: JSON.stringify(allHtkDataJSon)
-          },
-          success: function (response) {
-              if (this.checkServerResponse(response)) {
-                  if (response == "ok") {
-                      var htkComp;
-                      for (var i=0; i<keys.length; i++) {
-                          //The same id can be used to store multiple instances
-                          var htkCompArray = mainFrameHtkComponents[keys[i]];
-                          for (var j=0; j<htkCompArray.length; j++) {
-                              var htkComp = htkCompArray[j];
-                              htkComp.setInitialValue(htkComp.getValue());
-                          }
-                      }
-                      successFun();
-                  }
-                  else {
-                      errorFun();
-                  }
+    var allHtkDataJSon = {};
+    //Get the values of all the HtkComponents that are displayed in the main frame.
+    var mainFrameHtkComponents = this.htkMainEditor.getAllMainFrameHtkComponents();
+    var keys = Object.keys(mainFrameHtkComponents);
+    for (var i = 0; i < keys.length; i++) {
+      var htkComp = mainFrameHtkComponents[keys[i]];
+      allHtkDataJSon[htkComp[0].id] = htkComp[0].getValue();
+    }
+    $.ajax({
+      type: "post",
+      url: "/updateplant",
+      data: {
+        token: this.token,
+        tid: this.remoteServerTid,
+        pageName: configName,
+        variables: JSON.stringify(allHtkDataJSon)
+      },
+      success: function(response) {
+        if (this.checkServerResponse(response)) {
+          if (response == "ok") {
+            var htkComp;
+            for (var i = 0; i < keys.length; i++) {
+              //The same id can be used to store multiple instances
+              var htkCompArray = mainFrameHtkComponents[keys[i]];
+              for (var j = 0; j < htkCompArray.length; j++) {
+                var htkComp = htkCompArray[j];
+                htkComp.setInitialValue(htkComp.getValue());
               }
-          }.bind(this),
-          error: function (response) {
-              this.showCriticalError(response);
-              errorFun();
-          }.bind(this)
-      });
+            }
+            successFun();
+          } else {
+            errorFun();
+          }
+        }
+      }.bind(this),
+      error: function(response) {
+        this.showCriticalError(response);
+        errorFun();
+      }.bind(this)
+    });
   }
 
   /**
@@ -208,25 +208,25 @@ export default class HtkHelper {
    * @param[in] errorFun function with prototype (void) f(), that will be called if the variables were not set.
    */
   static getVariablesInfo(configName, variablesNames, successFun, errorFun) {
-      $.ajax({
-          type: "post",
-          url: "/getvariablesinfo",
-          data: {
-              token: this.token,
-              pageName: configName,
-              variables: JSON.stringify(variablesNames)
-          },
-          success: function (response) {
-              if (this.checkServerResponse(response)) {
-                  var variables = $.parseJSON(response);
-                  successFun(variables);
-              }
-          }.bind(this),
-          error: function (response) {
-              this.showCriticalError(response);
-              errorFun();
-          }.bind(this)
-      });
+    $.ajax({
+      type: "post",
+      url: "/getvariablesinfo",
+      data: {
+        token: this.token,
+        pageName: configName,
+        variables: JSON.stringify(variablesNames)
+      },
+      success: function(response) {
+        if (this.checkServerResponse(response)) {
+          var variables = $.parseJSON(response);
+          successFun(variables);
+        }
+      }.bind(this),
+      error: function(response) {
+        this.showCriticalError(response);
+        errorFun();
+      }.bind(this)
+    });
   }
 
   /**
@@ -238,25 +238,25 @@ export default class HtkHelper {
    * @param[in] errorFun function with prototype (void) f(), that will be called if the variables were not set.
    */
   static getLibraryVariablesInfo(libraryType, variablesNames, successFun, errorFun) {
-      $.ajax({
-          type: "post",
-          url: "/getlibraryvariablesinfo",
-          data: {
-              token: this.token,
-              libraryType: libraryType,
-              variables: JSON.stringify(variablesNames)
-          },
-          success: function (response) {
-              if (this.checkServerResponse(response)) {
-                  var variables = $.parseJSON(response);
-                  successFun(variables);
-              }
-          }.bind(this),
-          error: function (response) {
-              this.showCriticalError(response);
-              errorFun();
-          }.bind(this)
-      });
+    $.ajax({
+      type: "post",
+      url: "/getlibraryvariablesinfo",
+      data: {
+        token: this.token,
+        libraryType: libraryType,
+        variables: JSON.stringify(variablesNames)
+      },
+      success: function(response) {
+        if (this.checkServerResponse(response)) {
+          var variables = $.parseJSON(response);
+          successFun(variables);
+        }
+      }.bind(this),
+      error: function(response) {
+        this.showCriticalError(response);
+        errorFun();
+      }.bind(this)
+    });
   }
 
   /**
@@ -267,66 +267,66 @@ export default class HtkHelper {
    * @param[in] errorFun function with prototype (void) f(), that will be called if the variables were not set.
    */
   static getLiveVariablesInfo(variablesNames, successFun, errorFun) {
-      $.ajax({
-          type: "post",
-          url: "/getlivevariablesinfo",
-          data: {
-              token: this.token,
-              variables: JSON.stringify(variablesNames)
-          },
-          success: function(response) {
-              if (this.checkServerResponse(response)) {
-                  var variables = $.parseJSON(response);
-                  successFun(variables);
-              }
-          }.bind(this),
-          error: function (response) {
-              this.showCriticalError(response);
-              errorFun();
-          }.bind(this)
-      });
+    $.ajax({
+      type: "post",
+      url: "/getlivevariablesinfo",
+      data: {
+        token: this.token,
+        variables: JSON.stringify(variablesNames)
+      },
+      success: function(response) {
+        if (this.checkServerResponse(response)) {
+          var variables = $.parseJSON(response);
+          successFun(variables);
+        }
+      }.bind(this),
+      error: function(response) {
+        this.showCriticalError(response);
+        errorFun();
+      }.bind(this)
+    });
   }
 
   static getScheduleVariablesValues(scheduleName, successFun, errorFun) {
-      $.ajax({
-          type: "post",
-          url: "/getschedulevariablesvalues",
-          data: {
-              token: this.token,
-              scheduleUID: scheduleName
-          },
-          success: function (response) {
-              if (this.checkServerResponse(response)) {
-                  var variables = $.parseJSON(response);
-                  successFun(variables);
-              }
-          }.bind(this),
-          error: function (response) {
-              console.log(response);
-              alert(response);
-          }.bind(this)
-      });
+    $.ajax({
+      type: "post",
+      url: "/getschedulevariablesvalues",
+      data: {
+        token: this.token,
+        scheduleUID: scheduleName
+      },
+      success: function(response) {
+        if (this.checkServerResponse(response)) {
+          var variables = $.parseJSON(response);
+          successFun(variables);
+        }
+      }.bind(this),
+      error: function(response) {
+        console.log(response);
+        alert(response);
+      }.bind(this)
+    });
   }
 
   /**
    * @brief Sets on all components the value as the plant value and sets them as read-only.
    */
   static displayPlant() {
-      var mainFrameHtkComponents = this.htkMainEditor.getAllMainFrameHtkComponents();
-      if (mainFrameHtkComponents !== null) {
-          var keys = Object.keys(mainFrameHtkComponents);
-          for (var i=0; i<keys.length; i++) {
-              var htkCompArray = mainFrameHtkComponents[keys[i]];
-              for (var j=0; j<htkCompArray.length; j++) {
-                  var htkComp = htkCompArray[j];
-                  htkComp.setEditable(false);
-                  var value = htkComp.getPlantValue();
-                  if (value !== undefined) {
-                      htkComp.setValue(value, false);
-                  }
-              }
+    var mainFrameHtkComponents = this.htkMainEditor.getAllMainFrameHtkComponents();
+    if (mainFrameHtkComponents !== null) {
+      var keys = Object.keys(mainFrameHtkComponents);
+      for (var i = 0; i < keys.length; i++) {
+        var htkCompArray = mainFrameHtkComponents[keys[i]];
+        for (var j = 0; j < htkCompArray.length; j++) {
+          var htkComp = htkCompArray[j];
+          htkComp.setEditable(false);
+          var value = htkComp.getPlantValue();
+          if (value !== undefined) {
+            htkComp.setValue(value, false);
           }
+        }
       }
+    }
   }
 
   /**
@@ -335,32 +335,31 @@ export default class HtkHelper {
    * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be commited.
    */
   static commitAllChangesToSchedule(successFun, errorFun) {
-      $.ajax({
-          type: "post",
-          url: "/commitschedule",
-          data: {
-              token: this.token,
-              tid: this.remoteServerTid,
-              scheduleUID:this.currentScheduleUID,
-              variables:JSON.stringify(this.scheduleValuesToCommit)
-          },
-          success: function (response) {
-              if (this.checkServerResponse(response)) {
-                  if (response === Constants.HTK_IN_USE) {
-                      HtkDialogs.showErrorDialog("The schedule is being used in other schedules and thus cannot be overwritten (note that it might being used by this same variable. If so unselect if first).");
-                      errorFun();
-                  }
-                  else {
-                      successFun();
-                      this.scheduleValuesToCommit = {};
-                  }
-              }
-          }.bind(this),
-          error: function (response) {
-              this.showCriticalError(response);
-              errorFun();
-          }.bind(this)
-      });
+    $.ajax({
+      type: "post",
+      url: "/commitschedule",
+      data: {
+        token: this.token,
+        tid: this.remoteServerTid,
+        scheduleUID: this.currentScheduleUID,
+        variables: JSON.stringify(this.scheduleValuesToCommit)
+      },
+      success: function(response) {
+        if (this.checkServerResponse(response)) {
+          if (response === Constants.HTK_IN_USE) {
+            HtkDialogs.showErrorDialog("The schedule is being used in other schedules and thus cannot be overwritten (note that it might being used by this same variable. If so unselect if first).");
+            errorFun();
+          } else {
+            successFun();
+            this.scheduleValuesToCommit = {};
+          }
+        }
+      }.bind(this),
+      error: function(response) {
+        this.showCriticalError(response);
+        errorFun();
+      }.bind(this)
+    });
   }
 
   /**
@@ -370,23 +369,23 @@ export default class HtkHelper {
    * @param[in] errorFun function with prototype (void) f(), that will be called if the pages could not be retrieved.
    */
   static getPages(successFun, errorFun) {
-      $.ajax({
-          type: "post",
-          url: "/getpages",
-          data: {
-              token: this.token,
-          },
-          success: function (response) {
-              if (this.checkServerResponse(response)) {
-                  var pagesJson = $.parseJSON(response);
-                  successFun(pagesJson);
-              }
-          }.bind(this),
-          error: function (response) {
-              this.showCriticalError(response);
-              errorFun();
-          }.bind(this)
-      });
+    $.ajax({
+      type: "post",
+      url: "/getpages",
+      data: {
+        token: this.token,
+      },
+      success: function(response) {
+        if (this.checkServerResponse(response)) {
+          var pagesJson = $.parseJSON(response);
+          successFun(pagesJson);
+        }
+      }.bind(this),
+      error: function(response) {
+        this.showCriticalError(response);
+        errorFun();
+      }.bind(this)
+    });
   }
 
   /**
@@ -398,26 +397,26 @@ export default class HtkHelper {
    * @param[in] errorFun function with prototype (void) f(), that will be called if the folders could not be retrieved.
    */
   static getScheduleFolders(configName, username, parentFolders, successFun, errorFun) {
-      $.ajax({
-          type: "post",
-          url: "/getschedulefolders",
-          data: {
-              token: this.token,
-              pageName: configName,
-              username : username,
-              parentFolders: JSON.stringify(parentFolders)
-          },
-          success: function (response) {
-              if (this.checkServerResponse(response)) {
-                  var availableFolders = $.parseJSON(response);
-                  successFun(availableFolders);
-              }
-          }.bind(this),
-          error: function (response) {
-              this.showCriticalError(response);
-              errorFun();
-          }.bind(this)
-      });
+    $.ajax({
+      type: "post",
+      url: "/getschedulefolders",
+      data: {
+        token: this.token,
+        pageName: configName,
+        username: username,
+        parentFolders: JSON.stringify(parentFolders)
+      },
+      success: function(response) {
+        if (this.checkServerResponse(response)) {
+          var availableFolders = $.parseJSON(response);
+          successFun(availableFolders);
+        }
+      }.bind(this),
+      error: function(response) {
+        this.showCriticalError(response);
+        errorFun();
+      }.bind(this)
+    });
   }
 
 
@@ -430,26 +429,26 @@ export default class HtkHelper {
    * @param[in] errorFun function with prototype (void) f(), that will be called if the schedules could not be retrieved.
    */
   static getSchedules(configName, username, parentFolders, successFun, errorFun) {
-      $.ajax({
-          type: "post",
-          url: "/getschedules",
-          data: {
-              token: this.token,
-              pageName: configName,
-              username : username,
-              parentFolders: JSON.stringify(parentFolders)
-          },
-          success: function (response) {
-              if (this.checkServerResponse(response)) {
-                  var availableSchedules = $.parseJSON(response);
-                  successFun(availableSchedules);
-              }
-          }.bind(this),
-          error: function (response) {
-              this.showCriticalError(response);
-              errorFun();
-          }.bind(this)
-      });
+    $.ajax({
+      type: "post",
+      url: "/getschedules",
+      data: {
+        token: this.token,
+        pageName: configName,
+        username: username,
+        parentFolders: JSON.stringify(parentFolders)
+      },
+      success: function(response) {
+        if (this.checkServerResponse(response)) {
+          var availableSchedules = $.parseJSON(response);
+          successFun(availableSchedules);
+        }
+      }.bind(this),
+      error: function(response) {
+        this.showCriticalError(response);
+        errorFun();
+      }.bind(this)
+    });
   }
 
   /**
@@ -459,27 +458,26 @@ export default class HtkHelper {
    * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be retrieved.
    */
   static getSchedule(scheduleUID, successFun, errorFun) {
-      $.ajax({
-          type: "post",
-          url: "/getschedule",
-          data: {
-              token: this.token,
-              scheduleUID: scheduleUID
-          },
-          success: function (response) {
-              if (this.checkServerResponse(response)) {
-                  var schedule = $.parseJSON(response);
-                  successFun(schedule);
-              }
-              else {
-                  errorFun(response);
-              }
-          }.bind(this),
-          error: function (response) {
-              this.showCriticalError(response);
-              errorFun();
-          }.bind(this)
-      });
+    $.ajax({
+      type: "post",
+      url: "/getschedule",
+      data: {
+        token: this.token,
+        scheduleUID: scheduleUID
+      },
+      success: function(response) {
+        if (this.checkServerResponse(response)) {
+          var schedule = $.parseJSON(response);
+          successFun(schedule);
+        } else {
+          errorFun(response);
+        }
+      }.bind(this),
+      error: function(response) {
+        this.showCriticalError(response);
+        errorFun();
+      }.bind(this)
+    });
   }
 
   /**
@@ -495,33 +493,33 @@ export default class HtkHelper {
    * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be created.
    */
   static createSchedule(scheduleName, scheduleDescription, configName, parentFolders, sourceScheduleUID, inheritFromSchedule, successFun, errorFun) {
-      var schedule = {
-          token: this.token,
-          name: scheduleName,
-          description: scheduleDescription,
-          parentFolders: JSON.stringify(parentFolders),
-          pageName: configName
-      }
-      var user = JSON.parse(localStorage.user);
-      schedule["username"] = user.username;
-      if (sourceScheduleUID !== undefined) {
-          schedule["sourceScheduleUID"] = sourceScheduleUID;
-      }
-      schedule["inheritFromSchedule"] = inheritFromSchedule;
-      $.ajax({
-          type: "post",
-          url: "/createschedule",
-          data: schedule,
-          success: function (response) {
-              if (this.checkServerResponse(response)) {
-                  successFun();
-              }
-          }.bind(this),
-          error: function (response) {
-              this.showCriticalError(response);
-              errorFun();
-          }.bind(this)
-      });
+    var schedule = {
+      token: this.token,
+      name: scheduleName,
+      description: scheduleDescription,
+      parentFolders: JSON.stringify(parentFolders),
+      pageName: configName
+    }
+    var user = JSON.parse(localStorage.user);
+    schedule["username"] = user.username;
+    if (sourceScheduleUID !== undefined) {
+      schedule["sourceScheduleUID"] = sourceScheduleUID;
+    }
+    schedule["inheritFromSchedule"] = inheritFromSchedule;
+    $.ajax({
+      type: "post",
+      url: "/createschedule",
+      data: schedule,
+      success: function(response) {
+        if (this.checkServerResponse(response)) {
+          successFun();
+        }
+      }.bind(this),
+      error: function(response) {
+        this.showCriticalError(response);
+        errorFun();
+      }.bind(this)
+    });
   }
 
   /**
@@ -534,28 +532,28 @@ export default class HtkHelper {
    * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be created.
    */
   static createScheduleFolder(folderName, configName, parentFolders, successFun, errorFun) {
-      var user = JSON.parse(localStorage.user);
-      var scheduleFolder = {
-          token: this.token,
-          name: folderName,
-          parentFolders: JSON.stringify(parentFolders),
-          username: user.username,
-          pageName: configName
-      }
-      $.ajax({
-          type: "post",
-          url: "/createschedulefolder",
-          data: scheduleFolder,
-          success: function (response) {
-              if (this.checkServerResponse(response)) {
-                  successFun();
-              }
-          }.bind(this),
-          error: function (response) {
-              this.showCriticalError(response);
-              errorFun();
-          }.bind(this)
-      });
+    var user = JSON.parse(localStorage.user);
+    var scheduleFolder = {
+      token: this.token,
+      name: folderName,
+      parentFolders: JSON.stringify(parentFolders),
+      username: user.username,
+      pageName: configName
+    }
+    $.ajax({
+      type: "post",
+      url: "/createschedulefolder",
+      data: scheduleFolder,
+      success: function(response) {
+        if (this.checkServerResponse(response)) {
+          successFun();
+        }
+      }.bind(this),
+      error: function(response) {
+        this.showCriticalError(response);
+        errorFun();
+      }.bind(this)
+    });
   }
 
   /**
@@ -568,46 +566,43 @@ export default class HtkHelper {
    * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be created.
    */
   static deleteScheduleFolder(folderNames, configName, parentFolders, successFun, errorFun) {
-      if (folderNames.length > 0) {
-          var folderName = folderNames[0];
-          var user = JSON.parse(localStorage.user);
-          var scheduleFolder = {
-              token: this.token,
-              name: folderName,
-              parentFolders: JSON.stringify(parentFolders),
-              username: user.username,
-              pageName: configName
+    if (folderNames.length > 0) {
+      var folderName = folderNames[0];
+      var user = JSON.parse(localStorage.user);
+      var scheduleFolder = {
+        token: this.token,
+        name: folderName,
+        parentFolders: JSON.stringify(parentFolders),
+        username: user.username,
+        pageName: configName
+      }
+      $.ajax({
+        type: "post",
+        url: "/deleteschedulefolder",
+        data: scheduleFolder,
+        success: function(response) {
+          if (this.checkServerResponse(response)) {
+            if (response === Constants.HTK_OK) {
+              folderNames.shift();
+              if (folderNames.length > 0) {
+                this.deleteScheduleFolder(folderNames, configName, parentFolders, successFun, errorFun);
+              } else {
+                successFun();
+              }
+            } else {
+              HtkDialogs.showErrorDialog("Unkown error while deleting the folder " + folderName + " in the server. Is the folder empty?. Check the logs.");
+              errorFun();
+            }
           }
-          $.ajax({
-              type: "post",
-              url: "/deleteschedulefolder",
-              data: scheduleFolder,
-              success: function (response) {
-                  if (this.checkServerResponse(response)) {
-                      if (response === Constants.HTK_OK) {
-                          folderNames.shift();
-                          if (folderNames.length > 0) {
-                              this.deleteScheduleFolder(folderNames, configName, parentFolders, successFun, errorFun);
-                          }
-                          else {
-                              successFun();
-                          }
-                      }
-                      else {
-                          HtkDialogs.showErrorDialog("Unkown error while deleting the folder " + folderName + " in the server. Is the folder empty?. Check the logs.");
-                          errorFun();
-                      }
-                  }
-              }.bind(this),
-              error: function (response) {
-                  this.showCriticalError(response);
-                  errorFun();
-              }.bind(this)
-          });
-      }
-      else {
-          successFun();
-      }
+        }.bind(this),
+        error: function(response) {
+          this.showCriticalError(response);
+          errorFun();
+        }.bind(this)
+      });
+    } else {
+      successFun();
+    }
   }
 
   /**
@@ -620,46 +615,43 @@ export default class HtkHelper {
    * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be created.
    */
   static obsoleteScheduleFolder(folderNames, configName, parentFolders, successFun, errorFun) {
-      if (folderNames.length > 0) {
-          var folderName = folderNames[0];
-          var user = JSON.parse(localStorage.user);
-          var scheduleFolder = {
-              token: this.token,
-              name: folderName,
-              parentFolders: JSON.stringify(parentFolders),
-              username: user.username,
-              pageName: configName
+    if (folderNames.length > 0) {
+      var folderName = folderNames[0];
+      var user = JSON.parse(localStorage.user);
+      var scheduleFolder = {
+        token: this.token,
+        name: folderName,
+        parentFolders: JSON.stringify(parentFolders),
+        username: user.username,
+        pageName: configName
+      }
+      $.ajax({
+        type: "post",
+        url: "/obsoleteschedulefolder",
+        data: scheduleFolder,
+        success: function(response) {
+          if (this.checkServerResponse(response)) {
+            if (response === Constants.HTK_OK) {
+              folderNames.shift();
+              if (folderNames.length > 0) {
+                this.obsoleteScheduleFolder(folderNames, configName, parentFolders, successFun, errorFun);
+              } else {
+                successFun();
+              }
+            } else {
+              HtkDialogs.showErrorDialog("Unkown error while obsoleting the folder " + folderName + " in the server. Check the server logs.");
+              errorFun();
+            }
           }
-          $.ajax({
-              type: "post",
-              url: "/obsoleteschedulefolder",
-              data: scheduleFolder,
-              success: function (response) {
-                  if (this.checkServerResponse(response)) {
-                      if (response === Constants.HTK_OK) {
-                          folderNames.shift();
-                          if (folderNames.length > 0) {
-                              this.obsoleteScheduleFolder(folderNames, configName, parentFolders, successFun, errorFun);
-                          }
-                          else {
-                              successFun();
-                          }
-                      }
-                      else {
-                          HtkDialogs.showErrorDialog("Unkown error while obsoleting the folder " + folderName + " in the server. Check the server logs.");
-                          errorFun();
-                      }
-                  }
-              }.bind(this),
-              error: function (response) {
-                  this.showCriticalError(response);
-                  errorFun();
-              }.bind(this)
-          });
-      }
-      else {
-          successFun();
-      }
+        }.bind(this),
+        error: function(response) {
+          this.showCriticalError(response);
+          errorFun();
+        }.bind(this)
+      });
+    } else {
+      successFun();
+    }
   }
 
   /**
@@ -671,24 +663,24 @@ export default class HtkHelper {
    * @param[in] errorFun function with prototype (void) f(), that will be called if the transformation could not be triggered.
    */
   static transform(funName, inputs, successFun, errorFun) {
-      $.ajax({
-          type: "post",
-          url: "/transform",
-          data: {
-              token: this.token,
-              fun: funName,
-              inputs: JSON.stringify(inputs)
-          },
-          success: function (response) {
-              if (this.checkServerResponse(response)) {
-                  successFun(response);
-              }
-          }.bind(this),
-          error: function (response) {
-              this.showCriticalError(response);
-              errorFun();
-          }.bind(this)
-      });
+    $.ajax({
+      type: "post",
+      url: "/transform",
+      data: {
+        token: this.token,
+        fun: funName,
+        inputs: JSON.stringify(inputs)
+      },
+      success: function(response) {
+        if (this.checkServerResponse(response)) {
+          successFun(response);
+        }
+      }.bind(this),
+      error: function(response) {
+        this.showCriticalError(response);
+        errorFun();
+      }.bind(this)
+    });
   }
 
   /**
@@ -696,11 +688,11 @@ export default class HtkHelper {
    * @return the current logged in user.
    */
   static getUser() {
-      var user = localStorage.user;
-      if (user !== undefined) {
-          user = JSON.parse(user);
-      }
-      return user;
+    var user = localStorage.user;
+    if (user !== undefined) {
+      user = JSON.parse(user);
+    }
+    return user;
   }
 
   /**
@@ -709,23 +701,23 @@ export default class HtkHelper {
    * @param[in] errorFun function with prototype (void) f(), that will be called if the users could not be retrieved.
    */
   static getUsers(successFun, errorFun) {
-      $.ajax({
-          type: "post",
-          url: "/getusers",
-          data: {
-              token : this.token
-          },
-          success: function (response) {
-              if (this.checkServerResponse(response)) {
-                  this.allUsers = $.parseJSON(response);
-                  successFun(this.allUsers);
-              }
-          }.bind(this),
-          error: function (response) {
-              this.showCriticalError(response);
-              errorFun();
-          }.bind(this)
-      });
+    $.ajax({
+      type: "post",
+      url: "/getusers",
+      data: {
+        token: this.token
+      },
+      success: function(response) {
+        if (this.checkServerResponse(response)) {
+          this.allUsers = $.parseJSON(response);
+          successFun(this.allUsers);
+        }
+      }.bind(this),
+      error: function(response) {
+        this.showCriticalError(response);
+        errorFun();
+      }.bind(this)
+    });
   }
 
   /**
@@ -736,27 +728,26 @@ export default class HtkHelper {
    * @param[in] errorFun function with prototype (void) f(), that will be called if the user could not be logged in.
    */
   static loginToServer(usernameToSend, passwordToSend, successFun, errorFun) {
-      $.ajax({
-          type: "post",
-          url: "/login",
-          data: {
-              username: usernameToSend,
-              password: passwordToSend
-          },
-          success: function (response) {
-              var user = $.parseJSON(response);
-              if (user.id !== "") {
-                  successFun(user);
-              }
-              else {
-                  errorFun();
-              }
-          }.bind(this),
-          error: function (response) {
-              this.showCriticalError(response);
-              errorFun();
-          }
-      });
+    $.ajax({
+      type: "post",
+      url: "/login",
+      data: {
+        username: usernameToSend,
+        password: passwordToSend
+      },
+      success: function(response) {
+        var user = $.parseJSON(response);
+        if (user.id !== "") {
+          successFun(user);
+        } else {
+          errorFun();
+        }
+      }.bind(this),
+      error: function(response) {
+        this.showCriticalError(response);
+        errorFun();
+      }
+    });
   }
 
   /**
@@ -765,20 +756,20 @@ export default class HtkHelper {
    * @param[in] errorFun function with prototype (void) f(), that will be called if the users could not be logged out.
    */
   static logout(successFun, errorFun) {
-      $.ajax({
-          type: "post",
-          url: "/logout",
-          data: {
-              token : this.token
-          },
-          success: function (response) {
-              successFun();
-          }.bind(this),
-          error: function (response) {
-              this.showCriticalError(response);
-              errorFun();
-          }.bind(this)
-      });
+    $.ajax({
+      type: "post",
+      url: "/logout",
+      data: {
+        token: this.token
+      },
+      success: function(response) {
+        successFun();
+      }.bind(this),
+      error: function(response) {
+        this.showCriticalError(response);
+        errorFun();
+      }.bind(this)
+    });
   }
 
 
@@ -790,24 +781,24 @@ export default class HtkHelper {
    * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be created.
    */
   static getTransformations(configName, successFun, errorFun) {
-      $.ajax({
-          type: "post",
-          url: "/gettransformationsinfo",
-          data: {
-              token: this.token,
-              pageName: configName
-          },
-          success: function (response) {
-              if(this.checkServerResponse(response)) {
-                  var transformations = JSON.parse(response);
-                  successFun(transformations);
-              }
-          }.bind(this),
-          error: function (response) {
-              this.showCriticalError(response);
-              errorFun();
-          }.bind(this)
-      });
+    $.ajax({
+      type: "post",
+      url: "/gettransformationsinfo",
+      data: {
+        token: this.token,
+        pageName: configName
+      },
+      success: function(response) {
+        if (this.checkServerResponse(response)) {
+          var transformations = JSON.parse(response);
+          successFun(transformations);
+        }
+      }.bind(this),
+      error: function(response) {
+        this.showCriticalError(response);
+        errorFun();
+      }.bind(this)
+    });
   }
 
   /**
@@ -819,25 +810,25 @@ export default class HtkHelper {
    * @param[in] errorFun function with prototype (void) f(), that will be called if the libraries could not be retrieved.
    */
   static getLibraries(libraryType, username, successFun, errorFun) {
-      $.ajax({
-          type: "post",
-          url: "/getlibraries",
-          data: {
-              token: this.getToken(),
-              type: libraryType,
-              username: username,
-          },
-          success: function (response) {
-              if(this.checkServerResponse(response)) {
-                  var libraries = $.parseJSON(response);
-                  successFun(libraries);
-              }
-          }.bind(this),
-          error: function (response) {
-              this.showCriticalError(response);
-              errorFun();
-          }.bind(this)
-      });
+    $.ajax({
+      type: "post",
+      url: "/getlibraries",
+      data: {
+        token: this.getToken(),
+        type: libraryType,
+        username: username,
+      },
+      success: function(response) {
+        if (this.checkServerResponse(response)) {
+          var libraries = $.parseJSON(response);
+          successFun(libraries);
+        }
+      }.bind(this),
+      error: function(response) {
+        this.showCriticalError(response);
+        errorFun();
+      }.bind(this)
+    });
   }
 
   /**
@@ -848,24 +839,24 @@ export default class HtkHelper {
    * @param[in] errorFun function with prototype (void) f(), that will be called if the libraries variables values could not be retrieved.
    */
   static getLibraryVariablesValues(uid, successFun, errorFun) {
-      $.ajax({
-          type: "post",
-          url: "/getlibraryvariablesvalues",
-          data: {
-              token: this.getToken(),
-              libraryUID: uid
-          },
-          success: function (response) {
-              if(this.checkServerResponse(response)) {
-                  var libraries = $.parseJSON(response);
-                  successFun(libraries);
-              }
-          }.bind(this),
-          error: function (response) {
-              this.showCriticalError(response);
-              errorFun();
-          }.bind(this)
-      });
+    $.ajax({
+      type: "post",
+      url: "/getlibraryvariablesvalues",
+      data: {
+        token: this.getToken(),
+        libraryUID: uid
+      },
+      success: function(response) {
+        if (this.checkServerResponse(response)) {
+          var libraries = $.parseJSON(response);
+          successFun(libraries);
+        }
+      }.bind(this),
+      error: function(response) {
+        this.showCriticalError(response);
+        errorFun();
+      }.bind(this)
+    });
   }
 
   /**
@@ -879,39 +870,37 @@ export default class HtkHelper {
    * @param[in] errorFun function with prototype (void) f(), that will be called if the libraries variables values could not be saved.
    */
   static saveLibrary(libraryType, libraryName, libraryDescription, variables, successFun, errorFun) {
-      var user = this.getUser();
-      $.ajax({
-          type: "post",
-          url: "/savelibrary",
-          data: {
-              token: this.token,
-              type: libraryType,
-              name: libraryName,
-              description: libraryDescription,
-              username: user.username,
-              variables: JSON.stringify(variables)
-          },
-          success: function (response) {
-              if(this.checkServerResponse(response)) {
-                  if (response === Constants.HTK_IN_USE) {
-                      HtkDialogs.showErrorDialog("Library is being used in other schedules and thus cannot be overwritten (note that it might being used by this same variable. If so unselect if first).");
-                      errorFun();
-                  }
-                  else if (response === Constants.HTK_UNKNOWN_ERROR) {
-                      HtkDialogs.showErrorDialog("Unkown error while saving the library in the server");
-                      errorFun();
-                  }
-                  else {
-                      var library = $.parseJSON(response);
-                      successFun(library);
-                  }
-              }
-          }.bind(this),
-          error: function (response) {
-              this.showCriticalError(response);
-              errorFun();
-          }.bind(this)
-      });
+    var user = this.getUser();
+    $.ajax({
+      type: "post",
+      url: "/savelibrary",
+      data: {
+        token: this.token,
+        type: libraryType,
+        name: libraryName,
+        description: libraryDescription,
+        username: user.username,
+        variables: JSON.stringify(variables)
+      },
+      success: function(response) {
+        if (this.checkServerResponse(response)) {
+          if (response === Constants.HTK_IN_USE) {
+            HtkDialogs.showErrorDialog("Library is being used in other schedules and thus cannot be overwritten (note that it might being used by this same variable. If so unselect if first).");
+            errorFun();
+          } else if (response === Constants.HTK_UNKNOWN_ERROR) {
+            HtkDialogs.showErrorDialog("Unkown error while saving the library in the server");
+            errorFun();
+          } else {
+            var library = $.parseJSON(response);
+            successFun(library);
+          }
+        }
+      }.bind(this),
+      error: function(response) {
+        this.showCriticalError(response);
+        errorFun();
+      }.bind(this)
+    });
   }
 
   /**
@@ -922,51 +911,46 @@ export default class HtkHelper {
    * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be deleted.
    */
   static deleteSchedule(scheduleUIDs, successFun, errorFun) {
-      if (scheduleUIDs.length > 0) {
-          var scheduleUID = scheduleUIDs[0];
-          $.ajax({
-              type: "post",
-              url: "/deleteschedule",
-              data: {
-                  token: this.token,
-                  scheduleUID: scheduleUID
-              },
-              success: function (response) {
-                  if(this.checkServerResponse(response)) {
-                      if (response === Constants.HTK_OK) {
-                          scheduleUIDs.shift();
-                          if (scheduleUIDs.length > 0) {
-                              this.deleteSchedule(scheduleUIDs, successFun, errorFun);
-                          }
-                          else {
-                              successFun();
-                          }
-                      }
-                      else {
-                          if (response === Constants.HTK_IN_USE) {
-                              HtkDialogs.showErrorDialog("Schedule " + scheduleUID + " is being used in other schedules and thus cannot be deleted.");
-                              errorFun();
-                          }
-                          else if (response === Constants.HTK_NOT_FOUND) {
-                              HtkDialogs.showErrorDialog("Schedule " + scheduleUID + " could not be found in the server!");
-                              errorFun();
-                          }
-                          else {
-                              HtkDialogs.showErrorDialog("Unkown error while deleting the schedule " + scheduleUID + " in the server");
-                              errorFun();
-                          }
-                      }
-                  }
-              }.bind(this),
-              error: function (response) {
-                  this.showCriticalError(response);
-                  errorFun();
-              }.bind(this)
-          });
-      }
-      else {
-          successFun();
-      }
+    if (scheduleUIDs.length > 0) {
+      var scheduleUID = scheduleUIDs[0];
+      $.ajax({
+        type: "post",
+        url: "/deleteschedule",
+        data: {
+          token: this.token,
+          scheduleUID: scheduleUID
+        },
+        success: function(response) {
+          if (this.checkServerResponse(response)) {
+            if (response === Constants.HTK_OK) {
+              scheduleUIDs.shift();
+              if (scheduleUIDs.length > 0) {
+                this.deleteSchedule(scheduleUIDs, successFun, errorFun);
+              } else {
+                successFun();
+              }
+            } else {
+              if (response === Constants.HTK_IN_USE) {
+                HtkDialogs.showErrorDialog("Schedule " + scheduleUID + " is being used in other schedules and thus cannot be deleted.");
+                errorFun();
+              } else if (response === Constants.HTK_NOT_FOUND) {
+                HtkDialogs.showErrorDialog("Schedule " + scheduleUID + " could not be found in the server!");
+                errorFun();
+              } else {
+                HtkDialogs.showErrorDialog("Unkown error while deleting the schedule " + scheduleUID + " in the server");
+                errorFun();
+              }
+            }
+          }
+        }.bind(this),
+        error: function(response) {
+          this.showCriticalError(response);
+          errorFun();
+        }.bind(this)
+      });
+    } else {
+      successFun();
+    }
   }
 
   /**
@@ -977,47 +961,43 @@ export default class HtkHelper {
    * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be obsoleted.
    */
   static obsoleteSchedule(scheduleUIDs, successFun, errorFun) {
-      if (scheduleUIDs.length > 0) {
-          var scheduleUID = scheduleUIDs[0];
-          $.ajax({
-              type: "post",
-              url: "/obsoleteschedule",
-              data: {
-                  token: this.token,
-                  scheduleUID: scheduleUID
-              },
-              success: function (response) {
-                  if(this.checkServerResponse(response)) {
-                      if (response === Constants.HTK_OK) {
-                          scheduleUIDs.shift();
-                          if (scheduleUIDs.length > 0) {
-                              this.obsoleteSchedule(scheduleUIDs, successFun, errorFun);
-                          }
-                          else {
-                              successFun();
-                          }
-                      }
-                      else {
-                          if (response === Constants.HTK_NOT_FOUND) {
-                              HtkDialogs.showErrorDialog("Schedule " + scheduleUID + " could not be found in the server!");
-                              errorFun();
-                          }
-                          else {
-                              HtkDialogs.showErrorDialog("Unkown error while obsoleting the schedule " + scheduleUID + " in the server");
-                              errorFun();
-                          }
-                      }
-                  }
-              }.bind(this),
-              error: function (response) {
-                  this.showCriticalError(response);
-                  errorFun();
-              }.bind(this)
-          });
-      }
-      else {
-          successFun();
-      }
+    if (scheduleUIDs.length > 0) {
+      var scheduleUID = scheduleUIDs[0];
+      $.ajax({
+        type: "post",
+        url: "/obsoleteschedule",
+        data: {
+          token: this.token,
+          scheduleUID: scheduleUID
+        },
+        success: function(response) {
+          if (this.checkServerResponse(response)) {
+            if (response === Constants.HTK_OK) {
+              scheduleUIDs.shift();
+              if (scheduleUIDs.length > 0) {
+                this.obsoleteSchedule(scheduleUIDs, successFun, errorFun);
+              } else {
+                successFun();
+              }
+            } else {
+              if (response === Constants.HTK_NOT_FOUND) {
+                HtkDialogs.showErrorDialog("Schedule " + scheduleUID + " could not be found in the server!");
+                errorFun();
+              } else {
+                HtkDialogs.showErrorDialog("Unkown error while obsoleting the schedule " + scheduleUID + " in the server");
+                errorFun();
+              }
+            }
+          }
+        }.bind(this),
+        error: function(response) {
+          this.showCriticalError(response);
+          errorFun();
+        }.bind(this)
+      });
+    } else {
+      successFun();
+    }
   }
 
 
@@ -1029,39 +1009,36 @@ export default class HtkHelper {
    * @param[in] errorFun function with prototype (void) f(), that will be called if the library could not be deleted.
    */
   static deleteLibrary(libraryUID, successFun, errorFun) {
-      $.ajax({
-          type: "post",
-          url: "/deletelibrary",
-          data: {
-              token: this.token,
-              libraryUID: libraryUID
-          },
-          success: function (response) {
-              if(this.checkServerResponse(response)) {
-                  if (response === Constants.HTK_OK) {
-                      successFun();
-                  }
-                  else {
-                      if (response === Constants.HTK_IN_USE) {
-                          HtkDialogs.showErrorDialog("Library is being used in other schedules and thus cannot be deleted.");
-                          errorFun();
-                      }
-                      else if (response === Constants.HTK_NOT_FOUND) {
-                          HtkDialogs.showErrorDialog("Library could not be found in the server!");
-                          errorFun();
-                      }
-                      else {
-                          HtkDialogs.showErrorDialog("Unkown error while deleting the library in the server");
-                          errorFun();
-                      }
-                  }
-              }
-          }.bind(this),
-          error: function (response) {
-              this.showCriticalError(response);
+    $.ajax({
+      type: "post",
+      url: "/deletelibrary",
+      data: {
+        token: this.token,
+        libraryUID: libraryUID
+      },
+      success: function(response) {
+        if (this.checkServerResponse(response)) {
+          if (response === Constants.HTK_OK) {
+            successFun();
+          } else {
+            if (response === Constants.HTK_IN_USE) {
+              HtkDialogs.showErrorDialog("Library is being used in other schedules and thus cannot be deleted.");
               errorFun();
-          }.bind(this)
-      });
+            } else if (response === Constants.HTK_NOT_FOUND) {
+              HtkDialogs.showErrorDialog("Library could not be found in the server!");
+              errorFun();
+            } else {
+              HtkDialogs.showErrorDialog("Unkown error while deleting the library in the server");
+              errorFun();
+            }
+          }
+        }
+      }.bind(this),
+      error: function(response) {
+        this.showCriticalError(response);
+        errorFun();
+      }.bind(this)
+    });
   }
 
   /**
@@ -1072,35 +1049,33 @@ export default class HtkHelper {
    * @param[in] errorFun function with prototype (void) f(), that will be called if the library could not be obsoleted.
    */
   static obsoleteLibrary(libraryUID, successFun, errorFun) {
-      $.ajax({
-          type: "post",
-          url: "/obsoletelibrary",
-          data: {
-              token: this.token,
-              libraryUID: libraryUID
-          },
-          success: function (response) {
-              if(this.checkServerResponse(response)) {
-                  if (response === Constants.HTK_OK) {
-                      successFun();
-                  }
-                  else {
-                      if (response === Constants.HTK_NOT_FOUND) {
-                          HtkDialogs.showErrorDialog("Library could not be found in the server!");
-                          errorFun();
-                      }
-                      else {
-                          HtkDialogs.showErrorDialog("Unkown error while obsoleting the library in the server");
-                          errorFun();
-                      }
-                  }
-              }
-          }.bind(this),
-          error: function (response) {
-              this.showCriticalError(response);
+    $.ajax({
+      type: "post",
+      url: "/obsoletelibrary",
+      data: {
+        token: this.token,
+        libraryUID: libraryUID
+      },
+      success: function(response) {
+        if (this.checkServerResponse(response)) {
+          if (response === Constants.HTK_OK) {
+            successFun();
+          } else {
+            if (response === Constants.HTK_NOT_FOUND) {
+              HtkDialogs.showErrorDialog("Library could not be found in the server!");
               errorFun();
-          }.bind(this)
-      });
+            } else {
+              HtkDialogs.showErrorDialog("Unkown error while obsoleting the library in the server");
+              errorFun();
+            }
+          }
+        }
+      }.bind(this),
+      error: function(response) {
+        this.showCriticalError(response);
+        errorFun();
+      }.bind(this)
+    });
   }
 
   /**
@@ -1110,23 +1085,23 @@ export default class HtkHelper {
    * @param[in] errorFun function with prototype (void) f(), that will be called if the statistics could not be retrieved.
    */
   static getStatistics(successFun, errorFun) {
-      $.ajax({
-          type: "post",
-          url: "/statistics",
-          data: {
-              token: localStorage.currentToken
-          },
-          success: function (response) {
-              if (this.checkServerResponse(response)) {
-                  var statistics = $.parseJSON(response);
-                  successFun(statistics);
-              }
-          }.bind(this),
-          error: function (response) {
-              this.showCriticalError(response);
-              errorFun();
-          }.bind(this)
-      });
+    $.ajax({
+      type: "post",
+      url: "/statistics",
+      data: {
+        token: localStorage.currentToken
+      },
+      success: function(response) {
+        if (this.checkServerResponse(response)) {
+          var statistics = $.parseJSON(response);
+          successFun(statistics);
+        }
+      }.bind(this),
+      error: function(response) {
+        this.showCriticalError(response);
+        errorFun();
+      }.bind(this)
+    });
   }
 
 
@@ -1135,68 +1110,67 @@ export default class HtkHelper {
    * @return true if the response from the server is not HTK_INVALID_TOKEN.
    */
   static checkServerResponse(response) {
-      var ok = (response.length > 0);
-      if (ok) {
-          if (response === Constants.HTK_INVALID_TOKEN) {
-              ok = false;
-              this.fireInvalidToken();
-          }
+    var ok = (response.length > 0);
+    if (ok) {
+      if (response === Constants.HTK_INVALID_TOKEN) {
+        ok = false;
+        this.fireInvalidToken();
       }
-      return ok;
+    }
+    return ok;
   }
 
   /**
    * @brief Registers a component that is interested in being notified if an HTK_INVALID_TOKEN is received from the server.
    */
   static addInvalidTokenListener(listener) {
-      this.invalidTokenListeners.push(listener);
+    this.invalidTokenListeners.push(listener);
   }
 
   /**
    * @brief Informs all the registered components that an invalid token was received from the server.
    */
   static fireInvalidToken() {
-      for(var l in this.invalidTokenListeners) {
-          this.invalidTokenListeners[l].invalidTokenReceived();
-      }
+    for (var l in this.invalidTokenListeners) {
+      this.invalidTokenListeners[l].invalidTokenReceived();
+    }
   }
 
   /**
    * @brief Updates the schedule remotely with any values that have changed in the last period.
    */
   static synchroniseRemote() {
-      //This is because in the context of the setInterval callback the this is the Window
-      var _this = htkHelper;
-      if (_this.currentScheduleUID !== undefined) {
-          var toPop = _this.valuesToSynchroniseRemote.length;
-          if (toPop > 0) {
-              var variablesToSend = {};
-              //Not perfectly safe, but worst comes to the worst I send twice the same thing from time to time
-              var i = 0;
-              while (i < toPop) {
-                  var valueToSynch = _this.valuesToSynchroniseRemote.shift();//not pop since we want to remove the oldest (i.e. the first) before
-                  variablesToSend[valueToSynch.id] = valueToSynch.value;
-                  _this.scheduleValuesToCommit[valueToSynch.id] = valueToSynch.value;
-                  i++;
-              }
-              $.ajax({
-                  type: "post",
-                  url: "/updateschedule",
-                  data: {
-                      token: _this.token,
-                      tid: _this.remoteServerTid,
-                      scheduleUID:_this.currentScheduleUID,
-                      variables:JSON.stringify(variablesToSend)
-                  },
-                  success: function (response) {
-                  }.bind(_this),
-                  error: function (response) {
-                      console.log(response);
-                      alert(response);
-                  }.bind(_this)
-              });
-          }
+    //This is because in the context of the setInterval callback the this is the Window
+    var _this = htkHelper;
+    if (_this.currentScheduleUID !== undefined) {
+      var toPop = _this.valuesToSynchroniseRemote.length;
+      if (toPop > 0) {
+        var variablesToSend = {};
+        //Not perfectly safe, but worst comes to the worst I send twice the same thing from time to time
+        var i = 0;
+        while (i < toPop) {
+          var valueToSynch = _this.valuesToSynchroniseRemote.shift(); //not pop since we want to remove the oldest (i.e. the first) before
+          variablesToSend[valueToSynch.id] = valueToSynch.value;
+          _this.scheduleValuesToCommit[valueToSynch.id] = valueToSynch.value;
+          i++;
+        }
+        $.ajax({
+          type: "post",
+          url: "/updateschedule",
+          data: {
+            token: _this.token,
+            tid: _this.remoteServerTid,
+            scheduleUID: _this.currentScheduleUID,
+            variables: JSON.stringify(variablesToSend)
+          },
+          success: function(response) {}.bind(_this),
+          error: function(response) {
+            console.log(response);
+            alert(response);
+          }.bind(_this)
+        });
       }
+    }
   }
 
   /**
@@ -1206,32 +1180,28 @@ export default class HtkHelper {
    * @return the casted value if successful or, otherwise, the original text.
    */
   static textToTypeValue(txtValue, typeValue) {
-      var ret = txtValue;
-      if (typeValue !== undefined) {
-          if (typeValue.startsWith("float")) {
-              if(!isNaN(ret)) {
-                  ret = parseFloat(ret);
-              }
-              else {
-                  ret = undefined;
-              }
+    var ret = txtValue;
+    if (typeValue !== undefined) {
+      if (typeValue.startsWith("float")) {
+        if (!isNaN(ret)) {
+          ret = parseFloat(ret);
+        } else {
+          ret = undefined;
+        }
+      } else if ((typeValue.startsWith("int") || (typeValue.startsWith("uint")))) {
+        if (!isNaN(ret)) {
+          ret = parseFloat(ret);
+          if (Number.isInteger(ret)) {
+            ret = parseInt(ret);
+          } else {
+            ret = undefined;
           }
-          else if ((typeValue.startsWith("int") || (typeValue.startsWith("uint")))) {
-              if(!isNaN(ret)) {
-                  ret = parseFloat(ret);
-                  if(Number.isInteger(ret)) {
-                      ret = parseInt(ret);
-                  }
-                  else {
-                      ret = undefined;
-                  }
-              }
-              else {
-                  ret = undefined;
-              }
-          }
+        } else {
+          ret = undefined;
+        }
       }
-      return ret;
+    }
+    return ret;
   }
 
   /**
@@ -1239,14 +1209,14 @@ export default class HtkHelper {
    * @param[in] remoteServerTidIn the thread identifier on the remote server.
    */
   static setRemoteServerTid(remoteServerTidIn) {
-      this.remoteServerTid = remoteServerTidIn;
+    this.remoteServerTid = remoteServerTidIn;
   }
 
   /**
    * @brief Gets the authentication token that is being used to communicate with the server.
    */
   static getToken() {
-      return this.token;
+    return this.token;
   }
 
   /**
@@ -1254,15 +1224,15 @@ export default class HtkHelper {
    * @param[in] tokenIn the token to set.
    */
   static setToken(tokenIn) {
-      this.token = tokenIn;
-      localStorage.currentToken = this.token;
+    this.token = tokenIn;
+    localStorage.currentToken = this.token;
   }
 
   /**
    * @brief Alert to be shown when there is a critical error communicating with the server.
    */
   static showCriticalError(err) {
-      HtkDialogs.showErrorDialog("Critical error communicating with the server." + err);
+    HtkDialogs.showErrorDialog("Critical error communicating with the server." + err);
   }
 
   /**
@@ -1270,7 +1240,7 @@ export default class HtkHelper {
    * @return all the available users.
    */
   static getAllUsers() {
-      return this.allUsers;
+    return this.allUsers;
   }
 
   /**
@@ -1279,15 +1249,15 @@ export default class HtkHelper {
    * @return all the selected options.
    */
   static getSelectAllSelectedValues(select) {
-      var result = [];
-      var options = select && select.options;
-      var nOptions = options.length;
-      for (var i=0; i<nOptions; i++) {
-          var opt = options[i];
-          if (opt.selected) {
-              result.push(opt);
-          }
+    var result = [];
+    var options = select && select.options;
+    var nOptions = options.length;
+    for (var i = 0; i < nOptions; i++) {
+      var opt = options[i];
+      if (opt.selected) {
+        result.push(opt);
       }
-      return result;
+    }
+    return result;
   }
 }

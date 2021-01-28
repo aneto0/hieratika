@@ -26,7 +26,7 @@ template.innerHTML = `
 /**
  * @brief A modal dialog which displays a wait icon.
  */
-export class HtkWaitDialog extends HTMLElement {
+class HtkWaitDialog extends HTMLElement {
     constructor() {
         super();
     }

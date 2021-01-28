@@ -21,7 +21,7 @@
 */
 
 import HtkHelper from './htk-helper.js'
-import { HtkDialogs } from './htk-dialogs.js'
+import HtkDialogs from './htk-dialogs.js'
 import $ from './js/jquery/jquery.js'
 
 const template = document.createElement('template');

@@ -1,0 +1,204 @@
+/*
+ date: 27/01/2021
+ author: Luca Porzio
+
+ copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
+ the Development of Fusion Energy ('Fusion for Energy').
+ Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ by the European Commission - subsequent versions of the EUPL (the "Licence")
+ You may not use this work except in compliance with the Licence.
+ You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+
+ warning: Unless required by applicable law or agreed to in writing,
+ software distributed under the Licence is distributed on an "AS IS"
+ basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ or implied. See the Licence permissions and limitations under the Licence.
+*/
+
+import HtkHelper from './htk-helper.js'
+import HtkDialogs from './htk-dialogs.js'
+
+const template = document.createElement('template');
+template.innerHTML = `
+<dialog id="dtransformations">
+    <div id="divtinfo">
+        <table style="border-style:solid;border-width:1px;width: 100%" id="tabletinfo">
+        </table>
+        <table style="border-style:solid;border-width:0px;width: 100%">
+            <tr>
+                <td style="padding-top:20px;">
+                    <button title="Run" id="runbtn">Run</button>
+                    <button title="Abort" id="abortbtn">Abort</button>
+                    <button title="Close" id="closebtn">Close</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+</dialog>
+`;
+/**
+ * @brief A dialog that allows to manage the status of all the transformations associated to a given page.
+ */
+class HtkTransformations extends HTMLElement {
+
+  /**
+   * @brief Constructor. NOOP.
+   */
+  constructor() {
+    super();
+  }
+
+  /**
+   * @brief See HTMLElement.createdCallback.
+   */
+  connectedCallback() {
+    var templateContent = template.content;
+    // import template into
+    const root = this.attachShadow({
+      mode: 'open'
+    });
+    root.appendChild(templateContent.cloneNode(true));
+
+    this.diag = this.shadowRoot.querySelector("#dtransformations");
+    this.transformationsTable = this.shadowRoot.querySelector("#tabletinfo");
+    this.runButton = this.shadowRoot.querySelector("#runbtn");
+    var abortButton = this.shadowRoot.querySelector("#abortbtn");
+    var closeButton = this.shadowRoot.querySelector("#closebtn");
+    this.runButton.onclick = function() {
+      var mainFrameHtkComponents = HtkHelper.getAllMainFrameHtkComponents();
+      for (var i = 0; i < this.transformations.length; i++) {
+        var transformation = this.transformations[i];
+        transformation.progressBar.value = 0;
+        var outputKeys = Object.keys(transformation.outputs);
+        for (var j = 0; j < outputKeys.length; j++) {
+          var mapname = transformation.outputs[outputKeys[j]];
+          if (mapname !== undefined) {
+            var comps = mainFrameHtkComponents[mapname];
+            if (comps !== undefined) {
+              for (var z = 0; z < comps.length; z++) {
+                //Reset the components
+                comps[z].reset();
+              }
+            }
+          }
+        }
+        this.runTransformation(this.transformations[i]);
+      }
+    }.bind(this);
+
+    closeButton.onclick = function() {
+      this.diag.close();
+    }.bind(this);
+
+    this.runButton.disabled = true;
+    abortButton.disabled = true;
+    abortButton.onclick = function() {}.bind(this);
+  }
+
+  /**
+   * @brief Request the remote execution of the provided transformation.
+   * @param[in] transformation the transformation to execute remotely.
+   */
+  runTransformation(transformation) {
+    HtkDialogs.showWaitDialog();
+    var inputVariables = Object.keys(transformation.inputs);
+    var inputs = {};
+    var ok = true;
+    var mainFrameHtkComponents = HtkHelper.getAllMainFrameHtkComponents();
+    for (var i = 0;
+      (i < inputVariables.length) && (ok); i++) {
+      var varname = inputVariables[i];
+      var mapname = transformation.inputs[varname];
+      var comp = mainFrameHtkComponents[mapname];
+      if (comp !== undefined) {
+        inputs[varname] = comp[0].getValue();
+      } else {
+        console.log("Component with name " + mapname + " not found.");
+        ok = false;
+      }
+    }
+    if (ok) {
+      HtkHelper.transform(
+        transformation.fun,
+        inputs,
+        function(uid) {
+          transformation["uid"] = "" + uid;
+          HtkDialogs.closeWaitDialog();
+        }.bind(this),
+        function(response) {
+          HtkDialogs.closeWaitDialog();
+          HtkDialogs.showErrorDialog("Failed to trigger the transformation. Unknown error, check the server logs.");
+        }
+      );
+    }
+  }
+
+  /**
+   * @brief Sets the transformations that are to be executed for a given page.
+   * @param[in] transformations the list of transformations to be executed.
+   */
+  setTransformations(transformations) {
+    this.transformations = transformations;
+    this.transformationsTable.innerHTML = "";
+    for (var i = 0; i < transformations.length; i++) {
+      var funName = transformations[i].fun;
+      var inputs = Object.keys(transformations[i].inputs).toString();
+      var outputs = Object.keys(transformations[i].outputs).toString();
+      var fuid = funName + inputs + outputs;
+      fuid = fuid.replace(/[|&;$%@"<>()+,.]/g, "");
+      var row = this.transformationsTable.insertRow();
+      var fName = row.insertCell(0);
+      fName.innerHTML = funName;
+      var pbarCell = row.insertCell(1);
+      row.title = outputs + " = " + funName + "(" + inputs + ")";
+      pbarCell.innerHTML = "<progress value=\"0\" max=\"100\" id=\"pbar_" + fuid + "\"></progress>";
+      var pbar = this.shadowRoot.querySelector("#pbar_" + fuid);
+      transformations[i]["progressBar"] = pbar;
+    }
+    this.runButton.disabled = (transformations.length === 0);
+  }
+
+  /**
+   * @brief Callback function that is to be called whenever a transformation is updated.
+   * @param[in] transformationInfo structure with the transformation information.
+   */
+  transformationUpdated(transformationInfo) {
+    var mainFrameHtkComponents = HtkHelper.getAllMainFrameHtkComponents();
+    for (var i = 0; i < this.transformations.length; i++) {
+      var transformation = this.transformations[i];
+      if (transformation.uid === transformationInfo["transformationUID"]) {
+        var progressValue = parseFloat(transformationInfo["progress"]);
+        progressValue *= 100;
+        transformation.progressBar.value = "" + progressValue;
+
+        var outputs = transformationInfo["outputs"];
+        var outputKeys = Object.keys(outputs);
+        for (var j = 0; j < outputKeys.length; j++) {
+          //Map the transformation output (i.e. the variable name has seen by the transformation) to the variable name in the UI
+          var mapname = transformation.outputs[outputKeys[j]];
+          if (mapname !== undefined) {
+            var comps = mainFrameHtkComponents[mapname];
+            if (comps !== undefined) {
+              for (var z = 0; z < comps.length; z++) {
+                comps[z].setValue(outputs[outputKeys[j]]);
+              }
+            }
+          }
+        }
+        break;
+      }
+    }
+  }
+
+  /**
+   * @brief Shows the dialog (modal).
+   */
+  show() {
+    this.diag.showModal();
+  }
+}
+
+/**
+ * @brief Registers the element.
+ */
+ customElements.define('htk-transformations', HtkTransformations);
