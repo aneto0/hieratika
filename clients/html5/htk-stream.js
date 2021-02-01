@@ -36,7 +36,7 @@ export class Stream {
     //Changed values are received in json format
     this.evtSrc.onmessage = function(e) {
       if (e.data.length > 0) {
-        var jsonData = $.parseJSON(e.data);
+        var jsonData = JSON.parse(e.data);
         var reset = jsonData["reset"];
         var transformationUID = jsonData["transformationUID"];
         if (reset !== undefined) {

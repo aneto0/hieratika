@@ -16,7 +16,7 @@
 */
 
 import HtkHelper from './htk-helper.js'
-import HtkDialogs from './htk-dialogs.js'
+import { HtkDialogs } from './htk-dialogs.js'
 
 const template = document.createElement('template');
 template.innerHTML = `
@@ -36,6 +36,7 @@ template.innerHTML = `
     </div>
 </dialog>
 `;
+
 /**
  * @brief A dialog that allows to manage the status of all the transformations associated to a given page.
  */
@@ -100,7 +101,8 @@ class HtkTransformations extends HTMLElement {
    * @param[in] transformation the transformation to execute remotely.
    */
   runTransformation(transformation) {
-    HtkDialogs.showWaitDialog();
+    var htkDialog = new HtkDialogs();
+    htkDialog.showWaitDialog();
     var inputVariables = Object.keys(transformation.inputs);
     var inputs = {};
     var ok = true;
@@ -123,11 +125,11 @@ class HtkTransformations extends HTMLElement {
         inputs,
         function(uid) {
           transformation["uid"] = "" + uid;
-          HtkDialogs.closeWaitDialog();
+          htkDialog.closeWaitDialog();
         }.bind(this),
         function(response) {
-          HtkDialogs.closeWaitDialog();
-          HtkDialogs.showErrorDialog("Failed to trigger the transformation. Unknown error, check the server logs.");
+          htkDialog.closeWaitDialog();
+          htkDialog.showErrorDialog("Failed to trigger the transformation. Unknown error, check the server logs.");
         }
       );
     }

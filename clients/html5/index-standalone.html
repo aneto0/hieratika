@@ -25,18 +25,22 @@
 
         <script type="module">
           import HtkHelper from './htk-helper.js'
-          HtkHelper.initialise()
+          import { HtkDialogs } from './htk-dialogs.js'
+          HtkHelper.initialise();
         </script>
 
+        <script type="module" src="htk-wait-dialog.js"></script>
         <script type="module" src="./htk-page-selector.js"></script>
+        <script type="module" src="./htk-schedule-selector.js"></script>
         <script type="module" src="./htk-login.js"></script>
+        <script type="module" src="./htk-transformations.js"></script>
 
         <script type="module" src="htk-main-editor.js"></script>
         <script type="module" src="htk-nav.js"></script>
     </head>
     <body style="background:#FFFAFA">
       <div style="border-style:solid;border-width:1px;background:#353535;">
-          <htk-nav id="nav-pane" data-standalone="false"></htk-nav>
+          <htk-nav id="nav-pane" data-standalone="true"></htk-nav>
       </div>
       <div>
           <htk-main-editor id="main-editor"/></htk-main-editor>

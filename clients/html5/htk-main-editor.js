@@ -21,7 +21,7 @@
 */
 
 import HtkHelper from './htk-helper.js'
-import HtkDialogs from './htk-dialogs.js'
+import { HtkDialogs } from './htk-dialogs.js'
 import $ from './js/jquery/jquery.js'
 
 const template = document.createElement('template');
@@ -89,7 +89,8 @@ export class HtkMainEditor extends HTMLElement {
      * @param[in] pageName the page to display.
      */
     loadVariablesInfo(pageName) {
-        HtkDialogs.showWaitDialog();
+        var htkDialog = new HtkDialogs();
+        htkDialog.showWaitDialog();
         var allVariableIds = [];
         var allLiveVariableIds = [];
         var mainFrameComponents = this.mainEditorIFrame.contentDocument._frameComponents;
@@ -147,17 +148,19 @@ export class HtkMainEditor extends HTMLElement {
                         }
 
                         this.fireVariablesInfoLoaded();
-                        HtkDialogs.closeWaitDialog();
+                        htkDialog.closeWaitDialog();
                     }.bind(this),
                     function () {
-                        HtkDialogs.showErrorDialog("Failed to get variables info. Unknown error, check the server logs.");
-                        HtkDialogs.closeWaitDialog();
+                        var htkDialog = new HtkDialogs();
+                        htkDialog.showErrorDialog("Failed to get variables info. Unknown error, check the server logs.");
+                        htkDialog.closeWaitDialog();
                     }.bind(this)
                 );
             }.bind(this),
             function () {
-                HtkDialogs.showErrorDialog("Failed to get live variables info. Unknown error, check the server logs.");
-                HtkDialogs.closeWaitDialog();
+                var htkDialog = new HtkDialogs();
+                htkDialog.showErrorDialog("Failed to get live variables info. Unknown error, check the server logs.");
+                htkDialog.closeWaitDialog();
             }.bind(this)
 
         );

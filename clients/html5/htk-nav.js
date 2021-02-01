@@ -27,8 +27,9 @@
 
 
 import HtkHelper from './htk-helper.js'
-import HtkDialogs from './htk-dialogs.js'
+import { HtkDialogs } from './htk-dialogs.js'
 import { Stream } from './htk-stream.js'
+import * as Constants from './htk-constants.js'
 
 const template = document.createElement('template');
 template.innerHTML = `
@@ -90,6 +91,7 @@ template.innerHTML = `
                      */
                     constructor() {
                         super();
+                        this.htkDialog = new HtkDialogs();
                     }
 
                     /**
@@ -132,14 +134,14 @@ template.innerHTML = `
                         this.setPlantButton = this.shadowRoot.querySelector("#setplantbtn");
                         this.setPlantButton.onclick = function() {
                             this.hideSideBar();
-                            HtkDialogs.showWaitDialog();
+                            this.htkDialog.showWaitDialog();
                             HtkHelper.updatePlant(this.selectedPage.name, this.updatePlantCompleted, this.updatePlantError);
                         }.bind(this);
 
                         this.loadIntoPlantButton = this.shadowRoot.querySelector("#loadintoplantbtn");
                         this.loadIntoPlantButton.onclick = function() {
                             this.hideSideBar();
-                            HtkDialogs.showWaitDialog();
+                            this.htkDialog.showWaitDialog();
                             HtkHelper.loadIntoPlant(this.selectedPage.name, this.loadIntoPlantCompleted, this.loadIntoPlantError);
                         }.bind(this);
 
@@ -208,7 +210,7 @@ template.innerHTML = `
                             this.hideSideBar();
                             this.handleAccordionClick(viewAccordion);
                             HtkHelper.setCurrentScheduleUID(undefined);
-                            this.currentDisplay.innerHTML = PLANT_NAME;
+                            this.currentDisplay.innerHTML = Constants.PLANT_NAME;
                             this.setPlantButton.disabled = true;
                             this.copyFromReferenceScheduleButton.disabled = true;
                             this.copyFromReferencePlantButton.disabled = true;
@@ -235,17 +237,17 @@ template.innerHTML = `
                         this.referenceSelectNoneButton.onclick = function () {
                             this.hideSideBar();
                             this.handleAccordionClick(refAccordion);
-                            this.setReference(NONE_NAME);
-                            this.currentReference.innerHTML = NONE_NAME;
-                            this.currentReference.style.color = NONE_COLOR;
+                            this.setReference(Constants.NONE_NAME);
+                            this.currentReference.innerHTML = Constants.NONE_NAME;
+                            this.currentReference.style.color = Constants.NONE_COLOR;
                         }.bind(this);
 
                         this.referenceSelectPlantButton = this.shadowRoot.querySelector("#refselectplantbtn");
                         this.referenceSelectPlantButton.onclick = function () {
                             this.hideSideBar();
                             this.handleAccordionClick(refAccordion);
-                            this.setReference(PLANT_NAME);
-                            this.currentReference.innerHTML = PLANT_NAME;
+                            this.setReference(Constants.PLANT_NAME);
+                            this.currentReference.innerHTML = Constants.PLANT_NAME;
                         }.bind(this);
 
                         this.referenceSelectScheduleButton = this.shadowRoot.querySelector("#refselectschedulebtn");
@@ -281,7 +283,7 @@ template.innerHTML = `
                         this.commitButton = this.shadowRoot.querySelector("#commitbtn");
                         this.commitButton.onclick = function () {
                             this.hideSideBar();
-                            HtkDialogs.showWaitDialog();
+                            this.htkDialog.showWaitDialog();
                             HtkHelper.commitAllChangesToSchedule(this.commitCompleted, this.commitError);
                         }.bind(this);
 
@@ -307,13 +309,17 @@ template.innerHTML = `
                         this.userLogoutListeners = [this];
                         this.addPageListener(this.scheduleSelector);
                         this.disableAllButPageSelect();
+
+                        if (this.standalone) {
+                            HtkHelper.loginToServer("", "", this.loginSuccessful.bind(this), this.loginError.bind(this));
+                        }
                     }
 
 
                     /**
                      * @brief See HTMLElement.attachedCallback.
                      */
-                    attachedCallback() {
+                    adoptedCallback() {
                         if (this.standalone) {
                             HtkHelper.loginToServer("", "", this.loginSuccessful.bind(this), this.loginError.bind(this));
                         }
@@ -323,32 +329,32 @@ template.innerHTML = `
                      * @brief Callback function that is called when the load of the variables into the plant has been (asynchronously) completed successfully.
                      */
                     loadIntoPlantCompleted() {
-                        HtkDialogs.closeWaitDialog();
-                        HtkDialogs.showInformationDialog("Plant loaded successfully");
+                        this.htkDialog.closeWaitDialog();
+                        this.htkDialog.showInformationDialog("Plant loaded successfully");
                     }
 
                     /**
                      * @brief Callback function that is called when the load of the variables into the plant has been (asynchronously) completed with an error.
                      */
                     loadIntoPlantError() {
-                        HtkDialogs.closeWaitDialog();
-                        HtkDialogs.showErrorDialog("Failed to load the values into the plant. Unknown error, check the server logs.");
+                        this.htkDialog.closeWaitDialog();
+                        this.htkDialog.showErrorDialog("Failed to load the values into the plant. Unknown error, check the server logs.");
                     }
 
                     /**
                      * @brief Callback function that is called when the update of the variables into the plant has been (asynchronously) completed successfully.
                      */
                     updatePlantCompleted() {
-                        HtkDialogs.closeWaitDialog();
-                        HtkDialogs.showInformationDialog("Plant updated successfully. Do not forget to load.");
+                        this.htkDialog.closeWaitDialog();
+                        this.htkDialog.showInformationDialog("Plant updated successfully. Do not forget to load.");
                     }
 
                     /**
                      * @brief Callback function that is called when the update of the variables into the plant has been (asynchronously) completed with an error.
                      */
                     updatePlantError() {
-                        HtkDialogs.closeWaitDialog();
-                        HtkDialogs.showErrorDialog("Failed to update plant values. Unknown error, check the server logs.");
+                        this.htkDialog.closeWaitDialog();
+                        this.htkDialog.showErrorDialog("Failed to update plant values. Unknown error, check the server logs.");
                     }
 
                     /**
@@ -364,14 +370,14 @@ template.innerHTML = `
                                 htkComp.setInitialValue(htkComp.getValue());
                             }
                         }
-                        HtkDialogs.closeWaitDialog();
+                        this.htkDialog.closeWaitDialog();
                     }
 
                     /**
                      * @brief Callback function that is called when the commit of the variables into the schedule has been (asynchronously) completed with an error.
                      */
                     commitError() {
-                        HtkDialogs.closeWaitDialog();
+                        this.htkDialog.closeWaitDialog();
                     }
 
                     /**
@@ -400,7 +406,7 @@ template.innerHTML = `
                         this.referenceSelectScheduleButton.disabled = false;
                         this.referenceSelectNoneButton.disabled = false;
                         this.referenceSelectPlantButton.disabled = false;
-                        this.currentDisplay.innerHTML = PLANT_NAME;
+                        this.currentDisplay.innerHTML = Constants.PLANT_NAME;
                     }
 
                     /**
@@ -467,13 +473,13 @@ template.innerHTML = `
                      * @brief Callback function which is called when an invalid token is received from the server.
                      */
                     invalidTokenReceived() {
-                        HtkDialogs.closeWaitDialog();
-                        HtkDialogs.showErrorDialog("You have been logged out from the server. Please login again.");
+                        this.htkDialog.closeWaitDialog();
+                        this.htkDialog.showErrorDialog("You have been logged out from the server. Please login again.");
                         this.fireUserLogout();
                     }
 
                     loginError() {
-                      HtkDialogs.showErrorDialog("Error during login. Please try again.");
+                      this.htkDialog.showErrorDialog("Error during login. Please try again.");
                     }
 
                     /**
@@ -485,10 +491,10 @@ template.innerHTML = `
                                 localStorage.removeItem("user");
                                 localStorage.removeItem("schedule");
                                 this.usernameDisplay.innerHTML = "(login first)"
-                                this.currentDisplay.innerHTML = NONE_NAME;
-                                this.currentDisplay.style.color = NONE_COLOR;
-                                this.currentReference.innerHTML = NONE_NAME;
-                                this.currentReference.style.color = NONE_COLOR;
+                                this.currentDisplay.innerHTML = Constants.NONE_NAME;
+                                this.currentDisplay.style.color = Constants.NONE_COLOR;
+                                this.currentReference.innerHTML = Constants.NONE_NAME;
+                                this.currentReference.style.color = Constants.NONE_COLOR;
                                 this.loginButton.innerHTML = "<i class='fa fa-user-o'> Login</i>";
                                 this.pageSelectButton.disabled = true;
                                 this.disableAllButPageSelect();
@@ -524,7 +530,7 @@ template.innerHTML = `
                      * @brief Gets all the transformations that are available for a given page.
                      */
                     getTransformations() {
-                        HtkDialogs.showWaitDialog();
+                        this.htkDialog.showWaitDialog();
                         HtkHelper.getTransformations(
                             this.selectedPage.name,
                             function (transformations) {
@@ -537,11 +543,11 @@ template.innerHTML = `
                                 this.referenceSelectScheduleButton.disabled = false;
                                 this.referenceSelectNoneButton.disabled = false;
                                 this.referenceSelectPlantButton.disabled = false;
-                                HtkDialogs.closeWaitDialog();
+                                this.htkDialog.closeWaitDialog();
                             }.bind(this),
                             function (response) {
-                                HtkDialogs.closeWaitDialog();
-                                HtkDialogs.showErrorDialog("Failed to getTransformations. Unknown error, check the server logs.");
+                                this.htkDialog.closeWaitDialog();
+                                this.htkDialog.showErrorDialog("Failed to getTransformations. Unknown error, check the server logs.");
                             }
                         );
                     }
@@ -668,11 +674,11 @@ template.innerHTML = `
                      *  - currentReference a reference with the name currentReference
                      */
                     setReference(currentReference) {
-                        HtkDialogs.showWaitDialog();
+                        this.htkDialog.showWaitDialog();
                         var mainFrameHtkComponents = HtkHelper.getAllMainFrameHtkComponents();
                         var keys = Object.keys(mainFrameHtkComponents);
                         var htkComp;
-                        if (currentReference === NONE_NAME) {
+                        if (currentReference === Constants.NONE_NAME) {
                             //Reset all the values to N/A
                             for (var i=0; i<keys.length; i++) {
                                 var htkCompArray = mainFrameHtkComponents[keys[i]];
@@ -682,9 +688,9 @@ template.innerHTML = `
                                     htkComp.setReference(currentReference);
                                 }
                             }
-                            HtkDialogs.closeWaitDialog();
+                            this.htkDialog.closeWaitDialog();
                         }
-                        else if (currentReference === PLANT_NAME) {
+                        else if (currentReference === Constants.PLANT_NAME) {
                             for (var i=0; i<keys.length; i++) {
                                 var htkCompArray = mainFrameHtkComponents[keys[i]];
                                 for (var j=0; j<htkCompArray.length; j++) {
@@ -693,7 +699,7 @@ template.innerHTML = `
                                     htkComp.setReference(currentReference);
                                 }
                             }
-                            HtkDialogs.closeWaitDialog();
+                            this.htkDialog.closeWaitDialog();
                         }
                         else {
                             HtkHelper.getScheduleVariablesValues(
@@ -712,11 +718,11 @@ template.innerHTML = `
                                             }
                                         }
                                     }
-                                    HtkDialogs.closeWaitDialog();
+                                    this.htkDialog.closeWaitDialog();
                                 },
                                 function () {
-                                    HtkDialogs.closeWaitDialog();
-                                    HtkDialogs.showErrorDialog("Failed to update plant values. Unknown error, check the server logs.");
+                                    this.htkDialog.closeWaitDialog();
+                                    this.htkDialog.showErrorDialog("Failed to update plant values. Unknown error, check the server logs.");
                                 }
                             );
                         }
@@ -731,7 +737,7 @@ template.innerHTML = `
                      * @param[in] successFun the function to be called when all the variables have been copied.
                      */
                     copyFromSchedule(schUID, resetValue, updateRemote, setNotEditable, successFun) {
-                        HtkDialogs.showWaitDialog();
+                        this.htkDialog.showWaitDialog();
                         HtkHelper.getScheduleVariablesValues(
                             schUID,
                             function (variables) {
@@ -761,11 +767,11 @@ template.innerHTML = `
                                     }
                                 }
                                 successFun();
-                                HtkDialogs.closeWaitDialog();
+                                this.htkDialog.closeWaitDialog();
                             },
                             function () {
-                                HtkDialogs.closeWaitDialog();
-                                HtkDialogs.showErrorDialog("Failed to copy from the schedule. Unknown error, check the server logs.");
+                                this.htkDialog.closeWaitDialog();
+                                this.htkDialog.showErrorDialog("Failed to copy from the schedule. Unknown error, check the server logs.");
                             }
                         );
                     }

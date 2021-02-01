@@ -22,7 +22,7 @@
 */
 
 import * as Constants from './htk-constants.js'
-import HtkDialogs from './htk-dialogs.js'
+import { HtkDialogs } from './htk-dialogs.js'
 import $ from './js/jquery/jquery.js'
 
 /**
@@ -218,7 +218,8 @@ export default class HtkHelper {
       },
       success: function(response) {
         if (this.checkServerResponse(response)) {
-          var variables = $.parseJSON(response);
+          //var variables = JSON.parse(response);
+          var variables = JSON.parse(response);
           successFun(variables);
         }
       }.bind(this),
@@ -248,7 +249,7 @@ export default class HtkHelper {
       },
       success: function(response) {
         if (this.checkServerResponse(response)) {
-          var variables = $.parseJSON(response);
+          var variables = JSON.parse(response);
           successFun(variables);
         }
       }.bind(this),
@@ -276,7 +277,7 @@ export default class HtkHelper {
       },
       success: function(response) {
         if (this.checkServerResponse(response)) {
-          var variables = $.parseJSON(response);
+          var variables = JSON.parse(response);
           successFun(variables);
         }
       }.bind(this),
@@ -297,7 +298,7 @@ export default class HtkHelper {
       },
       success: function(response) {
         if (this.checkServerResponse(response)) {
-          var variables = $.parseJSON(response);
+          var variables = JSON.parse(response);
           successFun(variables);
         }
       }.bind(this),
@@ -347,7 +348,8 @@ export default class HtkHelper {
       success: function(response) {
         if (this.checkServerResponse(response)) {
           if (response === Constants.HTK_IN_USE) {
-            HtkDialogs.showErrorDialog("The schedule is being used in other schedules and thus cannot be overwritten (note that it might being used by this same variable. If so unselect if first).");
+            var htkDialog = new HtkDialogs();
+            htkDialog.showErrorDialog("The schedule is being used in other schedules and thus cannot be overwritten (note that it might being used by this same variable. If so unselect if first).");
             errorFun();
           } else {
             successFun();
@@ -377,7 +379,7 @@ export default class HtkHelper {
       },
       success: function(response) {
         if (this.checkServerResponse(response)) {
-          var pagesJson = $.parseJSON(response);
+          var pagesJson = JSON.parse(response);
           successFun(pagesJson);
         }
       }.bind(this),
@@ -408,7 +410,7 @@ export default class HtkHelper {
       },
       success: function(response) {
         if (this.checkServerResponse(response)) {
-          var availableFolders = $.parseJSON(response);
+          var availableFolders = JSON.parse(response);
           successFun(availableFolders);
         }
       }.bind(this),
@@ -440,7 +442,7 @@ export default class HtkHelper {
       },
       success: function(response) {
         if (this.checkServerResponse(response)) {
-          var availableSchedules = $.parseJSON(response);
+          var availableSchedules = JSON.parse(response);
           successFun(availableSchedules);
         }
       }.bind(this),
@@ -467,7 +469,7 @@ export default class HtkHelper {
       },
       success: function(response) {
         if (this.checkServerResponse(response)) {
-          var schedule = $.parseJSON(response);
+          var schedule = JSON.parse(response);
           successFun(schedule);
         } else {
           errorFun(response);
@@ -590,7 +592,8 @@ export default class HtkHelper {
                 successFun();
               }
             } else {
-              HtkDialogs.showErrorDialog("Unkown error while deleting the folder " + folderName + " in the server. Is the folder empty?. Check the logs.");
+              var htkDialog = new HtkDialogs();
+              htkDialog.showErrorDialog("Unkown error while deleting the folder " + folderName + " in the server. Is the folder empty?. Check the logs.");
               errorFun();
             }
           }
@@ -639,7 +642,8 @@ export default class HtkHelper {
                 successFun();
               }
             } else {
-              HtkDialogs.showErrorDialog("Unkown error while obsoleting the folder " + folderName + " in the server. Check the server logs.");
+              var htkDialog = new HtkDialogs();
+              htkDialog.showErrorDialog("Unkown error while obsoleting the folder " + folderName + " in the server. Check the server logs.");
               errorFun();
             }
           }
@@ -709,7 +713,7 @@ export default class HtkHelper {
       },
       success: function(response) {
         if (this.checkServerResponse(response)) {
-          this.allUsers = $.parseJSON(response);
+          this.allUsers = JSON.parse(response);
           successFun(this.allUsers);
         }
       }.bind(this),
@@ -736,7 +740,7 @@ export default class HtkHelper {
         password: passwordToSend
       },
       success: function(response) {
-        var user = $.parseJSON(response);
+        var user = JSON.parse(response);
         if (user.id !== "") {
           successFun(user);
         } else {
@@ -820,7 +824,7 @@ export default class HtkHelper {
       },
       success: function(response) {
         if (this.checkServerResponse(response)) {
-          var libraries = $.parseJSON(response);
+          var libraries = JSON.parse(response);
           successFun(libraries);
         }
       }.bind(this),
@@ -848,7 +852,7 @@ export default class HtkHelper {
       },
       success: function(response) {
         if (this.checkServerResponse(response)) {
-          var libraries = $.parseJSON(response);
+          var libraries = JSON.parse(response);
           successFun(libraries);
         }
       }.bind(this),
@@ -884,14 +888,15 @@ export default class HtkHelper {
       },
       success: function(response) {
         if (this.checkServerResponse(response)) {
+          var htkDialog = new HtkDialogs();
           if (response === Constants.HTK_IN_USE) {
-            HtkDialogs.showErrorDialog("Library is being used in other schedules and thus cannot be overwritten (note that it might being used by this same variable. If so unselect if first).");
+            htkDialog.showErrorDialog("Library is being used in other schedules and thus cannot be overwritten (note that it might being used by this same variable. If so unselect if first).");
             errorFun();
           } else if (response === Constants.HTK_UNKNOWN_ERROR) {
-            HtkDialogs.showErrorDialog("Unkown error while saving the library in the server");
+            htkDialog.showErrorDialog("Unkown error while saving the library in the server");
             errorFun();
           } else {
-            var library = $.parseJSON(response);
+            var library = JSON.parse(response);
             successFun(library);
           }
         }
@@ -930,14 +935,15 @@ export default class HtkHelper {
                 successFun();
               }
             } else {
+              var htkDialog = new HtkDialogs();
               if (response === Constants.HTK_IN_USE) {
-                HtkDialogs.showErrorDialog("Schedule " + scheduleUID + " is being used in other schedules and thus cannot be deleted.");
+                htkDialog.showErrorDialog("Schedule " + scheduleUID + " is being used in other schedules and thus cannot be deleted.");
                 errorFun();
               } else if (response === Constants.HTK_NOT_FOUND) {
-                HtkDialogs.showErrorDialog("Schedule " + scheduleUID + " could not be found in the server!");
+                htkDialog.showErrorDialog("Schedule " + scheduleUID + " could not be found in the server!");
                 errorFun();
               } else {
-                HtkDialogs.showErrorDialog("Unkown error while deleting the schedule " + scheduleUID + " in the server");
+                htkDialog.showErrorDialog("Unkown error while deleting the schedule " + scheduleUID + " in the server");
                 errorFun();
               }
             }
@@ -980,11 +986,12 @@ export default class HtkHelper {
                 successFun();
               }
             } else {
+              var htkDialog = new HtkDialogs();
               if (response === Constants.HTK_NOT_FOUND) {
-                HtkDialogs.showErrorDialog("Schedule " + scheduleUID + " could not be found in the server!");
+                htkDialog.showErrorDialog("Schedule " + scheduleUID + " could not be found in the server!");
                 errorFun();
               } else {
-                HtkDialogs.showErrorDialog("Unkown error while obsoleting the schedule " + scheduleUID + " in the server");
+                htkDialog.showErrorDialog("Unkown error while obsoleting the schedule " + scheduleUID + " in the server");
                 errorFun();
               }
             }
@@ -1021,14 +1028,15 @@ export default class HtkHelper {
           if (response === Constants.HTK_OK) {
             successFun();
           } else {
+            var htkDialog = new HtkDialogs();
             if (response === Constants.HTK_IN_USE) {
-              HtkDialogs.showErrorDialog("Library is being used in other schedules and thus cannot be deleted.");
+              htkDialog.showErrorDialog("Library is being used in other schedules and thus cannot be deleted.");
               errorFun();
             } else if (response === Constants.HTK_NOT_FOUND) {
-              HtkDialogs.showErrorDialog("Library could not be found in the server!");
+              htkDialog.showErrorDialog("Library could not be found in the server!");
               errorFun();
             } else {
-              HtkDialogs.showErrorDialog("Unkown error while deleting the library in the server");
+              htkDialog.showErrorDialog("Unkown error while deleting the library in the server");
               errorFun();
             }
           }
@@ -1061,11 +1069,12 @@ export default class HtkHelper {
           if (response === Constants.HTK_OK) {
             successFun();
           } else {
+            var htkDialog = new HtkDialogs();
             if (response === Constants.HTK_NOT_FOUND) {
-              HtkDialogs.showErrorDialog("Library could not be found in the server!");
+              htkDialog.showErrorDialog("Library could not be found in the server!");
               errorFun();
             } else {
-              HtkDialogs.showErrorDialog("Unkown error while obsoleting the library in the server");
+              htkDialog.showErrorDialog("Unkown error while obsoleting the library in the server");
               errorFun();
             }
           }
@@ -1093,7 +1102,7 @@ export default class HtkHelper {
       },
       success: function(response) {
         if (this.checkServerResponse(response)) {
-          var statistics = $.parseJSON(response);
+          var statistics = JSON.parse(response);
           successFun(statistics);
         }
       }.bind(this),
@@ -1232,7 +1241,8 @@ export default class HtkHelper {
    * @brief Alert to be shown when there is a critical error communicating with the server.
    */
   static showCriticalError(err) {
-    HtkDialogs.showErrorDialog("Critical error communicating with the server." + err);
+    var htkDialog = new HtkDialogs();
+    htkDialog.showErrorDialog("Critical error communicating with the server." + err);
   }
 
   /**

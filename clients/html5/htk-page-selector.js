@@ -16,7 +16,7 @@
 */
 
 import HtkHelper from './htk-helper.js'
-import HtkDialogs from './htk-dialogs.js'
+import { HtkDialogs } from './htk-dialogs.js'
 
 const template = document.createElement('template');
 template.innerHTML = `
@@ -109,8 +109,8 @@ class HtkPageSelector extends HTMLElement {
     this.pageSelect.innerHTML = "";
     this.okCallbackFunction = okCallbackFun;
     this.okButton.disabled = true;
-    HtkDialogs.createDialog();
-    HtkDialogs.showWaitDialog();
+    var htkDialog = new HtkDialogs();
+    htkDialog.showWaitDialog();
     HtkHelper.getPages(
       function(pagesJson) {
         for (var p in pagesJson) {
@@ -121,12 +121,12 @@ class HtkPageSelector extends HTMLElement {
           option1.pageInfo = pagesJson[p];
           this.pageSelect.appendChild(option1);
         }
-        HtkDialogs.closeWaitDialog();
+        htkDialog.closeWaitDialog();
         this.diag.showModal();
       }.bind(this),
       function() {
-        HtkDialogs.closeWaitDialog();
-        HtkDialogs.showErrorDialog("Failed to get the pages. Unknown error, check the server logs.");
+        htkDialog.closeWaitDialog();
+        htkDialog.showErrorDialog("Failed to get the pages. Unknown error, check the server logs.");
       }
     );
   }
