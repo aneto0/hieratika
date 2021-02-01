@@ -1,6 +1,6 @@
 /*
- date: 04/01/2018
- author: Andre' Neto
+ date: 01/02/2021
+ author: Luca Porzio
 
  copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
  the Development of Fusion Energy ('Fusion for Energy').
@@ -54,18 +54,24 @@ export class HtkMainEditor extends HTMLElement {
       HtkHelper.setHtkMainEditor(this);
       this.mainEditorIFrame = this.shadowRoot.querySelector("#dmaineditor");
       this.mainEditorIFrame.src = "/help.html?" + new Date().getTime(); //new Date... to force reloading with no caching
+
+      var topNav = document.getElementById("nav-pane");
+      topNav.addUserLogoutListener(this);
+      topNav.addPageListener(this);
+      //Cannot be done from the topNav since the topNav createdCallback and attachedCallback are called before the mainEditor created and attached callbacks
+      this.addVariablesInfoLoadedListener(topNav);
     }
 
     /**
      * @brief See HTMLElement.attachedCallback.
      */
-    attachedCallback() {
+    /*attachedCallback() {
         var topNav = document.getElementById("nav-pane");
         topNav.addPageListener(this);
         topNav.addUserLogoutListener(this);
         //Cannot be done from the topNav since the topNav createdCallback and attachedCallback are called before the mainEditor created and attached callbacks
         this.addVariablesInfoLoadedListener(topNav);
-    }
+    }*/
 
     /**
      * @brief Registers a component that wants to informed when all the variables information, for a given page, have been loaded.
