@@ -34,3 +34,9 @@ export const HTK_UNKNOWN_ERROR = "UnknownError";
 export const HTK_OK = "ok";
 export const HTK_IN_USE = "InUse";
 export const HTK_NOT_FOUND = "NotFound";
+
+export const VALUE_CHANGED = 0;
+export const VALUE_CHANGED_INITIAL = 1;
+export const VALUE_CHANGED_REFERENCE = 2;
+export const VALUE_CHANGED_PLANT = 3;
+export const VALUE_CHANGED_REFERENCE_NAME = 4;

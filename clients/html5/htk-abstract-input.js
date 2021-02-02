@@ -21,11 +21,12 @@
 */
 
 import * as Constants from './htk-constants.js'
+import { HtkComponent } from './htk-component.js'
 
     /**
      * @brief Provides common methods for all the standard input components.
      */
-    class HtkAbstractInput extends HtkComponent {
+    export class HtkAbstractInput extends HtkComponent {
 
         /**
          * @brief Constructor. NOOP.

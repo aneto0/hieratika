@@ -16,6 +16,7 @@
 */
 
 import * as Constants from './htk-constants.js'
+import { HtkAbstractInput } from './htk-abstract-input.js'
 
 const template = document.createElement('template');
 template.innerHTML = `
@@ -106,7 +107,7 @@ template.innerHTML = `
 
         setValue(valueToSet, updateRemote = true) {
           this.value = this.getTheCorrectValue(valueToSet);
-          this.fireValueChanged(HtkComponent.VALUE_CHANGED);
+          this.fireValueChanged(Constants.VALUE_CHANGED);
           if (updateRemote) {
             this.updateRemote(valueToSet);
           }
@@ -116,13 +117,13 @@ template.innerHTML = `
 
         setReferenceValue(referenceToSet) {
           this.referenceValue = this.getTheCorrectValue(referenceToSet);
-          this.fireValueChanged(HtkComponent.VALUE_CHANGED_REFERENCE);
+          this.fireValueChanged(Constants.VALUE_CHANGED_REFERENCE);
           this.refresh();
         }
 
         setPlantValue(plantValueToSet) {
           this.plantValue = this.getTheCorrectValue(plantValueToSet);
-          this.fireValueChanged(HtkComponent.VALUE_CHANGED);
+          this.fireValueChanged(Constants.VALUE_CHANGED);
           this.refresh();
         }
 

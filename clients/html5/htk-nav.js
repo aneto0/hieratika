@@ -26,10 +26,10 @@
         */
 
 
-import HtkHelper from './htk-helper.js'
-import { HtkDialogs } from './htk-dialogs.js'
-import { Stream } from './htk-stream.js'
-import * as Constants from './htk-constants.js'
+import HtkHelper from './htk-helper.js';
+import { HtkDialogs } from './htk-dialogs.js';
+import { Stream } from './htk-stream.js';
+import * as Constants from './htk-constants.js';
 
 const template = document.createElement('template');
 template.innerHTML = `
