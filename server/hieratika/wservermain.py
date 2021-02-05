@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+from __future__ import absolute_import
+from __future__ import print_function
+from six.moves import zip
 __copyright__ = """
     Copyright 2017 F4E | European Joint Undertaking for ITER and
     the Development of Fusion Energy ('Fusion for Energy').
@@ -27,7 +30,7 @@ __date__ = "17/11/2017"
 ##
 import argparse
 import ast
-import ConfigParser
+import six.moves.configparser
 import importlib
 import json
 import logging
@@ -244,7 +247,7 @@ def load(config):
             return application
         else:
             log.critical("Failed to load either the server or the auth service")
-    except (KeyError, ValueError, ConfigParser.Error) as e:
+    except (KeyError, ValueError, six.moves.configparser.Error) as e:
         #Trap both IOError
         log.critical("Failed to load configuration: {0}".format(e))
         exit()
@@ -253,10 +256,10 @@ def start(*args, **kwargs):
     configFilePath = kwargs["config"]
     try:
         with open(configFilePath, "r") as configFile:
-            config = ConfigParser.ConfigParser()
+            config = six.moves.configparser.ConfigParser()
             config.readfp(configFile)
             return load(config)
-    except (IOError, ConfigParser.Error) as e:
+    except (IOError, six.moves.configparser.Error) as e:
         #Trap both IOError
         log.critical("Failed to load configuration file {0} : {1}".format(configFile, e))
         exit()
@@ -745,22 +748,22 @@ if __name__ == "__main__":
     parser.add_argument("-i", "--ini", type=str, help="The location of the ini file", required=True)
     args = parser.parse_args()
 
-    print "\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
-    print "==============================================================================================================================="
-    print "Flash HTTP server for Hieratika"
-    print "==============================================================================================================================="
-    print "The preferred way to start this service is with gunicorn:"
-    print "gunicorn --preload --log-file=- -k gevent -w 16 -b 0.0.0.0:80 'hieratika.wservermain:start(config=\"PATH_TO_CONFIG.ini\")'"
-    print "==============================================================================================================================="
+    print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+    print("===============================================================================================================================")
+    print("Flash HTTP server for Hieratika")
+    print("===============================================================================================================================")
+    print("The preferred way to start this service is with gunicorn:")
+    print("gunicorn --preload --log-file=- -k gevent -w 16 -b 0.0.0.0:80 'hieratika.wservermain:start(config=\"PATH_TO_CONFIG.ini\")'")
+    print("===============================================================================================================================")
 
     try:
         with open(args.ini, "r") as configFile:
-            config = ConfigParser.ConfigParser()
+            config = six.moves.configparser.ConfigParser()
             config.readfp(configFile)
             application = load(config)
             if (application is not None):
                 application.run(threaded=True, use_reloader = False, host=args.host, port=args.port)
-    except (IOError, ConfigParser.Error) as e:
+    except (IOError, six.moves.configparser.Error) as e:
         #Trap both IOError
         log.critical("Failed to load configuration file {0} : {1}".format(configFile, e))
         exit()

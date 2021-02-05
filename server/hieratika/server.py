@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+from __future__ import absolute_import
+import six
 __copyright__ = """
     Copyright 2017 F4E | European Joint Undertaking for ITER and
     the Development of Fusion Energy ('Fusion for Energy').
@@ -20,7 +22,7 @@ __date__ = "17/11/2017"
 # Standard imports
 ##
 from abc import ABCMeta, abstractmethod
-import ConfigParser
+import six.moves.configparser
 import datetime
 import json
 import logging
@@ -44,13 +46,11 @@ log = logging.getLogger("{0}".format(__name__))
 ##
 # Class definition
 ##
-class HieratikaServer(object):
+class HieratikaServer(six.with_metaclass(ABCMeta, object)):
     """ Abstract class for any server implementation.
         It implements the inter-client SSE streaming mechanism which allows to notify all the registered clients
         about changes in the schedule or in the plant.
     """
-    
-    __metaclass__ = ABCMeta
 
     def __init__(self):
         super(HieratikaServer, self).__init__()
@@ -70,7 +70,7 @@ class HieratikaServer(object):
             udpPort = config.getint("hieratika", "udpBroadcastQueuePort")
             self.standalone = config.getboolean("hieratika", "standalone")
             self.udpQueue = BroadcastQueue(udpPort)
-        except (KeyError, ValueError, ConfigParser.Error) as e:
+        except (KeyError, ValueError, six.moves.configparser.Error) as e:
             log.critical("Failed to load configuration parameters {0}".format(e))
             return False
         return True

@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+from __future__ import absolute_import
+import six
 __copyright__ = """
     Copyright 2017 F4E | European Joint Undertaking for ITER and
     the Development of Fusion Energy ('Fusion for Energy').
@@ -64,7 +66,7 @@ class BroadcastQueue:
         """ Destructor.
             Closes all the queue sockets.
         """
-        for k,  sock in self.sockets.iteritems():
+        for k,  sock in six.iteritems(self.sockets):
              sock.close()
 
     def proxy(self):

@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from __future__ import absolute_import
+from six.moves import map
 __copyright__ = """
     Copyright 2017 F4E | European Joint Undertaking for ITER and
     the Development of Fusion Energy ('Fusion for Energy').
@@ -275,8 +277,8 @@ class Variable(object):
             "alias": self.getAlias(),
             "type": self.getType(),
             "description": self.getDescription(),
-            "permissions": map(str, self.getPermissions()),
-            "validations": map(str, self.getValidations()),
+            "permissions": list(map(str, self.getPermissions())),
+            "validations": list(map(str, self.getValidations())),
             "isStruct": self.isStruct,
             "lockVariable": self.lockVariable
         }

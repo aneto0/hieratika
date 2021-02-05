@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from __future__ import absolute_import
+from six.moves import map
 __copyright__ = """
     Copyright 2017 F4E | European Joint Undertaking for ITER and
     the Development of Fusion Energy ('Fusion for Energy').
@@ -25,7 +27,7 @@ import logging
 ##
 # Project imports
 ##
-from variable import Variable
+from .variable import Variable
 
 ##
 # Logger configuration
@@ -81,6 +83,6 @@ class VariableEnum(Variable):
             A json serializable representation of the VariableEnum which serialises all of its properties and Variable members (see Variable.asSerializableDict) together with the available choices (see getChoices).
         """
         variable = super(VariableEnum, self).asSerializableDict()
-        variable["choices"] = map(str, self.getChoices())
+        variable["choices"] = list(map(str, self.getChoices()))
         return variable
 

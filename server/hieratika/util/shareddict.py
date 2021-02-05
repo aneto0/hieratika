@@ -2,6 +2,7 @@
 
 """ A dictionary which can be safely shared between processes.
 """
+from __future__ import absolute_import
 __copyright__ = """
     Copyright 2017 F4E | European Joint Undertaking for ITER and
     the Development of Fusion Energy ('Fusion for Energy').
@@ -90,7 +91,7 @@ class SharedDictionary(object):
         """ See dict.has_key()
         """
         self.mux.acquire()
-        ret = self.dictImpl.has_key(key)
+        ret = key in self.dictImpl
         self.mux.release()
         return ret
 
@@ -158,7 +159,7 @@ class SharedDictionary(object):
         """ See dict.keys()
         """
         self.mux.acquire()
-        ret = self.dictImpl.keys()
+        ret = list(self.dictImpl.keys())
         self.mux.release()
         return ret
 

@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+from __future__ import absolute_import
+import six
 __copyright__ = """
     Copyright 2017 F4E | European Joint Undertaking for ITER and
     the Development of Fusion Energy ('Fusion for Energy').
@@ -20,7 +22,7 @@ __date__ = "27/11/2017"
 # Standard imports
 ##
 from abc import ABCMeta, abstractmethod
-import ConfigParser
+import six.moves.configparser
 import datetime
 import logging
 import multiprocessing
@@ -43,11 +45,9 @@ log = logging.getLogger("{0}".format(__name__))
 ##
 # Class definition
 ##
-class HieratikaAuth(object):
+class HieratikaAuth(six.with_metaclass(ABCMeta, object)):
     """ Abstract class which manages user authentication.
     """
-
-    __metaclass__ = ABCMeta
 
     def __init__(self):
         super(HieratikaAuth, self).__init__()
@@ -88,7 +88,7 @@ class HieratikaAuth(object):
                 self.loginMonitorEvent = threading.Event()
             else:
                 log.info("Standalone mode was set and thus no monitoring thread will be started")
-        except (KeyError, ValueError, ConfigParser.Error) as e:
+        except (KeyError, ValueError, six.moves.configparser.Error) as e:
             log.critical("Failed to load configuration parameters {0}".format(e))
             return False
         return True
@@ -122,7 +122,7 @@ class HieratikaAuth(object):
             currentTime = int(time.time())
             #Dict proxys cannot be iterated like a normal dict
             self.mux.acquire()
-            keys = self.tokens.keys()
+            keys = list(self.tokens.keys())
             for k in keys:
                 if ((currentTime - self.tokens[k][1])  > self.loginMonitorMaxInactivityTime):
                     log.info("User {0} was not active for the last {1} seconds. User will be logout".format(self.tokens[k][0], self.loginMonitorMaxInactivityTime))
@@ -150,7 +150,7 @@ class HieratikaAuth(object):
             log.debug(">Checking if tokenId: {0} is in the tokens list {1}".format(tokenId, self.tokens))
             self.mux.acquire()
             log.debug("Checking if tokenId: {0} is in the tokens list {1}".format(tokenId, self.tokens))
-            ok = (self.tokens.has_key(tokenId))
+            ok = (tokenId in self.tokens)
             log.debug("--Checking if tokenId: {0} is in the tokens list {1}".format(tokenId, self.tokens))
             if (ok):
                 username = self.tokens.get(tokenId)[0]
@@ -210,7 +210,7 @@ class HieratikaAuth(object):
         info = info + "Logged users\n"
         info = info + "{0:40}|{1:40}\n".format("user", "Last interaction")
         self.mux.acquire()
-        keys = self.tokens.keys()
+        keys = list(self.tokens.keys())
         for k in keys:
             user = self.tokens[k][0]
             interactionTime = str(datetime.datetime.fromtimestamp(self.tokens[k][1]))

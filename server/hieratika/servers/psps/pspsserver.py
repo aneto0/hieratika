@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+from __future__ import absolute_import
+from __future__ import print_function
+import six
+from six.moves import zip
 __copyright__ = """
     Copyright 2017 F4E | European Joint Undertaking for ITER and
     the Development of Fusion Energy ('Fusion for Energy').
@@ -20,7 +24,7 @@ __date__ = "17/11/2017"
 # Standard imports
 ##
 import ast
-import ConfigParser
+import six.moves.configparser
 import errno
 import fnmatch
 import json
@@ -95,7 +99,7 @@ class PSPSServer(HieratikaServer):
             self.defaultExperts = ast.literal_eval(config.get("server-impl", "defaultExperts"))
             self.lockPool = LockPool(numberOfLocks)
             self.loadPages()
-        except (ConfigParser.Error, KeyError) as e:
+        except (six.moves.configparser.Error, KeyError) as e:
             log.critical(str(e))
             ok = False
 
@@ -112,7 +116,7 @@ class PSPSServer(HieratikaServer):
         self.mux.acquire()
         if (len(self.xmlIds) > self.maxXmlIds):
             log.info("Reached maximum number of cached xmlIds :{0}".format(self.maxXmlIds))
-            keys = self.xmlIds.keys()
+            keys = list(self.xmlIds.keys())
             for k in keys:
                 if (not self.lockPool.isKeyInUse(self.xmlIds[k])):
                     del(self.xmlIds[k])
@@ -415,7 +419,7 @@ class PSPSServer(HieratikaServer):
             variable.setValidations(globalConstraints[varName])
 
         members = variable.getMembers()
-        for memberName, memberVariable in members.iteritems():
+        for memberName, memberVariable in six.iteritems(members):
             memberFullName = parentName + self.structSeparator + memberName
             log.debug("Looking for variable {0}".format(memberFullName))
             if (memberFullName in globalConstraints):
@@ -1248,7 +1252,7 @@ class PSPSServer(HieratikaServer):
             log.info("Reached maximum number of cached xml trees :{0} > {1}".format(len(self.cachedXmls), self.maxXmlCachedTrees))
             toDeleteMaxSize = (len(self.cachedXmls) / 2) + 1
             #Sort by access time. Remember that the values of cachedXmls are tupples containing the path, the parsed Element and the last access time
-            sortedByTime = sorted(self.cachedXmls.values(), key=lambda tup:tup[2])
+            sortedByTime = sorted(list(self.cachedXmls.values()), key=lambda tup:tup[2])
             i = 0
             while i < toDeleteMaxSize:
                 log.debug("Deleting xml (from memory) with key {0}".format(sortedByTime[i][0]))
@@ -1652,7 +1656,7 @@ class PSPSServer(HieratikaServer):
                     val = valueXml.text
                     log.critical("Failed to load json {0}. Returning the original text.".format(e))
 
-                print "\n\n\n\n\n\n{0}\n\n\n\n\n\n\n".format(val)
+                print("\n\n\n\n\n\n{0}\n\n\n\n\n\n\n".format(val))
                 try:
                     val = int(val)
                 except Exception as e:

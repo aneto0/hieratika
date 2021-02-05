@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import absolute_import
 __copyright__ = """
     Copyright 2017 F4E | European Joint Undertaking for ITER and
     the Development of Fusion Energy ('Fusion for Energy').
@@ -25,7 +26,7 @@ import os
 import threading
 import time
 import timeit
-import ConfigParser
+import six.moves.configparser
 
 ##
 # Project imports
@@ -63,7 +64,7 @@ class WStatistics:
             numberOfLocks = config.getint("hieratika", "numberOfLocks")
             statisticsUpdatePeriod = config.getint("hieratika", "statisticsUpdatePeriod")
             self.lockPool = LockPool(numberOfLocks)
-        except (ConfigParser.Error, KeyError) as e:
+        except (six.moves.configparser.Error, KeyError) as e:
             log.critical(str(e))
             ok = False
 
@@ -142,7 +143,7 @@ class WStatistics:
 
     def getStatistics(self):
         stats = {}
-        keys = self.statistics.keys()
+        keys = list(self.statistics.keys())
         for k in keys:
             stats[k] = self.statistics[k]
         return stats
