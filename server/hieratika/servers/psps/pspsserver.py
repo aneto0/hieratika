@@ -127,7 +127,8 @@ class PSPSServer(HieratikaServer):
             log.debug("Found {0} in cache and the value is {1}".format(xmlPath, ret))
         except KeyError:
             #Careful that this uuid must be unique in different processes, so that the same key always generate the same id! (Otherwise we migh lock with one key and unlock with a different key)
-            ret = uuid.uuid5(uuid.NAMESPACE_OID, xmlPath.encode("utf-8")).hex
+            #ret = uuid.uuid5(uuid.NAMESPACE_OID, xmlPath.encode("utf-8")).hex
+            ret = uuid.uuid5(uuid.NAMESPACE_OID, xmlPath).hex
             self.xmlIds[xmlPath] = ret
             log.debug("Not found {0} in cache and the generated value is {1}".format(xmlPath, ret))
         self.mux.release()
