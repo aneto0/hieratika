@@ -26,6 +26,15 @@ import HtkHelper from './htk-helper.js'
 import { HtkValidation, HtkValidationMath, HtkValidationType } from './htk-validation.js'
 import $ from './js/jquery/jquery.js'
 
+/**
+ * Static constants that are used by the HtkComponent
+ */
+ export const VALUE_CHANGED = 0;
+ export const VALUE_CHANGED_INITIAL = 1;
+ export const VALUE_CHANGED_REFERENCE = 2;
+ export const VALUE_CHANGED_PLANT = 3;
+ export const VALUE_CHANGED_REFERENCE_NAME = 4;
+
     /**
      * @brief The root of the Hieratika HTML5 components class hierarchy.
      * @details All the Hieratika HTML5 user-interface components shall inherit from HtkComponent.
@@ -33,7 +42,7 @@ import $ from './js/jquery/jquery.js'
      *
      * Typically an HtkComponent is associated and represents an Hieratika variable (identified by a unique name). See setVariable.
      */
-    class HtkComponent extends HTMLElement {
+    export class HtkComponent extends HTMLElement {
 
         /**
          * @brief Constructor. NOOP.
@@ -168,7 +177,7 @@ import $ from './js/jquery/jquery.js'
                 else {
                     this.referenceValue = referenceValueToSet;
                 }
-                this.fireValueChanged(HtkComponent.VALUE_CHANGED_REFERENCE);
+                this.fireValueChanged(Constants.VALUE_CHANGED_REFERENCE);
                 this.refresh();
             }
         }
@@ -194,7 +203,7 @@ import $ from './js/jquery/jquery.js'
                 else {
                     this.plantValue = plantValueToSet;
                 }
-                this.fireValueChanged(HtkComponent.VALUE_CHANGED_PLANT);
+                this.fireValueChanged(VALUE_CHANGED_PLANT);
                 this.refresh();
             }
         }
@@ -220,7 +229,7 @@ import $ from './js/jquery/jquery.js'
                 else {
                     this.initValue = initialValueToSet;
                 }
-                this.fireValueChanged(HtkComponent.VALUE_CHANGED_INITIAL);
+                this.fireValueChanged(VALUE_CHANGED_INITIAL);
                 this.refresh();
             }
         }
@@ -240,7 +249,7 @@ import $ from './js/jquery/jquery.js'
          */
         setReference (referenceToSet) {
             this.reference = referenceToSet;
-            this.fireValueChanged(HtkComponent.VALUE_CHANGED_REFERENCE_NAME);
+            this.fireValueChanged(VALUE_CHANGED_REFERENCE_NAME);
             this.refresh();
         }
 
@@ -259,7 +268,7 @@ import $ from './js/jquery/jquery.js'
          */
         setValue (valueToSet, updateRemote = true) {
             this.value = valueToSet;
-            this.fireValueChanged(HtkComponent.VALUE_CHANGED);
+            this.fireValueChanged(VALUE_CHANGED);
             if (updateRemote) {
                 this.updateRemote(valueToSet);
             }
@@ -551,18 +560,6 @@ import $ from './js/jquery/jquery.js'
         }
 
         /**
-         * @brief HTML5 attachedCallback. NOOP.
-         */
-        attachedCallback () {
-        }
-
-        /**
-         * @brief HTML5 detachedCallback. NOOP.
-         */
-        detachedCallback () {
-        }
-
-        /**
          * @brief Sets the groups that are allow to change this component variable value.
          * @param[in] groups an array with the names of the groups that are allowed to change this component variable value.
          */
@@ -595,12 +592,10 @@ import $ from './js/jquery/jquery.js'
             this.setReadOnly(this.isReadOnly());
         }
     }
-
-    /**
-     * Static constants that are used by the HtkComponent
-     */
-    HtkComponent.VALUE_CHANGED = 0;
-    HtkComponent.VALUE_CHANGED_INITIAL = 1;
-    HtkComponent.VALUE_CHANGED_REFERENCE = 2;
-    HtkComponent.VALUE_CHANGED_PLANT = 3;
-    HtkComponent.VALUE_CHANGED_REFERENCE_NAME = 4;
+    /*
+    Constants.VALUE_CHANGED = 0;
+    Constants.VALUE_CHANGED_INITIAL = 1;
+    Constants.VALUE_CHANGED_REFERENCE = 2;
+    Constants.VALUE_CHANGED_PLANT = 3;
+    Constants.VALUE_CHANGED_REFERENCE_NAME = 4;
+    */

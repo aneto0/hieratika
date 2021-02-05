@@ -1,25 +1,20 @@
-<!-- 
- date: 04/01/2018
- author: Andre' Neto
- 
+/*
+ date: 02/02/2021
+ author: Luca Porzio
+
  copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
  the Development of Fusion Energy ('Fusion for Energy').
  Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  by the European Commission - subsequent versions of the EUPL (the "Licence")
  You may not use this work except in compliance with the Licence.
  You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
- 
- warning: Unless required by applicable law or agreed to in writing, 
+
+ warning: Unless required by applicable law or agreed to in writing,
  software distributed under the Licence is distributed on an "AS IS"
  basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  or implied. See the Licence permissions and limitations under the Licence.
---> 
-
-<html>
-    <head>
-        <!-- Standard imports -->
-
-        <!-- Project imports -->
+*/
+/*
         <link rel="import" href="/libraries.html">
         <link rel="import" href="/htk-array-editor.html">
         <link rel="import" href="/htk-component.html">
@@ -27,40 +22,36 @@
         <link rel="import" href="/htk-input.html">
         <link rel="import" href="/htk-library-button.html">
         <link rel="import" href="/htk-schedule-button.html">
-    </head>
-    <body>
-        <!-- HTML5 component template-->
-        <template id="tstructbrowser">
-            <style>
-                .collapsibleList li{
-                    list-style-image : url('/icons/tree-item-8.png');
-                    cursor           : auto;
-                }
+*/
 
-                li.collapsibleListOpen{
-                    list-style-image : url('/icons/tree-close-8.png');
-                    cursor           : pointer;
-                }
-                
-                li.collapsibleListClosed{
-                    list-style-image : url('/icons/tree-open-8.png');
-                    cursor           : pointer;
-                }
+import HtkHelper from './htk-helper.js'
+import { HtkComponent } from './htk-component.js'
 
-                li.collapsibleListClosed:hover{
-                    background-color: gray;
-                }
+const template = document.createElement('template');
+template.innerHTML = `
+<style>
+    .collapsibleList li{
+        list-style-image : url('/icons/tree-item-8.png');
+        cursor           : auto;
+    }
 
+    li.collapsibleListOpen{
+        list-style-image : url('/icons/tree-close-8.png');
+        cursor           : pointer;
+    }
 
-            </style>
-            <div id="dstructbrowser"></div>
-        </template>
+    li.collapsibleListClosed{
+        list-style-image : url('/icons/tree-open-8.png');
+        cursor           : pointer;
+    }
 
-        <script>
-            //This is enclosure is required to protect the importDoc
-            (function () {
-                var importDoc = document.currentScript.ownerDocument; // importee
-        
+    li.collapsibleListClosed:hover{
+        background-color: gray;
+    }
+</style>
+<div id="dstructbrowser"></div>
+`;
+
                 /**
                  * @brief Renders an Hieratika structured variable with a tree, where each node represents a member of the structure.
                  */
@@ -76,20 +67,20 @@
                     /**
                      * @brief See HtkComponent.createdCallback.
                      */
-                    createdCallback () {
-                        super.createdCallback();
+                    connectedCallback () {
+                        super.connectedCallback();
                         this.mainDiv = this.shadowRoot.querySelector("#dstructbrowser");
                         this.treeHTML = "";
                         this.structureSeparator = "@";
                     }
-                   
+
                     /**
                      * @brief See HtkComponent.getTemplate.
                      */
-                    getTemplate() {
-                        var template = importDoc.querySelector("#tstructbrowser");
-                        return template;
-                    }
+                     getTemplate() {
+                       var templateContent = template.content;
+                       return templateContent;
+                     }
 
                     /**
                      * @brief Recursive function which adds a variable member to the tree.
@@ -128,7 +119,7 @@
                                             fullMemberName = fullMemberNameBeforeFor + this.structureSeparator + subMemberName;
                                             this.addMember(member[subMemberName], fullMemberName, subMemberName);
                                         }
-                                    } 
+                                    }
                                     this.treeHTML += "</ul>\n";
                                     this.treeHTML += "</li>\n";
                                     this.treeHTML += "</ul>\n";
@@ -161,12 +152,12 @@
                             }
                         }
                     }
-       
+
                     /**
                      * @brief Recursive function which adds the member variables to the tree.
                      * @param[in] member the member variable to be added.
                      * @param[in] user the username to be added.
-                     */ 
+                     */
                     populateComponentInfo(member, user) {
                         if (member !== undefined) {
                             var memberName = member["name"];
@@ -186,7 +177,7 @@
                                         if (isVariable) {
                                             this.populateComponentInfo(member[subMemberName], user);
                                         }
-                                    } 
+                                    }
                                 }
                                 else {
                                     var memberNameValidCSS = ".P" + memberName.replace(/[|&;$%@"<>()+,]/g, "");
@@ -211,7 +202,7 @@
                         this.addMember(this, this.name);
                         this.treeHTML += "</ul>";
                         this.mainDiv.innerHTML = this.treeHTML;
-                        var user = parent.htkHelper.getUser();
+                        var user = HtkHelper.getUser();
                         this.populateComponentInfo(this, user);
                         var tree = this.shadowRoot.querySelector("#struct-tree");
                         CollapsibleLists.applyTo(tree);
@@ -220,11 +211,5 @@
 
                 /**
                  * @brief Registers the element.
-                 */ 
-                document.registerElement("htk-struct-browser", {
-                    prototype: HtkStructBrowser.prototype,
-                });
-            })(); 
-        </script>
-    </body>
-</html>
+                 */
+                 customElements.define('htk-struct-browser', HtkStructBrowser);

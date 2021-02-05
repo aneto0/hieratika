@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import absolute_import
 __copyright__ = """
     Copyright 2017 F4E | European Joint Undertaking for ITER and
     the Development of Fusion Energy ('Fusion for Energy').
@@ -93,7 +94,7 @@ class TransformationFunction(object):
         Returns:
         	A unique identifier for the TransformationFunction based on the function name, input variables names and output variables names.
         """
-        return "{0}_{1}_{2}".format(self.fun, self.inputs.keys(), self.outputs.keys())
+        return "{0}_{1}_{2}".format(self.fun, list(self.inputs.keys()), list(self.outputs.keys()))
 
     def __eq__(self, another):
         """ Two TransformationFunction are equal if they have the same unique identifier (see getUID).
@@ -129,5 +130,5 @@ class TransformationFunction(object):
             Returns:
                 A string representation of a Variable which consists of the function name followed by the input and output variables.
         """
-        return "{0} = {1}({2})".format(self.outputs.keys(), self.fun, self.inputs.keys()) 
+        return "{0} = {1}({2})".format(list(self.outputs.keys()), self.fun, list(self.inputs.keys())) 
 

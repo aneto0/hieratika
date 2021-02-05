@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+from __future__ import absolute_import
+from __future__ import print_function
+from six.moves import range
 __copyright__ = """
     Copyright 2017 F4E | European Joint Undertaking for ITER and
     the Development of Fusion Energy ('Fusion for Energy').
@@ -156,7 +159,7 @@ class WServer(object):
             - and * N member variables (with the information above) if the variable being returned is structured.
         """
       
-        print request.form
+        print(request.form)
         toReturn = ""
         try: 
             libraryType = request.form["libraryType"]
@@ -214,9 +217,9 @@ class WServer(object):
             }
             variablesToStream = self.serverImpl.updatePlant(pageName, variablesToUpdate)
             #Send n variables at the time in order not to overflow the queue size..
-            keys = variablesToStream.keys()
+            keys = list(variablesToStream.keys())
             n = self.streamDataMaxVariables
-            for i in xrange(0, len(keys), n):
+            for i in range(0, len(keys), n):
                 toStream["variables"] = {}
                 for k in keys[i: i + n]:
                     toStream["variables"][k] = variablesToStream[k]
@@ -247,9 +250,9 @@ class WServer(object):
             }
             variablesToStream = self.serverImpl.updatePlantFromSchedule(pageName, scheduleUID)
             #Send n variables at the time in order not to overflow the queue size..
-            keys = variablesToStream.keys()
+            keys = list(variablesToStream.keys())
             n = self.streamDataMaxVariables
-            for i in xrange(0, len(keys), n):
+            for i in range(0, len(keys), n):
                 toStream["variables"] = {}
                 for k in keys[i: i + n]:
                     toStream["variables"][k] = variablesToStream[k]
@@ -417,9 +420,9 @@ class WServer(object):
                 "variables": {}
             }
             #Send 100 variables at the time in order not to overflow the queue size..
-            keys = variablesToStream.keys()
+            keys = list(variablesToStream.keys())
             n = self.streamDataMaxVariables 
-            for i in xrange(0, len(keys), n):
+            for i in range(0, len(keys), n):
                 toStream["variables"] = {}
                 for k in keys[i: i + n]:
                     toStream["variables"][k] = variablesToStream[k]
@@ -740,9 +743,9 @@ class WServer(object):
             toReturn = ret[0]
             variablesToStream = ret[1]
             #Send 100 variables at the time in order not to overflow the queue size..
-            keys = variablesToStream.keys()
+            keys = list(variablesToStream.keys())
             n = self.streamDataMaxVariables 
-            for i in xrange(0, len(variablesToStream), n):
+            for i in range(0, len(variablesToStream), n):
                 toStream["variables"] = {}
                 for k in keys[i: i + n]:
                     toStream["variables"][k] = variablesToStream[k]

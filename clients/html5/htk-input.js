@@ -19,11 +19,14 @@
   <link rel="import" href="/libraries.html">
   <link rel="import" href="/htk-abstract-input.html">
   */
+import { HtkAbstractInput } from './htk-abstract-input.js'
 
-
-  <template id="ttinput">
-    <input type="text" id="tinput"></input>
-  </template>
+const template = document.createElement('template');
+template.innerHTML = `
+  <dialog id="dwaitdialog">
+      <input type="text" id="tinput"></input>
+  </dialog>
+`;
 
       /**
        * @brief A text input component.

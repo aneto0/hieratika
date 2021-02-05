@@ -21,6 +21,7 @@
 */
 
 import HtkHelper from './htk-helper.js'
+import { HtkComponent } from './htk-component.js'
 
 const template = document.createElement('template');
 template.innerHTML = `

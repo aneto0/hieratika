@@ -3,6 +3,8 @@
 # Standard imports
 ##
 
+from __future__ import absolute_import
+from __future__ import print_function
 import logging  # For Logging interface
 import pvaccess # For pvAccess
 import os       # For file path handling routines
@@ -23,7 +25,7 @@ def setupLogging():
 
 def dump(obj):
   for attr in dir(obj):
-    print("obj.%s = %s" % (attr, getattr(obj, attr)))
+    print(("obj.%s = %s" % (attr, getattr(obj, attr))))
 
 def extractWriteDataSourcesPath(configFile):
     """ Looks for a defined CVVF DataSources XML definition file to be used when writing to the plant system 
@@ -62,7 +64,7 @@ Example:
     """
     configDir = os.path.dirname(configFile)
     dataSourceFile = os.path.join(configDir, "WriteDataSources.xml") 
-    print dataSourceFile
+    print(dataSourceFile)
     return dataSourceFile
 
 def apply(fileName):
@@ -98,6 +100,6 @@ def test():
         setupLogging()
         apply("/home/codac-dev/psps/configuration/Psps-dummy2/000/plant.xml")
     except pvaccess.PvaException as e:
-        print "Failed! "+e.message
+        print("Failed! "+e.message)
 
 test()

@@ -23,6 +23,7 @@
 */
 
 import * as Constants from './htk-constants.js'
+import { HtkAbstractInput } from './htk-abstract-input.js'
 
 const template = document.createElement('template');
 template.innerHTML = `

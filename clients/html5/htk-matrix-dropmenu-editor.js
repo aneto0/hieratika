@@ -22,7 +22,8 @@
 
 */
 
-import * as Constants. from './htk-constants.js'
+import * as Constants from './htk-constants.js'
+import { HtkComponent } from './htk-component.js'
 
 const template = document.createElement('template');
 template.innerHTML = `
