@@ -15,7 +15,7 @@
  or implied. See the Licence permissions and limitations under the Licence.
 */
 
-import HtkHelper from './htk-helper.js'
+
 import { HtkDialogs } from './htk-dialogs.js'
 
 const template = document.createElement('template');
@@ -66,7 +66,7 @@ class HtkTransformations extends HTMLElement {
     var abortButton = this.shadowRoot.querySelector("#abortbtn");
     var closeButton = this.shadowRoot.querySelector("#closebtn");
     this.runButton.onclick = function() {
-      var mainFrameHtkComponents = HtkHelper.getAllMainFrameHtkComponents();
+      var mainFrameHtkComponents = window.htkHelper.getAllMainFrameHtkComponents();
       for (var i = 0; i < this.transformations.length; i++) {
         var transformation = this.transformations[i];
         transformation.progressBar.value = 0;
@@ -106,7 +106,7 @@ class HtkTransformations extends HTMLElement {
     var inputVariables = Object.keys(transformation.inputs);
     var inputs = {};
     var ok = true;
-    var mainFrameHtkComponents = HtkHelper.getAllMainFrameHtkComponents();
+    var mainFrameHtkComponents = window.htkHelper.getAllMainFrameHtkComponents();
     for (var i = 0;
       (i < inputVariables.length) && (ok); i++) {
       var varname = inputVariables[i];
@@ -120,7 +120,7 @@ class HtkTransformations extends HTMLElement {
       }
     }
     if (ok) {
-      HtkHelper.transform(
+      window.htkHelper.transform(
         transformation.fun,
         inputs,
         function(uid) {
@@ -165,7 +165,7 @@ class HtkTransformations extends HTMLElement {
    * @param[in] transformationInfo structure with the transformation information.
    */
   transformationUpdated(transformationInfo) {
-    var mainFrameHtkComponents = HtkHelper.getAllMainFrameHtkComponents();
+    var mainFrameHtkComponents = window.htkHelper.getAllMainFrameHtkComponents();
     for (var i = 0; i < this.transformations.length; i++) {
       var transformation = this.transformations[i];
       if (transformation.uid === transformationInfo["transformationUID"]) {
@@ -203,4 +203,4 @@ class HtkTransformations extends HTMLElement {
 /**
  * @brief Registers the element.
  */
- customElements.define('htk-transformations', HtkTransformations);
+ window.customElements.define('htk-transformations', HtkTransformations);

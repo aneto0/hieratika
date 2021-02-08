@@ -61,4 +61,4 @@ class HtkWaitDialog extends HTMLElement {
     }
 }
 
-customElements.define('htk-wait-dialog', HtkWaitDialog);
+window.customElements.define('htk-wait-dialog', HtkWaitDialog);

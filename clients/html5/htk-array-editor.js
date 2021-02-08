@@ -20,7 +20,6 @@
 */
 
 import * as Constants from './htk-constants.js'
-import HtkHelper from './htk-helper.js'
 import { HtkComponent } from './htk-component.js'
 
 const template = document.createElement('template');
@@ -71,7 +70,7 @@ template.innerHTML = `
         var cell = row.cells[i];
         if (cell !== undefined) {
           var cellValue = cell.innerHTML;
-          var numberValue = HtkHelper.textToTypeValue(cellValue, typeValue);
+          var numberValue = window.htkHelper.textToTypeValue(cellValue, typeValue);
           if (numberValue === undefined) {
             numberValue = cellValue;
           }
@@ -278,4 +277,4 @@ template.innerHTML = `
   /**
    * @brief Registers the element.
    */
-  customElements.define('htk-array-editor', HtkArrayEditor);
+  window.customElements.define('htk-array-editor', HtkArrayEditor);

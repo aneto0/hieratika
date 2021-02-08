@@ -15,7 +15,7 @@
  or implied. See the Licence permissions and limitations under the Licence.
 */
 
-import HtkHelper from './htk-helper.js'
+
 import { HtkDialogs } from './htk-dialogs.js'
 
 const template = document.createElement('template');
@@ -111,7 +111,7 @@ class HtkPageSelector extends HTMLElement {
     this.okButton.disabled = true;
     var htkDialog = new HtkDialogs();
     htkDialog.showWaitDialog();
-    HtkHelper.getPages(
+    window.htkHelper.getPages(
       function(pagesJson) {
         for (var p in pagesJson) {
           var option1 = document.createElement("option");
@@ -138,4 +138,4 @@ class HtkPageSelector extends HTMLElement {
  /**
   * @brief Registers the element.
   */
-customElements.define('htk-page-selector', HtkPageSelector);
+window.customElements.define('htk-page-selector', HtkPageSelector);

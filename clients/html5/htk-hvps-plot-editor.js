@@ -21,7 +21,8 @@
 
 */
 
-import HtkHelper from './htk-helper.js';
+import * as Constants from './htk-constants.js'
+
 import { HtkComponent } from './htk-component.js'
 
 const template = document.createElement('template');
@@ -274,8 +275,8 @@ class HtkHvpsPlotEditor extends HtkComponent {
    */
   connectedCallback() {
     super.connectedCallback();
-    HtkHelper.addVariablesInfoLoadedListener(this);
-    // HtkHelper.addScheduleChangedListener(this);
+    window.htkHelper.addVariablesInfoLoadedListener(this);
+    // window.htkHelper.addScheduleChangedListener(this);
 
     var ctx = this.shadowRoot.querySelector("#tcanvas");
     var chart = new Chart(ctx, {
@@ -401,4 +402,4 @@ class HtkHvpsPlotEditor extends HtkComponent {
 /**
  * @brief Registers the element.
  */
- customElements.define('htk-hvps-plot-editor', HtkHvpsPlotEditor);
+ window.customElements.define('htk-hvps-plot-editor', HtkHvpsPlotEditor);

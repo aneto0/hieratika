@@ -25,7 +25,7 @@
 /* Be sure to import htk-library-editor in the main document */
 
 import * as Constants from './htk-constants.js';
-import { HtkLibray } from './htk-library.js'
+import { HtkLibrary } from './htk-library.js'
 
 const template = document.createElement('template');
 template.innerHTML = `
@@ -98,4 +98,4 @@ template.innerHTML = `
                 /**
                  * @brief Registers the element.
                  */
-                 customElements.define('htk-library-button', HtkLibraryButton);
+                 window.customElements.define('htk-library-button', HtkLibraryButton);

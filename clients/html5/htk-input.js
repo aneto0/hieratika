@@ -21,11 +21,10 @@
   */
 import { HtkAbstractInput } from './htk-abstract-input.js'
 
+
 const template = document.createElement('template');
 template.innerHTML = `
-  <dialog id="dwaitdialog">
-      <input type="text" id="tinput"></input>
-  </dialog>
+<input type="text" id="tinput"></input>
 `;
 
       /**
@@ -74,7 +73,7 @@ template.innerHTML = `
         getValue() {
           var txtValue = this.textInput.value;
           var typeValue = this.getTypeValue();
-          return parent.htkHelper.textToTypeValue(txtValue, typeValue);
+          return window.htkHelper.textToTypeValue(txtValue, typeValue);
         }
 
         /**
@@ -90,4 +89,4 @@ template.innerHTML = `
       /**
        * @brief Registers the element.
        */
-       customElements.define('htk-input', HtkInput);
+       window.customElements.define('htk-input', HtkInput);

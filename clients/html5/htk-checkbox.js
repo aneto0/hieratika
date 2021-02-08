@@ -16,6 +16,7 @@
 */
 
 import * as Constants from './htk-constants.js'
+
 import { HtkAbstractInput } from './htk-abstract-input.js'
 
 const template = document.createElement('template');
@@ -39,7 +40,7 @@ template.innerHTML = `
          * @brief See HtkComponent.createdCallback.
          */
         connectedCallback() {
-          super.createdCallback();
+          super.connectedCallback();
 
           // this.onlyEnable = false;
           this.checkInput = this.shadowRoot.querySelector("#tinput");
@@ -86,7 +87,7 @@ template.innerHTML = `
         getValue() {
           var txtValue = this.value;
           var typeValue = this.getTypeValue();
-          return parent.htkHelper.textToTypeValue(txtValue, typeValue);
+          return window.htkHelper.textToTypeValue(txtValue, typeValue);
         }
 
         /**
@@ -170,4 +171,4 @@ template.innerHTML = `
       /**
        * @brief Registers the element.
        */
-       customElements.define('htk-checkbox', HtkCheckBox);
+       window.customElements.define('htk-checkbox', HtkCheckBox);

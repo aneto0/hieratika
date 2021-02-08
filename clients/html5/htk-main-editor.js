@@ -20,13 +20,15 @@
         <link rel="import" href="/htk-component.html">
 */
 
-import HtkHelper from './htk-helper.js'
+
 import { HtkDialogs } from './htk-dialogs.js'
 import $ from './js/jquery/jquery.js'
 
 const template = document.createElement('template');
 template.innerHTML = `
   <iframe id="dmaineditor" style="position: absolute; height: 100%; width: 100%; border: none">
+  <script type="text/javascript">
+  </script>
   </iframe>
 `;
 
@@ -51,7 +53,7 @@ export class HtkMainEditor extends HTMLElement {
       const root = this.attachShadow({mode: 'open'});
       root.appendChild(templateContent.cloneNode(true));
       this.variablesInfoLoadedListeners = [this];
-      HtkHelper.setHtkMainEditor(this);
+      window.htkHelper.setHtkMainEditor(this);
       this.mainEditorIFrame = this.shadowRoot.querySelector("#dmaineditor");
       this.mainEditorIFrame.src = "/help.html?" + new Date().getTime(); //new Date... to force reloading with no caching
 
@@ -111,10 +113,10 @@ export class HtkMainEditor extends HTMLElement {
                 }
             }
         }
-        HtkHelper.getLiveVariablesInfo(
+        window.htkHelper.getLiveVariablesInfo(
             allLiveVariableIds,
             function (variables) {
-                var user = HtkHelper.getUser();
+                var user = window.htkHelper.getUser();
                 for (var i in variables) {
                     var variable = variables[i];
                     var targetElements = this.mainEditorIFrame.contentDocument._frameComponents[variable.name];
@@ -124,11 +126,11 @@ export class HtkMainEditor extends HTMLElement {
                         }
                     }
                 }
-                HtkHelper.getVariablesInfo(
+                window.htkHelper.getVariablesInfo(
                     pageName,
                     allVariableIds,
                     function (variables) {
-                        var user = HtkHelper.getUser();
+                        var user = window.htkHelper.getUser();
                         var lockVariableNames = [];
                         for (var i in variables) {
                             var variable = variables[i];
@@ -205,7 +207,7 @@ export class HtkMainEditor extends HTMLElement {
      * @brief Callback function that is called when all the variables information has been loaded.
      */
     variablesInfoLoaded() {
-        HtkHelper.displayPlant();
+        window.htkHelper.displayPlant();
     }
 
     /**
@@ -249,4 +251,4 @@ export class HtkMainEditor extends HTMLElement {
 /**
  * @brief Registers the element.
  */
-customElements.define('htk-main-editor', HtkMainEditor);
+window.customElements.define('htk-main-editor', HtkMainEditor);

@@ -20,7 +20,7 @@
 <link rel="import" href="/htk-component.html">
 */
 
-import HtkHelper from './htk-helper.js'
+
 import { HtkComponent } from './htk-component.js'
 
 const template = document.createElement('template');
@@ -175,7 +175,7 @@ template.innerHTML = `
           var cell = row.cells[j];
           if (cell !== undefined) {
             var cellValue = cell.innerHTML;
-            var numberValue = HtkHelper.textToTypeValue(cellValue, typeValue);
+            var numberValue = window.htkHelper.textToTypeValue(cellValue, typeValue);
             if (numberValue === undefined) {
               numberValue = cellValue;
             }
@@ -482,4 +482,4 @@ template.innerHTML = `
   /**
    * @brief Registers the element.
    */
-  customElements.define('htk-matrix-editor', HtkMatrixEditor);
+  window.customElements.define('htk-matrix-editor', HtkMatrixEditor);

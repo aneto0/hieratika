@@ -28,11 +28,9 @@ import $ from './js/jquery/jquery.js'
 /**
 * Collection of helper functions for the hieratika client components.
 */
-export default class HtkHelper {
+export class HtkHelper {
 
-  constructor() {}
-
-  static initialise() {
+  constructor() {
     this.remoteServerTid = "";
     this.token = "";
     this.allUsers = [];
@@ -49,7 +47,7 @@ export default class HtkHelper {
    * @brief Gets the UID of the schedule currently opened by the user.
    * @return the UID of the schedule currently opened by the user.
    */
-  static getCurrentScheduleUID() {
+  getCurrentScheduleUID() {
     return this.currentScheduleUID;
   }
 
@@ -57,7 +55,7 @@ export default class HtkHelper {
    * @brief Sets the UID of the schedule currently opened by the user.
    * @param[in] scheduleUIDIn the UID of the schedule currently opened by the user.
    */
-  static setCurrentScheduleUID(scheduleUIDIn) {
+  setCurrentScheduleUID(scheduleUIDIn) {
     this.currentScheduleUID = scheduleUIDIn;
   }
 
@@ -66,14 +64,14 @@ export default class HtkHelper {
    * @param[in] name the name of the variable to be (eventually commited).
    * @param[in] value the variable value.
    */
-  static updateScheduleValuesToCommit(name, value) {
+  updateScheduleValuesToCommit(name, value) {
     this.scheduleValuesToCommit[name] = value;
   }
 
   /**
    * @brief Resets the values that are to be commited.
    */
-  static resetScheduleValuesToCommit() {
+  resetScheduleValuesToCommit() {
     this.scheduleValuesToCommit = {};
   }
 
@@ -81,7 +79,7 @@ export default class HtkHelper {
    * @brief Informs that a value is to be synchronised remote.
    * @param[in] variable the variable to synchronise.
    */
-  static addVariableToSynchroniseRemote(variable) {
+  addVariableToSynchroniseRemote(variable) {
     this.valuesToSynchroniseRemote.push(variable);
   }
 
@@ -89,7 +87,7 @@ export default class HtkHelper {
    * @brief Sets the htk-main-editor (which is the owner of the main frame components).
    * @param[in] htkMainEditorIn the owner of the main frame components.
    */
-  static setHtkMainEditor(htkMainEditorIn) {
+  setHtkMainEditor(htkMainEditorIn) {
     this.htkMainEditor = htkMainEditorIn;
   }
 
@@ -97,7 +95,7 @@ export default class HtkHelper {
    * @brief Gets the htk-main-editor (which is the owner of the main frame components).
    * @return the owner of the main frame components.
    */
-  static getHtkMainEditor() {
+  getHtkMainEditor() {
     return this.htkMainEditor;
   }
 
@@ -105,7 +103,7 @@ export default class HtkHelper {
    * @brief Gets all the main frame components.
    * @return all the components that belong to the main frame.
    */
-  static getAllMainFrameHtkComponents() {
+  getAllMainFrameHtkComponents() {
     return this.htkMainEditor.getAllMainFrameHtkComponents();
   }
 
@@ -114,7 +112,7 @@ export default class HtkHelper {
    * @brief Registers a component that wants to informed when all the variables information, for a given page, have been loaded.
    * @param[in] listener the component to register.
    */
-  static addVariablesInfoLoadedListener(listener) {
+  addVariablesInfoLoadedListener(listener) {
     this.htkMainEditor.addVariablesInfoLoadedListener(listener);
   }
 
@@ -125,7 +123,7 @@ export default class HtkHelper {
    * @param[in] successFun function with prototype (void) f(void), that will be called if the variables were successfully loaded into the plant.
    * @param[in] errorFun function with prototype (void) f(), that will be called if the variables were not loaded into the plant.
    */
-  static loadIntoPlant(configName, successFun, errorFun) {
+  loadIntoPlant(configName, successFun, errorFun) {
     $.ajax({
       type: "post",
       url: "/loadintoplant",
@@ -156,7 +154,7 @@ export default class HtkHelper {
    * @param[in] successFun function with prototype (void) f(void), that will be called if the variables were successfully set as the variables to be uploaded into the plant.
    * @param[in] errorFun function with prototype (void) f(), that will be called if the variables were not set.
    */
-  static updatePlant(configName, successFun, errorFun) {
+  updatePlant(configName, successFun, errorFun) {
     var allHtkDataJSon = {};
     //Get the values of all the HtkComponents that are displayed in the main frame.
     var mainFrameHtkComponents = this.htkMainEditor.getAllMainFrameHtkComponents();
@@ -207,7 +205,7 @@ export default class HtkHelper {
    * @param[in] successFun function with prototype (void) f(variables), that will be called if the variables were successfully retrieved.
    * @param[in] errorFun function with prototype (void) f(), that will be called if the variables were not set.
    */
-  static getVariablesInfo(configName, variablesNames, successFun, errorFun) {
+  getVariablesInfo(configName, variablesNames, successFun, errorFun) {
     $.ajax({
       type: "post",
       url: "/getvariablesinfo",
@@ -238,7 +236,7 @@ export default class HtkHelper {
    * @param[in] successFun function with prototype (void) f(variables), that will be called if the variables were successfully retrieved.
    * @param[in] errorFun function with prototype (void) f(), that will be called if the variables were not set.
    */
-  static getLibraryVariablesInfo(libraryType, variablesNames, successFun, errorFun) {
+  getLibraryVariablesInfo(libraryType, variablesNames, successFun, errorFun) {
     $.ajax({
       type: "post",
       url: "/getlibraryvariablesinfo",
@@ -267,7 +265,7 @@ export default class HtkHelper {
    * @param[in] successFun function with prototype (void) f(variables), that will be called if the variables were successfully retrieved.
    * @param[in] errorFun function with prototype (void) f(), that will be called if the variables were not set.
    */
-  static getLiveVariablesInfo(variablesNames, successFun, errorFun) {
+  getLiveVariablesInfo(variablesNames, successFun, errorFun) {
     $.ajax({
       type: "post",
       url: "/getlivevariablesinfo",
@@ -288,7 +286,7 @@ export default class HtkHelper {
     });
   }
 
-  static getScheduleVariablesValues(scheduleName, successFun, errorFun) {
+  getScheduleVariablesValues(scheduleName, successFun, errorFun) {
     $.ajax({
       type: "post",
       url: "/getschedulevariablesvalues",
@@ -312,7 +310,7 @@ export default class HtkHelper {
   /**
    * @brief Sets on all components the value as the plant value and sets them as read-only.
    */
-  static displayPlant() {
+  displayPlant() {
     var mainFrameHtkComponents = this.htkMainEditor.getAllMainFrameHtkComponents();
     if (mainFrameHtkComponents !== null) {
       var keys = Object.keys(mainFrameHtkComponents);
@@ -335,7 +333,7 @@ export default class HtkHelper {
    * @param[in] successFun function with prototype (void) f(void), that will be called if the schedule is successfully commited.
    * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be commited.
    */
-  static commitAllChangesToSchedule(successFun, errorFun) {
+  commitAllChangesToSchedule(successFun, errorFun) {
     $.ajax({
       type: "post",
       url: "/commitschedule",
@@ -370,7 +368,7 @@ export default class HtkHelper {
    * @param[in] successFun function with prototype (void) f(pages), that will be called if the pages were successfully retrieved.
    * @param[in] errorFun function with prototype (void) f(), that will be called if the pages could not be retrieved.
    */
-  static getPages(successFun, errorFun) {
+  getPages(successFun, errorFun) {
     $.ajax({
       type: "post",
       url: "/getpages",
@@ -398,7 +396,7 @@ export default class HtkHelper {
    * @param[in] successFun function with prototype (void) f(folders), that will be called if the folders could be retrieved.
    * @param[in] errorFun function with prototype (void) f(), that will be called if the folders could not be retrieved.
    */
-  static getScheduleFolders(configName, username, parentFolders, successFun, errorFun) {
+  getScheduleFolders(configName, username, parentFolders, successFun, errorFun) {
     $.ajax({
       type: "post",
       url: "/getschedulefolders",
@@ -430,7 +428,7 @@ export default class HtkHelper {
    * @param[in] successFun function with prototype (void) f(schedules), that will be called if the schedules could be retrieved.
    * @param[in] errorFun function with prototype (void) f(), that will be called if the schedules could not be retrieved.
    */
-  static getSchedules(configName, username, parentFolders, successFun, errorFun) {
+  getSchedules(configName, username, parentFolders, successFun, errorFun) {
     $.ajax({
       type: "post",
       url: "/getschedules",
@@ -459,7 +457,7 @@ export default class HtkHelper {
    * @param[in] successFun function with prototype (void) f(schedule), the function that will be called if the schedule is successfully retrieved.
    * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be retrieved.
    */
-  static getSchedule(scheduleUID, successFun, errorFun) {
+  getSchedule(scheduleUID, successFun, errorFun) {
     $.ajax({
       type: "post",
       url: "/getschedule",
@@ -494,7 +492,7 @@ export default class HtkHelper {
    * @param[in] successFun function with prototype (void) f(void), that will be called if the schedule was successfully created.
    * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be created.
    */
-  static createSchedule(scheduleName, scheduleDescription, configName, parentFolders, sourceScheduleUID, inheritFromSchedule, successFun, errorFun) {
+  createSchedule(scheduleName, scheduleDescription, configName, parentFolders, sourceScheduleUID, inheritFromSchedule, successFun, errorFun) {
     var schedule = {
       token: this.token,
       name: scheduleName,
@@ -533,7 +531,7 @@ export default class HtkHelper {
    * @param[in] successFun function with prototype (void) f(void), that will be called if the schedule was successfully created.
    * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be created.
    */
-  static createScheduleFolder(folderName, configName, parentFolders, successFun, errorFun) {
+  createScheduleFolder(folderName, configName, parentFolders, successFun, errorFun) {
     var user = JSON.parse(localStorage.user);
     var scheduleFolder = {
       token: this.token,
@@ -567,7 +565,7 @@ export default class HtkHelper {
    * @param[in] successFun function with prototype (void) f(void), that will be called if the schedule was successfully created.
    * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be created.
    */
-  static deleteScheduleFolder(folderNames, configName, parentFolders, successFun, errorFun) {
+  deleteScheduleFolder(folderNames, configName, parentFolders, successFun, errorFun) {
     if (folderNames.length > 0) {
       var folderName = folderNames[0];
       var user = JSON.parse(localStorage.user);
@@ -617,7 +615,7 @@ export default class HtkHelper {
    * @param[in] successFun function with prototype (void) f(void), that will be called if the schedule was successfully created.
    * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be created.
    */
-  static obsoleteScheduleFolder(folderNames, configName, parentFolders, successFun, errorFun) {
+  obsoleteScheduleFolder(folderNames, configName, parentFolders, successFun, errorFun) {
     if (folderNames.length > 0) {
       var folderName = folderNames[0];
       var user = JSON.parse(localStorage.user);
@@ -666,7 +664,7 @@ export default class HtkHelper {
    * @param[in] successFun function with prototype (void) f(uid), that will be called if the transformation was successfully triggered.
    * @param[in] errorFun function with prototype (void) f(), that will be called if the transformation could not be triggered.
    */
-  static transform(funName, inputs, successFun, errorFun) {
+  transform(funName, inputs, successFun, errorFun) {
     $.ajax({
       type: "post",
       url: "/transform",
@@ -691,7 +689,7 @@ export default class HtkHelper {
    * @brief Gets the current logged in user.
    * @return the current logged in user.
    */
-  static getUser() {
+  getUser() {
     var user = localStorage.user;
     if (user !== undefined) {
       user = JSON.parse(user);
@@ -704,7 +702,7 @@ export default class HtkHelper {
    * @param[in] successFun function with prototype (void) f(users), that will be called if the users were successfully retrieved.
    * @param[in] errorFun function with prototype (void) f(), that will be called if the users could not be retrieved.
    */
-  static getUsers(successFun, errorFun) {
+  getUsers(successFun, errorFun) {
     $.ajax({
       type: "post",
       url: "/getusers",
@@ -731,7 +729,7 @@ export default class HtkHelper {
    * @param[in] successFun function with prototype (void) f(user), that will be called if the user was successfully logged in.
    * @param[in] errorFun function with prototype (void) f(), that will be called if the user could not be logged in.
    */
-  static loginToServer(usernameToSend, passwordToSend, successFun, errorFun) {
+  loginToServer(usernameToSend, passwordToSend, successFun, errorFun) {
     $.ajax({
       type: "post",
       url: "/login",
@@ -759,7 +757,7 @@ export default class HtkHelper {
    * @param[in] successFun function with prototype (void) f(void), that will be called if the user was successfully logged out.
    * @param[in] errorFun function with prototype (void) f(), that will be called if the users could not be logged out.
    */
-  static logout(successFun, errorFun) {
+  logout(successFun, errorFun) {
     $.ajax({
       type: "post",
       url: "/logout",
@@ -784,7 +782,7 @@ export default class HtkHelper {
    * @param[in] successFun function with prototype (void) f(void), that will be called if the schedule was successfully created.
    * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be created.
    */
-  static getTransformations(configName, successFun, errorFun) {
+  getTransformations(configName, successFun, errorFun) {
     $.ajax({
       type: "post",
       url: "/gettransformationsinfo",
@@ -813,7 +811,7 @@ export default class HtkHelper {
    * @param[in] successFun function with prototype (void) f(libraries), that will be called if the libraires were successfully retrieved .
    * @param[in] errorFun function with prototype (void) f(), that will be called if the libraries could not be retrieved.
    */
-  static getLibraries(libraryType, username, successFun, errorFun) {
+  getLibraries(libraryType, username, successFun, errorFun) {
     $.ajax({
       type: "post",
       url: "/getlibraries",
@@ -842,7 +840,7 @@ export default class HtkHelper {
    * @param[in] successFun function with prototype (void) f(variablesValues), that will be called if the library variables values were successfully retrieved .
    * @param[in] errorFun function with prototype (void) f(), that will be called if the libraries variables values could not be retrieved.
    */
-  static getLibraryVariablesValues(uid, successFun, errorFun) {
+  getLibraryVariablesValues(uid, successFun, errorFun) {
     $.ajax({
       type: "post",
       url: "/getlibraryvariablesvalues",
@@ -873,7 +871,7 @@ export default class HtkHelper {
    * @param[in] successFun function with prototype (void) f(library), that will be called if the library was successfully saved.
    * @param[in] errorFun function with prototype (void) f(), that will be called if the libraries variables values could not be saved.
    */
-  static saveLibrary(libraryType, libraryName, libraryDescription, variables, successFun, errorFun) {
+  saveLibrary(libraryType, libraryName, libraryDescription, variables, successFun, errorFun) {
     var user = this.getUser();
     $.ajax({
       type: "post",
@@ -915,7 +913,7 @@ export default class HtkHelper {
    * @param[in] successFun function with prototype (void) f(void), that will be called if the schedule was successfully deleted.
    * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be deleted.
    */
-  static deleteSchedule(scheduleUIDs, successFun, errorFun) {
+  deleteSchedule(scheduleUIDs, successFun, errorFun) {
     if (scheduleUIDs.length > 0) {
       var scheduleUID = scheduleUIDs[0];
       $.ajax({
@@ -966,7 +964,7 @@ export default class HtkHelper {
    * @param[in] successFun function with prototype (void) f(void), that will be called if the schedule was successfully obsoleted.
    * @param[in] errorFun function with prototype (void) f(), that will be called if the schedule could not be obsoleted.
    */
-  static obsoleteSchedule(scheduleUIDs, successFun, errorFun) {
+  obsoleteSchedule(scheduleUIDs, successFun, errorFun) {
     if (scheduleUIDs.length > 0) {
       var scheduleUID = scheduleUIDs[0];
       $.ajax({
@@ -1015,7 +1013,7 @@ export default class HtkHelper {
    * @param[in] successFun function with prototype (void) f(void), that will be called if the library was successfully deleted.
    * @param[in] errorFun function with prototype (void) f(), that will be called if the library could not be deleted.
    */
-  static deleteLibrary(libraryUID, successFun, errorFun) {
+  deleteLibrary(libraryUID, successFun, errorFun) {
     $.ajax({
       type: "post",
       url: "/deletelibrary",
@@ -1056,7 +1054,7 @@ export default class HtkHelper {
    * @param[in] successFun function with prototype (void) f(void), that will be called if the library was successfully obsoleted.
    * @param[in] errorFun function with prototype (void) f(), that will be called if the library could not be obsoleted.
    */
-  static obsoleteLibrary(libraryUID, successFun, errorFun) {
+  obsoleteLibrary(libraryUID, successFun, errorFun) {
     $.ajax({
       type: "post",
       url: "/obsoletelibrary",
@@ -1093,7 +1091,7 @@ export default class HtkHelper {
    * @param[in] successFun function with prototype (void) f(statistics), that will be called if the variables were successfully retrieved.
    * @param[in] errorFun function with prototype (void) f(), that will be called if the statistics could not be retrieved.
    */
-  static getStatistics(successFun, errorFun) {
+  getStatistics(successFun, errorFun) {
     $.ajax({
       type: "post",
       url: "/statistics",
@@ -1118,7 +1116,7 @@ export default class HtkHelper {
    * @brief Checks if the response from the server is valid (i.e. if the server has not replied with HTK_INVALID_TOKEN). If it returned with HTK_INVALID_TOKEN calls fireInvalidToken().
    * @return true if the response from the server is not HTK_INVALID_TOKEN.
    */
-  static checkServerResponse(response) {
+  checkServerResponse(response) {
     var ok = (response.length > 0);
     if (ok) {
       if (response === Constants.HTK_INVALID_TOKEN) {
@@ -1132,14 +1130,14 @@ export default class HtkHelper {
   /**
    * @brief Registers a component that is interested in being notified if an HTK_INVALID_TOKEN is received from the server.
    */
-  static addInvalidTokenListener(listener) {
+  addInvalidTokenListener(listener) {
     this.invalidTokenListeners.push(listener);
   }
 
   /**
    * @brief Informs all the registered components that an invalid token was received from the server.
    */
-  static fireInvalidToken() {
+  fireInvalidToken() {
     for (var l in this.invalidTokenListeners) {
       this.invalidTokenListeners[l].invalidTokenReceived();
     }
@@ -1148,7 +1146,7 @@ export default class HtkHelper {
   /**
    * @brief Updates the schedule remotely with any values that have changed in the last period.
    */
-  static synchroniseRemote() {
+  synchroniseRemote() {
     //This is because in the context of the setInterval callback the this is the Window
     var _this = htkHelper;
     if (_this.currentScheduleUID !== undefined) {
@@ -1188,7 +1186,7 @@ export default class HtkHelper {
    * @param[in] typeValue the type of the value to be casted.
    * @return the casted value if successful or, otherwise, the original text.
    */
-  static textToTypeValue(txtValue, typeValue) {
+  textToTypeValue(txtValue, typeValue) {
     var ret = txtValue;
     if (typeValue !== undefined) {
       if (typeValue.startsWith("float")) {
@@ -1217,14 +1215,14 @@ export default class HtkHelper {
    * @brief Sets the thread identifier on the remote server which is sending events through the SSE. This is to avoid receiving updates from ourselves.
    * @param[in] remoteServerTidIn the thread identifier on the remote server.
    */
-  static setRemoteServerTid(remoteServerTidIn) {
+  setRemoteServerTid(remoteServerTidIn) {
     this.remoteServerTid = remoteServerTidIn;
   }
 
   /**
    * @brief Gets the authentication token that is being used to communicate with the server.
    */
-  static getToken() {
+  getToken() {
     return this.token;
   }
 
@@ -1232,7 +1230,7 @@ export default class HtkHelper {
    * @brief Sets the authentication token that is being to communicate with the server.
    * @param[in] tokenIn the token to set.
    */
-  static setToken(tokenIn) {
+  setToken(tokenIn) {
     this.token = tokenIn;
     localStorage.currentToken = this.token;
   }
@@ -1240,7 +1238,7 @@ export default class HtkHelper {
   /**
    * @brief Alert to be shown when there is a critical error communicating with the server.
    */
-  static showCriticalError(err) {
+  showCriticalError(err) {
     var htkDialog = new HtkDialogs();
     htkDialog.showErrorDialog("Critical error communicating with the server." + err);
   }
@@ -1249,7 +1247,7 @@ export default class HtkHelper {
    * @brief Gets all the available users.
    * @return all the available users.
    */
-  static getAllUsers() {
+  getAllUsers() {
     return this.allUsers;
   }
 
@@ -1258,7 +1256,7 @@ export default class HtkHelper {
    * @param[in] select the HTML select where to get the options from.
    * @return all the selected options.
    */
-  static getSelectAllSelectedValues(select) {
+  getSelectAllSelectedValues(select) {
     var result = [];
     var options = select && select.options;
     var nOptions = options.length;

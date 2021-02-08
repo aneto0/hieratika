@@ -15,7 +15,7 @@
  or implied. See the Licence permissions and limitations under the Licence.
 */
 
-import HtkHelper from './htk-helper.js'
+
 import { HtkDialogs } from './htk-dialogs.js'
 import * as Constants from './htk-constants.js'
 
@@ -195,7 +195,7 @@ class HtkScheduleSelector extends HTMLElement {
 
       this.deleteScheduleButton = this.shadowRoot.querySelector("#deleteschedulebtn");
       this.deleteScheduleButton.onclick = function() {
-        var selectedOptions = htkHelper.getSelectAllSelectedValues(this.scheduleSelect);
+        var selectedOptions = window.htkHelper.getSelectAllSelectedValues(this.scheduleSelect);
         var selectedSchedulesUIDs = [];
         var selectedFolders = [];
         for (var i = 0; i < selectedOptions.length; i++) {
@@ -215,10 +215,10 @@ class HtkScheduleSelector extends HTMLElement {
           var ok = htkDialog.showConfirmDialog("Are you sure you want to delete the selected schedules / folders?");
           if (ok) {
             htkDialog.showWaitDialog();
-            HtkHelper.deleteSchedule(
+            window.htkHelper.deleteSchedule(
               selectedSchedulesUIDs,
               function() {
-                HtkHelper.deleteScheduleFolder(
+                window.htkHelper.deleteScheduleFolder(
                   selectedFolders,
                   this.pageName,
                   this.currentFolderPath,
@@ -245,7 +245,7 @@ class HtkScheduleSelector extends HTMLElement {
 
       this.obsoleteScheduleButton = this.shadowRoot.querySelector("#obsoleteschedulebtn");
       this.obsoleteScheduleButton.onclick = function() {
-        var selectedOptions = htkHelper.getSelectAllSelectedValues(this.scheduleSelect);
+        var selectedOptions = window.htkHelper.getSelectAllSelectedValues(this.scheduleSelect);
         var selectedSchedulesUIDs = [];
         var selectedFolders = [];
         for (var i = 0; i < selectedOptions.length; i++) {
@@ -262,10 +262,10 @@ class HtkScheduleSelector extends HTMLElement {
           var ok = htkDialog.showConfirmDialog("Are you sure you want to obsolete the selected schedules / folders?");
           if (ok) {
             htkDialog.showWaitDialog();
-            HtkHelper.obsoleteSchedule(
+            window.htkHelper.obsoleteSchedule(
               selectedSchedulesUIDs,
               function() {
-                HtkHelper.obsoleteScheduleFolder(
+                window.htkHelper.obsoleteScheduleFolder(
                   selectedFolders,
                   this.pageName,
                   this.currentFolderPath,
@@ -301,7 +301,7 @@ class HtkScheduleSelector extends HTMLElement {
         var newFolderName = htkDialog.showInputDialog("Please insert the new folder name.");
         if (newFolderName !== null) {
           htkDialog.showWaitDialog();
-          HtkHelper.createScheduleFolder(
+          window.htkHelper.createScheduleFolder(
             newFolderName,
             this.pageName,
             this.currentFolderPath,
@@ -336,7 +336,7 @@ class HtkScheduleSelector extends HTMLElement {
         if (this.copyFromScheduleUID !== undefined) {
           sourceScheduleUID = this.copyFromScheduleUID;
         }
-        HtkHelper.createSchedule(
+        window.htkHelper.createSchedule(
           this.newScheduleName.value,
           this.newScheduleDescription.value,
           this.pageName,
@@ -378,7 +378,7 @@ class HtkScheduleSelector extends HTMLElement {
           var disableOK = !this.allowUserOK;
           if (this.editMode) {
             if (!disableOK) {
-              var currentUsername = htkHelper.getUser().username;
+              var currentUsername = window.htkHelper.getUser().username;
               var userIsTheOwner = (currentUsername === username);
               disableOK = !userIsTheOwner;
             }
@@ -418,7 +418,7 @@ class HtkScheduleSelector extends HTMLElement {
     if (this.userSelect.selectedIndex >= 0) {
       htkDialog.showWaitDialog();
       var username = this.userSelect[this.userSelect.selectedIndex].value;
-      var currentUsername = htkHelper.getUser().username;
+      var currentUsername = window.htkHelper.getUser().username;
       var userIsTheOwner = (currentUsername === username);
       var allowScheduleManagement = ((this.allowUserScheduleManagement) && (userIsTheOwner));
       this.createNewScheduleButton.disabled = !allowScheduleManagement;
@@ -426,7 +426,7 @@ class HtkScheduleSelector extends HTMLElement {
       this.deleteScheduleButton.disabled = !allowScheduleManagement;
       this.obsoleteScheduleButton.disabled = !allowScheduleManagement;
       this.showObsoleteCheckBox.disabled = !allowScheduleManagement;
-      HtkHelper.getScheduleFolders(
+      window.htkHelper.getScheduleFolders(
         this.pageName,
         username,
         this.currentFolderPath,
@@ -459,7 +459,7 @@ class HtkScheduleSelector extends HTMLElement {
             }
           }
 
-          HtkHelper.getSchedules(
+          window.htkHelper.getSchedules(
             this.pageName,
             username,
             this.currentFolderPath,
@@ -542,7 +542,7 @@ class HtkScheduleSelector extends HTMLElement {
     option1.text = "Select user";
     option1.value = Constants.NONE_NAME;
     this.scheduleSelect.appendChild(option1);
-    var allUsers = HtkHelper.getAllUsers();
+    var allUsers = window.htkHelper.getAllUsers();
     for (var u in allUsers) {
       option1 = document.createElement("option");
       var username = allUsers[u].username;
@@ -565,4 +565,4 @@ class HtkScheduleSelector extends HTMLElement {
 /**
  * @brief Registers the element.
  */
-customElements.define('htk-schedule-selector', HtkScheduleSelector);
+window.customElements.define('htk-schedule-selector', HtkScheduleSelector);

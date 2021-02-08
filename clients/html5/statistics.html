@@ -31,7 +31,7 @@
     <body onload="getstatistics()">
         <script>
             function getstatistics() {
-                parent.htkHelper.getStatistics (
+                parent.window.htkHelper.getStatistics (
                     function (statistics) {
                         var names = ["function", "last", "min", "max", "mean", "var"];
                         var table = document.getElementById("statisticsTable");

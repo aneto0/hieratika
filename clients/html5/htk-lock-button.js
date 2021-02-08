@@ -134,4 +134,4 @@ template.innerHTML = `
   /**
    * @brief Registers the element.
    */
-   customElements.define('htk-lock-button', HtkLockButton);
+   window.customElements.define('htk-lock-button', HtkLockButton);

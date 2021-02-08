@@ -24,7 +24,8 @@
 */
 
 import * as Constants from './htk-constants.js'
-import HtkHelper from './htk-helper.js'
+
+import { HtkComponent } from './htk-component.js'
 import { HtkValidationType } from './htk-validation.js'
 
 			/**
@@ -719,12 +720,12 @@ import { HtkValidationType } from './htk-validation.js'
 				 */
 				connectedCallback() {
 					super.connectedCallback();
-					HtkHelper.addVariablesInfoLoadedListener(this);
-					// HtkHelper.addScheduleChangedListener(this);
+					window.htkHelper.addVariablesInfoLoadedListener(this);
+					// window.htkHelper.addScheduleChangedListener(this);
 				}
 			}
 
 			/**
 			 * @brief Registers the element.
 			 */
-       customElements.define('htk-falcon-opi', FalconOpi);
+       window.customElements.define('htk-falcon-opi', FalconOpi);

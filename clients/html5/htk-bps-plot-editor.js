@@ -20,7 +20,8 @@
   <link rel="import" href="/htk-component.html">
 */
 
-import HtkHelper from './htk-helper.js';
+import * as Constants from './htk-constants.js'
+;
 import { HtkComponent } from './htk-component.js'
 
 const template = document.createElement('template');
@@ -331,8 +332,8 @@ class HtkBpsPlotEditor extends HtkComponent {
    */
   connectedCallback() {
     super.connectedCallback();
-    HtkHelper.addVariablesInfoLoadedListener(this);
-    // HtkHelper.addScheduleChangedListener(this);
+    window.htkHelper.addVariablesInfoLoadedListener(this);
+    // window.htkHelper.addScheduleChangedListener(this);
 
     var ctx = this.shadowRoot.querySelector("#tcanvas");
     var chart = new Chart(ctx, {
@@ -458,4 +459,4 @@ class HtkBpsPlotEditor extends HtkComponent {
 /**
  * @brief Registers the element.
  */
-customElements.define('htk-bps-plot-editor', HtkBpsPlotEditor);
+window.customElements.define('htk-bps-plot-editor', HtkBpsPlotEditor);

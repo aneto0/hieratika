@@ -15,7 +15,7 @@
  or implied. See the Licence permissions and limitations under the Licence.
 -*/
       //  <link rel="import" href="/htk-helper.html">
-      import HtkHelper from './htk-helper.js'
+      
 
         const template = document.createElement('template');
         template.innerHTML = `
@@ -71,12 +71,12 @@
           loginButton.onclick = function() {
               var usernameTxt = this.shadowRoot.querySelector("#username");
               var passwordTxt = this.shadowRoot.querySelector("#password");
-              HtkHelper.loginToServer(
+              window.htkHelper.loginToServer(
                   usernameTxt.value,
                   passwordTxt.value,
                   function(user) {
                       localStorage.user = JSON.stringify(user);
-                      HtkHelper.setToken(user.token);
+                      window.htkHelper.setToken(user.token);
                       this.fireLoginSuccessful(user);
                       if (this.diag.open) {
                           this.diag.close();
@@ -125,4 +125,4 @@
   /**
    * @brief Registers the element.
    */
-  customElements.define('htk-login', HtkLogin);
+  window.customElements.define('htk-login', HtkLogin);

@@ -26,7 +26,7 @@
         */
 
 
-import HtkHelper from './htk-helper.js';
+;
 import { HtkDialogs } from './htk-dialogs.js';
 import { Stream } from './htk-stream.js';
 import * as Constants from './htk-constants.js';
@@ -135,26 +135,26 @@ template.innerHTML = `
                         this.setPlantButton.onclick = function() {
                             this.hideSideBar();
                             this.htkDialog.showWaitDialog();
-                            HtkHelper.updatePlant(this.selectedPage.name, this.updatePlantCompleted, this.updatePlantError);
+                            window.htkHelper.updatePlant(this.selectedPage.name, this.updatePlantCompleted, this.updatePlantError);
                         }.bind(this);
 
                         this.loadIntoPlantButton = this.shadowRoot.querySelector("#loadintoplantbtn");
                         this.loadIntoPlantButton.onclick = function() {
                             this.hideSideBar();
                             this.htkDialog.showWaitDialog();
-                            HtkHelper.loadIntoPlant(this.selectedPage.name, this.loadIntoPlantCompleted, this.loadIntoPlantError);
+                            window.htkHelper.loadIntoPlant(this.selectedPage.name, this.loadIntoPlantCompleted, this.loadIntoPlantError);
                         }.bind(this);
 
                         this.showStatisticsButton = this.shadowRoot.querySelector("#showstatisticsbtn");
                         this.showStatisticsButton.onclick = function() {
                             this.hideSideBar();
-                            HtkHelper.getHtkMainEditor().showStatistics();
+                            window.htkHelper.getHtkMainEditor().showStatistics();
                         }.bind(this);
 
                         this.showPlantBuilderButton = this.shadowRoot.querySelector("#plantbuilder");
                         this.showPlantBuilderButton.onclick = function() {
                             this.hideSideBar();
-                            HtkHelper.getHtkMainEditor().showPlantBuilder();
+                            window.htkHelper.getHtkMainEditor().showPlantBuilder();
                         }.bind(this);
 
                         this.pageSelectButton = this.shadowRoot.querySelector("#pageselectbtn");
@@ -163,7 +163,7 @@ template.innerHTML = `
                         this.loginDialog.addLoginListener(this);
                         this.loginButton.onclick = function() {
                             this.hideSideBar();
-                            var user = HtkHelper.getUser();
+                            var user = window.htkHelper.getUser();
                             if (user === undefined) {
                                 this.loginDialog.show();
                             }
@@ -187,7 +187,7 @@ template.innerHTML = `
                         this.pageSelector = this.shadowRoot.querySelector("#pageselector");
                         this.pageSelectButton.onclick = function() {
                             this.hideSideBar();
-                            HtkHelper.setCurrentScheduleUID(undefined);
+                            window.htkHelper.setCurrentScheduleUID(undefined);
                             this.pageSelector.show(this.firePageChanged.bind(this));
                         }.bind(this);
 
@@ -209,26 +209,26 @@ template.innerHTML = `
                         this.viewPlantButton.onclick = function() {
                             this.hideSideBar();
                             this.handleAccordionClick(viewAccordion);
-                            HtkHelper.setCurrentScheduleUID(undefined);
+                            window.htkHelper.setCurrentScheduleUID(undefined);
                             this.currentDisplay.innerHTML = Constants.PLANT_NAME;
                             this.setPlantButton.disabled = true;
                             this.copyFromReferenceScheduleButton.disabled = true;
                             this.copyFromReferencePlantButton.disabled = true;
                             this.commitButton.disabled = true;
                             this.undoButton.disabled = true;
-                            HtkHelper.displayPlant();
+                            window.htkHelper.displayPlant();
                         }.bind(this);
 
                         this.usernameDisplay = this.shadowRoot.querySelector("#username");
                         this.currentDisplay = this.shadowRoot.querySelector("#currentdisplay");
                         this.currentReference = this.shadowRoot.querySelector("#currentreference");
 
-                        var user = HtkHelper.getUser();
+                        var user = window.htkHelper.getUser();
                         if (user === undefined) {
                             this.loginButton.value = "<i class='fa fa-user-o'> Login</i>";
                         }
                         else {
-                            HtkHelper.setToken(localStorage.currentToken);
+                            window.htkHelper.setToken(localStorage.currentToken);
                             this.loginSuccessful(user);
                         }
                         this.pageSelect = this.shadowRoot.querySelector("#pageselect");
@@ -268,7 +268,7 @@ template.innerHTML = `
                         this.copyFromReferencePlantButton.onclick = function () {
                             this.hideSideBar();
                             this.handleAccordionClick(copyAccordion);
-                            var mainFrameHtkComponents = HtkHelper.getAllMainFrameHtkComponents();
+                            var mainFrameHtkComponents = window.htkHelper.getAllMainFrameHtkComponents();
                             var keys = Object.keys(mainFrameHtkComponents);
                             for (var i=0; i<keys.length; i++) {
                                 var htkCompArray = mainFrameHtkComponents[keys[i]];
@@ -284,7 +284,7 @@ template.innerHTML = `
                         this.commitButton.onclick = function () {
                             this.hideSideBar();
                             this.htkDialog.showWaitDialog();
-                            HtkHelper.commitAllChangesToSchedule(this.commitCompleted, this.commitError);
+                            window.htkHelper.commitAllChangesToSchedule(this.commitCompleted, this.commitError);
                         }.bind(this);
 
                         this.undoButton = this.shadowRoot.querySelector("#undobtn");
@@ -303,7 +303,7 @@ template.innerHTML = `
                             this.streamer.addTransformationListener(this.transformationsViewer);
                         }
 
-                        HtkHelper.addInvalidTokenListener(this);
+                        window.htkHelper.addInvalidTokenListener(this);
                         this.pageListeners = [this];
                         this.scheduleChangeListeners = [this];
                         this.userLogoutListeners = [this];
@@ -311,7 +311,7 @@ template.innerHTML = `
                         this.disableAllButPageSelect();
 
                         if (this.standalone) {
-                            HtkHelper.loginToServer("", "", this.loginSuccessful.bind(this), this.loginError.bind(this));
+                            window.htkHelper.loginToServer("", "", this.loginSuccessful.bind(this), this.loginError.bind(this));
                         }
                     }
 
@@ -321,7 +321,7 @@ template.innerHTML = `
                      */
                     adoptedCallback() {
                         if (this.standalone) {
-                            HtkHelper.loginToServer("", "", this.loginSuccessful.bind(this), this.loginError.bind(this));
+                            window.htkHelper.loginToServer("", "", this.loginSuccessful.bind(this), this.loginError.bind(this));
                         }
                     }
 
@@ -361,7 +361,7 @@ template.innerHTML = `
                      * @brief Callback function that is called when the commit of the variables into the schedule has been (asynchronously) completed successfully.
                      */
                     commitCompleted() {
-                        var mainFrameHtkComponents = HtkHelper.getAllMainFrameHtkComponents();
+                        var mainFrameHtkComponents = window.htkHelper.getAllMainFrameHtkComponents();
                         var keys = Object.keys(mainFrameHtkComponents);
                         for (var i=0; i<keys.length; i++) {
                             var htkCompArray = mainFrameHtkComponents[keys[i]];
@@ -417,7 +417,7 @@ template.innerHTML = `
                         if(!this.standalone){
                           this.user = user;
                         }
-                        HtkHelper.getUsers(
+                        window.htkHelper.getUsers(
                             function (allUsers) {
                                 if(!this.standalone){
                                     this.streamer.start();
@@ -486,7 +486,7 @@ template.innerHTML = `
                      * @brief Logsout a user from the system and disables the buttons that allow to interact with the system.
                      */
                     userLogout() {
-                        HtkHelper.logout(
+                        window.htkHelper.logout(
                             function() {
                                 localStorage.removeItem("user");
                                 localStorage.removeItem("schedule");
@@ -531,7 +531,7 @@ template.innerHTML = `
                      */
                     getTransformations() {
                         this.htkDialog.showWaitDialog();
-                        HtkHelper.getTransformations(
+                        window.htkHelper.getTransformations(
                             this.selectedPage.name,
                             function (transformations) {
                                 this.transformationsViewer.setTransformations(transformations);
@@ -570,7 +570,7 @@ template.innerHTML = `
                         this.currentDisplay.innerHTML = currentScheduleText;
                         if (schedule.inheritsFromUID !== undefined) {
                             if (schedule.inheritsFromUID.length > 0) {
-                                HtkHelper.getSchedule(
+                                window.htkHelper.getSchedule(
                                     schedule.inheritsFromUID,
                                     function (parentSchedule) {
                                         currentScheduleText += " (" + parentSchedule.name + ")";
@@ -581,8 +581,8 @@ template.innerHTML = `
                                 );
                             }
                         }
-                        HtkHelper.setCurrentScheduleUID(schedule.uid);
-                        HtkHelper.resetScheduleValuesToCommit();
+                        window.htkHelper.setCurrentScheduleUID(schedule.uid);
+                        window.htkHelper.resetScheduleValuesToCommit();
                         this.setPlantButton.disabled = false;
                     }
 
@@ -594,7 +594,7 @@ template.innerHTML = `
                         this.currentReference.innerHTML = referenceScheduleText;
                         if (schedule.inheritsFromUID !== undefined) {
                             if (schedule.inheritsFromUID.length > 0) {
-                                HtkHelper.getSchedule(
+                                window.htkHelper.getSchedule(
                                     schedule.inheritsFromUID,
                                     function (parentSchedule) {
                                         referenceScheduleText += " (" + parentSchedule.name + ")";
@@ -675,7 +675,7 @@ template.innerHTML = `
                      */
                     setReference(currentReference) {
                         this.htkDialog.showWaitDialog();
-                        var mainFrameHtkComponents = HtkHelper.getAllMainFrameHtkComponents();
+                        var mainFrameHtkComponents = window.htkHelper.getAllMainFrameHtkComponents();
                         var keys = Object.keys(mainFrameHtkComponents);
                         var htkComp;
                         if (currentReference === Constants.NONE_NAME) {
@@ -702,7 +702,7 @@ template.innerHTML = `
                             this.htkDialog.closeWaitDialog();
                         }
                         else {
-                            HtkHelper.getScheduleVariablesValues(
+                            window.htkHelper.getScheduleVariablesValues(
                                 currentReference,
                                 function(variables) {
                                     var keys = Object.keys(variables);
@@ -738,11 +738,11 @@ template.innerHTML = `
                      */
                     copyFromSchedule(schUID, resetValue, updateRemote, setNotEditable, successFun) {
                         this.htkDialog.showWaitDialog();
-                        HtkHelper.getScheduleVariablesValues(
+                        window.htkHelper.getScheduleVariablesValues(
                             schUID,
                             function (variables) {
                                 var keys = Object.keys(variables);
-                                var mainFrameHtkComponents = HtkHelper.getAllMainFrameHtkComponents();
+                                var mainFrameHtkComponents = window.htkHelper.getAllMainFrameHtkComponents();
                                 for (var i in keys) {
                                     var variableName = keys[i];
                                     var variableValue = variables[keys[i]];
@@ -767,20 +767,20 @@ template.innerHTML = `
                                     }
                                 }
                                 successFun();
-                                this.htkDialog.closeWaitDialog();
                             },
                             function () {
                                 this.htkDialog.closeWaitDialog();
                                 this.htkDialog.showErrorDialog("Failed to copy from the schedule. Unknown error, check the server logs.");
                             }
                         );
+                        this.htkDialog.closeWaitDialog();
                     }
 
                     /**
                      * @brief Undos all the changes that were made to a given schedule.
                      */
                     undoAllChangesToSchedule() {
-                        var mainFrameHtkComponents = HtkHelper.getAllMainFrameHtkComponents();
+                        var mainFrameHtkComponents = window.htkHelper.getAllMainFrameHtkComponents();
                         var keys = Object.keys(mainFrameHtkComponents);
                         for (var i=0; i<keys.length; i++) {
                             var htkCompArray = mainFrameHtkComponents[keys[i]];
@@ -795,4 +795,4 @@ template.innerHTML = `
                 /**
                  * @brief Registers the element.
                  */
-                 customElements.define('htk-nav', HtkNav);
+                 window.customElements.define('htk-nav', HtkNav);

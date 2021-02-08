@@ -15,7 +15,7 @@
  or implied. See the Licence permissions and limitations under the Licence.
 */
 
-import HtkHelper from './htk-helper.js'
+
 
 /**
 * @brief Client side implementation of the SSE interface to the server.
@@ -32,7 +32,7 @@ export class Stream {
    */
   start() {
     this.stop();
-    this.evtSrc = new EventSource("/stream?token=" + HtkHelper.getToken());
+    this.evtSrc = new EventSource("/stream?token=" + window.htkHelper.getToken());
     //Changed values are received in json format
     this.evtSrc.onmessage = function(e) {
       if (e.data.length > 0) {
@@ -41,7 +41,7 @@ export class Stream {
         var transformationUID = jsonData["transformationUID"];
         if (reset !== undefined) {
           var tid = jsonData["tid"];
-          HtkHelper.setRemoteServerTid(tid);
+          window.htkHelper.setRemoteServerTid(tid);
         } else if (transformationUID !== undefined) {
           this.fireTransformationUpdated(jsonData);
         } else {
@@ -49,10 +49,10 @@ export class Stream {
           var scheduleUID = jsonData["scheduleUID"];
           var updateLive = (jsonData["live"] !== undefined);
           var updateSchedule = (scheduleUID !== undefined);
-          var updateThisSchedule = (scheduleUID === HtkHelper.getCurrentScheduleUID());
+          var updateThisSchedule = (scheduleUID === window.htkHelper.getCurrentScheduleUID());
           var updatePlant = ((!updateLive) && (scheduleUID === undefined));
           //variables is a dictionary with name:value pairs
-          var mainFrameHtkComponents = HtkHelper.getAllMainFrameHtkComponents();
+          var mainFrameHtkComponents = window.htkHelper.getAllMainFrameHtkComponents();
           //If it is to update a schedule and this is not the correct uid, do not even try
           if ((updateLive) || (updateSchedule && updateThisSchedule) || (updatePlant)) {
             for (var name in variables) {
@@ -65,7 +65,7 @@ export class Stream {
                   if ((updateSchedule) || (updateLive)) {
                     targetElement.setValue(value, false);
                     //Someone else changed but might not have commited!
-                    HtkHelper.updateScheduleValuesToCommit(name, value);
+                    window.htkHelper.updateScheduleValuesToCommit(name, value);
                   } else {
                     targetElement.setPlantValue(value);
                   }

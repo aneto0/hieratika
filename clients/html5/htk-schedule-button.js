@@ -25,7 +25,7 @@
 /* Be sure that htk-scheduel selector is included in the main document */
 
 
-import HtkHelper from './htk-helper.js';
+;
 import * as Constants from './htk-constants.js'
 import { HtkAbstractInput } from './htk-abstract-input.js'
 
@@ -98,7 +98,7 @@ template.innerHTML = `
                         if (valueToSet !== undefined) {
                             if (valueToSet.length > 0) {
                                 this.buttonInput.disabled = true;
-                                HtkHelper.getSchedule(
+                                window.htkHelper.getSchedule(
                                     valueToSet,
                                     function(schedule) {
                                         this.buttonInput.disabled = false;
@@ -137,4 +137,4 @@ template.innerHTML = `
                 /**
                  * @brief Registers the element.
                  */
-                 customElements.define('htk-schedule-button', HtkScheduleButton);
+                 window.customElements.define('htk-schedule-button', HtkScheduleButton);

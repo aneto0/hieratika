@@ -579,4 +579,4 @@ template.innerHTML = `
   /**
    * @brief Registers the element.
    */
-  customElements.define('htk-matrix-dropmenu-editor', HtkMatrixDropMenuEditor);
+  window.customElements.define('htk-matrix-dropmenu-editor', HtkMatrixDropMenuEditor);

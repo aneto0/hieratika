@@ -30,11 +30,12 @@
 */
 
 import * as Constants from './htk-constants.js'
+
 import { HtkAbstractInput } from './htk-abstract-input.js'
 
 const template = document.createElement('template');
 template.innerHTML = `
-  <input type="radio" id="rinput"></input>
+<input type="radio" id="rinput"></input>
 `;
 
 
@@ -54,7 +55,7 @@ template.innerHTML = `
          * @brief See HtkComponent.createdCallback.
          */
         connectedCallback() {
-          super.createdCallback();
+          super.connectedCallback();
           this.radioInput = this.shadowRoot.querySelector("#rinput");
           this.value = 0;
           this.radioInput.checked = false;
@@ -99,7 +100,7 @@ template.innerHTML = `
         getValue() {
           var rValue = this.value;
           var typeValue = this.getTypeValue();
-          return parent.htkHelper.textToTypeValue(rValue, typeValue);
+          return window.htkHelper.textToTypeValue(rValue, typeValue);
         }
 
         /**
@@ -195,7 +196,7 @@ template.innerHTML = `
         }
       }
 
-      customElements.define('htk-radio-box', HtkRadioBox);
+      window.customElements.define('htk-radio-box', HtkRadioBox);
 
       /**
        * @brief A Radio group component.
@@ -258,4 +259,4 @@ template.innerHTML = `
       /**
        * @brief Registers the element.
        */
-       customElements.define('htk-radio-group', HtkRadioGroup);
+       window.customElements.define('htk-radio-group', HtkRadioGroup);

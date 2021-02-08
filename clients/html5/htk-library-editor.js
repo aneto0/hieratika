@@ -21,7 +21,7 @@
         <link rel="import" href="/htk-helper.html">
 */
 
-import HtkHelper from './htk-helper.js';
+;
 import { HtkDialogs } from './htk-dialogs.js';
 
 const template = document.createElement('template');
@@ -91,7 +91,7 @@ template.innerHTML = `
                      * @param[in] readyFun the function to be called when the libraries are available to be shown.
                      */
                     populateLibraries (username, readyFun) {
-                        HtkHelper.getLibraries(
+                        window.htkHelper.getLibraries(
                             this.owner.getLibraryType(),
                             username,
                             function (availableLibraries) {
@@ -126,7 +126,7 @@ template.innerHTML = `
                      */
                     populateUsers(libraryUser) {
                         if (this.userSelector.options.length === 0) {
-                            var allUsers = HtkHelper.getAllUsers();
+                            var allUsers = window.htkHelper.getAllUsers();
                             for (var u in allUsers) {
                                 var option1 = document.createElement("option");
                                 var username = allUsers[u].username;
@@ -144,7 +144,7 @@ template.innerHTML = `
                      * @param[in] libraryValue the name of the library.
                      */
                     showEditor (libraryUser, libraryValue) {
-                        var user = HtkHelper.getUser();
+                        var user = window.htkHelper.getUser();
                         this.deleteButton.disabled = (libraryUser !== user.username);
                         this.obsoleteButton.disabled = (libraryUser !== user.username);
 
@@ -167,7 +167,7 @@ template.innerHTML = `
                         var libraryUID = this.getLibraryUID(libraryName);
                         if (libraryUID !== undefined) {
                             if (libraryName.length > 0) {
-                                HtkHelper.getLibraryVariablesValues(
+                                window.htkHelper.getLibraryVariablesValues(
                                     libraryUID,
                                     successFn,
                                     function (response) {
@@ -300,10 +300,10 @@ template.innerHTML = `
                                 if (ok) {
                                     this.htkDialog.showWaitDialog();
                                     var libraryUID = this.getLibraryUID(libraryName);
-                                    HtkHelper.deleteLibrary(
+                                    window.htkHelper.deleteLibrary(
                                         libraryUID,
                                         function () {
-                                            var user = HtkHelper.getUser();
+                                            var user = window.htkHelper.getUser();
                                             this.populateLibraries(user.username, function() {
                                                 if (this.availableLibraries.length > 0) {
                                                     var selectedLibrary = this.availableLibraries[0].name;
@@ -326,7 +326,7 @@ template.innerHTML = `
 
                         this.obsoleteCheckBox.onclick = function() {
                             this.htkDialog.showWaitDialog();
-                            var user = HtkHelper.getUser();
+                            var user = window.htkHelper.getUser();
                             this.populateLibraries(user.username, function() {
                                 if (this.availableLibraries.length > 0) {
                                     var selectedLibrary = this.availableLibraries[0].name;
@@ -346,10 +346,10 @@ template.innerHTML = `
                                 if (ok) {
                                     this.htkDialog.showWaitDialog();
                                     var libraryUID = this.getLibraryUID(libraryName);
-                                    HtkHelper.obsoleteLibrary(
+                                    window.htkHelper.obsoleteLibrary(
                                         libraryUID,
                                         function () {
-                                            var user = HtkHelper.getUser();
+                                            var user = window.htkHelper.getUser();
                                             this.populateLibraries(user.username, function() {
                                                 if (this.availableLibraries.length > 0) {
                                                     var selectedLibrary = this.availableLibraries[0].name;
@@ -378,7 +378,7 @@ template.innerHTML = `
                         this.userSelector.onchange = function() {
                             this.htkDialog.showWaitDialog();
                             var selectedUser = this.userSelector.options[this.userSelector.selectedIndex].text;
-                            var user = HtkHelper.getUser();
+                            var user = window.htkHelper.getUser();
                             this.deleteButton.disabled = (selectedUser !== user.username);
                             this.obsoleteButton.disabled = (selectedUser !== user.username);
                             this.populateLibraries(selectedUser, function() {
@@ -415,7 +415,7 @@ template.innerHTML = `
                                     }
                                 }
                                 this.htkDialog.showWaitDialog();
-                                HtkHelper.saveLibrary(
+                                window.htkHelper.saveLibrary(
                                     this.owner.getLibraryType(),
                                     saveAsName,
                                     description,
@@ -471,11 +471,11 @@ template.innerHTML = `
                         for (var k in editorComponents) {
                             allVariableIds.push(k)
                         }
-                        HtkHelper.getLibraryVariablesInfo(
+                        window.htkHelper.getLibraryVariablesInfo(
                             libraryType,
                             allVariableIds,
                             function (variables) {
-                                var user = HtkHelper.getUser();
+                                var user = window.htkHelper.getUser();
                                 for (var i in variables) {
                                     var variable = variables[i];
                                     var targetElements = editorComponents[variable.name];
@@ -535,4 +535,4 @@ template.innerHTML = `
                 /**
                  * @brief Registers the element.
                  */
-                 customElements.define('htk-library-editor', HtkLibraryEditor);
+                 window.customElements.define('htk-library-editor', HtkLibraryEditor);

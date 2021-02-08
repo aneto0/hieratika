@@ -24,7 +24,7 @@
         <link rel="import" href="/htk-schedule-button.html">
 */
 
-import HtkHelper from './htk-helper.js'
+
 import { HtkComponent } from './htk-component.js'
 
 const template = document.createElement('template');
@@ -202,7 +202,7 @@ template.innerHTML = `
                         this.addMember(this, this.name);
                         this.treeHTML += "</ul>";
                         this.mainDiv.innerHTML = this.treeHTML;
-                        var user = HtkHelper.getUser();
+                        var user = window.htkHelper.getUser();
                         this.populateComponentInfo(this, user);
                         var tree = this.shadowRoot.querySelector("#struct-tree");
                         CollapsibleLists.applyTo(tree);
@@ -212,4 +212,4 @@ template.innerHTML = `
                 /**
                  * @brief Registers the element.
                  */
-                 customElements.define('htk-struct-browser', HtkStructBrowser);
+                 window.customElements.define('htk-struct-browser', HtkStructBrowser);

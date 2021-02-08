@@ -105,4 +105,4 @@ template.innerHTML = `
     /**
      * @brief Registers the element.
      */
-     customElements.define('htk-enum', HtkEnum);
+     window.customElements.define('htk-enum', HtkEnum);

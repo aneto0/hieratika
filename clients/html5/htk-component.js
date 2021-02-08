@@ -22,7 +22,7 @@
 */
 
 import * as Constants from './htk-constants.js'
-import HtkHelper from './htk-helper.js'
+
 import { HtkValidation, HtkValidationMath, HtkValidationType } from './htk-validation.js'
 import $ from './js/jquery/jquery.js'
 
@@ -49,6 +49,8 @@ import $ from './js/jquery/jquery.js'
          */
         constructor() {
             super();
+            // Pointer to htkHelper outside the mainFrame.
+            window.htkHelper = window.parent.htkHelper;
         }
 
         /**
@@ -387,8 +389,8 @@ import $ from './js/jquery/jquery.js'
             $.each(othersSameId, function (j, otherHtkComp) {
                 otherHtkComp.setValue(valueToUpdate, false);
             });
-            if (HtkHelper.getCurrentScheduleUID() !== undefined) {
-                HtkHelper.addVariableToSynchroniseRemote(valueToUpdateR);
+            if (window.htkHelper.getCurrentScheduleUID() !== undefined) {
+                window.htkHelper.addVariableToSynchroniseRemote(valueToUpdateR);
             }
         }
 
@@ -546,12 +548,14 @@ import $ from './js/jquery/jquery.js'
                     if (this.id.length > 0) {
                         //_frameComponents must be private to the iframe, otherwise there will be name clashes with the libraries variables
                         if (document._frameComponents === undefined) {
+                            console.log('HtkComponent creating frameComponents')
                             document._frameComponents = {};
                         }
                         if(document._frameComponents[this.id] === undefined) {
                             document._frameComponents[this.id] = [this];
                         }
                         else {
+                            console.log('HtkComponent pushing this')
                             document._frameComponents[this.id].push(this);
                         }
                     }
