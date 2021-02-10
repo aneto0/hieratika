@@ -22,10 +22,9 @@ import * as Constants from './htk-constants.js'
 const template = document.createElement('template');
 template.innerHTML = `
 <style>
-    @import url("/css/w3.css");
-    @import url("/css/font-awesome-4.7.0/css/font-awesome.min.css");
+  @import "./css/w3.css";
+  @import "./css/WebFont/font-css/LineIcons.css";
 </style>
-
 <dialog id="dscheduleselector">
     <div id="divschedule">
         <table style="border-style:solid;border-width:1px;width: 100%">
@@ -56,11 +55,11 @@ template.innerHTML = `
                     <table style="border-style:solid;border-width:0px;width: 100%">
                         <tr>
                             <td style="text-align:right;">
-                                <button title="Create a new schedule..." id="createschedulebtn"><i class="fa fa-plus-square"></i></button>
-                                <button title="Create a new folder..." id="createschedulefolderbtn"><i class="fa fa-folder"></i></button>
-                                <button title="Delete schedule/folder..." id="deleteschedulebtn"><i class="fa fa-minus-square"></i></button>
-                                <button title="Obsolete schedule/folder..." id="obsoleteschedulebtn"><i class="fa fa-asterisk"></i></button>
-                                <input type="checkbox" id="showobsoletecheckbox" value="obsolete" title="Show obsolete schedules and folders?"><i class="fa fa-eye"></i></input>
+                                <button title="Create a new schedule..." id="createschedulebtn"><i class="lni lni-circle-plus"></i></button>
+                                <button title="Create a new folder..." id="createschedulefolderbtn"><i class="lni lni-folder"></i></button>
+                                <button title="Delete schedule/folder..." id="deleteschedulebtn"><i class="lni lni-circle-minus"></i></button>
+                                <button title="Obsolete schedule/folder..." id="obsoleteschedulebtn"><i class="lni lni-ban"></i></button>
+                                <input type="checkbox" id="showobsoletecheckbox" value="obsolete" title="Show obsolete schedules and folders?"><i class="lni lni-eye"></i></input>
                             </td>
                         </tr>
                     </table>
@@ -209,12 +208,12 @@ class HtkScheduleSelector extends HTMLElement {
           }
         }
 
-        var htkDialog = new HtkDialogs();
+        //var htkDialog = new HtkDialogs();
 
         if ((selectedSchedulesUIDs.length > 0) || (selectedFolders.length > 0)) {
-          var ok = htkDialog.showConfirmDialog("Are you sure you want to delete the selected schedules / folders?");
+          var ok = HtkDialogs.showConfirmDialog("Are you sure you want to delete the selected schedules / folders?");
           if (ok) {
-            htkDialog.showWaitDialog();
+            HtkDialogs.showWaitDialog();
             window.htkHelper.deleteSchedule(
               selectedSchedulesUIDs,
               function() {
@@ -223,23 +222,23 @@ class HtkScheduleSelector extends HTMLElement {
                   this.pageName,
                   this.currentFolderPath,
                   function() {
-                    htkDialog.closeWaitDialog();
+                    HtkDialogs.closeWaitDialog();
                     this.updateUserSchedules();
                   }.bind(this),
                   function(response) {
-                    htkDialog.closeWaitDialog();
+                    HtkDialogs.closeWaitDialog();
                     this.updateUserSchedules();
                   }.bind(this)
                 );
               }.bind(this),
               function(response) {
-                htkDialog.closeWaitDialog();
+                HtkDialogs.closeWaitDialog();
                 this.updateUserSchedules();
               }.bind(this)
             );
           }
         } else {
-          htkDialog.showErrorDialog("Please select a schedule (or folder) first");
+          HtkDialogs.showErrorDialog("Please select a schedule (or folder) first");
         }
       }.bind(this);
 
@@ -259,9 +258,9 @@ class HtkScheduleSelector extends HTMLElement {
           }
         }
         if ((selectedSchedulesUIDs.length > 0) || (selectedFolders.length > 0)) {
-          var ok = htkDialog.showConfirmDialog("Are you sure you want to obsolete the selected schedules / folders?");
+          var ok = HtkDialogs.showConfirmDialog("Are you sure you want to obsolete the selected schedules / folders?");
           if (ok) {
-            htkDialog.showWaitDialog();
+            HtkDialogs.showWaitDialog();
             window.htkHelper.obsoleteSchedule(
               selectedSchedulesUIDs,
               function() {
@@ -270,23 +269,23 @@ class HtkScheduleSelector extends HTMLElement {
                   this.pageName,
                   this.currentFolderPath,
                   function() {
-                    htkDialog.closeWaitDialog();
+                    HtkDialogs.closeWaitDialog();
                     this.updateUserSchedules();
                   }.bind(this),
                   function(response) {
-                    htkDialog.closeWaitDialog();
+                    HtkDialogs.closeWaitDialog();
                     this.updateUserSchedules();
                   }.bind(this)
                 );
               }.bind(this),
               function(response) {
-                htkDialog.closeWaitDialog();
+                HtkDialogs.closeWaitDialog();
                 this.updateUserSchedules();
               }.bind(this)
             );
           }
         } else {
-          htkDialog.showErrorDialog("Please select a schedule (or folder) first");
+          HtkDialogs.showErrorDialog("Please select a schedule (or folder) first");
         }
       }.bind(this);
 
@@ -298,20 +297,20 @@ class HtkScheduleSelector extends HTMLElement {
       this.inheritCheckBox = this.shadowRoot.querySelector("#inheritcheckbox");
       this.createNewScheduleFolderButton = this.shadowRoot.querySelector("#createschedulefolderbtn");
       this.createNewScheduleFolderButton.onclick = function() {
-        var newFolderName = htkDialog.showInputDialog("Please insert the new folder name.");
+        var newFolderName = HtkDialogs.showInputDialog("Please insert the new folder name.");
         if (newFolderName !== null) {
-          htkDialog.showWaitDialog();
+          HtkDialogs.showWaitDialog();
           window.htkHelper.createScheduleFolder(
             newFolderName,
             this.pageName,
             this.currentFolderPath,
             function() {
               this.updateUserSchedules();
-              htkDialog.closeWaitDialog();
+              HtkDialogs.closeWaitDialog();
             }.bind(this),
             function(response) {
-              htkDialog.closeWaitDialog();
-              htkDialog.showErrorDialog("Failed to create the schedule folder. Unknown error, check the server logs.");
+              HtkDialogs.closeWaitDialog();
+              HtkDialogs.showErrorDialog("Failed to create the schedule folder. Unknown error, check the server logs.");
             }
           );
         }
@@ -325,7 +324,7 @@ class HtkScheduleSelector extends HTMLElement {
 
       var okNewScheduleButton = this.shadowRoot.querySelector("#oknewschedulebtn");
       okNewScheduleButton.onclick = function() {
-        htkDialog.showWaitDialog();
+        HtkDialogs.showWaitDialog();
         var sourceScheduleUID = undefined;
         var inheritFromSchedule = this.inheritCheckBox.checked;
         if (inheritFromSchedule) {
@@ -347,11 +346,11 @@ class HtkScheduleSelector extends HTMLElement {
             this.scheduleDiv.removeAttribute("hidden");
             this.newScheduleDiv.setAttribute("hidden", "true");
             this.updateUserSchedules();
-            htkDialog.closeWaitDialog();
+            HtkDialogs.closeWaitDialog();
           }.bind(this),
           function(response) {
-            htkDialog.closeWaitDialog();
-            htkDialog.showErrorDialog("Failed to create the schedule. Unknown error, check the server logs.");
+            HtkDialogs.closeWaitDialog();
+            HtkDialogs.showErrorDialog("Failed to create the schedule. Unknown error, check the server logs.");
           }
         );
       }.bind(this);
@@ -414,9 +413,9 @@ class HtkScheduleSelector extends HTMLElement {
    * @brief Show only the schedules that are available for a given user.
    */
   updateUserSchedules() {
-    var htkDialog = new HtkDialogs();
+    //var htkDialog = new HtkDialogs();
     if (this.userSelect.selectedIndex >= 0) {
-      htkDialog.showWaitDialog();
+      HtkDialogs.showWaitDialog();
       var username = this.userSelect[this.userSelect.selectedIndex].value;
       var currentUsername = window.htkHelper.getUser().username;
       var userIsTheOwner = (currentUsername === username);
@@ -491,17 +490,17 @@ class HtkScheduleSelector extends HTMLElement {
                 }
 
               }
-              htkDialog.closeWaitDialog();
+              HtkDialogs.closeWaitDialog();
             }.bind(this),
             function(response) {
-              htkDialog.closeWaitDialog();
-              htkDialog.showErrorDialog("Failed to retrieve the schedules. Unknown error, check the server logs.");
+              HtkDialogs.closeWaitDialog();
+              HtkDialogs.showErrorDialog("Failed to retrieve the schedules. Unknown error, check the server logs.");
             }
           );
         }.bind(this),
         function(response) {
-          htkDialog.closeWaitDialog();
-          htkDialog.showErrorDialog("Failed to retrieve the schedules. Unknown error, check the server logs.");
+          HtkDialogs.closeWaitDialog();
+          HtkDialogs.showErrorDialog("Failed to retrieve the schedules. Unknown error, check the server logs.");
         }
       );
     }

@@ -101,8 +101,8 @@ class HtkTransformations extends HTMLElement {
    * @param[in] transformation the transformation to execute remotely.
    */
   runTransformation(transformation) {
-    var htkDialog = new HtkDialogs();
-    htkDialog.showWaitDialog();
+    //var htkDialog = new HtkDialogs();
+    HtkDialogs.showWaitDialog();
     var inputVariables = Object.keys(transformation.inputs);
     var inputs = {};
     var ok = true;
@@ -125,11 +125,11 @@ class HtkTransformations extends HTMLElement {
         inputs,
         function(uid) {
           transformation["uid"] = "" + uid;
-          htkDialog.closeWaitDialog();
+          HtkDialogs.closeWaitDialog();
         }.bind(this),
         function(response) {
-          htkDialog.closeWaitDialog();
-          htkDialog.showErrorDialog("Failed to trigger the transformation. Unknown error, check the server logs.");
+          HtkDialogs.closeWaitDialog();
+          HtkDialogs.showErrorDialog("Failed to trigger the transformation. Unknown error, check the server logs.");
         }
       );
     }

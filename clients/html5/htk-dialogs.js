@@ -28,13 +28,12 @@ export class HtkDialogs {
      * @brief Constructor. NOOP.
      */
     constructor() {
-
     }
 
     /**
      * @brief Shows a modal wait dialog.
      */
-    showWaitDialog() {
+    static showWaitDialog() {
         this.waitDialog = document.createElement("htk-wait-dialog");
         document.body.appendChild(this.waitDialog);
         this.waitDialog.showModal();
@@ -43,7 +42,7 @@ export class HtkDialogs {
     /**
      * @brief Closes the modal wait dialog which was previously shown using showWaitDialog.
      */
-    closeWaitDialog() {
+    static closeWaitDialog() {
         this.waitDialog.close();
         document.body.removeChild(this.waitDialog);
     }
@@ -60,7 +59,7 @@ export class HtkDialogs {
      * @brief Shows an information dialog.
      * @param[in] msg the message to display.
      */
-    showErrorDialog(msg) {
+    static showErrorDialog(msg) {
         alert(msg);
     }
 
@@ -70,7 +69,7 @@ export class HtkDialogs {
      * @param[in] defaultValue the default value to show on the text input box.
      * @return the user answer or null if the user has pressed cancel.
      */
-    showInputDialog(msg, defaultValue = "") {
+    static showInputDialog(msg, defaultValue = "") {
         return prompt(msg, defaultValue);
     }
 
@@ -79,7 +78,7 @@ export class HtkDialogs {
      * @param[in] msg the message to display.
      * @return true if the user pressed OK, false otherwise.
      */
-    showConfirmDialog(msg) {
+    static showConfirmDialog(msg) {
         return confirm(msg);
     }
 

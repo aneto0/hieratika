@@ -109,8 +109,8 @@ class HtkPageSelector extends HTMLElement {
     this.pageSelect.innerHTML = "";
     this.okCallbackFunction = okCallbackFun;
     this.okButton.disabled = true;
-    var htkDialog = new HtkDialogs();
-    htkDialog.showWaitDialog();
+    //var htkDialog = new HtkDialogs();
+    HtkDialogs.showWaitDialog();
     window.htkHelper.getPages(
       function(pagesJson) {
         for (var p in pagesJson) {
@@ -121,12 +121,12 @@ class HtkPageSelector extends HTMLElement {
           option1.pageInfo = pagesJson[p];
           this.pageSelect.appendChild(option1);
         }
-        htkDialog.closeWaitDialog();
+        HtkDialogs.closeWaitDialog();
         this.diag.showModal();
       }.bind(this),
       function() {
-        htkDialog.closeWaitDialog();
-        htkDialog.showErrorDialog("Failed to get the pages. Unknown error, check the server logs.");
+        HtkDialogs.closeWaitDialog();
+        HtkDialogs.showErrorDialog("Failed to get the pages. Unknown error, check the server logs.");
       }
     );
   }

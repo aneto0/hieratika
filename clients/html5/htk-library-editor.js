@@ -148,12 +148,12 @@ template.innerHTML = `
                         this.deleteButton.disabled = (libraryUser !== user.username);
                         this.obsoleteButton.disabled = (libraryUser !== user.username);
 
-                        this.htkDialog.showWaitDialog();
+                        HtkDialogs.showWaitDialog();
                         this.populateUsers(libraryUser);
                         this.populateLibraries(libraryUser, function() {
                             this.librarySelector.value = libraryValue;
                             this.editLibrary();
-                            this.htkDialog.closeWaitDialog();
+                            HtkDialogs.closeWaitDialog();
                             this.diag.showModal();
                         }.bind(this));
                     }
@@ -171,8 +171,8 @@ template.innerHTML = `
                                     libraryUID,
                                     successFn,
                                     function (response) {
-                                        this.htkDialog.closeWaitDialog();
-                                        this.htkDialog.showErrorDialog("Failed to get library variables values. Unknown error, check the server logs.");
+                                        HtkDialogs.closeWaitDialog();
+                                        HtkDialogs.showErrorDialog("Failed to get library variables values. Unknown error, check the server logs.");
                                     }
                                 );
                             }
@@ -193,7 +193,7 @@ template.innerHTML = `
                                 var ownerPlantValue = this.owner.getPlantValue();
                                 if (ownerReference !== "none") {
                                     if (ownerReferenceValue !== undefined) {
-                                        this.htkDialog.showWaitDialog();
+                                        HtkDialogs.showWaitDialog();
                                         this.getLibrary(ownerReferenceValue, function (variables) {
                                             var keys = Object.keys(variables);
                                             for (var i in keys) {
@@ -204,12 +204,12 @@ template.innerHTML = `
                                                     comps[c].setReferenceValue(variableValue);
                                                 }
                                             }
-                                            this.htkDialog.closeWaitDialog();
+                                            HtkDialogs.closeWaitDialog();
                                         }.bind(this));
                                     }
                                 }
                                 if (ownerInitialValue !== undefined) {
-                                    this.htkDialog.showWaitDialog();
+                                    HtkDialogs.showWaitDialog();
                                     this.getLibrary(ownerInitialValue, function (variables) {
                                         var keys = Object.keys(variables);
                                         for (var i in keys) {
@@ -220,11 +220,11 @@ template.innerHTML = `
                                                 comps[c].setInitialValue(variableValue);
                                             }
                                         }
-                                        this.htkDialog.closeWaitDialog();
+                                        HtkDialogs.closeWaitDialog();
                                     }.bind(this));
                                 }
                                 if (ownerPlantValue !== undefined) {
-                                    this.htkDialog.showWaitDialog();
+                                    HtkDialogs.showWaitDialog();
                                     this.getLibrary(ownerPlantValue, function (variables) {
                                         var keys = Object.keys(variables);
                                         for (var i in keys) {
@@ -235,12 +235,12 @@ template.innerHTML = `
                                                 comps[c].setPlantValue(variableValue);
                                             }
                                         }
-                                        this.htkDialog.closeWaitDialog();
+                                        HtkDialogs.closeWaitDialog();
                                     }.bind(this));
                                 }
                             }
                             if (this.librarySelector.selectedIndex >= 0) {
-                                this.htkDialog.showWaitDialog();
+                                HtkDialogs.showWaitDialog();
                                 var option = this.librarySelector.options[this.librarySelector.selectedIndex];
                                 var libraryName = option.text;
                                 this.getLibrary(libraryName, function (variables) {
@@ -254,7 +254,7 @@ template.innerHTML = `
                                         }
                                     }
                                     this.descriptionTextArea.value = option.description;
-                                    this.htkDialog.closeWaitDialog();
+                                    HtkDialogs.closeWaitDialog();
                                 }.bind(this));
                             }
                         }
@@ -296,9 +296,9 @@ template.innerHTML = `
                             if (this.librarySelector.selectedIndex >= 0) {
                                 var option = this.librarySelector.options[this.librarySelector.selectedIndex];
                                 var libraryName = option.text;
-                                var ok = this.htkDialog.showConfirmDialog("Are you sure you want to delete the library " + libraryName + "?");
+                                var ok = HtkDialogs.showConfirmDialog("Are you sure you want to delete the library " + libraryName + "?");
                                 if (ok) {
-                                    this.htkDialog.showWaitDialog();
+                                    HtkDialogs.showWaitDialog();
                                     var libraryUID = this.getLibraryUID(libraryName);
                                     window.htkHelper.deleteLibrary(
                                         libraryUID,
@@ -310,22 +310,22 @@ template.innerHTML = `
                                                     this.librarySelector.value = selectedLibrary;
                                                 }
                                                 this.editLibrary();
-                                                this.htkDialog.closeWaitDialog();
+                                                HtkDialogs.closeWaitDialog();
                                             }.bind(this));
                                         }.bind(this),
                                         function (response) {
-                                            this.htkDialog.closeWaitDialog();
+                                            HtkDialogs.closeWaitDialog();
                                         }
                                     );
                                 }
                             }
                             else {
-                                this.htkDialog.showErrorDialog("Please select a library first");
+                                HtkDialogs.showErrorDialog("Please select a library first");
                             }
                         }.bind(this);
 
                         this.obsoleteCheckBox.onclick = function() {
-                            this.htkDialog.showWaitDialog();
+                            HtkDialogs.showWaitDialog();
                             var user = window.htkHelper.getUser();
                             this.populateLibraries(user.username, function() {
                                 if (this.availableLibraries.length > 0) {
@@ -333,7 +333,7 @@ template.innerHTML = `
                                     this.librarySelector.value = selectedLibrary;
                                 }
                                 this.editLibrary();
-                                this.htkDialog.closeWaitDialog();
+                                HtkDialogs.closeWaitDialog();
                             }.bind(this));
                         }.bind(this);
 
@@ -342,9 +342,9 @@ template.innerHTML = `
                             if (this.librarySelector.selectedIndex >= 0) {
                                 var option = this.librarySelector.options[this.librarySelector.selectedIndex];
                                 var libraryName = option.text;
-                                var ok = this.htkDialog.showConfirmDialog("Are you sure you want to obsolete the library " + libraryName + "?");
+                                var ok = HtkDialogs.showConfirmDialog("Are you sure you want to obsolete the library " + libraryName + "?");
                                 if (ok) {
-                                    this.htkDialog.showWaitDialog();
+                                    HtkDialogs.showWaitDialog();
                                     var libraryUID = this.getLibraryUID(libraryName);
                                     window.htkHelper.obsoleteLibrary(
                                         libraryUID,
@@ -356,17 +356,17 @@ template.innerHTML = `
                                                     this.librarySelector.value = selectedLibrary;
                                                 }
                                                 this.editLibrary();
-                                                this.htkDialog.closeWaitDialog();
+                                                HtkDialogs.closeWaitDialog();
                                             }.bind(this));
                                         }.bind(this),
                                         function (response) {
-                                            this.htkDialog.closeWaitDialog();
+                                            HtkDialogs.closeWaitDialog();
                                         }
                                     );
                                 }
                             }
                             else {
-                                this.htkDialog.showErrorDialog("Please select a library first");
+                                HtkDialogs.showErrorDialog("Please select a library first");
                             }
                         }.bind(this);
 
@@ -376,7 +376,7 @@ template.innerHTML = `
                         }.bind(this); //bind is needed to make sure that the "this" is still valid in the context of the callback
 
                         this.userSelector.onchange = function() {
-                            this.htkDialog.showWaitDialog();
+                            HtkDialogs.showWaitDialog();
                             var selectedUser = this.userSelector.options[this.userSelector.selectedIndex].text;
                             var user = window.htkHelper.getUser();
                             this.deleteButton.disabled = (selectedUser !== user.username);
@@ -387,7 +387,7 @@ template.innerHTML = `
                                     this.librarySelector.value = selectedLibrary;
                                 }
                                 this.editLibrary();
-                                this.htkDialog.closeWaitDialog();
+                                HtkDialogs.closeWaitDialog();
                             }.bind(this));
                         }.bind(this);
 
@@ -403,7 +403,7 @@ template.innerHTML = `
                                 var option = this.librarySelector.options[this.librarySelector.selectedIndex];
                                 libraryName = option.text;
                             }
-                            var saveAsName = this.htkDialog.showInputDialog("Please insert the new library name:", libraryName);
+                            var saveAsName = HtkDialogs.showInputDialog("Please insert the new library name:", libraryName);
                             if (saveAsName !== null) {
                                 var description = this.descriptionTextArea.value;
                                 var variables = {};
@@ -414,7 +414,7 @@ template.innerHTML = `
                                         variables[comps[c].id] = comps[c].getValue();
                                     }
                                 }
-                                this.htkDialog.showWaitDialog();
+                                HtkDialogs.showWaitDialog();
                                 window.htkHelper.saveLibrary(
                                     this.owner.getLibraryType(),
                                     saveAsName,
@@ -435,10 +435,10 @@ template.innerHTML = `
                                             }
                                             alert("Library created successfully!");
                                         }
-                                        this.htkDialog.closeWaitDialog();
+                                        HtkDialogs.closeWaitDialog();
                                     }.bind(this),
                                     function (response) {
-                                        this.htkDialog.closeWaitDialog();
+                                        HtkDialogs.closeWaitDialog();
                                     }
                                 );
                             }
@@ -488,7 +488,7 @@ template.innerHTML = `
                                 }
                             }.bind(this),
                             function () {
-                                this.htkDialog.showErrorDialog("Failed to get library variables info. Unknown error, check the server logs.");
+                                HtkDialogs.showErrorDialog("Failed to get library variables info. Unknown error, check the server logs.");
                             }
                         );
                         for (var i=0; i<editorComponents.length; i++) {

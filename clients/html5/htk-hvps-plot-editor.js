@@ -28,7 +28,7 @@ import { HtkComponent } from './htk-component.js'
 const template = document.createElement('template');
 template.innerHTML = `
 <style>
-    @import url("/js/jqmath-0.4.3.css");
+  @import url("/css/jqmath-0.4.3.min.css");
 </style>
 <input type="range" id="trange" min="1000" max="100000" value="10000" background="#4CAF50" border="1">
 <input type="text" id="tinput"></input>

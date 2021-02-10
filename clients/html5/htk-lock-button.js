@@ -28,9 +28,9 @@ import { HtkAbstractInput } from './htk-abstract-input.js'
 const template = document.createElement('template');
 template.innerHTML = `
 <style>
-    @import url("/css/font-awesome-4.7.0/css/font-awesome.min.css");
+  @import "../css/WebFont/font-css/LineIcons.css";
 </style>
-<button type="button" id="block" style="font-size:24px;border:none"><i id="bicon" class="fa fa-unlock"></i></button>
+<button type="button" id="block" style="font-size:24px;border:none"><i id="bicon" class="lni lni-lock"></i></button>
 `;
 
   /**
@@ -80,13 +80,13 @@ template.innerHTML = `
           }
           var intValue = parseInt(value);
           if (intValue === 1) {
-              this.buttonIcon.className = "fa fa-lock";
+              this.buttonIcon.className = "lni lni-lock";
           }
           else if (intValue === 0) {
-              this.buttonIcon.className = "fa fa-unlock";
+              this.buttonIcon.className = "lni lni-unlock";
           }
           else {
-              this.buttonIcon.className = "fa fa-lock";
+              this.buttonIcon.className = "lni lni-lock";
           }
           this.checkValues(this.buttonIcon);
           this.buttonIcon.style.background = Constants.STANDARD_BCOLOR;

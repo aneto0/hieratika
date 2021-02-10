@@ -97,8 +97,8 @@ export class HtkMainEditor extends HTMLElement {
      * @param[in] pageName the page to display.
      */
     loadVariablesInfo(pageName) {
-        var htkDialog = new HtkDialogs();
-        htkDialog.showWaitDialog();
+        //var htkDialog = new HtkDialogs();
+        HtkDialogs.showWaitDialog();
         var allVariableIds = [];
         var allLiveVariableIds = [];
         var mainFrameComponents = this.mainEditorIFrame.contentDocument._frameComponents;
@@ -156,19 +156,19 @@ export class HtkMainEditor extends HTMLElement {
                         }
 
                         this.fireVariablesInfoLoaded();
-                        htkDialog.closeWaitDialog();
+                        HtkDialogs.closeWaitDialog();
                     }.bind(this),
                     function () {
-                        var htkDialog = new HtkDialogs();
-                        htkDialog.showErrorDialog("Failed to get variables info. Unknown error, check the server logs.");
-                        htkDialog.closeWaitDialog();
+                        //var htkDialog = new HtkDialogs();
+                        HtkDialogs.showErrorDialog("Failed to get variables info. Unknown error, check the server logs.");
+                        HtkDialogs.closeWaitDialog();
                     }.bind(this)
                 );
             }.bind(this),
             function () {
-                var htkDialog = new HtkDialogs();
-                htkDialog.showErrorDialog("Failed to get live variables info. Unknown error, check the server logs.");
-                htkDialog.closeWaitDialog();
+                //var htkDialog = new HtkDialogs();
+                HtkDialogs.showErrorDialog("Failed to get live variables info. Unknown error, check the server logs.");
+                HtkDialogs.closeWaitDialog();
             }.bind(this)
 
         );
