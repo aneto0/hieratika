@@ -37,6 +37,7 @@ export class HtkHelper {
     this.invalidTokenListeners = [];
     //This reference to the main editor can be used to listen to page events for components that e.g. do not inherit from HtkComponent
     this.htkMainEditor = undefined;
+    this.htkNav = undefined
     this.valuesToSynchroniseRemote = [];
     this.scheduleValuesToCommit = {};
     this.currentScheduleUID = undefined;
@@ -107,6 +108,14 @@ export class HtkHelper {
     return this.htkMainEditor.getAllMainFrameHtkComponents();
   }
 
+  /**
+    * @brief Registers a component that wants to be informed about schedule changes.
+    * @param[in] listener the component to register.
+    */
+   addScheduleChangedListener(listener) {
+       this.htkNav.addScheduleChangedListener(listener);
+   }
+
 
   /**
    * @brief Registers a component that wants to informed when all the variables information, for a given page, have been loaded.
@@ -115,6 +124,23 @@ export class HtkHelper {
   addVariablesInfoLoadedListener(listener) {
     this.htkMainEditor.addVariablesInfoLoadedListener(listener);
   }
+
+  /**
+   * @brief Sets the htk-nav (which is the navigator).
+   * @param[in] htkNavIn the owner of the navigator component.
+   */
+  setHtkNav(htkNavIn) {
+      this.htkNav = htkNavIn;
+  }
+
+  /**
+   * @brief Gets the htk-nav (which is the navigator component).
+   * @return the navigator component.
+   */
+  getHtkNav() {
+      return this.htkNav;
+  }
+
 
   /**
    * @brief Loads the configuration variables into the plant.

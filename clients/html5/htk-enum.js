@@ -84,6 +84,11 @@ template.innerHTML = `
             this.select.value = this.getValue();
         }
 
+        getChoices(){
+            return this.choices.slice(0);
+        }
+
+
         /**
          * @brief Sets the selected choice visible on the component.
          */

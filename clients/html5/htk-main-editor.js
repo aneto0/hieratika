@@ -26,10 +26,7 @@ import $ from './js/jquery/jquery.js'
 
 const template = document.createElement('template');
 template.innerHTML = `
-  <iframe id="dmaineditor" style="position: absolute; height: 100%; width: 100%; border: none">
-  <script type="text/javascript">
-  </script>
-  </iframe>
+  <iframe id="dmaineditor" style="position: absolute; height: 100%; width: 100%; border: none"></iframe>
 `;
 
 

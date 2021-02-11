@@ -303,6 +303,7 @@ template.innerHTML = `
                             this.streamer.addTransformationListener(this.transformationsViewer);
                         }
 
+                        window.htkHelper.setHtkNav(this);
                         window.htkHelper.addInvalidTokenListener(this);
                         this.pageListeners = [this];
                         this.scheduleChangeListeners = [this];

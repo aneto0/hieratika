@@ -35,6 +35,16 @@ import $ from './js/jquery/jquery.js'
  export const VALUE_CHANGED_PLANT = 3;
  export const VALUE_CHANGED_REFERENCE_NAME = 4;
 
+ export function copy(o) {
+     var output, v, key;
+     output = Array.isArray(o) ? [] : {};
+     for (key in o) {
+         v = o[key];
+         output[key] = (typeof v === "object") ? copy(v) : v;
+     }
+     return output;
+ }
+
     /**
      * @brief The root of the Hieratika HTML5 components class hierarchy.
      * @details All the Hieratika HTML5 user-interface components shall inherit from HtkComponent.

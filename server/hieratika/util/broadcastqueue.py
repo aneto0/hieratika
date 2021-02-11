@@ -8,8 +8,8 @@ __copyright__ = """
     by the European Commission - subsequent versions of the EUPL (the "Licence")
     You may not use this work except in compliance with the Licence.
     You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
- 
-    Unless required by applicable law or agreed to in writing, 
+
+    Unless required by applicable law or agreed to in writing,
     software distributed under the Licence is distributed on an "AS IS"
     basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
     or implied. See the Licence permissions and limitations under the Licence.
@@ -23,7 +23,7 @@ __date__ = "07/11/2017"
 # Standard imports
 ##
 import logging
-import multiprocessing 
+import multiprocessing
 import os
 import threading
 import time
@@ -45,7 +45,7 @@ class BroadcastQueue:
     """ A one to many queue which allows to share objects between one and many processes.
         The implementation is based on a zmq published subscriber pattern.
     """
-    
+
     def __init__(self, port, timeout = 100, address = "127.0.0.1"):
         """ Constructor.
         Args:
@@ -80,16 +80,16 @@ class BroadcastQueue:
         pub.bind("tcp://{0}:{1}".format(self.address, self.port))
         try:
             log.info("Starting zmq proxy and binding to ({0}) {1}:{2}".format(self.proxyUrl, self.address, self.port))
-            zmq.proxy(sub, pub) 
+            zmq.proxy(sub, pub)
         except Exception as e:
             log.critical("zmq proxy terminated {0}".format(e))
         log.critical("Exiting zmq proxy callback")
-        
+
     def getSocket(self, receiver):
         """ Gets a socket. A socket will be cached for every pid/tid pair.
-   
+
         Args:
-            receiver (bool): True if the socket is for a subscriber. 
+            receiver (bool): True if the socket is for a subscriber.
         Returns:
             A zmq socket.
         """
@@ -103,28 +103,28 @@ class BroadcastQueue:
                 sock.connect("tcp://{0}:{1}".format(self.address, self.port))
                 log.info("Creating new subscriber socket @ {0}:{1}".format(self.address, self.port))
                 sock.setsockopt(zmq.RCVTIMEO, self.timeout)
-                sock.setsockopt(zmq.SUBSCRIBE, "")
+                sock.setsockopt(zmq.SUBSCRIBE, b"")
             else:
                 log.info("Creating new publisher socket {0} @ {1}:{2}".format(self.proxyUrl, self.address, self.port))
                 sock = context.socket(zmq.DEALER)
                 sock.sndhwm = 1100000
                 sock.connect(self.proxyUrl)
 
-            self.sockets[uid] = sock 
+            self.sockets[uid] = sock
         return self.sockets[uid]
 
     def put(self, item):
         """ Puts an item in the queue and warns all the registered receivers.
-        
+
         Args:
             item (str): the item to be sent.
         """
         sock = self.getSocket(False)
         sock.send_pyobj(item)
-            
+
     def get(self):
         """ Gets an item from queue.
-        
+
         Returns:
             The received item or None if a timeout occurs.
         """
@@ -133,6 +133,5 @@ class BroadcastQueue:
         try:
             item = sock.recv_pyobj()
         except Exception as e:
-            item = None 
+            item = None
         return item
-

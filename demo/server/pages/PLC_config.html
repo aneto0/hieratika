@@ -1,0 +1,139 @@
+ <html>
+    <head>
+
+      <link href="../css/WebFont/font-css/LineIcons.css" rel="stylesheet">
+      <script type="text/javascript" src="../js/math.js"></script>
+
+      <script type="module" src="../htk-component.js"></script>
+    	<script type="module" src="../htk-array-editor.js"></script>
+    	<script type="module" src="../htk-enum.js"></script>
+    	<script type="module" src="../htk-input.js"></script>
+    	<script type="module" src="../htk-checkbox.js"></script>
+    	<script type="module" src="../htk-matrix-dropmenu-editor.js"></script>
+      <script type="module" src="../htk-library-button.js"></script>
+      <script type="module" src="../htk-lock-button.js"></script>
+      <script type="module" src="../htk-struct-browser.js"></script>
+    	<script type="module" src="../htk-schedule-button.js"></script>
+      <script type="module" src="../ls-input-preprocessing.js"></script>
+      <script type="module" src="../ls-function-assignment.js"></script>
+      <script type="module" src="../ls-function-logic.js"></script>
+      <script type="module" src="../ls-final-or.js"></script>
+
+
+    </head>
+    <body>
+        <table>
+           <tr>
+                <td>Lock 1</td>
+                <td>
+                    <htk-lock-button id='DT@BT@LOCK1'></htk-lock-button>
+                </td>
+           </tr>
+           <tr>
+                <td>Lock 2</td>
+                <td>
+                    <htk-lock-button id='DT@BT@LOCK2'></htk-lock-button>
+                </td>
+           </tr>
+           <tr>
+                <td>Lock 3</td>
+                <td>
+                    <htk-lock-button id='DT@BT@LOCK3'></htk-lock-button>
+                </td>
+           </tr>
+            <tr>
+                <td>
+                    <htk-enum id='DT@BT@DBLE'></htk-enum>
+                </td>
+            </tr>
+             <tr>
+                <td>
+                    <htk-enum id='DT@BT@DBLE1'></htk-enum>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <htk-enum id='DT@BT@DBLE2'></htk-enum>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <htk-enum id='DT@BT@DBLE3'></htk-enum>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <htk-enum id='DT@BT@DBLE4'></htk-enum>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <htk-enum id='DT@BT@DBLE5'></htk-enum>
+                </td>
+            </tr>
+           <tr>
+                <td>Input Preprocess</td>
+                <td>
+                    <ls-input-preprocessing id='DT@BT@DBLSIP' data-m1Id="DT@BT@DBLMA" data-m2Id="DT@BT@DBLMA1" data-m3Id="DT@BT@DBLMA2"></ls-input-preprocessing>
+                </td>
+           </tr>
+           <tr>
+                <td>Input Preprocess</td>
+                <td>
+            	<table border="0">
+                    	<tr>
+                        	<td>
+								<htk-matrix-dropmenu-editor id="DT@BT@DBLMA" data-initEnumId="DT@BT@DBLE"><\htk-matrix-dropmenu-editor>
+                        	</td>
+                        	<td>
+								<htk-matrix-dropmenu-editor id="DT@BT@DBLMA1" data-initEnumId="DT@BT@DBLE1"><\htk-matrix-dropmenu-editor>
+                        	</td>
+                        	<td>
+								<htk-matrix-dropmenu-editor id="DT@BT@DBLMA2" data-initEnumId="DT@BT@DBLE2"><\htk-matrix-dropmenu-editor>
+                        	</td>
+                    	</tr>
+                 </table>
+                </td>
+           </tr>
+           <tr>
+                <td>Function Assignment</td>
+                <td>
+                    <ls-function-assignment id='DT@BT@DBLSFS' data-mId="DT@BT@DBLMA3" data-inputPreprocessId="DT@BT@DBLSIP"></ls-function-assignment>
+                </td>
+            </tr>
+            <tr>
+                <td>Function Assignment</td>
+                <td>
+			     	<htk-matrix-dropmenu-editor id="DT@BT@DBLMA3" data-initEnumId="DT@BT@DBLE4"><\htk-matrix-dropmenu-editor>
+                </td>
+            </tr>
+           <tr>
+                <td>Function Logic Implementation</td>
+                <td>
+                    <ls-function-logic id='DT@BT@DBLSFL' data-assignmentId="DT@BT@DBLSFS" ></ls-function-logic>
+                </td>
+            </tr>
+           <tr>
+                <td>Final OR</td>
+                <td>
+                    <ls-final-or id='DT@BT@DBLSFO' data-preprocessingId="DT@BT@DBLSIP" data-assignmentId="DT@BT@DBLSFS" data-logicId="DT@BT@DBLSFL" data-m1Id="DT@BT@DBLMA4" data-m2Id="DT@BT@DBLMA5"></ls-final-or>
+                </td>
+            </tr>
+            <tr>
+
+                <td>Final OR</td>
+                <td>
+                     <table border="0">
+            		<tr>
+					<td>
+					<htk-matrix-dropmenu-editor id="DT@BT@DBLMA4" data-initEnumId="DT@BT@DBLE3"><\htk-matrix-dropmenu-editor>
+                	</td>
+                	<td>
+					<htk-matrix-dropmenu-editor id="DT@BT@DBLMA5" data-initEnumId="DT@BT@DBLE5"><\htk-matrix-dropmenu-editor>
+                	</td>
+					</tr>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>
