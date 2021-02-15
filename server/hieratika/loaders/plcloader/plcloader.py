@@ -132,8 +132,9 @@ class PLCLoader(HieratikaLoader):
                     else:
                         self.fileId.write(",");
                     #config_dict = OrderedDict([("Address_L", 2), ("Address_M", config%256), ("ID", config/256), ("Data_M", address%256), ("Data_L", address/256)])
-                    config_dict = OrderedDict([("ID", 2), ("Data_L", config%256), ("Data_M", config/256), ("Address_L", address%256), ("Address_M", address/256)])
+                    #config_dict = OrderedDict([("ID", 2), ("Data_L", config%256), ("Data_M", config/256), ("Address_L", address%256), ("Address_M", address/256)])
                     #config_dict = {"ID" : 2, "Address_L" : address%256, "Address_M" : address/256, "Data_L" : config%256, "Data_M" : config/256}
+                    config_dict = OrderedDict([("ID", 2), ("Data_L", self.extractKBits(config,4,1)), ("Data_M", self.extractKBits(config,4,5)), ("Address_L", self.extractKBits(address,4,1)), ("Address_M", self.extractKBits(address,4,5))])
                     #self.fileId.write(struct.pack("4B",config%256, config/256, address%256, address/256))
                     self.fileId.write(json.dumps(config_dict));
                     config_list.append(config_dict)
@@ -180,7 +181,8 @@ class PLCLoader(HieratikaLoader):
                         print(config, address)
                         self.fileId.write(",");
                         #config_dict = OrderedDict([("Address_L", 2), ("Address_M", config%256), ("ID", config/256), ("Data_M", address%256), ("Data_L", address/256)])
-                        config_dict = OrderedDict([("ID", 2), ("Data_L", config%256), ("Data_M", config/256), ("Address_L", address%256), ("Address_M", address/256)])
+                        #config_dict = OrderedDict([("ID", 2), ("Data_L", config%256), ("Data_M", config/256), ("Address_L", address%256), ("Address_M", address/256)])
+                        config_dict = OrderedDict([("ID", 2), ("Data_L", self.extractKBits(config,4,1)), ("Data_M", self.extractKBits(config,4,5)), ("Address_L", self.extractKBits(address,4,1)), ("Address_M", self.extractKBits(address,4,5))])
                         #config_dict = {"ID" : 2, "Address_L" : address%256, "Address_M" : address/256, "Data_L" : config%256, "Data_M" : config/256}
                         self.fileId.write(json.dumps(config_dict));
                         #self.fileId.write(struct.pack("4B",config%256,config/256,address%256,address/256))
@@ -219,7 +221,8 @@ class PLCLoader(HieratikaLoader):
                        print(retVal,address)
                        self.fileId.write(",");
                        #config_dict = OrderedDict([("Address_L", 2), ("Address_M", retVal%256), ("ID", retVal/256), ("Data_M", address%256), ("Data_L", address/256)])
-                       config_dict = OrderedDict([("ID", 2), ("Data_L", retVal%256), ("Data_M", retVal/256), ("Address_L", address%256), ("Address_M", address/256)])
+                       #config_dict = OrderedDict([("ID", 2), ("Data_L", retVal%256), ("Data_M", retVal/256), ("Address_L", address%256), ("Address_M", address/256)])
+                       config_dict = OrderedDict([("ID", 2), ("Data_L", self.extractKBits(retVal,4,1)), ("Data_M", self.extractKBits(retVal,4,5)), ("Address_L", self.extractKBits(address,4,1)), ("Address_M", self.extractKBits(address,4,5))])
                        #config_dict = {"ID" : 2, "Address_L" : address%256, "Address_M" : address/256, "Data_L" : retVal%256, "Data_M" : retVal/256}
                        self.fileId.write(json.dumps(config_dict));
                        #self.fileId.write(struct.pack("4B",retVal%256, retVal/256, address%256, address/256))
@@ -247,9 +250,8 @@ class PLCLoader(HieratikaLoader):
                             elementIndex=elementIndex+1
                         print(config, address)
                         self.fileId.write(",");
-                        #config_dict = OrderedDict([("Address_L", 2), ("Address_M", config%256), ("ID", config/256), ("Data_M", address%256), ("Data_L", address/256)])
-                        config_dict = OrderedDict([("ID", 2), ("Data_L", config%256), ("Data_M", config/256), ("Address_L", address%256), ("Address_M", address/256)])
-                        #config_dict = {"ID" : 2, "Address_L" : address%256, "Address_M" : address/256, "Data_L" : config%256, "Data_M" : config/256}
+                        config_dict = OrderedDict([("ID", 2), ("Data_L", self.extractKBits(config,4,1)), ("Data_M", self.extractKBits(config,4,5)), ("Address_L", self.extractKBits(address,4,1)), ("Address_M", self.extractKBits(address,4,5))])
+                        #config_dict = OrderedDict([("ID", 2), ("Data_L", config%256), ("Data_M", config/256), ("Address_L", address%256), ("Address_M", address/256)])
                         self.fileId.write(json.dumps(config_dict));
                         #self.fileId.write(struct.pack("4B",config%256, config/256, address%256, address/256))
                         config_list.append(config_dict)
@@ -257,6 +259,20 @@ class PLCLoader(HieratikaLoader):
         self.fileId.write("]")
         self.fileId.flush()
         return True
+
+    #Extract k bits from position p
+    def extractKBits(self,num,k,p):
+        binary = bin(num)
+	#removing first two characters
+        binary = binary[2:]
+        end = len(binary) - p
+        start = end -k + 1
+        kBitSubStr = binary[start : end + 1]
+        if kBitSubStr == '':
+            splittedNum = 0
+        else:
+            splittedNum = int(kBitSubStr, 2)
+        return splittedNum
 
     def isLoadable(self, pageName):
         return True
