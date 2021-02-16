@@ -34,6 +34,7 @@ from pvaccess import *
 # Project imports
 ##
 from hieratika.loader import HieratikaLoader
+from hieratika.loaders.plcloader.suploader import sendToSup
 
 ##
 # Logger configuration
@@ -56,14 +57,15 @@ class PLCLoader(HieratikaLoader):
         self.pvLoadCommand = ""
         self.pageName = "PLC_config"
         #self.fileId = open("config.fls", "w+b")
-        self.fileId = open("config.json", "w")
+
 
 
 
     def load(self, config):
         """ Loads the mapping between the hieratika variables and the EPICS records, defined in a json file whose path shall be defined in
         [loader-impl] recordVariableMappingJsonPath
-        """
+        """ 
+
         ok = False
         try:
             signalNames = config.get("loader-impl", "signalNames")
@@ -95,6 +97,7 @@ class PLCLoader(HieratikaLoader):
         return True
 
     def loadIntoPlant(self, pageName):
+        self.fileId = open("config.json", "w")
         log.info("Loading {0}".format(pageName))
         variablesPlantInfo = self.server.getVariablesInfo(self.pageName, self.variables)
         address = 0
@@ -258,6 +261,12 @@ class PLCLoader(HieratikaLoader):
                         address=address+1
         self.fileId.write("]")
         self.fileId.flush()
+        
+        self.fileId.close()
+     
+        #Send Configuration to SUP for Loading
+        sendToSup()
+        
         return True
 
     #Extract k bits from position p
