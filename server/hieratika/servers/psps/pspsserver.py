@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+from __future__ import absolute_import
+from __future__ import print_function
+import six
+from six.moves import zip
 __copyright__ = """
     Copyright 2017 F4E | European Joint Undertaking for ITER and
     the Development of Fusion Energy ('Fusion for Energy').
@@ -6,8 +10,8 @@ __copyright__ = """
     by the European Commission - subsequent versions of the EUPL (the "Licence")
     You may not use this work except in compliance with the Licence.
     You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
- 
-    Unless required by applicable law or agreed to in writing, 
+
+    Unless required by applicable law or agreed to in writing,
     software distributed under the Licence is distributed on an "AS IS"
     basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
     or implied. See the Licence permissions and limitations under the Licence.
@@ -20,7 +24,7 @@ __date__ = "17/11/2017"
 # Standard imports
 ##
 import ast
-import ConfigParser
+import six.moves.configparser
 import errno
 import fnmatch
 import json
@@ -79,12 +83,12 @@ class PSPSServer(HieratikaServer):
         self.recordTag = "{{{0}}}record".format(self.xmlns["ns0"])
         self.pages = SharedList()
         #This is to protect the local resources cachedXmls and xmlIds (which are local to the process)
-        self.mux = multiprocessing.Lock() 
+        self.mux = multiprocessing.Lock()
 
     def load(self, config):
         ok = True
         try:
-            self.structSeparator = config.get("hieratika", "structSeparator") 
+            self.structSeparator = config.get("hieratika", "structSeparator")
             self.standalone = config.getboolean("hieratika", "standalone")
             self.pagesFolder = config.get("hieratika", "pagesFolder")
             numberOfLocks = config.getint("server-impl", "numberOfLocks")
@@ -95,24 +99,24 @@ class PSPSServer(HieratikaServer):
             self.defaultExperts = ast.literal_eval(config.get("server-impl", "defaultExperts"))
             self.lockPool = LockPool(numberOfLocks)
             self.loadPages()
-        except (ConfigParser.Error, KeyError) as e:
+        except (six.moves.configparser.Error, KeyError) as e:
             log.critical(str(e))
-            ok = False 
-    
+            ok = False
+
         return ok
 
     def getXmlId(self, xmlPath):
         """ Creates a unique key and associates it to an xml file path. (needed to have shorter keys as path may potentially be very long).
-        
+
         Args:
         	xmlPath(str): path to the xml file.
 		Returns:
-        	A key which univocally identifies this xml path. 
+        	A key which univocally identifies this xml path.
         """
         self.mux.acquire()
         if (len(self.xmlIds) > self.maxXmlIds):
             log.info("Reached maximum number of cached xmlIds :{0}".format(self.maxXmlIds))
-            keys = self.xmlIds.keys()
+            keys = list(self.xmlIds.keys())
             for k in keys:
                 if (not self.lockPool.isKeyInUse(self.xmlIds[k])):
                     del(self.xmlIds[k])
@@ -123,13 +127,14 @@ class PSPSServer(HieratikaServer):
             log.debug("Found {0} in cache and the value is {1}".format(xmlPath, ret))
         except KeyError:
             #Careful that this uuid must be unique in different processes, so that the same key always generate the same id! (Otherwise we migh lock with one key and unlock with a different key)
-            ret = uuid.uuid5(uuid.NAMESPACE_OID, xmlPath.encode("utf-8")).hex
+            #ret = uuid.uuid5(uuid.NAMESPACE_OID, xmlPath.encode("utf-8")).hex
+            ret = uuid.uuid5(uuid.NAMESPACE_OID, xmlPath).hex
             self.xmlIds[xmlPath] = ret
             log.debug("Not found {0} in cache and the generated value is {1}".format(xmlPath, ret))
         self.mux.release()
         return ret
 
-    def findVariableInXml(self, xmlRoot, variableName):       
+    def findVariableInXml(self, xmlRoot, variableName):
         """ Walks the xml tree and finds a given variable.
 
 		Args:
@@ -145,7 +150,7 @@ class PSPSServer(HieratikaServer):
         else:
             plantSystemName = variableName
             path = []
-           
+
         plantRootXml = xmlRoot.find("./ns0:plantSystems/ns0:plantSystem[ns0:name='{0}']".format(plantSystemName), self.xmlns)
         if (plantRootXml is not None):
             r = plantRootXml
@@ -200,7 +205,7 @@ class PSPSServer(HieratikaServer):
 
     def createVariableFromRecord(self, rec):
         """ Helper function to create a Variable from a psps record.
-        
+
         Args:
         	rec (xmlElement): xml Element pointing at ns0:record.
         Returns:
@@ -290,9 +295,9 @@ class PSPSServer(HieratikaServer):
 
     def getVariableInfo(self, r, parent):
         """ Recursively gets all the variable information, including information of any member variables.
-            
+
             Args:
-                r (xmlElement): points at the current the xml Element in the tree. 
+                r (xmlElement): points at the current the xml Element in the tree.
                 parent (Variable): the Variable to which this variable should be added as a member.
 
             Returns:
@@ -317,7 +322,7 @@ class PSPSServer(HieratikaServer):
         else:
             records = records.findall("./ns0:record", self.xmlns)
             for rec in records:
-                member = self.createVariableFromRecord(rec) 
+                member = self.createVariableFromRecord(rec)
                 if (member is not None):
                     if (parent is None):
                         parent = member
@@ -328,7 +333,7 @@ class PSPSServer(HieratikaServer):
         return parent
 
     def getAbsoluteVariableName(self, xmlRoot, fullVarName):
-        """ 
+        """
         Returns:
             The absolute variable name with-in the scope of a structure.
         """
@@ -346,7 +351,7 @@ class PSPSServer(HieratikaServer):
 
     def loadConstraints(self, xmlRoot):
         """ Loads all the constraints defined in the xml file and (if needed) resets all the variables names to the full structured path name.
-        
+
         Args:
             xmlRoot (Element): pointing at the root of the xml file where to load the constraints from.
         Returns:
@@ -370,7 +375,7 @@ class PSPSServer(HieratikaServer):
                     constraintFunctionXml = constraintXml.find("./ns0:function", self.xmlns)
                     if (constraintFunctionXml is not None):
                         constraintFunction = constraintFunctionXml.text
-                        #Remove the leading = 
+                        #Remove the leading =
                         constraintFunction = constraintFunction[1:]
                         log.debug("Loading function {0}".format(constraintFunction))
                         #Store all the variables related to this constraint function (identified by being between single quotes '')
@@ -413,9 +418,9 @@ class PSPSServer(HieratikaServer):
         if (varName in globalConstraints):
             log.debug("Attaching {0} to variable {1}".format(globalConstraints[varName], variable.getName()))
             variable.setValidations(globalConstraints[varName])
-           
+
         members = variable.getMembers()
-        for memberName, memberVariable in members.iteritems():
+        for memberName, memberVariable in six.iteritems(members):
             memberFullName = parentName + self.structSeparator + memberName
             log.debug("Looking for variable {0}".format(memberFullName))
             if (memberFullName in globalConstraints):
@@ -437,9 +442,9 @@ class PSPSServer(HieratikaServer):
             for variableName in requestedVariables:
                 variable = None
                 r = self.findVariableInXml(xmlRoot, variableName)
-                if (r.tag == self.recordTag): 
+                if (r.tag == self.recordTag):
                     #If it pointing already inside a record just create the member variable (and set the name to the full path, so that it is clear that a variable may be part of a structure)
-                    variable = self.createVariableFromRecord(r) 
+                    variable = self.createVariableFromRecord(r)
                     if (variable is not None):
                         #Reset the parent to point at the member
                         variable.setName(variableName)
@@ -476,7 +481,7 @@ class PSPSServer(HieratikaServer):
         variables = self.loadVariablesInfo(xmlFileLocation, requestedVariables)
         perfElapsedTime = timeit.default_timer() - perfStartTime
         log.info("Took {0} s to get the information for all the {1} variables in the plant for page {2}".format(perfElapsedTime, len(requestedVariables), pageName))
-        return variables 
+        return variables
 
     def getLibraryVariablesInfo(self, libraryType, requestedVariables):
         xmlFileLocation = "{0}/psps/libraries/{1}.xml".format(self.baseDir, libraryType)
@@ -485,7 +490,7 @@ class PSPSServer(HieratikaServer):
         variables = self.loadVariablesInfo(xmlFileLocation, requestedVariables)
         perfElapsedTime = timeit.default_timer() - perfStartTime
         log.info("Took {0} s to get the information for all the {1} variables for library type {2}".format(perfElapsedTime, len(requestedVariables), libraryType))
-        return variables 
+        return variables
 
     def getTransformationsInfo(self, pageName):
         xmlFileLocation = "{0}/psps/configuration/{1}/000/plant.xml".format(self.baseDir, pageName)
@@ -519,7 +524,7 @@ class PSPSServer(HieratikaServer):
                         ok = (inputNameXml.text not in inputs)
                     else:
                         log.critical("<input><map> not defined in transformation for {0}".format(pageName))
-                    
+
                     if (ok):
                         inputs[inputNameXml.text] = inputMapXml.text
                     else:
@@ -539,7 +544,7 @@ class PSPSServer(HieratikaServer):
                             ok = (outputNameXml.text not in outputs)
                         else:
                             log.critical("<output><map> not defined in transformation for {0}".format(pageName))
-                        
+
                         if (ok):
                             outputs[outputNameXml.text] = outputMapXml.text
                         else:
@@ -558,7 +563,7 @@ class PSPSServer(HieratikaServer):
 
         perfElapsedTime = timeit.default_timer() - perfStartTime
         log.info("Took {0} s to get the information for all the {1} transformations in the plant for page {2}".format(perfElapsedTime, len(transformations), pageName))
-        return variables 
+        return variables
 
     def getPages(self):
         return self.pages
@@ -596,7 +601,7 @@ class PSPSServer(HieratikaServer):
                 obsoleteXml = xmlRoot.find("./ns0:obsolete", self.xmlns)
                 if (obsoleteXml is not None):
                     obsoleteTxt = obsoleteXml.text
-                    obsolete = obsoleteTxt in ("true", "yes", "1") 
+                    obsolete = obsoleteTxt in ("true", "yes", "1")
 
             self.lockPool.release(xmlId)
             filePath = xmlFile.split("/")
@@ -624,7 +629,7 @@ class PSPSServer(HieratikaServer):
                 obsoleteXml = xmlRoot.find("./ns0:obsolete", self.xmlns)
                 if (obsoleteXml is not None):
                     obsoleteTxt = obsoleteXml.text
-                    obsolete = obsoleteTxt in ("true", "yes", "1") 
+                    obsolete = obsoleteTxt in ("true", "yes", "1")
                 inheritXml = xmlRoot.find("./ns0:inherit", self.xmlns)
                 if (inheritXml is not None):
                     inheritsFromUID = inheritXml.text
@@ -660,7 +665,7 @@ class PSPSServer(HieratikaServer):
             obsoleteXml = xmlRoot.find("./ns0:obsolete", self.xmlns)
             if (obsoleteXml is not None):
                 obsoleteTxt = obsoleteXml.text
-                obsolete = obsoleteTxt in ("true", "yes", "1") 
+                obsolete = obsoleteTxt in ("true", "yes", "1")
 
             owner = ""
             ownerXml = xmlRoot.find("./ns0:owner", self.xmlns)
@@ -720,7 +725,7 @@ class PSPSServer(HieratikaServer):
                     except Exception as e:
                         ret = HieratikaConstants.UNKNOWN_ERROR
                         log.critical("Failed deleting schedule with UID: {0}".format(scheduleUID))
-                    
+
                 else:
                     ret = HieratikaConstants.NOT_FOUND
             else:
@@ -756,7 +761,7 @@ class PSPSServer(HieratikaServer):
             refsCounterXml = etree.SubElement(xmlRoot, "{{{0}}}references".format(self.xmlns["ns0"]))
             refCounterXml = etree.SubElement(refsCounterXml, "{{{0}}}counter".format(self.xmlns["ns0"]))
             refCounterXml.text = "0"
-            
+
         referenceCounter = int(refCounterXml.text)
         return referenceCounter
 
@@ -810,7 +815,7 @@ class PSPSServer(HieratikaServer):
                     except Exception as e:
                         ret = HieratikaConstants.UNKNOWN_ERROR
                         log.critical("Failed deleting library with UID: {0}".format(libraryUID))
-                    
+
                 else:
                     ret = HieratikaConstants.NOT_FOUND
             else:
@@ -875,7 +880,7 @@ class PSPSServer(HieratikaServer):
                     sucessfullyUpdatedVariables = self.updateVariable(name, root, value)
                     for var in sucessfullyUpdatedVariables:
                         varName = var[0]
-                        varValue = var[1] 
+                        varValue = var[1]
                         updatedVariables[varName] = varValue
                 tree.write(scheduleUID)
                 log.debug("Committed schedule variables {0}".format(updatedVariables))
@@ -895,22 +900,22 @@ class PSPSServer(HieratikaServer):
                 sucessfullyUpdatedVariables = self.updateVariable(name, root, value)
                 for var in sucessfullyUpdatedVariables:
                     varName = var[0]
-                    varValue = var[1] 
+                    varValue = var[1]
                     updatedVariables[varName] = varValue
         tree.write(xmlPath)
         self.lockPool.release(xmlId)
-        return updatedVariables 
+        return updatedVariables
 
     def updatePlantFromSchedule(self, pageName, scheduleUID):
         variables = self.getScheduleVariablesValues(scheduleUID)
         return self.updatePlant(pageName, variables)
-    
+
     def createSchedule(self, name, description, username, pageName, parentFolders, sourceScheduleUID, inheritFromSchedule):
         log.info("Creating a new schedule for user: {0} for page: {1} with name: {2}".format(username, pageName, name))
         parentFoldersPath = self.getParentFoldersPath(parentFolders)
         if (sourceScheduleUID is None):
             sourceScheduleUID = "{0}/psps/configuration/{1}/000/plant.xml".format(self.baseDir, pageName)
-        else: 
+        else:
             filePath = sourceScheduleUID.split("/")
 
         sourceScheduleXmlId = self.getXmlId(sourceScheduleUID)
@@ -931,9 +936,9 @@ class PSPSServer(HieratikaServer):
             if (e.errno != errno.EEXIST):
                 #Ignore the file exists error
                 log.critical("Failed to create schedule directory {0}".format(e))
-        
+
         try:
-            shutil.copy2(sourceScheduleUID, destScheduleUID) 
+            shutil.copy2(sourceScheduleUID, destScheduleUID)
         except IOError as e:
             log.critical("Failed to create schedule {0}".format(e))
             ok = False
@@ -946,14 +951,14 @@ class PSPSServer(HieratikaServer):
                 xmlRoot = tree.getroot()
                 nameXml = xmlRoot.find("./ns0:name", self.xmlns)
                 if (nameXml is not None):
-                    nameXml.text = name 
+                    nameXml.text = name
                 descriptionXml = xmlRoot.find("./ns0:description", self.xmlns)
                 if (descriptionXml is not None):
                     descriptionXml.text = description
                 ownerXml = xmlRoot.find("./ns0:owner", self.xmlns)
                 if (ownerXml is None):
                     ownerXml = etree.SubElement(xmlRoot, "{{{0}}}owner".format(self.xmlns["ns0"]))
-                ownerXml.text = username 
+                ownerXml.text = username
                 if (inheritFromSchedule):
                     inheritXml = xmlRoot.find("./ns0:inherit", self.xmlns)
                     if (inheritXml is None):
@@ -976,7 +981,7 @@ class PSPSServer(HieratikaServer):
             else:
                 log.critical("Failed to create schedule with uid {0}".format(destScheduleUID))
             self.lockPool.release(xmlId)
-        
+
         self.lockPool.release(sourceScheduleXmlId)
         return destScheduleUID
 
@@ -998,7 +1003,7 @@ class PSPSServer(HieratikaServer):
                 #Ignore the file exists error
                 log.critical("Failed to create schedule folder {0}".format(e))
                 ok = HieratikaConstants.UNKNOWN_ERROR
-        return ok 
+        return ok
 
     def deleteScheduleFolder(self, name, username, parentFolders, pageName):
         parentFoldersPath = self.getParentFoldersPath(parentFolders)
@@ -1025,7 +1030,7 @@ class PSPSServer(HieratikaServer):
             ok = HieratikaConstants.UNKNOWN_ERROR
             if (wasObsolete):
                 self.touchFile(obsoleteFile)
-        return ok 
+        return ok
 
     def obsoleteScheduleFolder(self, name, username, parentFolders, pageName):
         parentFoldersPath = self.getParentFoldersPath(parentFolders)
@@ -1043,11 +1048,11 @@ class PSPSServer(HieratikaServer):
             #Ignore the file exists error
             log.critical("Failed to obsolete schedule folder {0}".format(e))
             ok = HieratikaConstants.UNKNOWN_ERROR
-        return ok 
+        return ok
 
     def convertVariableTypeFromXml(self, xmlVariableType):
         """ Helper function which converts a psps record type to a hieratika type.
-        
+
         Args:
             xmlVariableType(str): the psps record type to convert.
         Returns:
@@ -1055,28 +1060,28 @@ class PSPSServer(HieratikaServer):
         """
         toReturn = "string"
         if (xmlVariableType == "recordLong"):
-            toReturn = "int32" 
+            toReturn = "int32"
         elif (xmlVariableType == "recordFloat"):
-            toReturn = "float32" 
+            toReturn = "float32"
         elif (xmlVariableType == "recordDouble"):
-            toReturn = "float64" 
+            toReturn = "float64"
         elif (xmlVariableType == "recordString"):
-            toReturn = "string" 
+            toReturn = "string"
         elif (xmlVariableType == "recordEnum"):
-            toReturn = "enum" 
+            toReturn = "enum"
         elif (xmlVariableType == "recordLibrary"):
-            toReturn = "library" 
+            toReturn = "library"
         elif (xmlVariableType == "recordSchedule"):
-            toReturn = "schedule" 
+            toReturn = "schedule"
         elif (xmlVariableType == "recordLock"):
-            toReturn = "lock" 
+            toReturn = "lock"
         else:
             log.critical("Could not convert type {0}".format(xmlVariableType))
         return toReturn
 
     def getAllLibrariesXmls(self, username, htype):
         """ Helper function which gets all libraies associated to a given page for a given library type.
-       
+
         Args:
             username (str): the username to search.
             htype (str): the library type  to search.
@@ -1096,7 +1101,7 @@ class PSPSServer(HieratikaServer):
     def getScheduleFolders(self, username, pageName, parentFolders):
         log.debug("Parent folder: {0}".format(parentFolders))
         parentFoldersPath = self.getParentFoldersPath(parentFolders)
-        
+
         matches = []
         if (self.standalone):
             directory = "{0}/psps/configuration/{1}/{2}".format(self.baseDir, pageName, parentFoldersPath)
@@ -1119,7 +1124,7 @@ class PSPSServer(HieratikaServer):
 
     def getAllSchedulesXmls(self, username, pageName, parentFolders):
         """ Helper function which gets all psps configurations associated to a given page for a given user.
-       
+
         Args:
             username (str): the username to search.
             pageName (str): the configuration to search.
@@ -1146,7 +1151,7 @@ class PSPSServer(HieratikaServer):
                         matches.append(fullname)
         except Exception as e:
             log.info("Could not read directory {0} ({1})".format(directory, e))
- 
+
         return matches
 
     def loadPages(self):
@@ -1182,20 +1187,24 @@ class PSPSServer(HieratikaServer):
                     if (latestXmlFound is not None):
                         log.warning("For {0}, going to create the plant.xml based on {1}".format(page.name, latestXmlFound))
                         try:
-                            shutil.copy2(latestXmlFound, plantXmlFileLocation) 
+                            shutil.copy2(latestXmlFound, plantXmlFileLocation)
                         except IOError as e:
                             log.critical("Failed to create the plant.xml {0}".format(e))
                     else:
                         log.warning("No configuration xml was found for {0}".format(page.name))
 
-                #Check if the page html exists
-                pageHtmlPath = "{0}/{1}.html".format(self.pagesFolder, page.name)
-                if (not os.path.exists(pageHtmlPath)):                
-                    log.warning("The {0} file does not exist".format(pageHtmlPath))
-                    if (self.autoCreatePages):
-                        self.createHtmlPage(pageHtmlPath, plantXmlFileLocation)
-                
-                    
+                #Check if the folder exists
+                pageFolder = page.name
+                pageHtmlPathFolder = "{0}/{1}/{2}.html".format(self.pagesFolder, pageFolder, page.name)
+                if (not os.path.exists(pageHtmlPathFolder)):
+                    #Check if the page html exists
+                    pageHtmlPath = "{0}/{1}.html".format(self.pagesFolder, page.name)
+                    if (not os.path.exists(pageHtmlPath)):
+                        log.warning("The {0} file does not exist".format(pageHtmlPath))
+                        if (self.autoCreatePages):
+                            self.createHtmlPage(pageHtmlPath, plantXmlFileLocation)
+
+
             #Only want the first sub level
             break
 
@@ -1233,7 +1242,7 @@ class PSPSServer(HieratikaServer):
     def getCachedXmlTree(self, xmlPath):
         """ Parses the xml defined by the xmlPath and caches it in memory.
             This method is not thread-safe and expects the methods acquire and release to be called by the caller.
-            
+
             Args:
                 xmlPath (str): path to the xml file to be parsed.
             Returns:
@@ -1244,7 +1253,7 @@ class PSPSServer(HieratikaServer):
             log.info("Reached maximum number of cached xml trees :{0} > {1}".format(len(self.cachedXmls), self.maxXmlCachedTrees))
             toDeleteMaxSize = (len(self.cachedXmls) / 2) + 1
             #Sort by access time. Remember that the values of cachedXmls are tupples containing the path, the parsed Element and the last access time
-            sortedByTime = sorted(self.cachedXmls.values(), key=lambda tup:tup[2])
+            sortedByTime = sorted(list(self.cachedXmls.values()), key=lambda tup:tup[2])
             i = 0
             while i < toDeleteMaxSize:
                 log.debug("Deleting xml (from memory) with key {0}".format(sortedByTime[i][0]))
@@ -1273,7 +1282,7 @@ class PSPSServer(HieratikaServer):
         Args:
             rec (xmlElement): record which contains the library:
             root (Element node): the root of the xml to be updated.
-            variableValue (str): the variable value which shall contain the username of the owner of the variable and the name of the library separated by a / 
+            variableValue (str): the variable value which shall contain the username of the owner of the variable and the name of the library separated by a /
         Returns:
             The list of updated variables as an array of variable/value tupples.
         """
@@ -1282,8 +1291,8 @@ class PSPSServer(HieratikaServer):
         variableValueOwnerLibName = variableValue.split("/")
         if (len(variableValueOwnerLibName) < 2):
             log.critical("The library variable value shall contain the owner username and the name of the library separated by a /")
-            ok = False 
-        #The variable name i the 
+            ok = False
+        #The variable name i the
         libraryXml = rec.find("./ns0:library", self.xmlns)
         if (ok):
             username = variableValueOwnerLibName[0]
@@ -1318,7 +1327,7 @@ class PSPSServer(HieratikaServer):
                     log.critical("ns0:type could not be found {0}".format(libraryName))
                 if (ok):
                     ok = (len(sourceLibraryVariables) == len(destinationPlantScheduleVariables))
-                
+
                 if (ok):
                     if (self.standalone):
                         directory = "{0}/psps/libraries/{1}".format(self.baseDir, libraryType)
@@ -1365,8 +1374,8 @@ class PSPSServer(HieratikaServer):
         """ Marks a given schedule as being used.
 
         Args:
-            variableValue (str): the variable value which shall contain the schedule UID 
-            oldVariableValue (str): the old variable value which shall contain the schedule UID 
+            variableValue (str): the variable value which shall contain the schedule UID
+            oldVariableValue (str): the old variable value which shall contain the schedule UID
         Returns:
             True if the schedule counter could be incremented.
         """
@@ -1383,7 +1392,7 @@ class PSPSServer(HieratikaServer):
         """ Updates the value of the a variable in a given xml (plant or schedule).
             This method is not thread-safe and expects the methods acquire and release to be called by the caller.
             Note that this change is not sinked to disk.
-    
+
         Args:
             variableName (str): the name of the variable to update.
             root (Element node): the root of the xml to be updated.
@@ -1404,9 +1413,9 @@ class PSPSServer(HieratikaServer):
             plantSystemName = variableName[:idx]
             variableNameAfterPS = variableName[idx + 1:]
             path = variableNameAfterPS.split(self.structSeparator)
-           
+
             r = root.find("./ns0:plantSystems/ns0:plantSystem[ns0:name='{0}']/ns0:plantRecords".format(plantSystemName), self.xmlns)
-            fullVariablePath = "." 
+            fullVariablePath = "."
             for p in path[:-1]:
                 fullVariablePath = fullVariablePath + "/ns0:folders/ns0:folder[ns0:name='{0}']".format(p)
 
@@ -1418,7 +1427,7 @@ class PSPSServer(HieratikaServer):
                 if (valuesXml is not None):
                     oldValueXml = valuesXml.find("./ns0:value", self.xmlns)
                     if (oldValueXml is not None):
-                        oldValue = oldValueXml.text 
+                        oldValue = oldValueXml.text
                     recordXml.remove(valuesXml)
                 valuesXml = etree.SubElement(recordXml, "{{{0}}}values".format(self.xmlns["ns0"]))
                 valueXml = etree.SubElement(valuesXml, "{{{0}}}value".format(self.xmlns["ns0"]))
@@ -1439,7 +1448,7 @@ class PSPSServer(HieratikaServer):
 
     def getVariableValue(self, r, variableName, variables):
         """ Recursively gets all the variable values for a given plantSystem node in the xml.
-            
+
             Args:
                 r (xmlElement): walks the xml Tree. The first time this function is called it shall point at the plantRecords.
                 variableName (str): the name of the variable. It is constructed as the function recursively walks the tree. The separator is the structSeparator symbol.
@@ -1484,7 +1493,7 @@ class PSPSServer(HieratikaServer):
 
 
     def containsRecords(self, records):
-        """ 
+        """
         Returns:
             True if the xml node r is a non-empty node of type records.
         """
@@ -1495,7 +1504,7 @@ class PSPSServer(HieratikaServer):
 
     def getRecord(self, rec, variables, prefix = None):
         """ Helper function to load the value from a record.
-        
+
         Args:
             rec (xml Element): the record to be queried.
             variables ({}): dictionary where to set the record name: record value
@@ -1506,7 +1515,7 @@ class PSPSServer(HieratikaServer):
             variableName = n.text
             if (prefix is not None):
                 variableName = prefix + self.structSeparator + variableName
-            
+
             valuesXml = rec.find("./ns0:values", self.xmlns)
             if (valuesXml is not None):
                 value = []
@@ -1542,12 +1551,12 @@ class PSPSServer(HieratikaServer):
             directory = "{0}/users/{1}/libraries/{2}".format(self.baseDir, username, htype)
 
         #Check if the directory already exists
-        if (not os.path.exists(directory)):                
+        if (not os.path.exists(directory)):
             os.makedirs(directory)
 
         libraryInstanceXmlFileLocation = "{0}/{1}.xml".format(directory, name)
         log.debug("Saving library at {0}".format(libraryInstanceXmlFileLocation))
-        if (os.path.exists(libraryInstanceXmlFileLocation)):                
+        if (os.path.exists(libraryInstanceXmlFileLocation)):
             xmlId = self.getXmlId(libraryInstanceXmlFileLocation)
             self.lockPool.acquire(xmlId)
             referenceCounter = 0
@@ -1562,7 +1571,7 @@ class PSPSServer(HieratikaServer):
 
         if (ok == HieratikaConstants.OK):
             try:
-                shutil.copy2(libraryTypeXmlFileLocation, libraryInstanceXmlFileLocation) 
+                shutil.copy2(libraryTypeXmlFileLocation, libraryInstanceXmlFileLocation)
             except IOError as e:
                 log.critical("Failed to create library {0}".format(e))
                 ok = HieratikaConstants.UNKNOWN_ERROR
@@ -1577,7 +1586,7 @@ class PSPSServer(HieratikaServer):
                 if (n is not None):
                     n.text = name
                 else:
-                    log.critical("./ns0:name is missing in the library definition") 
+                    log.critical("./ns0:name is missing in the library definition")
                     ok = false
                     ok = HieratikaConstants.UNKNOWN_ERROR
                 if (ok == HieratikaConstants.OK):
@@ -1585,7 +1594,7 @@ class PSPSServer(HieratikaServer):
                     if (n is not None):
                         n.text = description
                     else:
-                        log.critical("./ns0:description is missing in the library definition") 
+                        log.critical("./ns0:description is missing in the library definition")
                         ok = HieratikaConstants.UNKNOWN_ERROR
                 if (ok == HieratikaConstants.OK):
                     for varName in variables:
@@ -1604,7 +1613,7 @@ class PSPSServer(HieratikaServer):
 
     def getParentFoldersPath(self, parentFolders):
         """ Helper function which converts a list of parent folders into a path
-        
+
         Args:
             parentFolders([str]): the list of parent folders.
         Returns:
@@ -1621,8 +1630,8 @@ class PSPSServer(HieratikaServer):
 
 
     def touchFile(self, filename):
-        """ Helper function which touches a file. 
-        
+        """ Helper function which touches a file.
+
         Args:
             filename (str): the filename to be touched.
         """
@@ -1633,7 +1642,7 @@ class PSPSServer(HieratikaServer):
 
     def inheritLocks(self, xmlRoot):
         """ Helper function which inherits all the locks and thus disallows any locks that are already locked from being changed in the schedule.
-            Assumes that the xmlRoot is locked (semaphore access-wise).        
+            Assumes that the xmlRoot is locked (semaphore access-wise).
         Args:
             xmlRoot(str): the xml where to lock the locks.
         """
@@ -1648,7 +1657,7 @@ class PSPSServer(HieratikaServer):
                     val = valueXml.text
                     log.critical("Failed to load json {0}. Returning the original text.".format(e))
 
-                print "\n\n\n\n\n\n{0}\n\n\n\n\n\n\n".format(val)
+                print("\n\n\n\n\n\n{0}\n\n\n\n\n\n\n".format(val))
                 try:
                     val = int(val)
                 except Exception as e:
@@ -1691,4 +1700,3 @@ class PSPSServer(HieratikaServer):
                         else:
                             self.decrementReferenceCounter(libraryUID)
                         self.lockPool.release(libraryXmlId)
-

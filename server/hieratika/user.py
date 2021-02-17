@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+from __future__ import absolute_import
+from six.moves import map
 __copyright__ = """
     Copyright 2017 F4E | European Joint Undertaking for ITER and
     the Development of Fusion Energy ('Fusion for Energy').
@@ -117,7 +119,7 @@ class User(object):
         """
         user = {
             "username": self.getUsername(),
-            "groups": map(str, self.getGroups()),
+            "groups": list(map(str, self.getGroups())),
             "token": self.token
         }
         return user
@@ -132,7 +134,7 @@ class User(object):
         """
         user = None
         try:
-            user = User(userDict["username"], map(UserGroup, userDict["groups"]), userDict["token"])
+            user = User(userDict["username"], list(map(UserGroup, userDict["groups"])), userDict["token"])
         except Exception as e:
             log.critical("Could not create the User {0}".format(e))
         return user

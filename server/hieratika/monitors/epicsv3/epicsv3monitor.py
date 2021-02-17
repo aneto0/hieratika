@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import absolute_import
 __copyright__ = """
     Copyright 2017 F4E | European Joint Undertaking for ITER and
     the Development of Fusion Energy ('Fusion for Energy').
@@ -19,7 +20,7 @@ __date__ = "22/12/2017"
 ##
 # Standard imports
 ##
-import ConfigParser
+import six.moves.configparser
 import epics
 import json
 import logging
@@ -194,7 +195,7 @@ class EPICSV3Monitor(HieratikaMonitor):
                         self.variableCache[pvName] = var
                         epics.camonitor(pvName, None, self.pvValueChanged)
             ok = True
-        except (ConfigParser.Error, KeyError, IOError) as e:
+        except (six.moves.configparser.Error, KeyError, IOError) as e:
             log.critical(str(e))
             ok = False
         return ok

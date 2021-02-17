@@ -2,6 +2,7 @@
 
 """ A list which can be safely shared between processes.
 """
+from __future__ import absolute_import
 __copyright__ = """
     Copyright 2017 F4E | European Joint Undertaking for ITER and
     the Development of Fusion Energy ('Fusion for Energy').

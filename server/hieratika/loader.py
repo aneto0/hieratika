@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+from __future__ import absolute_import
+import six
 __copyright__ = """
     Copyright 2017 F4E | European Joint Undertaking for ITER and
     the Development of Fusion Energy ('Fusion for Energy').
@@ -35,12 +37,10 @@ log = logging.getLogger("{0}".format(__name__))
 ##
 # Class definition
 ##
-class HieratikaLoader(object):
+class HieratikaLoader(six.with_metaclass(ABCMeta, object)):
     """ Abstract class for any loader implementation.
         TODO
     """
-    
-    __metaclass__ = ABCMeta
 
     def __init__(self):
         pass

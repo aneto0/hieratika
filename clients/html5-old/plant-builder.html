@@ -1,0 +1,240 @@
+<!--
+ date: 23/01/2018
+ author: Andre' Neto
+
+ copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
+ the Development of Fusion Energy ('Fusion for Energy').
+ Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ by the European Commission - subsequent versions of the EUPL (the "Licence")
+ You may not use this work except in compliance with the Licence.
+ You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+
+ warning: Unless required by applicable law or agreed to in writing,
+ software distributed under the Licence is distributed on an "AS IS"
+ basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ or implied. See the Licence permissions and limitations under the Licence.
+-->
+
+<html>
+
+<head>
+  <!-- Standard imports -->
+
+  <!-- Project imports -->
+  <link rel="import" href="/libraries.html">
+
+  <!-- Custom CSS style -->
+  <link rel="stylesheet" href="/css/builder.css">
+</head>
+
+<body>
+  <!-- Intro description -->
+  <div style="padding-left: 10px;" id="intro">
+    <h2><b>Hieratika Plant Builder</b></h2>
+    <p>A tool for creating Plant Configurations. Automatically generates the <i>plant.xml</i> file using ITER PSPS configuration model.</p>
+    <div align="center">
+      <button type="button" onclick="newConfig()" id="btnNewConfig">START</button>
+    </div>
+  </div>
+  <div class="hidden" style="padding-left: 10px;" id="instructions">
+    <h2><b>New Configuration</b></h2>
+    <p>Insert all the Plant information below and create a new Plant Configuration.
+  </div>
+
+  <!-- PSPS Plant description form -->
+  <div class="table-single hidden" id="plantDetailsForm">
+    <div class="row">
+      <div class="col-single">
+        <h5>
+        </h5>
+        <div class="table">
+          <div class="row grey">
+            <div class="col-40">
+              Plant Name:
+            </div>
+            <div class="col-60">
+              <input type="text" name="plantName" placeholder="FALCON" id="pName">
+            </div>
+          </div>
+          <div class="row grey">
+            <div class="col-40">
+              Plant Description:
+            </div>
+            <div class="col-60">
+              <input type="text" name="plantDescription" placeholder="FALCON Configuration for Pulse 5185" id="pDesc">
+            </div>
+          </div>
+          <div class="row grey">
+            <div class="col-40">
+              Schema Version:
+            </div>
+            <div class="col-60">
+              <input type="text" name="schemaVersion" value="1.2" id="sVersion" disabled>
+            </div>
+          </div>
+          <div class="row grey">
+            <div class="col-40">
+              SDD Version:
+            </div>
+            <div class="col-60">
+              <input type="text" name="sddVersion" value="1" id="sdd" disabled>
+            </div>
+          </div>
+          <div class="row grey">
+            <div class="col-40">
+              Plant Version:
+            </div>
+            <div class="col-60">
+              <input type="text" name="plantVersion" placeholder="00.00" id="pVersion">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-40">
+
+            </div>
+            <div class="col-60">
+              <button type="button" onclick="savePlantDetails()">SAVE</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hidden" style="padding-left: 10px;" id="plantConfigurator">
+    <div class="table-single" id="addPlant">
+      <h3><b>Plant Systems</b></h3>
+      <p>Add a new Plant System. The HTML preview is showed below.</p>
+      <div class="row">
+        <div class="col-single">
+          <h5>
+          </h5>
+          <div class="table">
+            <div class="row grey">
+              <div class="col-40">
+                Plant System Name:
+              </div>
+              <div class="col-60">
+                <input type="text" name="plantSysName" placeholder="RU_MAIN" id="psName">
+              </div>
+            </div>
+            <div class="row grey">
+              <div class="col-40">
+                Plant System Description:
+              </div>
+              <div class="col-60">
+                <input type="text" name="plantSysDescription" placeholder="Falcon configuration structure for RU_Main" id="psDesc">
+              </div>
+            </div>
+            <div class="row grey">
+              <div class="col-40">
+                Plant System Version:
+              </div>
+              <div class="col-60">
+                <input type="text" name="schemaSysVersion" value="1.0" id="psVersion">
+              </div>
+            </div>
+            <div class="row grey">
+              <div class="col-40">
+                Layers:
+              </div>
+              <div class="col-60">
+                <input type="radio" name="layers" value="single"> Single
+                <input type="radio" name="layers" value="multi"> Multi<br>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-40">
+
+              </div>
+              <div class="col-60">
+                <button type="button" onclick="addPlantSystem()">ADD PLANT SYSTEM</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-single" id="addRecords">
+      <h3><b>Plant Records</b></h3>
+      <p>Add a new Record. Select first the Plant System.</p>
+      <div class="row">
+        <div class="col-single">
+          <h5>
+          </h5>
+          <div class="table">
+            <div class="row grey">
+              <div class="col-40">
+                Plant System Name:
+              </div>
+              <div class="col-60">
+                <input type="text" name="plantSysName" placeholder="RU_MAIN" id="psName">
+              </div>
+            </div>
+            <div class="row grey">
+              <div class="col-40">
+                Plant System Description:
+              </div>
+              <div class="col-60">
+                <input type="text" name="plantSysDescription" placeholder="Falcon configuration structure for RU_Main" id="psDesc">
+              </div>
+            </div>
+            <div class="row grey">
+              <div class="col-40">
+                Plant System Version:
+              </div>
+              <div class="col-60">
+                <input type="text" name="schemaSysVersion" value="1.0" id="psVersion">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-40">
+
+              </div>
+              <div class="col-60">
+                <button type="button" onclick="addPlantSystem()">ADD PLANT SYSTEM</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Generated HTML Container -->
+    <div class="configcontent" id="configdiv">
+      <div class="tab">
+        <!-- Using DNA Template  -->
+        <button class="tablinks" template="[tabList]" z-var="value ., value @id, value @onclick" onclick="openTab(event, '${value}_tab')"></button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Custom Javascript  -->
+  <script type="text/javascript" src="/js/builder.js"></script>
+  <!-- jQuery DNA Template  -->
+  <script src="/js/jquery.template.min.js"></script>
+
+  <!-- Templates list -->
+  <script id="template-single" type="text/template">
+    <div class="table-single">
+      <div class="row">
+        <div class="col-single">
+          <h5>
+          </h5>
+          <div class="table">
+          </div>
+        </div>
+      </div>
+    </div>
+  </script>
+
+  <script id="template-tabcontent" type="text/template">
+    <div id="newTabContent" class="tabcontent">
+    </div>
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,1861 @@
+<html>
+
+<head>
+
+	<link href="../css/WebFont/font-css/LineIcons.css" rel="stylesheet">
+
+	<script type="text/javascript" src="../js/math.js"></script>
+	<script type="text/javascript" src="../js/Chart.bundle.min.js"></script>
+
+	<script type="module" src="../htk-component.js"></script>
+	<script type="module" src="../htk-array-editor.js"></script>
+	<script type="module" src="../htk-enum.js"></script>
+	<script type="module" src="../htk-input.js"></script>
+	<script type="module" src="../htk-checkbox.js"></script>
+	<script type="module" src="../htk-matrix-dropmenu-editor.js"></script>
+	<script type="module" src="../htk-matrix-editor.js"></script>
+	<script type="module" src="../htk-library-button.js"></script>
+	<script type="module" src="../htk-lock-button.js"></script>
+	<script type="module" src="../htk-radio.js"></script>
+	<script type="module" src="../htk-struct-browser.js"></script>
+	<script type="module" src="../htk-schedule-button.js"></script>
+	<script type="module" src="../htk-bps-plot-editor.js"></script>
+	<script type="module" src="../htk-hvps-plot-editor.js"></script>
+	<script type="module" src="../htk-falcon-opi.js"></script>
+	<!--
+	<link rel="import" href="/htk-array-editor.html">
+	<link rel="import" href="/htk-component.html">
+	<link rel="import" href="/htk-enum.html">
+	<link rel="import" href="/htk-input.html">
+	<link rel="import" href="/htk-checkbox.html">
+	<link rel="import" href="/htk-matrix-dropmenu-editor.html">
+	<link rel="import" href="/htk-matrix-editor.html">
+	<link rel="import" href="/htk-library-button.html">
+	<link rel="import" href="/htk-lock-button.html">
+	<link rel="import" href="/htk-radio.html">
+	<link rel='import' href='/htk-struct-browser.html'>
+	<link rel="import" href="/htk-schedule-button.html">
+	<link rel="import" href="/htk-falcon-opi.html">
+	<link rel="import" href="/htk-bps-plot-editor.html">
+	<link rel="import" href="/htk-hvps-plot-editor.html">
+-->
+
+	<link rel="stylesheet" href="/pages/css/FALCON.css">
+
+</head>
+
+<body>
+
+	<div class="tab">
+		<button class="tablinks" id="RU_Main" onclick="openTab(event, 'RU_Main_tab')">RU Main</button>
+		<button class="tablinks" id="RU_Alarms" onclick="openTab(event, 'RU_Alarms_tab')">RU Alarms</button>
+		<button class="tablinks" id="RU_CWS_Alarms" onclick="openTab(event, 'RU_CWS_Alarms_tab')">RU CWS Alarms</button>
+		<button class="tablinks" id="BPS" onclick="openTab(event, 'BPS_tab')">BPS</button>
+		<button class="tablinks" id="CPS" onclick="openTab(event, 'CPS_tab')">CPS</button>
+		<button class="tablinks" id="GCPS" onclick="openTab(event, 'GCPS_tab')">GCPS</button>
+		<button class="tablinks" id="HVPS" onclick="openTab(event, 'HVPS_tab')">HVPS</button>
+		<button class="tablinks" id="IPS1" onclick="openTab(event, 'IPS1_tab')">IPS1</button>
+		<button class="tablinks" id="IPS2" onclick="openTab(event, 'IPS2_tab')">IPS2</button>
+		<button class="tablinks" id="PMP1" onclick="openTab(event, 'PMP1_tab')">PMP1</button>
+		<button class="tablinks" id="PMP2" onclick="openTab(event, 'PMP2_tab')">PMP2</button>
+		<button class="tablinks" id="RFIL" onclick="openTab(event, 'RFIL_tab')">RFIL</button>
+		<button class="tablinks" id="RSCM" onclick="openTab(event, 'RSCM_tab')">RSCM</button>
+		<button class="tablinks" id="RSWP" onclick="openTab(event, 'RSWP_tab')">RSWP</button>
+	</div>
+
+	<div id="RU_Main_tab" class="tabcontent">
+		<h4>RU Main Configuration</h4>
+		<h5>Lock <htk-lock-button id='RU_MAIN@LOCK'></htk-lock-button>
+		</h5>
+		<div class="table">
+			<div class="row">
+				<div class="col">
+					<h4><b>Pulse Configuration</b></h4>
+					<div class="table">
+						<h5>
+							MHVPS
+						</h5>
+						<div class="row grey">
+							<div class="col-60">
+								MHVPS Voltage
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_MAIN@MHVPS_VOLTAGE'></htk-input>
+							</div>
+						</div>
+						<div class="row grey">
+							<div class="col-60">
+								MHVPS Total Voltage
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_MAIN@TOTAL_VOLTAGE'></htk-input>
+							</div>
+						</div>
+						<h5>
+							Pulse Length
+						</h5>
+						<div class="row grey">
+							<div class="col-60">
+								Minutes
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_MAIN@PULSE_MINUTES'></htk-input>
+							</div>
+						</div>
+						<div class="row grey">
+							<div class="col-60">
+								Seconds
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_MAIN@PULSE_SECONDS'></htk-input>
+							</div>
+						</div>
+						<div class="row grey">
+							<div class="col-60">
+								Milliseconds
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_MAIN@PULSE_MSECONDS'></htk-input>
+							</div>
+						</div>
+						<h5>
+
+						</h5>
+						<div class="row grey">
+							<div class="col-60">
+								Variable Body Voltage
+							</div>
+							<div class="col-40">
+								<htk-checkbox id='RU_MAIN@VARIABLE_BODY_VOLTAGE'></htk-checkbox>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col">
+					<h4><b>SCM PS Configuration</b></h4>
+					<h5>
+
+					</h5>
+					<div class="table">
+						<div class="row grey">
+							<div class="col-60">
+								Heater On
+							</div>
+							<div class="col-40">
+								<htk-checkbox id='RU_MAIN@SCM_HEATER_ON'></htk-checkbox>
+							</div>
+						</div>
+						<div class="row grey">
+							<div class="col-60">
+								SP Current
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_MAIN@SCM_SP_CURRENT'></htk-input>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col">
+					<h4><b>Filament PS Configuration</b></h4>
+					<h5>
+
+					</h5>
+					<div class="table">
+						<div class="row grey">
+							<div class="col-60">
+								Filament Current SP
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_MAIN@FILAMENT_CURRENT_SP'></htk-input>
+							</div>
+						</div>
+						<div class="row grey">
+							<div class="col-60">
+								Gyrotron Current SP
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_MAIN@GYRO_CURRENT_SP'></htk-input>
+							</div>
+						</div>
+						<div class="row grey">
+							<div class="col-60">
+								Stabilization Mode
+							</div>
+							<div class="col-40">
+								<htk-checkbox id='RU_MAIN@STABILIZATION_MODE'></htk-checkbox>
+							</div>
+						</div>
+						<div class="row grey">
+							<div class="col-60">
+								Reset Errors
+							</div>
+							<div class="col-40">
+								<htk-checkbox id='RU_MAIN@RESET_ERRORS'></htk-checkbox>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="RU_Alarms_tab" class="tabcontent">
+		<h4>RU Alarms Configuration</h4>
+		<h5>Lock <htk-lock-button id='RU_ALARMS@LOCK'></htk-lock-button>
+		</h5>
+		<div class="table">
+			<div class="row">
+				<div class="col">
+					<h4><b>Russian Filament PS</b></h4>
+					<div class="table">
+						<h5>
+						</h5>
+						<div class="row grey">
+							<div class="col-60">
+								Filament Current HHLL Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_ALARMS@FIL_CUR_HHLL_THRES'></htk-input>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col">
+					<h4><b>Russian SCM PS</b></h4>
+					<h5>
+
+					</h5>
+					<div class="table">
+						<div class="row grey">
+							<div class="col-60">
+								Current SCM HHLL1 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_ALARMS@SCM_SCM_CUR_HHLL1_THRES'></htk-input>
+							</div>
+						</div>
+						<div class="row grey">
+							<div class="col-60">
+								Current SCM HHLL2 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_ALARMS@SCM_SCM_CUR_HHLL2_THRES'></htk-input>
+							</div>
+						</div>
+						<h5>
+
+						</h5>
+						<div class="row grey">
+							<div class="col-60">
+								Current LEM HHLL1 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_ALARMS@SCM_LEM_CUR_HHLL1_THRES'></htk-input>
+							</div>
+						</div>
+						<div class="row grey">
+							<div class="col-60">
+								Current LEM HHLL2 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_ALARMS@SCM_LEM_CUR_HHLL2_THRES'></htk-input>
+							</div>
+						</div>
+						<h5>
+
+						</h5>
+						<div class="row grey">
+							<div class="col-60">
+								Current Serial HHLL1 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_ALARMS@SCM_SERIAL_CUR_HHLL1_THRES'></htk-input>
+							</div>
+						</div>
+						<div class="row grey">
+							<div class="col-60">
+								Current Serial HHLL2 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_ALARMS@SCM_SERIAL_CUR_HHLL2_THRES'></htk-input>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col">
+					<h4><b>ION PUMP1 PS</b></h4>
+					<h5>
+
+					</h5>
+					<div class="table">
+						<div class="row grey">
+							<div class="col-60">
+								Current HW HHLL1 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_ALARMS@IPS1_CUR_HW_HHLL1_THRES'></htk-input>
+							</div>
+						</div>
+						<div class="row grey">
+							<div class="col-60">
+								Current HW HHLL2 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_ALARMS@IPS1_CUR_HW_HHLL2_THRES'></htk-input>
+							</div>
+						</div>
+						<h5>
+
+						</h5>
+						<div class="row grey">
+							<div class="col-60">
+								Current Serial HHLL1 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_ALARMS@IPS1_SERIAL_CUR_HHLL1_THRES'></htk-input>
+							</div>
+						</div>
+						<div class="row grey">
+							<div class="col-60">
+								Current Serial HHLL2 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_ALARMS@IPS1_SERIAL_CUR_HHLL2_THRES'></htk-input>
+							</div>
+						</div>
+						<h5>
+
+						</h5>
+						<div class="row grey">
+							<div class="col-60">
+								Voltage Serial HHLL Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_ALARMS@IPS1_SERIAL_VOL_HHLL_THRES'></htk-input>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<h4><b>Collector PS</b></h4>
+					<h5>
+
+					</h5>
+					<div class="table">
+						<div class="row grey">
+							<div class="col-60">
+								Current HW HHLL1 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_ALARMS@COLL_CUR_HW_HHLL1_THRES'></htk-input>
+							</div>
+						</div>
+						<div class="row grey">
+							<div class="col-60">
+								Current HW HHLL2 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_ALARMS@COLL_CUR_HW_HHLL2_THRES'></htk-input>
+							</div>
+						</div>
+						<h5>
+
+						</h5>
+						<div class="row grey">
+							<div class="col-60">
+								Current Serial HHLL1 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_ALARMS@COLL_SERIAL_CUR_HHLL1_THRES'></htk-input>
+							</div>
+						</div>
+						<div class="row grey">
+							<div class="col-60">
+								Current Serial HHLL2 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_ALARMS@COLL_SERIAL_CUR_HHLL2_THRES'></htk-input>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col">
+					<h4><b>RF Detectors</b></h4>
+					<div class="table">
+						<h5>
+							Mode Loss
+						</h5>
+						<div class="row grey">
+							<div class="col-60">
+								RF Transmitter 1 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_ALARMS@RF_TX1_HHLL_THRES'></htk-input>
+							</div>
+						</div>
+						<h5>
+							Stray Radiation
+						</h5>
+						<div class="row grey">
+							<div class="col-60">
+								RF Transmitter 2 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_ALARMS@RF_TX2_HHLL_THRES'></htk-input>
+							</div>
+						</div>
+						<div class="row grey">
+							<div class="col-60">
+								RF Transmitter 3 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_ALARMS@RF_TX3_HHLL_THRES'></htk-input>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col">
+					<h4><b>GNU Coil PS</b></h4>
+					<h5>
+
+					</h5>
+					<div class="table">
+						<div class="row grey">
+							<div class="col-60">
+								Current HW HHLL1 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_ALARMS@GC_CUR_HW_HHLL1_THRES'></htk-input>
+							</div>
+						</div>
+						<div class="row grey">
+							<div class="col-60">
+								Current HW HHLL2 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_ALARMS@GC_CUR_HW_HHLL2_THRES'></htk-input>
+							</div>
+						</div>
+						<h5>
+
+						</h5>
+						<div class="row grey">
+							<div class="col-60">
+								Current Serial HHLL1 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_ALARMS@GC_CUR_SER_HHLL1_THRES'></htk-input>
+							</div>
+						</div>
+						<div class="row grey">
+							<div class="col-60">
+								Current Serial HHLL2 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_ALARMS@GC_CUR_SER_HHLL2_THRES'></htk-input>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<h4><b>Vacuum Pumping Load</b></h4>
+					<h5>
+
+					</h5>
+					<div class="table">
+						<div class="row grey">
+							<div class="col-60">
+								Pres Load HW HHLL Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_ALARMS@VPUMPL_PRES_LOAD_HW_HHLL_THRES'></htk-input>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col">
+					<h4><b>Vacuum Pumping MOU</b></h4>
+					<h5>
+
+					</h5>
+					<div class="table">
+						<div class="row grey">
+							<div class="col-60">
+								Pres Load HW HHLL Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_ALARMS@VPUMPM_PRES_LOAD_HW_HHLL_THRES'></htk-input>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col">
+					<h4><b>Sweeping</b></h4>
+					<h5>
+
+					</h5>
+					<div class="table">
+						<div class="row grey">
+							<div class="col-60">
+								Semi period Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_ALARMS@SWEEP_SEMI_PERIOD_THRES'></htk-input>
+							</div>
+						</div>
+						<div class="row grey">
+							<div class="col-60">
+								Threshold H
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_ALARMS@SWEEP_H_THRES'></htk-input>
+							</div>
+						</div>
+						<div class="row grey">
+							<div class="col-60">
+								Threshold L
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_ALARMS@SWEEP_L_THRES'></htk-input>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="RU_CWS_Alarms_tab" class="tabcontent">
+		<h4>RU CWS Alarms Configuration</h4>
+		<h5>Lock <htk-lock-button id='RU_CWS_ALARMS@LOCK'></htk-lock-button>
+		</h5>
+		<div class="table">
+			<div class="row">
+				<div class="col">
+					<h4><b>Collector</b></h4>
+					<h5>
+
+					</h5>
+					<div class="table">
+						<div class="row grey">
+							<div class="col-60">
+								Temp In Coll HHLL Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@COL_TEMP_IN_HHLL_THRES'></htk-input>
+							</div>
+						</div>
+						<h5>
+						</h5>
+						<div class="row grey">
+							<div class="col-60">
+								DTemp Coll HHLL Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@COL_DTEMP_HHLL_THRES'></htk-input>
+							</div>
+						</div>
+						<h5>
+						</h5>
+						<div class="row grey">
+							<div class="col-60">
+								Fl Coll HHLL1 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@COL_FL_HHLL1_THRES'></htk-input>
+							</div>
+						</div>
+						<div class="row grey">
+							<div class="col-60">
+								Fl Coll HHLL2 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@COL_FL_HHLL2_THRES'></htk-input>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col">
+					<h4><b>Load</b></h4>
+					<h5>
+
+					</h5>
+					<div class="table">
+						<div class="row grey">
+							<div class="col-60">
+								Temp In LP HHLL Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@LOAD_TEMP_IN_HHLL_THRES'></htk-input>
+							</div>
+						</div>
+						<h5>
+						</h5>
+						<div class="row grey">
+							<div class="col-60">
+								DTemp LP HHLL Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@LOAD_DTEMP_HHLL_THRES'></htk-input>
+							</div>
+						</div>
+						<h5>
+						</h5>
+						<div class="row grey">
+							<div class="col-60">
+								Fl LP HHLL1 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@LOAD_FL_LP_HHLL1_THRES'></htk-input>
+							</div>
+						</div>
+						<div class="row grey">
+							<div class="col-60">
+								Fl LP HHLL2 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@LOAD_FL_LP_HHLL2_THRES'></htk-input>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col">
+					<h4><b>BP1 Body 2</b></h4>
+					<h5>
+
+					</h5>
+					<div class="table">
+						<div class="row grey">
+							<div class="col-60">
+								Temp In BP1 HHLL Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@BP1_TEMP_IN_HHLL_THRES'></htk-input>
+							</div>
+						</div>
+						<h5>
+						</h5>
+						<div class="row grey">
+							<div class="col-60">
+								Fl BP1 HHLL1 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@BP1_FL_HHLL1_THRES'></htk-input>
+							</div>
+						</div>
+						<div class="row grey">
+							<div class="col-60">
+								Fl BP1 HHLL2 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@BP1_FL_HHLL2_THRES'></htk-input>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<h4><b>BP4 Anode</b></h4>
+					<h5>
+
+					</h5>
+					<div class="table">
+						<div class="row grey">
+							<div class="col-60">
+								Temp In BP4 HHLL Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@BP4_TEMP_IN_HHLL_THRES'></htk-input>
+							</div>
+						</div>
+						<h5>
+						</h5>
+						<div class="row grey">
+							<div class="col-60">
+								Fl BP4 HHLL1 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@BP4_FL_HHLL1_THRES'></htk-input>
+							</div>
+						</div>
+						<div class="row grey">
+							<div class="col-60">
+								Fl BP4 HHLL2 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@BP4_FL_HHLL2_THRES'></htk-input>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col">
+					<h4><b>BP5 Main Window</b></h4>
+					<h5>
+
+					</h5>
+					<div class="table">
+						<div class="row grey">
+							<div class="col-60">
+								Temp In BP5 HHLL Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@BP5_TEMP_IN_HHLL_THRES'></htk-input>
+							</div>
+						</div>
+						<h5>
+						</h5>
+						<div class="row grey">
+							<div class="col-60">
+								DTemp In BP5 HHLL Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@BP5_DTEMP_IN_HHLL_THRES'></htk-input>
+							</div>
+						</div>
+						<h5>
+						</h5>
+						<div class="row grey">
+							<div class="col-60">
+								Fl BP5 HHLL1 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@BP5_FL_HHLL1_THRES'></htk-input>
+							</div>
+						</div>
+						<div class="row grey">
+							<div class="col-60">
+								Fl BP5 HHLL2 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@BP5_FL_HHLL2_THRES'></htk-input>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col">
+					<h4><b>BP6 Last Mirror</b></h4>
+					<h5>
+
+					</h5>
+					<div class="table">
+						<div class="row grey">
+							<div class="col-60">
+								Fl BP6 HHLL1 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@BP6_FL_HHLL1_THRES'></htk-input>
+							</div>
+						</div>
+						<div class="row grey">
+							<div class="col-60">
+								Fl BP6 HHLL2 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@BP6_FL_HHLL2_THRES'></htk-input>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<h4><b>BP8 MOU Mirrors</b></h4>
+					<h5>
+
+					</h5>
+					<div class="table">
+						<div class="row grey">
+							<div class="col-60">
+								Temp In BP8 HHLL Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@BP8_TEMP_IN_HHLL_THRES'></htk-input>
+							</div>
+						</div>
+						<h5>
+						</h5>
+						<div class="row grey">
+							<div class="col-60">
+								Fl BP8 HHLL1 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@BP8_FL_HHLL1_THRES'></htk-input>
+							</div>
+						</div>
+						<div class="row grey">
+							<div class="col-60">
+								Fl BP8 HHLL2 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@BP8_FL_HHLL2_THRES'></htk-input>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col">
+					<h4><b>BP10 Relief Window</b></h4>
+					<h5>
+
+					</h5>
+					<div class="table">
+						<div class="row grey">
+							<div class="col-60">
+								Temp In BP10 HHLL Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@BP10_TEMP_IN_HHLL_THRES'></htk-input>
+							</div>
+						</div>
+						<h5>
+						</h5>
+						<div class="row grey">
+							<div class="col-60">
+								Fl BP10 HHLL1 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@BP10_FL_HHLL1_THRES'></htk-input>
+							</div>
+						</div>
+						<div class="row grey">
+							<div class="col-60">
+								Fl BP10 HHLL2 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@BP10_FL_HHLL2_THRES'></htk-input>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col">
+					<h4><b>BP11 MOU Absorber</b></h4>
+					<h5>
+
+					</h5>
+					<div class="table">
+						<div class="row grey">
+							<div class="col-60">
+								Temp In BP11 HHLL Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@BP11_TEMP_IN_HHLL_THRES'></htk-input>
+							</div>
+						</div>
+						<h5>
+						</h5>
+						<div class="row grey">
+							<div class="col-60">
+								Fl BP11 HHLL1 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@BP11_FL_HHLL1_THRES'></htk-input>
+							</div>
+						</div>
+						<div class="row grey">
+							<div class="col-60">
+								Fl BP11 HHLL2 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@BP11_FL_HHLL2_THRES'></htk-input>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<h4><b>HP4 Oil Tank</b></h4>
+					<h5>
+
+					</h5>
+					<div class="table">
+						<div class="row grey">
+							<div class="col-60">
+								Temp In HP4 HHLL Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@HP4_TEMP_IN_HHLL_THRES'></htk-input>
+							</div>
+						</div>
+						<h5>
+						</h5>
+						<div class="row grey">
+							<div class="col-60">
+								Fl HP4 HHLL1 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@HP4_FL_HHLL1_THRES'></htk-input>
+							</div>
+						</div>
+						<div class="row grey">
+							<div class="col-60">
+								Fl HP4 HHLL2 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@HP4_FL_HHLL2_THRES'></htk-input>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col">
+					<h4><b>HP8 Cavity</b></h4>
+					<h5>
+
+					</h5>
+					<div class="table">
+						<div class="row grey">
+							<div class="col-60">
+								Temp In HP8 HHLL Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@HP8_TEMP_IN_HHLL_THRES'></htk-input>
+							</div>
+						</div>
+						<h5>
+						</h5>
+						<div class="row grey">
+							<div class="col-60">
+								Fl HP8 HHLL1 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@HP8_FL_HHLL1_THRES'></htk-input>
+							</div>
+						</div>
+						<div class="row grey">
+							<div class="col-60">
+								Fl HP8 HHLL2 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@HP8_FL_HHLL2_THRES'></htk-input>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col">
+					<h4><b>HP9 Relief Absorber</b></h4>
+					<h5>
+
+					</h5>
+					<div class="table">
+						<div class="row grey">
+							<div class="col-60">
+								Temp In HP9 HHLL Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@HP9_TEMP_IN_HHLL_THRES'></htk-input>
+							</div>
+						</div>
+						<h5>
+						</h5>
+						<div class="row grey">
+							<div class="col-60">
+								Fl HP9 HHLL1 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@HP9_FL_HHLL1_THRES'></htk-input>
+							</div>
+						</div>
+						<div class="row grey">
+							<div class="col-60">
+								Fl HP9 HHLL2 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@HP9_FL_HHLL2_THRES'></htk-input>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col">
+					<h4><b>HP10 MOU Ports</b></h4>
+					<h5>
+
+					</h5>
+					<div class="table">
+						<div class="row grey">
+							<div class="col-60">
+								Temp In HP10 HHLL Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@HP10_TEMP_IN_HHLL_THRES'></htk-input>
+							</div>
+						</div>
+						<div class="row grey">
+							<div class="col-60">
+								Fl HP10 HHLL1 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@HP10_FL_HHLL1_THRES'></htk-input>
+							</div>
+						</div>
+						<div class="row grey">
+							<div class="col-60">
+								Fl HP10 HHLL2 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@HP10_FL_HHLL2_THRES'></htk-input>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col">
+					<h4><b>HP11 MOU Body 1</b></h4>
+					<h5>
+
+					</h5>
+					<div class="table">
+						<div class="row grey">
+							<div class="col-60">
+								Temp In HP11 HHLL Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@HP11_TEMP_IN_HHLL_THRES'></htk-input>
+							</div>
+						</div>
+						<div class="row grey">
+							<div class="col-60">
+								Fl HP11 HHLL1 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@HP11_FL_HHLL1_THRES'></htk-input>
+							</div>
+						</div>
+						<div class="row grey">
+							<div class="col-60">
+								Fl HP11 HHLL2 Threshold
+							</div>
+							<div class="col-40">
+								<htk-input id='RU_CWS_ALARMS@HP11_FL_HHLL2_THRES'></htk-input>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="BPS_tab" class="tabcontent">
+		<h4>BPS Configuration</h4>
+		<h5>Lock<htk-lock-button id='BPS@LOCK'></htk-lock-button>
+		</h5>
+		<div class="table">
+			<div class="row">
+				<div class="col">
+							<h5>
+								<b>BPS Parameters</b>
+							</h5>
+							<div class="table">
+								<div class="row grey">
+									<div class="col-40">
+										Time 1 (ms)
+									</div>
+									<div class="col-60">
+										<htk-input id='BPS@TIME_1_REA0'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										Ramp Up Time 1 (us)
+									</div>
+									<div class="col-60">
+										<htk-input id='BPS@RAMP_UP_TI0'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										Voltage Level 1 (V)
+									</div>
+									<div class="col-60">
+										<htk-input id='BPS@VOLTAGE_LE0'></htk-input>
+									</div>
+								</div>
+								<h5>
+
+								</h5>
+								<div class="row grey">
+									<div class="col-40">
+										Time 2 (ms)
+									</div>
+									<div class="col-60">
+										<htk-input id='BPS@TIME_2_REA0'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										Ramp Up Time 2 (us)
+									</div>
+									<div class="col-60">
+										<htk-input id='BPS@RAMP_UP_TI1'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										Voltage Level 2 (V)
+									</div>
+									<div class="col-60">
+										<htk-input id='BPS@VOLTAGE_LE1'></htk-input>
+									</div>
+								</div>
+								<h5>
+
+								</h5>
+								<div class="row grey">
+									<div class="col-40">
+										Time 3 (ms)
+									</div>
+									<div class="col-60">
+										<htk-input id='BPS@TIME_3_REA0'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										Ramp Up Time 3 (us)
+									</div>
+									<div class="col-60">
+										<htk-input id='BPS@RAMP_UP_TI2'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										Voltage Level 3 (V)
+									</div>
+									<div class="col-60">
+										<htk-input id='BPS@VOLTAGE_LE2'></htk-input>
+									</div>
+								</div>
+								<h5>
+
+								</h5>
+								<div class="row grey">
+									<div class="col-40">
+										Pulse Length
+									</div>
+									<div class="col-60">
+										<htk-input id='BPS@PULSE_LENG0'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										Ramp Down Time (us)
+									</div>
+									<div class="col-60">
+										<htk-input id='BPS@RAMP_DOWN_0'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										Pulse Length Unit in Seconds
+									</div>
+									<div class="col-60">
+										<htk-checkbox id='BPS@PL_IN_SEC_0'></htk-checkbox>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										Variable Body Voltage
+									</div>
+									<div class="col-60">
+										<htk-checkbox id='BPS@VAR_BODY_V0'></htk-checkbox>
+									</div>
+								</div>
+							</div>
+				</div>
+				<div class="col plot">
+							<h5><b>Voltage Plot</b></h5>
+							<htk-bps-plot-editor id='BPS@PLOT' data-time1='BPS@TIME_1_REA0' data-time2='BPS@TIME_2_REA0' data-time3='BPS@TIME_3_REA0' data-ru1='BPS@RAMP_UP_TI0' data-ru2='BPS@RAMP_UP_TI1' data-ru3='BPS@RAMP_UP_TI2' data-v1='BPS@VOLTAGE_LE0'
+								data-v2='BPS@VOLTAGE_LE1' data-v3='BPS@VOLTAGE_LE2' data-rd='BPS@RAMP_DOWN_0' data-pl='BPS@PULSE_LENG0' data-pl-unit='BPS@PL_IN_SEC_0'></htk-bps-plot-editor>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="CPS_tab" class="tabcontent">
+		<h4>CPS Configuration</h4>
+		<h5>Lock<htk-lock-button id='CPS@LOCK'></htk-lock-button>
+		</h5>
+		<div class="table-single">
+			<div class="row">
+				<div class="col-single">
+							<h5>
+								<b>CPS Parameters</b>
+							</h5>
+							<div class="table">
+								<div class="row grey">
+									<div class="col-40">
+										Autorestart
+									</div>
+									<div class="col-60">
+										<htk-checkbox id='CPS@AUTORESTAR0'></htk-checkbox>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										Foldback
+									</div>
+									<div class="col-60">
+										<htk-radio-group id='CPS@RADIO'>
+											<htk-radio-box label="Arm" id='CPS@FOLDBACK_A0'></htk-radio-box>
+											<htk-radio-box label="Cancel" id='CPS@FOLDBACK_C0'></htk-radio-box>
+											<htk-radio-box label="Release" id='CPS@FOLDBACK_R0'></htk-radio-box>
+										</htk-radio-group>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										Overvoltage Lim Read
+									</div>
+									<div class="col-60">
+										<htk-input id='CPS@OVERVOLTAG0'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										SP Current Read
+									</div>
+									<div class="col-60">
+										<htk-input id='CPS@SP_CURRENT0'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										SP Voltage Read
+									</div>
+									<div class="col-60">
+										<htk-input id='CPS@SP_VOLTAGE0'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										Undervoltage Lim Read
+									</div>
+									<div class="col-60">
+										<htk-input id='CPS@UNDERVOLTA0'></htk-input>
+									</div>
+								</div>
+							</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="GCPS_tab" class="tabcontent">
+		<h4>GCPS Configuration</h4>
+		<h5>Lock<htk-lock-button id='GCPS@LOCK'></htk-lock-button>
+		</h5>
+		<div class="table-single">
+			<div class="row">
+				<div class="col-single">
+							<h5>
+								<b>GCPS Parameters</b>
+							</h5>
+							<div class="table">
+								<div class="row grey">
+									<div class="col-40">
+										Autorestart
+									</div>
+									<div class="col-60">
+										<htk-checkbox id='GCPS@AUTORESTAR1'></htk-checkbox>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										Foldback
+									</div>
+									<div class="col-60">
+										<htk-radio-group id='GCPS@RADIO'>
+											<htk-radio-box label="Arm" id='GCPS@FOLDBACK_A1'></htk-radio-box>
+											<htk-radio-box label="Cancel" id='GCPS@FOLDBACK_C1'></htk-radio-box>
+											<htk-radio-box label="Release" id='GCPS@FOLDBACK_R1'></htk-radio-box>
+										</htk-radio-group>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										Overvoltage Lim Read
+									</div>
+									<div class="col-60">
+										<htk-input id='GCPS@OVERVOLTAG1'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										SP Current Read
+									</div>
+									<div class="col-60">
+										<htk-input id='GCPS@SP_CURRENT7'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										SP Voltage Read
+									</div>
+									<div class="col-60">
+										<htk-input id='GCPS@SP_VOLTAGE1'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										Undervoltage Lim Read
+									</div>
+									<div class="col-60">
+										<htk-input id='GCPS@UNDERVOLTA1'></htk-input>
+									</div>
+								</div>
+							</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="HVPS_tab" class="tabcontent">
+		<h4>HVPS Configuration</h4>
+		<h5>Lock<htk-lock-button id='HVPS@LOCK'></htk-lock-button>
+		</h5>
+		<div class="table">
+			<div class="row">
+				<div class="col">
+							<h5>
+								<b>HVPS Parameters</b>
+							</h5>
+							<div class="table">
+								<div class="row grey">
+									<div class="col-40">
+										Ramp Up Time
+									</div>
+									<div class="col-60">
+										<htk-input id='HVPS@RAMP_UP_TI4'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										Ramp Down Time
+									</div>
+									<div class="col-60">
+										<htk-input id='HVPS@RAMP_DOWN_1'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										Voltage Level
+									</div>
+									<div class="col-60">
+										<htk-input id='HVPS@VOLTAGE_LE4'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										Pulse Duration
+									</div>
+									<div class="col-60">
+										<htk-input id='HVPS@PULSE_DURA0'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										Pulse Number
+									</div>
+									<div class="col-60">
+										<htk-input id='HVPS@PULSE_NUMB1'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										Time Between Pulses
+									</div>
+									<div class="col-60">
+										<htk-input id='HVPS@TIME_BET_P0'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										Pulse Unit in Seconds
+									</div>
+									<div class="col-60">
+										<htk-checkbox id='HVPS@PULSE_UNIT0'></htk-checkbox>
+									</div>
+								</div>
+							</div>
+				</div>
+				<div class="col plot">
+							<h5><b>Voltage Plot</b></h5>
+							<htk-hvps-plot-editor id='HVPS@PLOT' data-ru='HVPS@RAMP_UP_TI4' data-v='HVPS@VOLTAGE_LE4' data-rd='HVPS@RAMP_DOWN_1' data-pl='HVPS@PULSE_DURA0' data-pl-unit='HVPS@PULSE_UNIT0'></htk-hvps-plot-editor>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="IPS1_tab" class="tabcontent">
+		<h4>IPS1 Configuration</h4>
+		<h5>Lock<htk-lock-button id='IPS1@LOCK'></htk-lock-button>
+		</h5>
+		<div class="table-single">
+			<div class="row">
+				<div class="col-single">
+							<h5>
+								<b>IPS1 Parameters</b>
+							</h5>
+							<div class="table">
+								<div class="row grey">
+									<div class="col-40">
+										Output Voltage 3KV
+									</div>
+									<div class="col-60">
+										<htk-input id='IPS1@OUTPUT_VOL0'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										Output Voltage 5KV
+									</div>
+									<div class="col-60">
+										<htk-input id='IPS1@OUTPUT_VOL1'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										Output Voltage 7KV
+									</div>
+									<div class="col-60">
+										<htk-input id='IPS1@OUTPUT_VOL2'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										Protection Mode
+									</div>
+									<div class="col-60">
+										<htk-input id='IPS1@PROTECTION0'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										Start Mode
+									</div>
+									<div class="col-60">
+										<htk-input id='IPS1@START_MODE0'></htk-input>
+									</div>
+								</div>
+							</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="IPS2_tab" class="tabcontent">
+		<h4>IPS2 Configuration</h4>
+		<h5>Lock<htk-lock-button id='IPS2@LOCK'></htk-lock-button>
+		</h5>
+		<div class="table-single">
+			<div class="row">
+				<div class="col-single">
+							<h5>
+								<b>IPS2 Parameters</b>
+							</h5>
+							<div class="table">
+								<div class="row grey">
+									<div class="col-40">
+										Output Voltage 3KV
+									</div>
+									<div class="col-60">
+										<htk-input id='IPS2@OUTPUT_VOL3'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										Output Voltage 5KV
+									</div>
+									<div class="col-60">
+										<htk-input id='IPS2@OUTPUT_VOL4'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										Output Voltage 7KV
+									</div>
+									<div class="col-60">
+										<htk-input id='IPS2@OUTPUT_VOL5'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										Protection Mode
+									</div>
+									<div class="col-60">
+										<htk-input id='IPS2@PROTECTION1'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										Start Mode
+									</div>
+									<div class="col-60">
+										<htk-input id='IPS2@START_MODE1'></htk-input>
+									</div>
+								</div>
+							</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="PMP1_tab" class="tabcontent">
+		<h4>PMP1 Configuration</h4>
+		<h5>Lock<htk-lock-button id='PMP1@LOCK'></htk-lock-button>
+		</h5>
+		<div class="table-single">
+			<div class="row">
+				<div class="col-single">
+							<h5>
+								<b>PMP1 Parameters</b>
+							</h5>
+							<div class="table">
+								<div class="row grey">
+									<div class="col-40">
+										PBR260 Calib
+									</div>
+									<div class="col-60">
+										<htk-input id='PMP1@PBR260_CAL0'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										PBR260 On Off
+									</div>
+									<div class="col-60">
+										<htk-input id='PMP1@PBR260_ON_0'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										PBR260 SP LimH
+									</div>
+									<div class="col-60">
+										<htk-input id='PMP1@PBR260_SP_0'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										PBR260 SP LimL
+									</div>
+									<div class="col-60">
+										<htk-input id='PMP1@PBR260_SP_1'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										PBR260 UnderRange
+									</div>
+									<div class="col-60">
+										<htk-input id='PMP1@PBR260_UND0'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										TPR280 Calib
+									</div>
+									<div class="col-60">
+										<htk-input id='PMP1@TPR280_CAL0'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										TPR280 On Off
+									</div>
+									<div class="col-60">
+										<htk-input id='PMP1@TPR280_ON_0'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										TPR280 SP LimH
+									</div>
+									<div class="col-60">
+										<htk-input id='PMP1@TPR280_SP_0'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										TPR280 SP LimL
+									</div>
+									<div class="col-60">
+										<htk-input id='PMP1@TPR280_SP_1'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										TPR280 UnderRange
+									</div>
+									<div class="col-60">
+										<htk-input id='PMP1@TPR280_UND0'></htk-input>
+									</div>
+								</div>
+							</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="PMP2_tab" class="tabcontent">
+		<h4>PMP2 Configuration</h4>
+		<h5>Lock<htk-lock-button id='PMP2@LOCK'></htk-lock-button>
+		</h5>
+		<div class="table-single">
+			<div class="row">
+				<div class="col-single">
+							<h5>
+								<b>PMP2 Parameters</b>
+							</h5>
+							<div class="table">
+								<div class="row grey">
+									<div class="col-40">
+										PBR260 Calib
+									</div>
+									<div class="col-60">
+										<htk-input id='PMP2@PBR260_CAL1'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										PBR260 On Off
+									</div>
+									<div class="col-60">
+										<htk-input id='PMP2@PBR260_ON_1'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										PBR260 SP LimH
+									</div>
+									<div class="col-60">
+										<htk-input id='PMP2@PBR260_SP_2'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										PBR260 SP LimL
+									</div>
+									<div class="col-60">
+										<htk-input id='PMP2@PBR260_SP_3'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										PBR260 UnderRange
+									</div>
+									<div class="col-60">
+										<htk-input id='PMP2@PBR260_UND1'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										TPR280 Calib
+									</div>
+									<div class="col-60">
+										<htk-input id='PMP2@TPR280_CAL1'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										TPR280 On Off
+									</div>
+									<div class="col-60">
+										<htk-input id='PMP2@TPR280_ON_1'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										TPR280 SP LimH
+									</div>
+									<div class="col-60">
+										<htk-input id='PMP2@TPR280_SP_2'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										TPR280 SP LimL
+									</div>
+									<div class="col-60">
+										<htk-input id='PMP2@TPR280_SP_3'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										TPR280 UnderRange
+									</div>
+									<div class="col-60">
+										<htk-input id='PMP2@TPR280_UND1'></htk-input>
+									</div>
+								</div>
+							</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="RFIL_tab" class="tabcontent">
+		<h4>RFIL Configuration</h4>
+		<h5>Lock<htk-lock-button id='RFIL@LOCK'></htk-lock-button>
+		</h5>
+		<div class="table-single">
+			<div class="row">
+				<div class="col-single">
+							<h5>
+								<b>RFIL Parameters</b>
+							</h5>
+							<div class="table">
+								<div class="row grey">
+									<div class="col-40">
+										Err Reset
+									</div>
+									<div class="col-60">
+										<htk-input id='RFIL@ERR_RESET_0'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										IF Max Current
+									</div>
+									<div class="col-60">
+										<htk-input id='RFIL@IF_MAX_CUR0'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										IF SP Current
+									</div>
+									<div class="col-60">
+										<htk-input id='RFIL@IF_SP_CURR0'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										IG SP Current
+									</div>
+									<div class="col-60">
+										<htk-input id='RFIL@IG_SP_CURR0'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										Stabilization
+									</div>
+									<div class="col-60">
+										<htk-input id='RFIL@STABILIZAT0'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										Sweep Rate Down
+									</div>
+									<div class="col-60">
+										<htk-input id='RFIL@SWEEP_RATE0'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										Sweep Rate Up
+									</div>
+									<div class="col-60">
+										<htk-input id='RFIL@SWEEP_RATE1'></htk-input>
+									</div>
+								</div>
+							</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="RSCM_tab" class="tabcontent">
+		<h4>RSCM Configuration</h4>
+		<h5>Lock<htk-lock-button id='RSCM@LOCK'></htk-lock-button>
+		</h5>
+		<div class="table-single">
+			<div class="row">
+				<div class="col-single">
+							<h5>
+								<b>RSCM Parameters</b>
+							</h5>
+							<div class="table">
+								<div class="row grey">
+									<div class="col-40">
+										Heater On
+									</div>
+									<div class="col-60">
+										<htk-input id='RSCM@HEATER_ON_0'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										SP Current
+									</div>
+									<div class="col-60">
+										<htk-input id='RSCM@SP_CURRENT8'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										Sweep Rate
+									</div>
+									<div class="col-60">
+										<htk-input id='RSCM@SWEEP_RATE2'></htk-input>
+									</div>
+								</div>
+							</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="RSWP_tab" class="tabcontent">
+		<h4>RSWP Configuration</h4>
+		<h5>Lock<htk-lock-button id='RSWP@LOCK'></htk-lock-button>
+		</h5>
+		<div class="table-single">
+			<div class="row">
+				<div class="col-single">
+							<h5>
+								<b>RSWP Parameters</b>
+							</h5>
+							<div class="table">
+								<div class="row grey">
+									<div class="col-40">
+										Threshold H
+									</div>
+									<div class="col-60">
+										<htk-input id='RSWP@THRESHOLD_0'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										Threshold L
+									</div>
+									<div class="col-60">
+										<htk-input id='RSWP@THRESHOLD_1'></htk-input>
+									</div>
+								</div>
+								<div class="row grey">
+									<div class="col-40">
+										Wave Period
+									</div>
+									<div class="col-60">
+										<htk-input id='RSWP@WAVE_PERIO1'></htk-input>
+									</div>
+								</div>
+							</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<script type="text/javascript" src="/pages/js/FALCON.js"></script>
+
+</body>
+
+</html>
