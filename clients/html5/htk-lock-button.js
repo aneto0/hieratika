@@ -34,7 +34,7 @@ template.innerHTML = `
 `;
 
   /**
-   * @brief A button which renders an Hieratike Lock type.
+   * @brief A button which renders an Hieratika Lock type.
    */
   class HtkLockButton extends HtkAbstractInput {
 

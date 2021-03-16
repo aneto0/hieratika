@@ -19,74 +19,72 @@
   <link rel="import" href="/libraries.html">
   <link rel="import" href="/htk-abstract-input.html">
   */
-import { HtkAbstractInput } from './htk-abstract-input.js'
-
-
+import { HtkAbstractInput } from './htk-abstract-input.js';
 const template = document.createElement('template');
 template.innerHTML = `
 <input type="text" id="tinput"></input>
 `;
 
-      /**
-       * @brief A text input component.
-       */
-      class HtkInput extends HtkAbstractInput {
+/**
+* @brief A text input component.
+*/
+export class HtkInput extends HtkAbstractInput {
 
-        /**
-         * @brief Constructor. NOOP.
-         */
-        constructor() {
-          super();
-        }
+    /**
+     * @brief Constructor. NOOP.
+     */
+    constructor() {
+      super();
+    }
 
-        /**
-         * @brief See HtkComponent.createdCallback.
-         */
-        connectedCallback() {
-          super.connectedCallback();
-          this.textInput = this.shadowRoot.querySelector("#tinput");
-          this.textInput.style.width = "100%";
-          this.textInput.addEventListener("input", function(e) {
-            this.setValue(this.textInput.value);
-          }.bind(this));
-        }
+    /**
+     * @brief See HtkComponent.createdCallback.
+     */
+    connectedCallback() {
+      super.connectedCallback();
+      this.textInput = this.shadowRoot.querySelector("#tinput");
+      this.textInput.style.width = "100%";
+      this.textInput.addEventListener("input", function(e) {
+        this.setValue(this.textInput.value);
+      }.bind(this));
+    }
 
-        /**
-         * @brief See HtkComponent.getTemplat.
-         */
-         getTemplate() {
-           var templateContent = template.content;
-           return templateContent;
-         }
+    /**
+     * @brief See HtkComponent.getTemplate.
+     */
+     getTemplate() {
+       var templateContent = template.content;
+       return templateContent;
+     }
 
-        /**
-         * @brief See HtkComponent.refresh.
-         */
-        refresh() {
-          this.textInput.value = this.value;
-          this.checkValues(this.textInput);
-        }
+    /**
+     * @brief See HtkComponent.refresh.
+     */
+    refresh() {
+      this.textInput.value = this.value;
+      this.checkValues(this.textInput);
+    }
 
-        /**
-         * @brief See HtkComponent.getValue.
-         */
-        getValue() {
-          var txtValue = this.textInput.value;
-          var typeValue = this.getTypeValue();
-          return window.htkHelper.textToTypeValue(txtValue, typeValue);
-        }
+    /**
+     * @brief See HtkComponent.getValue.
+     */
+    getValue() {
+      var txtValue = this.textInput.value;
+      var typeValue = this.getTypeValue();
+      return window.htkHelper.textToTypeValue(txtValue, typeValue);
+    }
 
-        /**
-         * @brief See HtkComponent.setReadOnly.
-         */
-        setReadOnly(isReadOnly) {
-          super.setReadOnly(isReadOnly);
-          this.textInput.disabled = isReadOnly;
-        }
+    /**
+     * @brief See HtkComponent.setReadOnly.
+     */
+    setReadOnly(isReadOnly) {
+      super.setReadOnly(isReadOnly);
+      this.textInput.disabled = isReadOnly;
+    }
 
-      }
+}
 
-      /**
-       * @brief Registers the element.
-       */
-       window.customElements.define('htk-input', HtkInput);
+/**
+* @brief Registers the element.
+*/
+window.customElements.define('htk-input', HtkInput);

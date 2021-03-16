@@ -34,8 +34,8 @@ import * as Constants from './htk-constants.js';
 const template = document.createElement('template');
 template.innerHTML = `
 <style>
-  @import "./css/w3.css";
-  @import "./css/WebFont/font-css/LineIcons.css";
+  @import "../css/w3.css";
+  @import "../css/WebFont/font-css/LineIcons.css";
 </style>
     <div class="w3-sidebar w3-bar-block w3-dark-grey w3-animate-left w3-large" style="display:none" id="tsidebar">
         <button class="w3-bar-item w3-button w3-tiny w3-light-grey" id="tsidebarclose"><i class="lni lni-arrow-left"></i></button>

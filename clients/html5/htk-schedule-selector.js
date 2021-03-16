@@ -22,8 +22,8 @@ import * as Constants from './htk-constants.js'
 const template = document.createElement('template');
 template.innerHTML = `
 <style>
-  @import "./css/w3.css";
-  @import "./css/WebFont/font-css/LineIcons.css";
+  @import "../css/w3.css";
+  @import "../css/WebFont/font-css/LineIcons.css";
 </style>
 <dialog id="dscheduleselector">
     <div id="divschedule">
@@ -66,48 +66,49 @@ template.innerHTML = `
                 </td>
            </tr>
         </table>
-    </dialog>
-<div id="divnewschedule" hidden>
-    <table style="border-style:solid;border-width:1px;width: 100%">
-        <tr>
-            <td>Schedule name:</td>
-            <td><input type="text" id="newschedulename"></input></td>
-        </tr>
-        <tr>
-            <td>Schedule description:</td>
-            <td><textarea rows="4" cols="30" id="newscheduledescription" title="Description"></textarea></td>
-        </tr>
-        <tr>
-            <td rowspan="2">Copy from:</td>
-            <td>
-                <button title="Select" id="newschedulebtn">Select...</button>
-            </td>
-        </tr>
-        <tr>
-            <td id="newschedulescopyfromname">
-                plant
-            </td>
-            <td>
-                <input type="checkbox" id="inheritcheckbox" value="inherit" title="Inherit from selected schedule?">Inherit?<i class="fa fa-link"></i></input>
-            </td>
-        </tr>
-    </table>
-    <table style="border-style:solid;border-width:0px;width: 100%">
-        <tr>
-            <td style="padding-top:20px;">
-                <button title="OK" id="oknewschedulebtn">OK</button>
-                <button title="Cancel" id="cancelnewschedulebtn">Cancel</button>
-            </td>
-        </tr>
-    </table>
-</div>
+    </div>
+    <div id="divnewschedule" hidden>
+        <table style="border-style:solid;border-width:1px;width: 100%">
+            <tr>
+                <td>Schedule name:</td>
+                <td><input type="text" id="newschedulename"></input></td>
+            </tr>
+            <tr>
+                <td>Schedule description:</td>
+                <td><textarea rows="4" cols="30" id="newscheduledescription" title="Description"></textarea></td>
+            </tr>
+            <tr>
+                <td rowspan="2">Copy from:</td>
+                <td>
+                    <button title="Select" id="newschedulebtn">Select...</button>
+                </td>
+            </tr>
+            <tr>
+                <td id="newschedulescopyfromname">
+                    plant
+                </td>
+                <td>
+                    <input type="checkbox" id="inheritcheckbox" value="inherit" title="Inherit from selected schedule?">Inherit?<i class="fa fa-link"></i></input>
+                </td>
+            </tr>
+        </table>
+        <table style="border-style:solid;border-width:0px;width: 100%">
+            <tr>
+                <td style="padding-top:20px;">
+                    <button title="OK" id="oknewschedulebtn">OK</button>
+                    <button title="Cancel" id="cancelnewschedulebtn">Cancel</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+</dialog>
 `;
 
 /**
  * @brief A dialog which allows to select a schedule (from the ones available for this page).
  * @details This dialog allows to select an existent schedule (from this or any other Hieratika user) or to create a new schedule (for this user).
  */
-class HtkScheduleSelector extends HTMLElement {
+export class HtkScheduleSelector extends HTMLElement {
 
   /**
    * @brief Constructor. NOOP.

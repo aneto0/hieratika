@@ -16,3 +16,5 @@ pyzmq
 #For bit manipulation
 bitstring
 
+#Python 2.7 compat
+six

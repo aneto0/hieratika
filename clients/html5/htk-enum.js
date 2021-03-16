@@ -26,88 +26,88 @@ template.innerHTML = `
 <select id="tselect" name="tselect"></select>
 `;
 
+/**
+ * @brief Enum editor component implemented using an HTML select.
+ */
+export class HtkEnum extends HtkAbstractInput {
+
     /**
-     * @brief Enum editor component implemented using an HTML select.
+     * @brief Constructor. NOOP.
      */
-    class HtkEnum extends HtkAbstractInput {
-
-        /**
-         * @brief Constructor. NOOP.
-         */
-        constructor() {
-            super();
-        }
-
-        /**
-         * @brief See HtkComponent.createdCallback
-         */
-        connectedCallback () {
-            super.connectedCallback();
-            this.select = this.shadowRoot.querySelector("#tselect");
-            this.select.addEventListener("input", function (e) {
-                var selectedValue = this.select[this.select.selectedIndex].value;
-                this.setValue(selectedValue);
-            }.bind(this));
-            this.choices = [];
-        }
-
-        /**
-         * @brief See HtkComponent.getTemplate
-         */
-         getTemplate() {
-           var templateContent = template.content;
-           return templateContent;
-         }
-
-        /**
-         * @brief See HtkComponent.setVariable.
-         */
-        setVariable (variable) {
-            super.setVariable(variable);
-            if ("choices" in variable) {
-                this.setChoices(variable.choices);
-            }
-        }
-
-        /**
-         * @brief Adds all the available options to the selector.
-         */
-        setChoices(choices) {
-            this.choices = choices;
-            this.select.innerHTML = "";
-            for (var i=0; i<this.choices.length; i++) {
-                var option = document.createElement("option");
-                option.text = choices[i];
-                option.value = choices[i];
-                this.select.appendChild(option);
-            }
-            this.select.value = this.getValue();
-        }
-
-        getChoices(){
-            return this.choices.slice(0);
-        }
-
-
-        /**
-         * @brief Sets the selected choice visible on the component.
-         */
-        refresh() {
-            this.select.value = this.value;
-            this.checkValues(this.select);
-        }
-
-        /**
-         * @brief Sets the select as read only.
-         */
-        setReadOnly (isReadOnly) {
-            super.setReadOnly(isReadOnly);
-            this.select.disabled = isReadOnly;
-        }
-
+    constructor() {
+        super();
     }
 
     /**
-     * @brief Registers the element.
+     * @brief See HtkComponent.createdCallback
      */
-     window.customElements.define('htk-enum', HtkEnum);
+    connectedCallback () {
+        super.connectedCallback();
+        this.select = this.shadowRoot.querySelector("#tselect");
+        this.select.addEventListener("input", function (e) {
+            var selectedValue = this.select[this.select.selectedIndex].value;
+            this.setValue(selectedValue);
+        }.bind(this));
+        this.choices = [];
+    }
+
+    /**
+     * @brief See HtkComponent.getTemplate
+     */
+     getTemplate() {
+       var templateContent = template.content;
+       return templateContent;
+     }
+
+    /**
+     * @brief See HtkComponent.setVariable.
+     */
+    setVariable (variable) {
+        super.setVariable(variable);
+        if ("choices" in variable) {
+            this.setChoices(variable.choices);
+        }
+    }
+
+    /**
+     * @brief Adds all the available options to the selector.
+     */
+    setChoices(choices) {
+        this.choices = choices;
+        this.select.innerHTML = "";
+        for (var i=0; i<this.choices.length; i++) {
+            var option = document.createElement("option");
+            option.text = choices[i];
+            option.value = choices[i];
+            this.select.appendChild(option);
+        }
+        this.select.value = this.getValue();
+    }
+
+    getChoices(){
+        return this.choices.slice(0);
+    }
+
+
+    /**
+     * @brief Sets the selected choice visible on the component.
+     */
+    refresh() {
+        this.select.value = this.value;
+        this.checkValues(this.select);
+    }
+
+    /**
+     * @brief Sets the select as read only.
+     */
+    setReadOnly (isReadOnly) {
+        super.setReadOnly(isReadOnly);
+        this.select.disabled = isReadOnly;
+    }
+
+}
+
+/**
+ * @brief Registers the element.
+ */
+ window.customElements.define('htk-enum', HtkEnum);

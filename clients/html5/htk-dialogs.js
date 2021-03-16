@@ -19,6 +19,7 @@
         <link rel="import" href="/htk-wait-dialog.html">
 */
 
+import { HtkWaitDialog } from './htk-wait-dialog.js';
 /**
  * @brief Collection of Hieratika standard dialogs.
  */
@@ -34,8 +35,11 @@ export class HtkDialogs {
      * @brief Shows a modal wait dialog.
      */
     static showWaitDialog() {
-        this.waitDialog = document.createElement("htk-wait-dialog");
-        document.body.appendChild(this.waitDialog);
+        if (this.waitDialog === undefined) {
+            this.waitDialog = document.createElement("htk-wait-dialog");
+            document.body.appendChild(this.waitDialog);
+        }
+        //document.body.appendChild(this.waitDialog);
         this.waitDialog.showModal();
     }
 
@@ -44,7 +48,7 @@ export class HtkDialogs {
      */
     static closeWaitDialog() {
         this.waitDialog.close();
-        document.body.removeChild(this.waitDialog);
+        //document.body.removeChild(this.waitDialog);
     }
 
     /**

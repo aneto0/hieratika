@@ -25,7 +25,8 @@
 /* Be sure to import htk-library-editor in the main document */
 
 import * as Constants from './htk-constants.js';
-import { HtkLibrary } from './htk-library.js'
+import { HtkLibrary } from './htk-library.js';
+import { HtkLibraryEditor } from './htk-library-editor.js';
 
 const template = document.createElement('template');
 template.innerHTML = `
@@ -33,69 +34,70 @@ template.innerHTML = `
 <button type="button" id="blibrary"></button>
 `;
 
-                /**
-                 * @brief A button which opens a htk-library-editor. The value of this component is the name of the selected library (username/libraryname).
-                 */
-                class HtkLibraryButton extends HtkLibrary {
+/**
+ * @brief A button which opens a htk-library-editor. The value of this component is the name of the selected library (username/libraryname).
+ */
+export class HtkLibraryButton extends HtkLibrary {
 
-                    /**
-                     * @brief Constructor. NOOP.
-                     */
-                    constructor() {
-                        super();
-                    }
+    /**
+     * @brief Constructor. NOOP.
+     */
+    constructor() {
+        super();
+    }
 
-                    /**
-                     * @brief See HtkComponent.connectedCallback.
-                     */
-                    connectedCallback () {
-                        super.connectedCallback();
-                        this.buttonInput = this.shadowRoot.querySelector("#blibrary");
-                        this.buttonInput.style.background = Constants.STANDARD_BCOLOR;
-                        this.buttonInput.addEventListener("click", function (e) {
-                            this.showLibraryEditor();
-                        }.bind(this));
-                        this.attachLibraryHandler();
-                    }
+    /**
+     * @brief See HtkComponent.connectedCallback.
+     */
+    connectedCallback () {
+        super.connectedCallback();
+        this.buttonInput = this.shadowRoot.querySelector("#blibrary");
+        this.buttonInput.style.background = Constants.STANDARD_BCOLOR;
+        this.buttonInput.addEventListener("click", function (e) {
+            this.showLibraryEditor();
+        }.bind(this));
+        this.htkLibraryEditor = this.shadowRoot.querySelector("#tlibrary-editor");
+        this.attachLibraryHandler(this.htkLibraryEditor);
+    }
 
-                    /**
-                     * @brief See HtkComponent.refresh.
-                     */
-                    refresh() {
-                        this.buttonInput.innerHTML = this.value;
-                        this.checkValues(this.buttonInput);
-                    }
+    /**
+     * @brief See HtkComponent.refresh.
+     */
+    refresh() {
+        this.buttonInput.innerHTML = this.value;
+        this.checkValues(this.buttonInput);
+    }
 
-                    /**
-                     * @brief See HtkComponent.getValue.
-                     */
-                    getValue() {
-                        return this.buttonInput.innerHTML;
-                    }
+    /**
+     * @brief See HtkComponent.getValue.
+     */
+    getValue() {
+        return this.buttonInput.innerHTML;
+    }
 
-                    /**
-                     * @brief See HtkComponent.getTemplate.
-                     */
-                    getTemplate() {
-                      var templateContent = template.content;
-                      return templateContent;
-                    }
+    /**
+     * @brief See HtkComponent.getTemplate.
+     */
+    getTemplate() {
+      var templateContent = template.content;
+      return templateContent;
+    }
 
-                    /**
-                     * @brief This function is called by the HtkLibraryEditor when the user selects a new library. The value displayed by the button is updated to the newLibraryName.
-                     * @param[in] libraryOwner the username which owns the library.
-                     * @param[in] newLibraryName the library name.
-                     */
-                    libraryChanged (libraryOwner, newLibraryName) {
-                        if (!this.isReadOnly()) {
-                            this.buttonInput.innerHTML = newLibraryName;
-                            this.setValue(libraryOwner + "/" + newLibraryName);
-                            this.checkValues(this.buttonInput);
-                        }
-                    }
-                }
+    /**
+     * @brief This function is called by the HtkLibraryEditor when the user selects a new library. The value displayed by the button is updated to the newLibraryName.
+     * @param[in] libraryOwner the username which owns the library.
+     * @param[in] newLibraryName the library name.
+     */
+    libraryChanged (libraryOwner, newLibraryName) {
+        if (!this.isReadOnly()) {
+            this.buttonInput.innerHTML = newLibraryName;
+            this.setValue(libraryOwner + "/" + newLibraryName);
+            this.checkValues(this.buttonInput);
+        }
+    }
+}
 
-                /**
-                 * @brief Registers the element.
-                 */
-                 window.customElements.define('htk-library-button', HtkLibraryButton);
+/**
+ * @brief Registers the element.
+ */
+ window.customElements.define('htk-library-button', HtkLibraryButton);

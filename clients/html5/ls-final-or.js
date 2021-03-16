@@ -129,7 +129,7 @@ template.innerHTML = `
                       if (tempPlantValue[c][h][k] !== undefined) {
                         if (tempRefValue[c][h] !== undefined) {
                           if (tempRefValue[c][h][k] !== undefined) {
-                            if (!this.compareWithReference(this.tempValue[c][h][k], this.tempPlantValue[c][h][k], this.tempRefValue[c][h][k])) {
+                            if (!this.compareWithReference(tempValue[c][h][k], tempPlantValue[c][h][k], tempRefValue[c][h][k])) {
                               myCell.style.color = Constants.PLANT_OR_REF_CHANGED_COLOR;
                             }
                           }

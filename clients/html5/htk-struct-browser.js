@@ -25,7 +25,11 @@
 */
 
 
-import { HtkComponent } from './htk-component.js'
+import { HtkComponent } from './htk-component.js';
+import { HtkEnum } from './htk-enum.js';
+import { HtkInput } from './htk-input.js';
+import { HtkArrayEditor } from './htk-array-editor.js';
+import { CollapsibleLists } from './js/CollapsibleLists.js';
 
 const template = document.createElement('template');
 template.innerHTML = `
@@ -52,164 +56,164 @@ template.innerHTML = `
 <div id="dstructbrowser"></div>
 `;
 
-                /**
-                 * @brief Renders an Hieratika structured variable with a tree, where each node represents a member of the structure.
-                 */
-                class HtkStructBrowser extends HtkComponent {
+/**
+ * @brief Renders an Hieratika structured variable with a tree, where each node represents a member of the structure.
+ */
+class HtkStructBrowser extends HtkComponent {
 
-                    /**
-                     * @brief Constructor. NOOP.
-                     */
-                    constructor() {
-                        super();
+    /**
+     * @brief Constructor. NOOP.
+     */
+    constructor() {
+        super();
+    }
+
+    /**
+     * @brief See HtkComponent.createdCallback.
+     */
+    connectedCallback () {
+        super.connectedCallback();
+        this.mainDiv = this.shadowRoot.querySelector("#dstructbrowser");
+        this.treeHTML = "";
+        this.structureSeparator = "@";
+    }
+
+    /**
+     * @brief See HtkComponent.getTemplate.
+     */
+     getTemplate() {
+       var templateContent = template.content;
+       return templateContent;
+     }
+
+    /**
+     * @brief Recursive function which adds a variable member to the tree.
+     * @param[in] member the variable member to add.
+     * @param[in] fullMemberName the recursive full member name.
+     * @param[in] callerMemberName the parent of the member.
+     */
+    addMember(member, fullMemberName, callerMemberName = undefined) {
+        if (member !== undefined) {
+            var memberName = member["name"];
+            if (memberName !== undefined) {
+                var memberIsStruct = member["isStruct"]
+                if (memberIsStruct !== undefined) {
+                    memberIsStruct = (memberIsStruct === true);
+                }
+                if (memberIsStruct) {
+                    this.treeHTML += "<ul>\n";
+                    this.treeHTML += "<li>\n";
+                    if (callerMemberName !== undefined) {
+                        this.treeHTML += callerMemberName;
                     }
-
-                    /**
-                     * @brief See HtkComponent.createdCallback.
-                     */
-                    connectedCallback () {
-                        super.connectedCallback();
-                        this.mainDiv = this.shadowRoot.querySelector("#dstructbrowser");
-                        this.treeHTML = "";
-                        this.structureSeparator = "@";
+                    else {
+                        this.treeHTML += memberName;
                     }
-
-                    /**
-                     * @brief See HtkComponent.getTemplate.
-                     */
-                     getTemplate() {
-                       var templateContent = template.content;
-                       return templateContent;
-                     }
-
-                    /**
-                     * @brief Recursive function which adds a variable member to the tree.
-                     * @param[in] member the variable member to add.
-                     * @param[in] fullMemberName the recursive full member name.
-                     * @param[in] callerMemberName the parent of the member.
-                     */
-                    addMember(member, fullMemberName, callerMemberName = undefined) {
-                        if (member !== undefined) {
-                            var memberName = member["name"];
-                            if (memberName !== undefined) {
-                                var memberIsStruct = member["isStruct"]
-                                if (memberIsStruct !== undefined) {
-                                    memberIsStruct = (memberIsStruct === true);
-                                }
-                                if (memberIsStruct) {
-                                    this.treeHTML += "<ul>\n";
-                                    this.treeHTML += "<li>\n";
-                                    if (callerMemberName !== undefined) {
-                                        this.treeHTML += callerMemberName;
-                                    }
-                                    else {
-                                        this.treeHTML += memberName;
-                                    }
-                                    this.treeHTML += "<ul>\n";
-                                    var memberVariables = Object.keys(member);
-                                    var fullMemberNameBeforeFor = fullMemberName;
-                                    for (var i in memberVariables) {
-                                        var subMemberName = memberVariables[i];
-                                        //Check if it is a variable (which will have to have the isStruct field defined)
-                                        var isVariable = (member[subMemberName] !== undefined);
-                                        if (isVariable) {
-                                            isVariable = (member[subMemberName]["isStruct"] !== undefined);
-                                        }
-                                        if (isVariable) {
-                                            fullMemberName = fullMemberNameBeforeFor + this.structureSeparator + subMemberName;
-                                            this.addMember(member[subMemberName], fullMemberName, subMemberName);
-                                        }
-                                    }
-                                    this.treeHTML += "</ul>\n";
-                                    this.treeHTML += "</li>\n";
-                                    this.treeHTML += "</ul>\n";
-                                }
-                                else {
-                                    this.treeHTML += "<ul>\n";
-                                    this.treeHTML += "<li><div>\n";
-                                    var memberNameValidCSS = "P" + memberName.replace(/[|&;$%@"<>()+,]/g, "");
-                                    memberNameValidCSS = memberNameValidCSS.replace(/:/g, "");
-                                    if (member.numberOfElements > 1) {
-                                        this.treeHTML += callerMemberName + ": <htk-array-editor id=\"" + fullMemberName + "\" name=\"" + fullMemberName + "\" class=\"" + memberNameValidCSS + "\"></htk-array-editor>\n";
-                                    }
-                                    else {
-                                        if (member.type === "enum") {
-                                            this.treeHTML += callerMemberName + ": <htk-enum id=\"" + fullMemberName + "\" name=\"" + fullMemberName + "\" class=\"" + memberNameValidCSS + "\"></htk-enum>\n";
-                                        }
-                                        else if (member.type === "library") {
-                                            this.treeHTML += callerMemberName + ": <htk-library-button id=\"" + fullMemberName + "\" name=\"" + fullMemberName + "\" class=\"" + memberNameValidCSS + "\"></htk-library-button>\n";
-                                        }
-                                        else if (member.type === "schedule") {
-                                            this.treeHTML += callerMemberName + ": <htk-schedule-button id=\"" + fullMemberName + "\" name=\"" + fullMemberName + "\" class=\"" + memberNameValidCSS + "\"></htk-schedule-button>\n";
-                                        }
-                                        else {
-                                            this.treeHTML += callerMemberName + ": <htk-input id=\"" + fullMemberName + "\" name=\"" + fullMemberName + "\" class=\"" + memberNameValidCSS + "\"></htk-input>\n";
-                                        }
-                                    }
-                                    this.treeHTML += "</div></li>\n";
-                                    this.treeHTML += "</ul>\n";
-                                }
-                            }
+                    this.treeHTML += "<ul>\n";
+                    var memberVariables = Object.keys(member);
+                    var fullMemberNameBeforeFor = fullMemberName;
+                    for (var i in memberVariables) {
+                        var subMemberName = memberVariables[i];
+                        //Check if it is a variable (which will have to have the isStruct field defined)
+                        var isVariable = (member[subMemberName] !== undefined);
+                        if (isVariable) {
+                            isVariable = (member[subMemberName]["isStruct"] !== undefined);
+                        }
+                        if (isVariable) {
+                            fullMemberName = fullMemberNameBeforeFor + this.structureSeparator + subMemberName;
+                            this.addMember(member[subMemberName], fullMemberName, subMemberName);
                         }
                     }
-
-                    /**
-                     * @brief Recursive function which adds the member variables to the tree.
-                     * @param[in] member the member variable to be added.
-                     * @param[in] user the username to be added.
-                     */
-                    populateComponentInfo(member, user) {
-                        if (member !== undefined) {
-                            var memberName = member["name"];
-                            if (memberName !== undefined) {
-                                var memberIsStruct = member["isStruct"]
-                                if (memberIsStruct !== undefined) {
-                                    memberIsStruct = (memberIsStruct === true);
-                                }
-                                if (memberIsStruct) {
-                                    var membersNames = Object.keys(member);
-                                    for (var i in membersNames) {
-                                        var subMemberName = membersNames[i];
-                                        var isVariable = (member[subMemberName] !== undefined);
-                                        if (isVariable) {
-                                            isVariable = (member[subMemberName]["isStruct"] !== undefined);
-                                        }
-                                        if (isVariable) {
-                                            this.populateComponentInfo(member[subMemberName], user);
-                                        }
-                                    }
-                                }
-                                else {
-                                    var memberNameValidCSS = ".P" + memberName.replace(/[|&;$%@"<>()+,]/g, "");
-                                    memberNameValidCSS = memberNameValidCSS.replace(/:/g, "");
-                                    var compMember = this.shadowRoot.querySelector(memberNameValidCSS);
-                                    compMember.setVariable(member);
-                                    compMember.checkUserAllowedToWrite(user);
-                                }
-                            }
+                    this.treeHTML += "</ul>\n";
+                    this.treeHTML += "</li>\n";
+                    this.treeHTML += "</ul>\n";
+                }
+                else {
+                    this.treeHTML += "<ul>\n";
+                    this.treeHTML += "<li><div>\n";
+                    var memberNameValidCSS = "P" + memberName.replace(/[|&;$%@"<>()+,]/g, "");
+                    memberNameValidCSS = memberNameValidCSS.replace(/:/g, "");
+                    if (member.numberOfElements > 1) {
+                        this.treeHTML += callerMemberName + ": <htk-array-editor id=\"" + fullMemberName + "\" name=\"" + fullMemberName + "\" class=\"" + memberNameValidCSS + "\"></htk-array-editor>\n";
+                    }
+                    else {
+                        if (member.type === "enum") {
+                            this.treeHTML += callerMemberName + ": <htk-enum id=\"" + fullMemberName + "\" name=\"" + fullMemberName + "\" class=\"" + memberNameValidCSS + "\"></htk-enum>\n";
+                        }
+                        else if (member.type === "library") {
+                            this.treeHTML += callerMemberName + ": <htk-library-button id=\"" + fullMemberName + "\" name=\"" + fullMemberName + "\" class=\"" + memberNameValidCSS + "\"></htk-library-button>\n";
+                        }
+                        else if (member.type === "schedule") {
+                            this.treeHTML += callerMemberName + ": <htk-schedule-button id=\"" + fullMemberName + "\" name=\"" + fullMemberName + "\" class=\"" + memberNameValidCSS + "\"></htk-schedule-button>\n";
+                        }
+                        else {
+                            this.treeHTML += callerMemberName + ": <htk-input id=\"" + fullMemberName + "\" name=\"" + fullMemberName + "\" class=\"" + memberNameValidCSS + "\"></htk-input>\n";
                         }
                     }
+                    this.treeHTML += "</div></li>\n";
+                    this.treeHTML += "</ul>\n";
+                }
+            }
+        }
+    }
 
-                    /**
-                     * @brief Recursive adds the variable to the tree. See HtkComponent.setVariable.
-                     */
-                    setVariable (variable) {
-                        super.setVariable(variable);
-                        this.name = this.id;
-                        this.isStruct = this.isStruct();
-                        this.mainDiv.innerHTML = "Loading structure, please wait";
-                        this.treeHTML = "<ul class=\"collapsibleList\" id=\"struct-tree\">";
-                        this.addMember(this, this.name);
-                        this.treeHTML += "</ul>";
-                        this.mainDiv.innerHTML = this.treeHTML;
-                        var user = window.htkHelper.getUser();
-                        this.populateComponentInfo(this, user);
-                        var tree = this.shadowRoot.querySelector("#struct-tree");
-                        CollapsibleLists.applyTo(tree);
+    /**
+     * @brief Recursive function which adds the member variables to the tree.
+     * @param[in] member the member variable to be added.
+     * @param[in] user the username to be added.
+     */
+    populateComponentInfo(member, user) {
+        if (member !== undefined) {
+            var memberName = member["name"];
+            if (memberName !== undefined) {
+                var memberIsStruct = member["isStruct"]
+                if (memberIsStruct !== undefined) {
+                    memberIsStruct = (memberIsStruct === true);
+                }
+                if (memberIsStruct) {
+                    var membersNames = Object.keys(member);
+                    for (var i in membersNames) {
+                        var subMemberName = membersNames[i];
+                        var isVariable = (member[subMemberName] !== undefined);
+                        if (isVariable) {
+                            isVariable = (member[subMemberName]["isStruct"] !== undefined);
+                        }
+                        if (isVariable) {
+                            this.populateComponentInfo(member[subMemberName], user);
+                        }
                     }
                 }
+                else {
+                    var memberNameValidCSS = ".P" + memberName.replace(/[|&;$%@"<>()+,]/g, "");
+                    memberNameValidCSS = memberNameValidCSS.replace(/:/g, "");
+                    var compMember = this.shadowRoot.querySelector(memberNameValidCSS);
+                    compMember.setVariable(member);
+                    compMember.checkUserAllowedToWrite(user);
+                }
+            }
+        }
+    }
 
-                /**
-                 * @brief Registers the element.
-                 */
-                 window.customElements.define('htk-struct-browser', HtkStructBrowser);
+    /**
+     * @brief Recursive adds the variable to the tree. See HtkComponent.setVariable.
+     */
+    setVariable (variable) {
+        super.setVariable(variable);
+        this.name = this.id;
+        this.isStruct = this.isStruct();
+        this.mainDiv.innerHTML = "Loading structure, please wait";
+        this.treeHTML = "<ul class=\"collapsibleList\" id=\"struct-tree\">";
+        this.addMember(this, this.name);
+        this.treeHTML += "</ul>";
+        this.mainDiv.innerHTML = this.treeHTML;
+        var user = window.htkHelper.getUser();
+        this.populateComponentInfo(this, user);
+        var tree = this.shadowRoot.querySelector("#struct-tree");
+        CollapsibleLists.applyTo(tree);
+    }
+}
+
+/**
+ * @brief Registers the element.
+ */
+window.customElements.define('htk-struct-browser', HtkStructBrowser);

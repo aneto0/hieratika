@@ -17,16 +17,15 @@
 const template = document.createElement('template');
 template.innerHTML = `
   <dialog id="dwaitdialog">
-      <img src="./icons/ajax-loader.gif"></img>
+      <img src="../icons/ajax-loader.gif"></img>
   </dialog>
 `;
-
 
 
 /**
  * @brief A modal dialog which displays a wait icon.
  */
-class HtkWaitDialog extends HTMLElement {
+export class HtkWaitDialog extends HTMLElement {
     constructor() {
         super();
     }

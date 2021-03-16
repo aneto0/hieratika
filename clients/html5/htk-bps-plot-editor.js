@@ -15,14 +15,8 @@
  or implied. See the Licence permissions and limitations under the Licence.
 */
 
-/*
-  <link rel="import" href="/libraries.html">
-  <link rel="import" href="/htk-component.html">
-*/
-
-import * as Constants from './htk-constants.js'
-;
-import { HtkComponent } from './htk-component.js'
+import * as Constants from './htk-constants.js';
+import { HtkComponent } from './htk-component.js';
 
 const template = document.createElement('template');
 template.innerHTML = `

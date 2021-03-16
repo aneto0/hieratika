@@ -23,89 +23,89 @@
 
 import { HtkAbstractInput } from './htk-abstract-input.js'
 
-            /**
-             * @brief An abstract class where components that are to handle library variables should inherit from.*/
-            export class HtkLibrary extends HtkAbstractInput {
+/**
+ * @brief An abstract class where components that are to handle library variables should inherit from.*/
+export class HtkLibrary extends HtkAbstractInput {
 
-                /**
-                 * @brief Constructor. NOOP.
-                 */
-                constructor() {
-                    super();
-                }
+    /**
+     * @brief Constructor. NOOP.
+     */
+    constructor() {
+        super();
+    }
 
-                /**
-                 * @brief Registers the htk-library-editor that will be used to edit this library.
-                 * @details The component inheriting from this HtkLibrary shall have on its HTML5 template an htk-library-editor with an tlibrary-editor.
-                 */
-                attachLibraryHandler () {
-                    //Create an editor
-                    this.libraryEditor = this.shadowRoot.querySelector("#tlibrary-editor");
-                    this.libraryType = undefined;
-                    this.libraryMappings = undefined;
-                }
+    /**
+     * @brief Registers the htk-library-editor that will be used to edit this library.
+     * @details The component inheriting from this HtkLibrary shall have on its HTML5 template an htk-library-editor with an tlibrary-editor.
+     */
+    attachLibraryHandler (libraryEditor) {
+        //Create an editor
+        this.libraryEditor = libraryEditor;
+        this.libraryType = undefined;
+        this.libraryMappings = undefined;
+    }
 
-                /**
-                 * @brief See HtkComponent.setVariable.
-                 * @param[in] variable shall have the "library" property and thus contain the members mappings and type.
-                 */
-                setVariable (variable) {
-                    super.setVariable(variable);
-                    if ("library" in variable) {
-                        this.libraryType = variable.library.type;
-                        this.libraryMappings = variable.library.mappings;
-                        this.libraryEditor.setOwnerComponent(this);
-                    }
-                }
+    /**
+     * @brief See HtkComponent.setVariable.
+     * @param[in] variable shall have the "library" property and thus contain the members mappings and type.
+     */
+    setVariable (variable) {
+        super.setVariable(variable);
+        if ("library" in variable) {
+            this.libraryType = variable.library.type;
+            this.libraryMappings = variable.library.mappings;
+            this.libraryEditor.setOwnerComponent(this);
+        }
+    }
 
-                /**
-                 * @brief Opens the library editor associated to this component.
-                 */
-                showLibraryEditor () {
-                    var libraryValueUser = this.getValue().split("/");
-                    var libraryUser = libraryValueUser[0];
-                    var libraryName = libraryValueUser[1];
-                    this.libraryEditor.showEditor(libraryUser, libraryName);
-                }
+    /**
+     * @brief Opens the library editor associated to this component.
+     */
+    showLibraryEditor () {
+        var libraryValueUser = this.getValue().split("/");
+        var libraryUser = libraryValueUser[0];
+        var libraryName = libraryValueUser[1];
+        this.libraryEditor.showEditor(libraryUser, libraryName);
+    }
 
-                /**
-                 * @brief See HtkComponent.setReadOnly.
-                 */
-                setReadOnly (isReadOnly) {
-                    super.setReadOnly(isReadOnly);
-                    this.libraryEditor.setReadOnly(isReadOnly);
-                }
+    /**
+     * @brief See HtkComponent.setReadOnly.
+     */
+    setReadOnly (isReadOnly) {
+        super.setReadOnly(isReadOnly);
+        this.libraryEditor.setReadOnly(isReadOnly);
+    }
 
-                /**
-                 * @brief See HtkComponent.checkUserAllowedToWrite.
-                 * @details Calls setUserAllowedToWrite in the library editor.
-                 */
-                checkUserAllowedToWrite (user) {
-                    super.checkUserAllowedToWrite(user);
-                    this.libraryEditor.setUserAllowedToWrite(this.isUserAllowedToWrite());
-                }
+    /**
+     * @brief See HtkComponent.checkUserAllowedToWrite.
+     * @details Calls setUserAllowedToWrite in the library editor.
+     */
+    checkUserAllowedToWrite (user) {
+        super.checkUserAllowedToWrite(user);
+        this.libraryEditor.setUserAllowedToWrite(this.isUserAllowedToWrite());
+    }
 
-                /**
-                 * @brief See HtkComponent.setReference.
-                 * @details Calls setReference in the library editor.
-                 */
-                setReference (referenceToSet) {
-                    super.setReference(referenceToSet);
-                    this.libraryEditor.setReference(referenceToSet);
-                }
+    /**
+     * @brief See HtkComponent.setReference.
+     * @details Calls setReference in the library editor.
+     */
+    setReference (referenceToSet) {
+        super.setReference(referenceToSet);
+        this.libraryEditor.setReference(referenceToSet);
+    }
 
-                /**
-                 * @brief Gets the library type.
-                 */
-                getLibraryType() {
-                    return this.libraryType;
-                }
+    /**
+     * @brief Gets the library type.
+     */
+    getLibraryType() {
+        return this.libraryType;
+    }
 
-                /**
-                 * @brief This function is called by the HtkLibraryEditor when the user selects a new library.
-                 * @param[in] libraryOwner the username which owns the library.
-                 * @param[in] newLibraryName the library name.
-                 */
-                libraryChanged (libraryOwner, newLibraryName) {
-                }
-            }
+    /**
+     * @brief This function is called by the HtkLibraryEditor when the user selects a new library.
+     * @param[in] libraryOwner the username which owns the library.
+     * @param[in] newLibraryName the library name.
+     */
+    libraryChanged (libraryOwner, newLibraryName) {
+    }
+}

@@ -20,7 +20,7 @@
         <link rel="import" href="/libraries.html">
 */
 //Solve this import with math.js
-//import * as math from './js/math.js'
+import { HtkHelper } from './htk-helper.js'
 
 /**
  * @brief The root of the Hieratika HTML5 validations class hierarchy.
@@ -33,6 +33,7 @@ export class HtkValidation {
      * @param[in] validationFunction a string representation of the validation function.
      */
     constructor(validationFunction) {
+        this.math = HtkHelper.getMathLibrary();
         this.validationFunction = validationFunction;
     }
 
@@ -63,7 +64,7 @@ export class HtkValidationMath extends HtkValidation {
      */
     constructor(validationFunction) {
         super(validationFunction);
-        this.parser = math.parser();
+        this.parser = this.math.parser();
         this.parser.set('getValue', function (variableName) {
             var ret = undefined;
             var comp = document._frameComponents[variableName];
