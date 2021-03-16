@@ -1,0 +1,230 @@
+/*
+ date: 08/01/2018
+ author: Andre' Neto
+ 
+ copyright: Copyright 2017 F4E | European Joint Undertaking for ITER and
+ the Development of Fusion Energy ('Fusion for Energy').
+ Licensed under the EUPL, Version 1.1 or - as soon they will be approved
+ by the European Commission - subsequent versions of the EUPL (the "Licence")
+ You may not use this work except in compliance with the Licence.
+ You may obtain a copy of the Licence at: http://ec.europa.eu/idabc/eupl
+ 
+ warning: Unless required by applicable law or agreed to in writing, 
+ software distributed under the Licence is distributed on an "AS IS"
+ basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ or implied. See the Licence permissions and limitations under the Licence.
+*/
+
+import { HtkComponent } from './htk-component.js';
+
+const template = document.createElement('template');
+template.innerHTML = `
+<canvas width="600" height="300" id="tcanvas"></canvas>
+`;
+/**
+ * @brief 2d line plot component based on www.chartjs.org (see connectedCallback for available options).
+ */
+class Htk2DLinePlot extends HtkComponent {
+
+    /**
+     * @brief Constructor. NOOP.
+     */
+    constructor () {
+        super();
+    }
+
+    /**
+     * @brief Helper function which populates the provided dataset with the values.
+     * @param[in] dataset the dataset to be populated.
+     * @param[in] values 2d array with values in the (values[0][i], values[1][i]).
+     */
+    populateDataset (dataset, values) {
+        for (var i=0; i<values.length; i++) {
+            if (values[0][i] !== undefined) {
+                dataset.data.push({x: values[0][i], y: values[1][i]});
+            }
+        }
+    }
+
+    /**
+     * @brief Helper function which resets all the datasets.
+     */
+    reset () {
+        for (var i=0; i<this.chart.data.datasets.length; i++) {
+            this.chart.data.datasets[i].data = [];
+        }
+    }
+
+    /**
+     * @brief Helper function which displays the plant and reference values (when set).
+     */
+    checkValues () {
+        if (!this.appendData) {
+            this.reset();
+        }
+
+        if (this.value !== undefined) {
+            this.populateDataset(this.chart.data.datasets[0], this.value);
+        }
+
+        var ref = this.getReference();
+        var refValue = this.getReferenceValue();
+        var plantValue = this.getPlantValue();
+        if (this.showReference) {
+            if ((ref !== NONE_NAME) && (refValue !== undefined)) {
+                this.populateDataset(this.chart.data.datasets[1], refValue);
+            }
+        }
+        if (this.showPlant) {
+            if (plantValue !== undefined) {
+                this.populateDataset(this.chart.data.datasets[this.showPlantIdx], plantValue);
+            }
+        }
+        this.chart.update();
+
+        this.title = this.toString();
+    }
+
+    /** 
+     * @brief See HtkComponent.setValue
+     */
+    setValue (elementsToSet, updateRemote=true) {
+        super.setValue(elementsToSet.slice(0), updateRemote);
+        this.checkValues();
+    }
+
+    /** 
+     * @brief See HtkComponent.refresh
+     */
+    refresh() {
+        this.checkValues(false);
+    }
+
+    /** 
+     * @brief See HtkComponent.getTemplate
+     */
+    getTemplate() {
+        var templateContent = template.content;
+        return templateContent;
+    }
+
+    /** 
+     * @brief See HtkComponent.createdCallback
+     * @details The available html options are:
+     * - data-xlabel the label for the xx axis;
+     * - data-ylabel the label for the yy axis;
+     * - data-xtype the type of data for the xx axis;
+     * - data-ytype the type of data for the yy axis;
+     * - data-append if true data will be appended to the current dataset;
+     * - data-show-plant if true the plant values will be displayed;
+     * - data-show-reference if true the current reference values will be displayed;
+     */
+    connectedCallback() {
+        super.connectedCallback();
+        var ctx = this.shadowRoot.querySelector("#tcanvas");
+        var xlabel = this.getAttribute("data-xlabel");
+        var ylabel = this.getAttribute("data-ylabel");
+        var xtype = this.getAttribute("data-xtype");
+        var ytype = this.getAttribute("data-ytype");
+        var appendData = this.getAttribute("data-append");
+        var showPlant = this.getAttribute("data-show-plant");
+        var showReference = this.getAttribute("data-show-reference");
+        if (appendData !== null) {
+            this.appendData = (appendData.toLowerCase() === "true");
+        }
+        else {
+            this.appendData  = false;
+        }
+        if (showPlant !== null) {
+            this.showPlant = (showPlant.toLowerCase() === "true");
+        }
+        else {
+            this.showPlant = true;
+        }
+        if (showReference !== null) {
+            this.showReference = (showReference.toLowerCase() === "true");
+        }
+        else {
+            this.showReference = true;
+        }
+
+        if (xlabel === null) {
+            xlabel = "";
+        }
+        if (ylabel === null) {
+            ylabel = "";
+        }
+        if (xtype === null) {
+            xtype = "linear";
+        }
+        if (ytype === null) {
+            ytype = "linear";
+        }
+
+        var chart = new Chart(ctx, {
+            // The type of chart we want to create
+            type: "line",
+
+            // The data for our dataset
+            data: {
+                datasets: [
+                {
+                    label: "Current",
+                    fill: "false",
+                    backgroundColor: "white",
+                    borderColor: "blue" // The main line color
+                }
+                ]
+            },
+
+            // Configuration options go here
+            options: {
+                scales: {
+                    xAxes: [{
+                        type: xtype,
+                        position: "bottom",
+                        scaleLabel: {
+                            display: true,
+                            labelString: xlabel
+                        }
+                    }],
+                    yAxes: [{
+                        type: ytype,
+                        scaleLabel: {
+                            display: true,
+                            labelString: ylabel
+                        }
+                    }]
+                },
+                responsive : false
+            }
+        });
+        if (this.showReference) {
+            chart.data.datasets.push(
+                {
+                    label: "Reference",
+                    fill: "false",
+                    backgroundColor: "white",
+                    borderColor: "gray"
+                }
+            );
+        }
+        if (this.showPlant) {
+            chart.data.datasets.push(
+                {
+                    label: "Plant",
+                    fill: "false",
+                    backgroundColor: "white",
+                    borderColor: "red"
+                }
+            );
+        }
+        this.showPlantIdx = (chart.data.datasets.length - 1);
+        chart.update();
+        this.chart = chart;
+    }
+}
+/**
+ * @brief Registers the element.
+ */
+window.customElements.define('htk-2d-line-plot', Htk2DLinePlot);
